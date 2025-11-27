@@ -1,0 +1,21 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc3281_PKIXAttributeCertificate.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 50, column 2]
+    │
+    │ 
+ 50 │  AttributeCertificateInfo ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 51 │      version  AttCertVersion  -- version is v2,
+ 52 │      holder   Holder,
+ 53 │      issuer   AttCertIssuer,
+ 54 │      signatureAlgorithmIdentifier,
+ 55 │      serialNumber   CertificateSerialNumber,
+ 56 │      attrCertValidityPeriod   AttCertValidityPeriod,
+ 57 │      attributes     SEQUENCE OF Attribute,
+ 58 │      issuerUniqueID UniqueIdentifier OPTIONAL,
+ 59 │      extensions     Extensions     OPTIONAL
+ 60 │  }
+    │
+────╯

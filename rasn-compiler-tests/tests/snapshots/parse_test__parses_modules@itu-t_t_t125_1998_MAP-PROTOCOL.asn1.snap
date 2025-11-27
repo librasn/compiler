@@ -1,0 +1,808 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t125_1998_MAP-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod map_protocol {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct ChannelID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DataDescriptor {
+        #[rasn(identifier = "unicastForwardFlag")]
+        pub unicast_forward_flag: bool,
+        #[rasn(identifier = "startingSequenceNumber")]
+        pub starting_sequence_number: SequenceNumber,
+        #[rasn(identifier = "dataFlowIdentifier")]
+        pub data_flow_identifier: Option<DataFlowIdentifier>,
+        #[rasn(value("0..=65535"), identifier = "domainReferenceID")]
+        pub domain_reference_id: Option<u16>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DataDescriptor {
+        pub fn new(
+            unicast_forward_flag: bool,
+            starting_sequence_number: SequenceNumber,
+            data_flow_identifier: Option<DataFlowIdentifier>,
+            domain_reference_id: Option<u16>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                unicast_forward_flag,
+                starting_sequence_number,
+                data_flow_identifier,
+                domain_reference_id,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DataFlowIdentifierMetachannelID {
+        #[rasn(identifier = "channelID")]
+        pub channel_id: ChannelID,
+        #[rasn(identifier = "reliabilityLevel")]
+        pub reliability_level: ReliabilityLevel,
+        pub priority: Priority,
+    }
+    impl DataFlowIdentifierMetachannelID {
+        pub fn new(
+            channel_id: ChannelID,
+            reliability_level: ReliabilityLevel,
+            priority: Priority,
+        ) -> Self {
+            Self {
+                channel_id,
+                reliability_level,
+                priority,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DataFlowIdentifier {
+        #[rasn(identifier = "senderID")]
+        pub sender_id: Option<SenderID>,
+        #[rasn(identifier = "metachannelID")]
+        pub metachannel_id: Option<DataFlowIdentifierMetachannelID>,
+        #[rasn(identifier = "dataType")]
+        pub data_type: Option<DataType>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DataFlowIdentifier {
+        pub fn new(
+            sender_id: Option<SenderID>,
+            metachannel_id: Option<DataFlowIdentifierMetachannelID>,
+            data_type: Option<DataType>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                sender_id,
+                metachannel_id,
+                data_type,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DataFrameEntry {
+        #[rasn(identifier = "firstSegmentFlag")]
+        pub first_segment_flag: bool,
+        #[rasn(identifier = "lastSegmentFlag")]
+        pub last_segment_flag: bool,
+        #[rasn(identifier = "userData")]
+        pub user_data: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl DataFrameEntry {
+        pub fn new(
+            first_segment_flag: bool,
+            last_segment_flag: bool,
+            user_data: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                first_segment_flag,
+                last_segment_flag,
+                user_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DataType {
+        nonuniform(()),
+        uniform(()),
+        proxy(()),
+        nonStandardDataType(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=255"))]
+    pub struct H221NonStandardIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Key {
+        object(ObjectIdentifier),
+        h221NonStandard(H221NonStandardIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPAddGroupRequestPDU {
+        pub metachannel: Metachannel,
+        #[rasn(identifier = "transportProtocolID")]
+        pub transport_protocol_id: TransportProtocolID,
+        #[rasn(identifier = "multicastGroupAddress")]
+        pub multicast_group_address: NetworkAddress,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPAddGroupRequestPDU {
+        pub fn new(
+            metachannel: Metachannel,
+            transport_protocol_id: TransportProtocolID,
+            multicast_group_address: NetworkAddress,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                metachannel,
+                transport_protocol_id,
+                multicast_group_address,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPArbitrateProtocolsConfirmPDU {
+        #[rasn(value("0..=65535"), identifier = "domainReferenceID")]
+        pub domain_reference_id: u16,
+        #[rasn(identifier = "moreToComeFlag")]
+        pub more_to_come_flag: bool,
+        #[rasn(identifier = "transportProtocolMenu")]
+        pub transport_protocol_menu: SequenceOf<TransportProtocolConfirmEntry>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPArbitrateProtocolsConfirmPDU {
+        pub fn new(
+            domain_reference_id: u16,
+            more_to_come_flag: bool,
+            transport_protocol_menu: SequenceOf<TransportProtocolConfirmEntry>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                domain_reference_id,
+                more_to_come_flag,
+                transport_protocol_menu,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPArbitrateProtocolsRequestPDU {
+        #[rasn(value("0..=65535"), identifier = "domainReferenceID")]
+        pub domain_reference_id: u16,
+        #[rasn(identifier = "moreToComeFlag")]
+        pub more_to_come_flag: bool,
+        #[rasn(identifier = "transportProtocolMenu")]
+        pub transport_protocol_menu: SequenceOf<TransportProtocolRequestEntry>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPArbitrateProtocolsRequestPDU {
+        pub fn new(
+            domain_reference_id: u16,
+            more_to_come_flag: bool,
+            transport_protocol_menu: SequenceOf<TransportProtocolRequestEntry>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                domain_reference_id,
+                more_to_come_flag,
+                transport_protocol_menu,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPConnectConfirmPDU {
+        #[rasn(identifier = "versionNumber")]
+        pub version_number: VersionNumber,
+        #[rasn(value("0..=65535"), identifier = "connectionMAPSAP")]
+        pub connection_mapsap: u16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPConnectConfirmPDU {
+        pub fn new(
+            version_number: VersionNumber,
+            connection_mapsap: u16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                version_number,
+                connection_mapsap,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPConnectRequestPDU {
+        #[rasn(identifier = "versionNumber")]
+        pub version_number: VersionNumber,
+        #[rasn(value("0..=65535"), identifier = "connectionMAPSAP")]
+        pub connection_mapsap: u16,
+        #[rasn(value("0..=65535"), identifier = "domainReferenceID")]
+        pub domain_reference_id: u16,
+        #[rasn(identifier = "priorityRange")]
+        pub priority_range: PriorityRange,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPConnectRequestPDU {
+        pub fn new(
+            version_number: VersionNumber,
+            connection_mapsap: u16,
+            domain_reference_id: u16,
+            priority_range: PriorityRange,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                version_number,
+                connection_mapsap,
+                domain_reference_id,
+                priority_range,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPDataPDU {
+        #[rasn(identifier = "dataDescriptor")]
+        pub data_descriptor: Option<DataDescriptor>,
+        #[rasn(identifier = "dataFrameArray")]
+        pub data_frame_array: SequenceOf<DataFrameEntry>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPDataPDU {
+        pub fn new(
+            data_descriptor: Option<DataDescriptor>,
+            data_frame_array: SequenceOf<DataFrameEntry>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                data_descriptor,
+                data_frame_array,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPDisableMulticastConfirmPDU {
+        pub metachannel: Metachannel,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPDisableMulticastConfirmPDU {
+        pub fn new(
+            metachannel: Metachannel,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                metachannel,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPDisableMulticastRequestPDU {
+        pub metachannel: Metachannel,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPDisableMulticastRequestPDU {
+        pub fn new(
+            metachannel: Metachannel,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                metachannel,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPDisableUnicastRequestPDU {
+        #[rasn(identifier = "dataFlowIdentifier")]
+        pub data_flow_identifier: DataFlowIdentifier,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPDisableUnicastRequestPDU {
+        pub fn new(
+            data_flow_identifier: DataFlowIdentifier,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                data_flow_identifier,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPDisconnectConfirmPDU {
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPDisconnectConfirmPDU {
+        pub fn new(non_standard_parameters: Option<SequenceOf<NonStandardParameter>>) -> Self {
+            Self {
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPDisconnectRequestPDU {
+        pub reason: Reason,
+        #[rasn(identifier = "confirmRequired")]
+        pub confirm_required: bool,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPDisconnectRequestPDU {
+        pub fn new(
+            reason: Reason,
+            confirm_required: bool,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                reason,
+                confirm_required,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPEnableMulticastRequestPDU {
+        pub metachannel: Metachannel,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPEnableMulticastRequestPDU {
+        pub fn new(
+            metachannel: Metachannel,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                metachannel,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPEnableUnicastConfirmPDU {
+        #[rasn(identifier = "dataFlowIdentifier")]
+        pub data_flow_identifier: DataFlowIdentifier,
+        #[rasn(identifier = "sequenceNumber")]
+        pub sequence_number: SequenceNumber,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPEnableUnicastConfirmPDU {
+        pub fn new(
+            data_flow_identifier: DataFlowIdentifier,
+            sequence_number: SequenceNumber,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                data_flow_identifier,
+                sequence_number,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPEnableUnicastRequestPDU {
+        #[rasn(identifier = "dataFlowIdentifier")]
+        pub data_flow_identifier: DataFlowIdentifier,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPEnableUnicastRequestPDU {
+        pub fn new(
+            data_flow_identifier: DataFlowIdentifier,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                data_flow_identifier,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum MAPPDU {
+        mapConnectRequest(MAPConnectRequestPDU),
+        mapConnectConfirm(MAPConnectConfirmPDU),
+        mapDisconnectRequest(MAPDisconnectRequestPDU),
+        mapDisconnectConfirm(MAPDisconnectConfirmPDU),
+        mapArbitrateProtocolsRequest(MAPArbitrateProtocolsRequestPDU),
+        mapArbitrateProtocolsConfirm(MAPArbitrateProtocolsConfirmPDU),
+        mapData(MAPDataPDU),
+        mapAddGroupRequest(MAPAddGroupRequestPDU),
+        mapRemoveGroupRequest(MAPRemoveGroupRequestPDU),
+        mapDisableUnicastRequest(MAPDisableUnicastRequestPDU),
+        mapEnableUnicastRequest(MAPEnableUnicastRequestPDU),
+        mapEnableUnicastConfirm(MAPEnableUnicastConfirmPDU),
+        mapDisableMulticastRequest(MAPDisableMulticastRequestPDU),
+        mapDisableMulticastConfirm(MAPDisableMulticastConfirmPDU),
+        mapEnableMulticastRequest(MAPEnableMulticastRequestPDU),
+        mapSequenceNumber(MAPSequenceNumberPDU),
+        nonStandardPDU(NonStandardPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPRemoveGroupRequestPDU {
+        pub metachannel: Metachannel,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPRemoveGroupRequestPDU {
+        pub fn new(
+            metachannel: Metachannel,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                metachannel,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MAPSequenceNumberPDU {
+        #[rasn(identifier = "dataFlowIdentifier")]
+        pub data_flow_identifier: DataFlowIdentifier,
+        #[rasn(identifier = "sequenceNumber")]
+        pub sequence_number: SequenceNumber,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl MAPSequenceNumberPDU {
+        pub fn new(
+            data_flow_identifier: DataFlowIdentifier,
+            sequence_number: SequenceNumber,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                data_flow_identifier,
+                sequence_number,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Metachannel {
+        #[rasn(identifier = "channelID")]
+        pub channel_id: ChannelID,
+        #[rasn(identifier = "reliabilityLevel")]
+        pub reliability_level: ReliabilityLevel,
+        #[rasn(identifier = "priorityRange")]
+        pub priority_range: PriorityRange,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl Metachannel {
+        pub fn new(
+            channel_id: ChannelID,
+            reliability_level: ReliabilityLevel,
+            priority_range: PriorityRange,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                channel_id,
+                reliability_level,
+                priority_range,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NetworkAddress {
+        #[rasn(size("1..=20"), identifier = "nsapAddress")]
+        pub nsap_address: OctetString,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl NetworkAddress {
+        pub fn new(
+            nsap_address: OctetString,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                nsap_address,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardPDU {
+        pub data: NonStandardParameter,
+    }
+    impl NonStandardPDU {
+        pub fn new(data: NonStandardParameter) -> Self {
+            Self { data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardParameter {
+        pub key: Key,
+        pub data: OctetString,
+    }
+    impl NonStandardParameter {
+        pub fn new(key: Key, data: OctetString) -> Self {
+            Self { key, data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("128..=65535"))]
+    pub struct PayloadSize(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=15"))]
+    pub struct Priority(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PriorityRange {
+        #[rasn(identifier = "highPriority")]
+        pub high_priority: Priority,
+        #[rasn(identifier = "lowPriority")]
+        pub low_priority: Priority,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl PriorityRange {
+        pub fn new(
+            high_priority: Priority,
+            low_priority: Priority,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                high_priority,
+                low_priority,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Reason {
+        providerInitiated(()),
+        userRejected(()),
+        userInitiated(()),
+        invalidMAPSAP(()),
+        invalidDomainReferenceID(()),
+        unicastTransition(()),
+        unspecifiedFailure(()),
+        nonStandardReason(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ReliabilityLevel {
+        reliable(()),
+        unreliable(()),
+        nonStandardReliabilityLevel(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1001..=65535"))]
+    pub struct SenderID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct SequenceNumber(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransportProtocolConfirmEntry {
+        #[rasn(identifier = "transportProtocolID")]
+        pub transport_protocol_id: TransportProtocolID,
+        #[rasn(identifier = "transportProtocolType")]
+        pub transport_protocol_type: TransportProtocolType,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: NetworkAddress,
+        #[rasn(identifier = "maximumPayloadSize")]
+        pub maximum_payload_size: PayloadSize,
+        #[rasn(value("0..=65535"), identifier = "preferenceWeighting")]
+        pub preference_weighting: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "nodeCount")]
+        pub node_count: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "numberOfConnections")]
+        pub number_of_connections: Option<u16>,
+        #[rasn(identifier = "configurationData")]
+        pub configuration_data: Option<OctetString>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl TransportProtocolConfirmEntry {
+        pub fn new(
+            transport_protocol_id: TransportProtocolID,
+            transport_protocol_type: TransportProtocolType,
+            network_address: NetworkAddress,
+            maximum_payload_size: PayloadSize,
+            preference_weighting: Option<u16>,
+            node_count: Option<u16>,
+            number_of_connections: Option<u16>,
+            configuration_data: Option<OctetString>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                transport_protocol_id,
+                transport_protocol_type,
+                network_address,
+                maximum_payload_size,
+                preference_weighting,
+                node_count,
+                number_of_connections,
+                configuration_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum TransportProtocolID {
+        objectProtocolID(ObjectIdentifier),
+        h221NonStandardProtocolID(H221NonStandardIdentifier),
+        #[rasn(size("5"))]
+        snapProtocolID(OctetString),
+        nonStandardProtocolID(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TransportProtocolRequestEntry {
+        #[rasn(identifier = "transportProtocolID")]
+        pub transport_protocol_id: TransportProtocolID,
+        #[rasn(identifier = "transportProtocolType")]
+        pub transport_protocol_type: TransportProtocolType,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: NetworkAddress,
+        #[rasn(identifier = "maximumPayloadFixedFlag")]
+        pub maximum_payload_fixed_flag: bool,
+        #[rasn(identifier = "maximumPayloadSize")]
+        pub maximum_payload_size: PayloadSize,
+        #[rasn(value("0..=65535"), identifier = "preferenceWeighting")]
+        pub preference_weighting: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "nodeCount")]
+        pub node_count: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "numberOfConnections")]
+        pub number_of_connections: Option<u16>,
+        #[rasn(identifier = "configurationData")]
+        pub configuration_data: Option<OctetString>,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl TransportProtocolRequestEntry {
+        pub fn new(
+            transport_protocol_id: TransportProtocolID,
+            transport_protocol_type: TransportProtocolType,
+            network_address: NetworkAddress,
+            maximum_payload_fixed_flag: bool,
+            maximum_payload_size: PayloadSize,
+            preference_weighting: Option<u16>,
+            node_count: Option<u16>,
+            number_of_connections: Option<u16>,
+            configuration_data: Option<OctetString>,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                transport_protocol_id,
+                transport_protocol_type,
+                network_address,
+                maximum_payload_fixed_flag,
+                maximum_payload_size,
+                preference_weighting,
+                node_count,
+                number_of_connections,
+                configuration_data,
+                non_standard_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum TransportProtocolType {
+        reliableUnicast(()),
+        unreliableUnicast(()),
+        reliableMulticast(()),
+        unreliableMulticast(()),
+        nonStandardProtocolType(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct VersionNumber {
+        #[rasn(value("0..=65535"), identifier = "majorVersionNumber")]
+        pub major_version_number: u16,
+        #[rasn(value("0..=65535"), identifier = "minorVersionNumber")]
+        pub minor_version_number: u16,
+        #[rasn(identifier = "nonStandardParameters")]
+        pub non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+    }
+    impl VersionNumber {
+        pub fn new(
+            major_version_number: u16,
+            minor_version_number: u16,
+            non_standard_parameters: Option<SequenceOf<NonStandardParameter>>,
+        ) -> Self {
+            Self {
+                major_version_number,
+                minor_version_number,
+                non_standard_parameters,
+            }
+        }
+    }
+}

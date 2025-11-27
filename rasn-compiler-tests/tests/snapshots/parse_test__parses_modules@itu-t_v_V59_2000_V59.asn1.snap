@@ -1,0 +1,1990 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_v_V59_2000_V59.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod v59 {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCallProgress {
+        #[rasn(identifier = "callProgressResult")]
+        pub call_progress_result: CallProgressRes,
+        #[rasn(identifier = "callTerminate")]
+        pub call_terminate: CallTerminateCode,
+    }
+    impl AnonymousCallProgress {
+        pub fn new(
+            call_progress_result: CallProgressRes,
+            call_terminate: CallTerminateCode,
+        ) -> Self {
+            Self {
+                call_progress_result,
+                call_terminate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallProgress(pub SequenceOf<AnonymousCallProgress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CallProgressRes {
+        #[rasn(value("0"))]
+        noPrevCall(u8),
+        #[rasn(value("1"))]
+        noDialTone(u8),
+        #[rasn(value("2"))]
+        noRingBack(u8),
+        #[rasn(value("3"))]
+        reOrderTone(u8),
+        #[rasn(value("4"))]
+        busyTone(u8),
+        #[rasn(value("5"))]
+        voiceDetected(u8),
+        #[rasn(value("6"))]
+        aNSdetected(u8),
+        #[rasn(value("7"))]
+        aNSamDetected(u8),
+        #[rasn(value("8"))]
+        v8bisDetected(u8),
+        #[rasn(value("9"))]
+        txpDetected(u8),
+        #[rasn(value("20"))]
+        unKnownSig(u8),
+        #[rasn(value("40"))]
+        connected(u8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CallTerminateCode {
+        #[rasn(value("0"))]
+        causeUnidentified(u8),
+        #[rasn(value("20"))]
+        dCEpowerLoss(u8),
+        #[rasn(value("21"))]
+        equipmentFailure(u8),
+        #[rasn(value("25"))]
+        inactivityTimerExpired(u8),
+        #[rasn(value("31"))]
+        cct108isOffInhibitsDial(u8),
+        #[rasn(value("32"))]
+        cct108turnedOff(u8),
+        #[rasn(value("40"))]
+        noNumberProvided(u8),
+        #[rasn(value("41"))]
+        blacklistedNumber(u8),
+        #[rasn(value("42"))]
+        callAttemptsLimitExceeded(u8),
+        #[rasn(value("43"))]
+        extensionDeviceOffHook(u8),
+        #[rasn(value("44"))]
+        callSetupFailTimerExpired(u8),
+        #[rasn(value("45"))]
+        incomingCallDetected(u8),
+        #[rasn(value("46"))]
+        loopCurrentInterrupted(u8),
+        #[rasn(value("47"))]
+        noDialTone(u8),
+        #[rasn(value("48"))]
+        voiceDetected(u8),
+        #[rasn(value("49"))]
+        reorderTone(u8),
+        #[rasn(value("50"))]
+        sitTone(u8),
+        #[rasn(value("51"))]
+        engagedTone(u8),
+        #[rasn(value("52"))]
+        longSpaceDisconnect(u8),
+        #[rasn(value("60"))]
+        carrierLost(u8),
+        #[rasn(value("61"))]
+        trainingFailed(u8),
+        #[rasn(value("62"))]
+        noModulationinCommon(u8),
+        #[rasn(value("63"))]
+        retrainFailed(u8),
+        #[rasn(value("64"))]
+        retrainAttemptCountExceeded(u8),
+        #[rasn(value("65"))]
+        gstnCleardownReceived(u8),
+        #[rasn(value("66"))]
+        faxDetected(u8),
+        #[rasn(value("80"))]
+        protocolError(u8),
+        #[rasn(value("90"))]
+        userDisconnect(u8),
+        #[rasn(value("100"))]
+        onHoldTimerExpired(u8),
+        #[rasn(value("101"))]
+        onHoldRemoteDisc(u8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Capabilities {
+        #[rasn(value("0"))]
+        notSupported(u8),
+        #[rasn(value("1"))]
+        default(u8),
+        #[rasn(value("2"))]
+        enabled(u8),
+        #[rasn(value("3"))]
+        disabled(u8),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CarrierFreq {
+        #[rasn(value("0"))]
+        cF1200(u8),
+        #[rasn(value("1"))]
+        cF1600(u8),
+        #[rasn(value("2"))]
+        cF1646(u8),
+        #[rasn(value("3"))]
+        cF1680(u8),
+        #[rasn(value("4"))]
+        cF1700(u8),
+        #[rasn(value("5"))]
+        cF1800(u8),
+        #[rasn(value("6"))]
+        cF1829(u8),
+        #[rasn(value("7"))]
+        cF1867(u8),
+        #[rasn(value("8"))]
+        cF1920(u8),
+        #[rasn(value("9"))]
+        cF1959(u8),
+        #[rasn(value("10"))]
+        cF2000(u8),
+        #[rasn(value("11"))]
+        cF2400(u8),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCnxDiag {
+        #[rasn(identifier = "txCarrier")]
+        pub tx_carrier: V59String,
+        #[rasn(identifier = "rxCarrier")]
+        pub rx_carrier: V59String,
+        #[rasn(value("0..=256"), identifier = "carrierLosses")]
+        pub carrier_losses: u16,
+        #[rasn(value("0..=256"), identifier = "renegRequests")]
+        pub reneg_requests: u16,
+        #[rasn(value("0..=256"), identifier = "renegSuccesses")]
+        pub reneg_successes: u16,
+        #[rasn(value("0..=256"), identifier = "retrainRequests")]
+        pub retrain_requests: u16,
+        #[rasn(value("0..=256"), identifier = "retrainSuccesses")]
+        pub retrain_successes: u16,
+        #[rasn(value("0..=256"), identifier = "callWaiting")]
+        pub call_waiting: Option<u16>,
+        pub duration: Option<V59String>,
+        pub caller: bool,
+        #[rasn(identifier = "reverseRoles")]
+        pub reverse_roles: Option<bool>,
+    }
+    impl AnonymousCnxDiag {
+        pub fn new(
+            tx_carrier: V59String,
+            rx_carrier: V59String,
+            carrier_losses: u16,
+            reneg_requests: u16,
+            reneg_successes: u16,
+            retrain_requests: u16,
+            retrain_successes: u16,
+            call_waiting: Option<u16>,
+            duration: Option<V59String>,
+            caller: bool,
+            reverse_roles: Option<bool>,
+        ) -> Self {
+            Self {
+                tx_carrier,
+                rx_carrier,
+                carrier_losses,
+                reneg_requests,
+                reneg_successes,
+                retrain_requests,
+                retrain_successes,
+                call_waiting,
+                duration,
+                caller,
+                reverse_roles,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CnxDiag(pub SequenceOf<AnonymousCnxDiag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCompressionCompressionNegotiationResult {
+        none = 0,
+        v42bisOnly = 1,
+        v42bisBoth = 2,
+        v44Both = 3,
+        v44Only = 4,
+        other = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCompressionV42bisCompressionActive {
+        none = 0,
+        initOnly = 1,
+        respOnly = 2,
+        both = 3,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCompressionV44CompressionActive {
+        none = 0,
+        txOnly = 1,
+        rxOnly = 2,
+        both = 3,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousCompression {
+        #[rasn(identifier = "compressionNegotiationResult")]
+        pub compression_negotiation_result: AnonymousCompressionCompressionNegotiationResult,
+        #[rasn(identifier = "modeV42B")]
+        pub mode_v42_b: Capabilities,
+        #[rasn(identifier = "v42bisCompressionActive")]
+        pub v42bis_compression_active: AnonymousCompressionV42bisCompressionActive,
+        #[rasn(value("512..=65535"), identifier = "v42bisDictionarySize")]
+        pub v42bis_dictionary_size: Option<u16>,
+        #[rasn(value("6..=250"), identifier = "v42bisStringLength")]
+        pub v42bis_string_length: Option<u8>,
+        #[rasn(identifier = "modeV44")]
+        pub mode_v44: Capabilities,
+        #[rasn(identifier = "v44CompressionActive")]
+        pub v44_compression_active: AnonymousCompressionV44CompressionActive,
+        #[rasn(value("256..=65535"), identifier = "v44EncoderDictionarySize")]
+        pub v44_encoder_dictionary_size: Option<u16>,
+        #[rasn(value("512..=1677215"), identifier = "v44EncoderHistorySize")]
+        pub v44_encoder_history_size: Option<u32>,
+        #[rasn(value("32..=255"), identifier = "v44EncoderStringLength")]
+        pub v44_encoder_string_length: Option<u8>,
+        #[rasn(value("256..=65535"), identifier = "v44DecoderDictionarySize")]
+        pub v44_decoder_dictionary_size: Option<u16>,
+        #[rasn(value("512..=1677215"), identifier = "v44DecoderHistorySize")]
+        pub v44_decoder_history_size: Option<u32>,
+        #[rasn(value("32..=255"), identifier = "v44DecoderStringLength")]
+        pub v44_decoder_string_length: Option<u8>,
+    }
+    impl AnonymousCompression {
+        pub fn new(
+            compression_negotiation_result: AnonymousCompressionCompressionNegotiationResult,
+            mode_v42_b: Capabilities,
+            v42bis_compression_active: AnonymousCompressionV42bisCompressionActive,
+            v42bis_dictionary_size: Option<u16>,
+            v42bis_string_length: Option<u8>,
+            mode_v44: Capabilities,
+            v44_compression_active: AnonymousCompressionV44CompressionActive,
+            v44_encoder_dictionary_size: Option<u16>,
+            v44_encoder_history_size: Option<u32>,
+            v44_encoder_string_length: Option<u8>,
+            v44_decoder_dictionary_size: Option<u16>,
+            v44_decoder_history_size: Option<u32>,
+            v44_decoder_string_length: Option<u8>,
+        ) -> Self {
+            Self {
+                compression_negotiation_result,
+                mode_v42_b,
+                v42bis_compression_active,
+                v42bis_dictionary_size,
+                v42bis_string_length,
+                mode_v44,
+                v44_compression_active,
+                v44_encoder_dictionary_size,
+                v44_encoder_history_size,
+                v44_encoder_string_length,
+                v44_decoder_dictionary_size,
+                v44_decoder_history_size,
+                v44_decoder_string_length,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Compression(pub SequenceOf<AnonymousCompression>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousDTEDCE {
+        #[rasn(identifier = "txFlowControl")]
+        pub tx_flow_control: V59String,
+        #[rasn(identifier = "rxFlowControl")]
+        pub rx_flow_control: V59String,
+        pub protocol: V59String,
+        #[rasn(value("50..=1677215"), identifier = "txSpeed")]
+        pub tx_speed: u32,
+        #[rasn(value("50..=1677215"), identifier = "rxSpeed")]
+        pub rx_speed: u32,
+        #[rasn(value("50..=1677215"), identifier = "txThroughput")]
+        pub tx_throughput: u32,
+        #[rasn(value("50..=1677215"), identifier = "rxThroughput")]
+        pub rx_throughput: u32,
+        #[rasn(value("0..=65535"), identifier = "txErrors")]
+        pub tx_errors: u16,
+        #[rasn(value("0..=65535"), identifier = "rxErrors")]
+        pub rx_errors: u16,
+    }
+    impl AnonymousDTEDCE {
+        pub fn new(
+            tx_flow_control: V59String,
+            rx_flow_control: V59String,
+            protocol: V59String,
+            tx_speed: u32,
+            rx_speed: u32,
+            tx_throughput: u32,
+            rx_throughput: u32,
+            tx_errors: u16,
+            rx_errors: u16,
+        ) -> Self {
+            Self {
+                tx_flow_control,
+                rx_flow_control,
+                protocol,
+                tx_speed,
+                rx_speed,
+                tx_throughput,
+                rx_throughput,
+                tx_errors,
+                rx_errors,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DTEDCE(pub SequenceOf<AnonymousDTEDCE>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AnonymousErrorControlProtocolNegotiation {
+        disabled = 0,
+        lapm = 1,
+        v42annexA = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousErrorControlEcStatistics {
+        #[rasn(value("0..=65535"), identifier = "framesSentAck")]
+        pub frames_sent_ack: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "framesRetransmitted")]
+        pub frames_retransmitted: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "framesReceivedAck")]
+        pub frames_received_ack: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "framesReceivedDiscard")]
+        pub frames_received_discard: Option<u16>,
+    }
+    impl AnonymousErrorControlEcStatistics {
+        pub fn new(
+            frames_sent_ack: Option<u16>,
+            frames_retransmitted: Option<u16>,
+            frames_received_ack: Option<u16>,
+            frames_received_discard: Option<u16>,
+        ) -> Self {
+            Self {
+                frames_sent_ack,
+                frames_retransmitted,
+                frames_received_ack,
+                frames_received_discard,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousErrorControl {
+        #[rasn(identifier = "protocolNegotiation")]
+        pub protocol_negotiation: AnonymousErrorControlProtocolNegotiation,
+        #[rasn(identifier = "v42featureNegotiation")]
+        pub v42feature_negotiation: BitString,
+        #[rasn(value("1..=65535"), identifier = "txFrameSize")]
+        pub tx_frame_size: u16,
+        #[rasn(value("1..=65535"), identifier = "rxFrameSize")]
+        pub rx_frame_size: u16,
+        #[rasn(value("1..=65535"), identifier = "txWindow")]
+        pub tx_window: u16,
+        #[rasn(value("1..=65535"), identifier = "rxWindow")]
+        pub rx_window: u16,
+        #[rasn(value("0..=511"), identifier = "linkTimeout")]
+        pub link_timeout: Option<u16>,
+        #[rasn(identifier = "ecStatistics")]
+        pub ec_statistics: AnonymousErrorControlEcStatistics,
+        #[rasn(value("0..=65535"), identifier = "txErrors")]
+        pub tx_errors: Option<u16>,
+        #[rasn(value("0..=65535"), identifier = "rxErrors")]
+        pub rx_errors: Option<u16>,
+        #[rasn(value("0..=32767"), identifier = "txThroughput")]
+        pub tx_throughput: Option<u16>,
+        #[rasn(value("0..=32767"), identifier = "rxThroughput")]
+        pub rx_throughput: Option<u16>,
+    }
+    impl AnonymousErrorControl {
+        pub fn new(
+            protocol_negotiation: AnonymousErrorControlProtocolNegotiation,
+            v42feature_negotiation: BitString,
+            tx_frame_size: u16,
+            rx_frame_size: u16,
+            tx_window: u16,
+            rx_window: u16,
+            link_timeout: Option<u16>,
+            ec_statistics: AnonymousErrorControlEcStatistics,
+            tx_errors: Option<u16>,
+            rx_errors: Option<u16>,
+            tx_throughput: Option<u16>,
+            rx_throughput: Option<u16>,
+        ) -> Self {
+            Self {
+                protocol_negotiation,
+                v42feature_negotiation,
+                tx_frame_size,
+                rx_frame_size,
+                tx_window,
+                rx_window,
+                link_timeout,
+                ec_statistics,
+                tx_errors,
+                rx_errors,
+                tx_throughput,
+                rx_throughput,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ErrorControl(pub SequenceOf<AnonymousErrorControl>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousLineConDiag {
+        #[rasn(identifier = "lineProbeValues")]
+        pub line_probe_values: Option<V59String>,
+        #[rasn(identifier = "phaseJitter")]
+        pub phase_jitter: Option<V59String>,
+        #[rasn(identifier = "ampJitter")]
+        pub amp_jitter: Option<V59String>,
+        #[rasn(identifier = "nLD")]
+        pub n_ld: Option<V59String>,
+    }
+    impl AnonymousLineConDiag {
+        pub fn new(
+            line_probe_values: Option<V59String>,
+            phase_jitter: Option<V59String>,
+            amp_jitter: Option<V59String>,
+            n_ld: Option<V59String>,
+        ) -> Self {
+            Self {
+                line_probe_values,
+                phase_jitter,
+                amp_jitter,
+                n_ld,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LineConDiag(pub SequenceOf<AnonymousLineConDiag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AnonymousModeCapabilityModulationMode {
+        #[rasn(identifier = "modeV90")]
+        pub mode_v90: Capabilities,
+        #[rasn(identifier = "modeV91")]
+        pub mode_v91: Capabilities,
+        #[rasn(identifier = "modeV92")]
+        pub mode_v92: Capabilities,
+        #[rasn(identifier = "modeV34")]
+        pub mode_v34: Capabilities,
+        #[rasn(identifier = "modeV32B")]
+        pub mode_v32_b: Capabilities,
+        #[rasn(identifier = "modeV22B")]
+        pub mode_v22_b: Capabilities,
+        #[rasn(identifier = "modeV23")]
+        pub mode_v23: Capabilities,
+        #[rasn(identifier = "modeV21")]
+        pub mode_v21: Capabilities,
+        #[rasn(identifier = "modeV34H")]
+        pub mode_v34_h: Capabilities,
+        #[rasn(identifier = "modeV17")]
+        pub mode_v17: Capabilities,
+        #[rasn(identifier = "modeV29")]
+        pub mode_v29: Capabilities,
+        #[rasn(identifier = "modeV27T")]
+        pub mode_v27_t: Capabilities,
+        #[rasn(identifier = "modeV18")]
+        pub mode_v18: Capabilities,
+        #[rasn(identifier = "otherModMode")]
+        pub other_mod_mode: Option<V59String>,
+    }
+    impl AnonymousModeCapabilityModulationMode {
+        pub fn new(
+            mode_v90: Capabilities,
+            mode_v91: Capabilities,
+            mode_v92: Capabilities,
+            mode_v34: Capabilities,
+            mode_v32_b: Capabilities,
+            mode_v22_b: Capabilities,
+            mode_v23: Capabilities,
+            mode_v21: Capabilities,
+            mode_v34_h: Capabilities,
+            mode_v17: Capabilities,
+            mode_v29: Capabilities,
+            mode_v27_t: Capabilities,
+            mode_v18: Capabilities,
+            other_mod_mode: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v90,
+                mode_v91,
+                mode_v92,
+                mode_v34,
+                mode_v32_b,
+                mode_v22_b,
+                mode_v23,
+                mode_v21,
+                mode_v34_h,
+                mode_v17,
+                mode_v29,
+                mode_v27_t,
+                mode_v18,
+                other_mod_mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AnonymousModeCapabilityProtocolmode {
+        #[rasn(identifier = "modeV42")]
+        pub mode_v42: Capabilities,
+        #[rasn(identifier = "modeV42B")]
+        pub mode_v42_b: Capabilities,
+        #[rasn(identifier = "modeV44")]
+        pub mode_v44: Capabilities,
+        #[rasn(identifier = "otherProtMode")]
+        pub other_prot_mode: Option<V59String>,
+    }
+    impl AnonymousModeCapabilityProtocolmode {
+        pub fn new(
+            mode_v42: Capabilities,
+            mode_v42_b: Capabilities,
+            mode_v44: Capabilities,
+            other_prot_mode: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v42,
+                mode_v42_b,
+                mode_v44,
+                other_prot_mode,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousModeCapability {
+        #[rasn(identifier = "modulationMode")]
+        pub modulation_mode: AnonymousModeCapabilityModulationMode,
+        pub protocolmode: AnonymousModeCapabilityProtocolmode,
+    }
+    impl AnonymousModeCapability {
+        pub fn new(
+            modulation_mode: AnonymousModeCapabilityModulationMode,
+            protocolmode: AnonymousModeCapabilityProtocolmode,
+        ) -> Self {
+            Self {
+                modulation_mode,
+                protocolmode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModeCapability(pub SequenceOf<AnonymousModeCapability>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ModeSelected {
+        #[rasn(identifier = "modulationHistory")]
+        pub modulation_history: V59String,
+    }
+    impl ModeSelected {
+        pub fn new(modulation_history: V59String) -> Self {
+            Self { modulation_history }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousModemIdentity {
+        pub manufacturer: V59String,
+        pub model: V59String,
+        #[rasn(identifier = "firmwareVersion")]
+        pub firmware_version: V59String,
+        #[rasn(identifier = "diagnosticVersion")]
+        pub diagnostic_version: V59String,
+        #[rasn(identifier = "multimediaMode")]
+        pub multimedia_mode: Option<BitString>,
+    }
+    impl AnonymousModemIdentity {
+        pub fn new(
+            manufacturer: V59String,
+            model: V59String,
+            firmware_version: V59String,
+            diagnostic_version: V59String,
+            multimedia_mode: Option<BitString>,
+        ) -> Self {
+            Self {
+                manufacturer,
+                model,
+                firmware_version,
+                diagnostic_version,
+                multimedia_mode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModemIdentity(pub SequenceOf<AnonymousModemIdentity>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousNSMDiag {
+        #[rasn(identifier = "proprietaryMode")]
+        pub proprietary_mode: Option<V59String>,
+        #[rasn(size("1..=256"), identifier = "fieldData")]
+        pub field_data: Option<Ia5String>,
+    }
+    impl AnonymousNSMDiag {
+        pub fn new(proprietary_mode: Option<V59String>, field_data: Option<Ia5String>) -> Self {
+            Self {
+                proprietary_mode,
+                field_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NSMDiag(pub SequenceOf<AnonymousNSMDiag>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ONOFF {
+        #[rasn(value("0"))]
+        dISABLED(u8),
+        #[rasn(value("1"))]
+        eNABLED(u8),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousProtocol {
+        #[rasn(identifier = "errorControlStat")]
+        pub error_control_stat: ErrorControl,
+        #[rasn(identifier = "compStat")]
+        pub comp_stat: Compression,
+    }
+    impl AnonymousProtocol {
+        pub fn new(error_control_stat: ErrorControl, comp_stat: Compression) -> Self {
+            Self {
+                error_control_stat,
+                comp_stat,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Protocol(pub SequenceOf<AnonymousProtocol>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RobBitPatt(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum SymbolRate {
+        #[rasn(value("0"))]
+        sR8000(u8),
+        #[rasn(value("1"))]
+        sR3429(u8),
+        #[rasn(value("2"))]
+        sR3200(u8),
+        #[rasn(value("3"))]
+        sR3000(u8),
+        #[rasn(value("4"))]
+        sR2800(u8),
+        #[rasn(value("5"))]
+        sR2743(u8),
+        #[rasn(value("6"))]
+        sR2400(u8),
+        #[rasn(value("7"))]
+        sR1600(u8),
+        #[rasn(value("8"))]
+        sR1200(u8),
+        #[rasn(value("9"))]
+        sR600(u8),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousTxPowerLevel {
+        #[rasn(identifier = "initialTxPower")]
+        pub initial_tx_power: V59String,
+        #[rasn(identifier = "txPowerDrop")]
+        pub tx_power_drop: Option<V59String>,
+        #[rasn(identifier = "txPower")]
+        pub tx_power: Option<V59String>,
+    }
+    impl AnonymousTxPowerLevel {
+        pub fn new(
+            initial_tx_power: V59String,
+            tx_power_drop: Option<V59String>,
+            tx_power: Option<V59String>,
+        ) -> Self {
+            Self {
+                initial_tx_power,
+                tx_power_drop,
+                tx_power,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TxPowerLevel(pub SequenceOf<AnonymousTxPowerLevel>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV17Diag {
+        #[rasn(identifier = "modeV17")]
+        pub mode_v17: Capabilities,
+        #[rasn(identifier = "v17TxLevel")]
+        pub v17_tx_level: TxPowerLevel,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+    }
+    impl AnonymousV17Diag {
+        pub fn new(
+            mode_v17: Capabilities,
+            v17_tx_level: TxPowerLevel,
+            rx_level_estimate: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v17,
+                v17_tx_level,
+                rx_level_estimate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V17Diag(pub SequenceOf<AnonymousV17Diag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousV18DiagV18used {
+        none = 0,
+        #[rasn(identifier = "v18-V21Hi")]
+        v18_V21Hi = 1,
+        #[rasn(identifier = "v18-V21Lo")]
+        v18_V21Lo = 2,
+        #[rasn(identifier = "v18-V61C")]
+        v18_V61C = 3,
+        #[rasn(identifier = "v18-V61A")]
+        v18_V61A = 4,
+        v21Hi = 5,
+        v21Lo = 6,
+        dTMF = 7,
+        eDT = 8,
+        baudot45 = 9,
+        baudot47 = 10,
+        baudot50 = 11,
+        v23Hi = 12,
+        v23Lo = 13,
+        bellHi = 14,
+        bellLo = 15,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV18Diag {
+        #[rasn(identifier = "modeV18")]
+        pub mode_v18: Capabilities,
+        pub v18used: AnonymousV18DiagV18used,
+        #[rasn(identifier = "v18TxLevel")]
+        pub v18_tx_level: TxPowerLevel,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+    }
+    impl AnonymousV18Diag {
+        pub fn new(
+            mode_v18: Capabilities,
+            v18used: AnonymousV18DiagV18used,
+            v18_tx_level: TxPowerLevel,
+            rx_level_estimate: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v18,
+                v18used,
+                v18_tx_level,
+                rx_level_estimate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V18Diag(pub SequenceOf<AnonymousV18Diag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousV21Diag {
+        #[rasn(identifier = "modeV21")]
+        pub mode_v21: Capabilities,
+        #[rasn(identifier = "v21TxLevel")]
+        pub v21_tx_level: TxPowerLevel,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+    }
+    impl AnonymousV21Diag {
+        pub fn new(
+            mode_v21: Capabilities,
+            v21_tx_level: TxPowerLevel,
+            rx_level_estimate: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v21,
+                v21_tx_level,
+                rx_level_estimate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V21Diag(pub SequenceOf<AnonymousV21Diag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV22Diag {
+        #[rasn(identifier = "modeV22B")]
+        pub mode_v22_b: Capabilities,
+        #[rasn(identifier = "dataRateHistory")]
+        pub data_rate_history: V59String,
+        #[rasn(identifier = "v22TxLevel")]
+        pub v22_tx_level: TxPowerLevel,
+        #[rasn(identifier = "v22RateSeq")]
+        pub v22_rate_seq: V59String,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+    }
+    impl AnonymousV22Diag {
+        pub fn new(
+            mode_v22_b: Capabilities,
+            data_rate_history: V59String,
+            v22_tx_level: TxPowerLevel,
+            v22_rate_seq: V59String,
+            rx_level_estimate: Option<V59String>,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v22_b,
+                data_rate_history,
+                v22_tx_level,
+                v22_rate_seq,
+                rx_level_estimate,
+                noise_estimate,
+                rx_signal_quality,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V22Diag(pub SequenceOf<AnonymousV22Diag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV23Diag {
+        #[rasn(identifier = "modeV23")]
+        pub mode_v23: Capabilities,
+        #[rasn(identifier = "v23TxLevel")]
+        pub v23_tx_level: TxPowerLevel,
+        pub duplex: bool,
+        #[rasn(identifier = "transmitDataRate")]
+        pub transmit_data_rate: V23Drate,
+        #[rasn(identifier = "receiveDataRate")]
+        pub receive_data_rate: V23Drate,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+    }
+    impl AnonymousV23Diag {
+        pub fn new(
+            mode_v23: Capabilities,
+            v23_tx_level: TxPowerLevel,
+            duplex: bool,
+            transmit_data_rate: V23Drate,
+            receive_data_rate: V23Drate,
+            rx_level_estimate: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v23,
+                v23_tx_level,
+                duplex,
+                transmit_data_rate,
+                receive_data_rate,
+                rx_level_estimate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V23Diag(pub SequenceOf<AnonymousV23Diag>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum V23Drate {
+        #[rasn(value("0"))]
+        dR1200(u8),
+        #[rasn(value("1"))]
+        dR600(u8),
+        #[rasn(value("2"))]
+        dR75(u8),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV27tfaxDiag {
+        #[rasn(identifier = "modeV27T")]
+        pub mode_v27_t: Capabilities,
+        #[rasn(identifier = "v27TxLevel")]
+        pub v27_tx_level: TxPowerLevel,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+    }
+    impl AnonymousV27tfaxDiag {
+        pub fn new(
+            mode_v27_t: Capabilities,
+            v27_tx_level: TxPowerLevel,
+            rx_level_estimate: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v27_t,
+                v27_tx_level,
+                rx_level_estimate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V27tfaxDiag(pub SequenceOf<AnonymousV27tfaxDiag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV29faxDiag {
+        #[rasn(identifier = "modeV29")]
+        pub mode_v29: Capabilities,
+        #[rasn(identifier = "v29TxLevel")]
+        pub v29_tx_level: TxPowerLevel,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+    }
+    impl AnonymousV29faxDiag {
+        pub fn new(
+            mode_v29: Capabilities,
+            v29_tx_level: TxPowerLevel,
+            rx_level_estimate: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v29,
+                v29_tx_level,
+                rx_level_estimate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V29faxDiag(pub SequenceOf<AnonymousV29faxDiag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV32Diag {
+        #[rasn(identifier = "modeV32B")]
+        pub mode_v32_b: Capabilities,
+        #[rasn(identifier = "v32TxLevel")]
+        pub v32_tx_level: TxPowerLevel,
+        #[rasn(identifier = "v32txRateSeq")]
+        pub v32tx_rate_seq: V59String,
+        #[rasn(identifier = "v32rxRateSeq")]
+        pub v32rx_rate_seq: V59String,
+        #[rasn(identifier = "txDataHistory")]
+        pub tx_data_history: V59String,
+        #[rasn(identifier = "rxDataHistory")]
+        pub rx_data_history: V59String,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+        #[rasn(identifier = "nearEchoEstimate")]
+        pub near_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "farEchoEstimate")]
+        pub far_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "roundTripDelay")]
+        pub round_trip_delay: Option<V59String>,
+    }
+    impl AnonymousV32Diag {
+        pub fn new(
+            mode_v32_b: Capabilities,
+            v32_tx_level: TxPowerLevel,
+            v32tx_rate_seq: V59String,
+            v32rx_rate_seq: V59String,
+            tx_data_history: V59String,
+            rx_data_history: V59String,
+            rx_level_estimate: Option<V59String>,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+            near_echo_estimate: Option<V59String>,
+            far_echo_estimate: Option<V59String>,
+            round_trip_delay: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v32_b,
+                v32_tx_level,
+                v32tx_rate_seq,
+                v32rx_rate_seq,
+                tx_data_history,
+                rx_data_history,
+                rx_level_estimate,
+                noise_estimate,
+                rx_signal_quality,
+                near_echo_estimate,
+                far_echo_estimate,
+                round_trip_delay,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V32Diag(pub SequenceOf<AnonymousV32Diag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV34Diag {
+        #[rasn(identifier = "modeV34")]
+        pub mode_v34: Capabilities,
+        #[rasn(identifier = "iNFO0Tx")]
+        pub i_nfo0_tx: V59String,
+        #[rasn(identifier = "iNFO0Rx")]
+        pub i_nfo0_rx: V59String,
+        #[rasn(identifier = "iNFO1c")]
+        pub i_nfo1c: V59String,
+        #[rasn(identifier = "iNFO1a")]
+        pub i_nfo1a: V59String,
+        #[rasn(identifier = "mPTx")]
+        pub m_ptx: V59String,
+        #[rasn(identifier = "mPRx")]
+        pub m_prx: V59String,
+        #[rasn(identifier = "precodeCoeffTx")]
+        pub precode_coeff_tx: Option<V59String>,
+        #[rasn(identifier = "precodeCoeffRx")]
+        pub precode_coeff_rx: Option<V59String>,
+        #[rasn(identifier = "v34TxLevel")]
+        pub v34_tx_level: TxPowerLevel,
+        #[rasn(identifier = "txSymbolRate")]
+        pub tx_symbol_rate: Option<SymbolRate>,
+        #[rasn(identifier = "rxSymbolRate")]
+        pub rx_symbol_rate: Option<SymbolRate>,
+        #[rasn(identifier = "txCarrierFreq")]
+        pub tx_carrier_freq: Option<CarrierFreq>,
+        #[rasn(identifier = "rxCarrierFreq")]
+        pub rx_carrier_freq: Option<CarrierFreq>,
+        #[rasn(identifier = "txDataHistory")]
+        pub tx_data_history: V59String,
+        #[rasn(identifier = "rxDataHistory")]
+        pub rx_data_history: V59String,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+        #[rasn(identifier = "nearEchoEstimate")]
+        pub near_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "farEchoEstimate")]
+        pub far_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "roundTripDelay")]
+        pub round_trip_delay: Option<V59String>,
+    }
+    impl AnonymousV34Diag {
+        pub fn new(
+            mode_v34: Capabilities,
+            i_nfo0_tx: V59String,
+            i_nfo0_rx: V59String,
+            i_nfo1c: V59String,
+            i_nfo1a: V59String,
+            m_ptx: V59String,
+            m_prx: V59String,
+            precode_coeff_tx: Option<V59String>,
+            precode_coeff_rx: Option<V59String>,
+            v34_tx_level: TxPowerLevel,
+            tx_symbol_rate: Option<SymbolRate>,
+            rx_symbol_rate: Option<SymbolRate>,
+            tx_carrier_freq: Option<CarrierFreq>,
+            rx_carrier_freq: Option<CarrierFreq>,
+            tx_data_history: V59String,
+            rx_data_history: V59String,
+            rx_level_estimate: Option<V59String>,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+            near_echo_estimate: Option<V59String>,
+            far_echo_estimate: Option<V59String>,
+            round_trip_delay: Option<V59String>,
+        ) -> Self {
+            Self {
+                mode_v34,
+                i_nfo0_tx,
+                i_nfo0_rx,
+                i_nfo1c,
+                i_nfo1a,
+                m_ptx,
+                m_prx,
+                precode_coeff_tx,
+                precode_coeff_rx,
+                v34_tx_level,
+                tx_symbol_rate,
+                rx_symbol_rate,
+                tx_carrier_freq,
+                rx_carrier_freq,
+                tx_data_history,
+                rx_data_history,
+                rx_level_estimate,
+                noise_estimate,
+                rx_signal_quality,
+                near_echo_estimate,
+                far_echo_estimate,
+                round_trip_delay,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V34Diag(pub SequenceOf<AnonymousV34Diag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousV34HdxDiagCCrate {
+        t12R12 = 0,
+        t24R24 = 1,
+        t12R24 = 2,
+        t24R12 = 3,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV34HdxDiag {
+        #[rasn(identifier = "modeV34H")]
+        pub mode_v34_h: Capabilities,
+        #[rasn(identifier = "iNFO0Tx")]
+        pub i_nfo0_tx: V59String,
+        #[rasn(identifier = "iNFO0Rx")]
+        pub i_nfo0_rx: V59String,
+        #[rasn(identifier = "iNFOh")]
+        pub i_nfoh: V59String,
+        #[rasn(identifier = "mPh")]
+        pub m_ph: V59String,
+        #[rasn(identifier = "precodeCoeffTx")]
+        pub precode_coeff_tx: Option<V59String>,
+        #[rasn(identifier = "v34TxLevel")]
+        pub v34_tx_level: TxPowerLevel,
+        #[rasn(identifier = "symbolRate")]
+        pub symbol_rate: Option<V59String>,
+        #[rasn(identifier = "carrierFreq")]
+        pub carrier_freq: Option<V59String>,
+        #[rasn(identifier = "dataHistory")]
+        pub data_history: Option<V59String>,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+        #[rasn(identifier = "cCrate")]
+        pub c_crate: AnonymousV34HdxDiagCCrate,
+    }
+    impl AnonymousV34HdxDiag {
+        pub fn new(
+            mode_v34_h: Capabilities,
+            i_nfo0_tx: V59String,
+            i_nfo0_rx: V59String,
+            i_nfoh: V59String,
+            m_ph: V59String,
+            precode_coeff_tx: Option<V59String>,
+            v34_tx_level: TxPowerLevel,
+            symbol_rate: Option<V59String>,
+            carrier_freq: Option<V59String>,
+            data_history: Option<V59String>,
+            rx_level_estimate: Option<V59String>,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+            c_crate: AnonymousV34HdxDiagCCrate,
+        ) -> Self {
+            Self {
+                mode_v34_h,
+                i_nfo0_tx,
+                i_nfo0_rx,
+                i_nfoh,
+                m_ph,
+                precode_coeff_tx,
+                v34_tx_level,
+                symbol_rate,
+                carrier_freq,
+                data_history,
+                rx_level_estimate,
+                noise_estimate,
+                rx_signal_quality,
+                c_crate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V34HdxDiag(pub SequenceOf<AnonymousV34HdxDiag>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum V59Objects {
+        modemIdentity(ModemIdentity),
+        modeCapability(ModeCapability),
+        modeSelected(ModeSelected),
+        v8Diag(V8Diag),
+        v8bisDiag(V8bisDiag),
+        v90Diag(V90Diag),
+        v91Diag(V91Diag),
+        v92ModDiag(V92ModDiag),
+        v34Diag(V34Diag),
+        v32Diag(V32Diag),
+        v22Diag(V22Diag),
+        v23Diag(V23Diag),
+        v21Diag(V21Diag),
+        v34HdxDiag(V34HdxDiag),
+        v17Diag(V17Diag),
+        v29faxDiag(V29faxDiag),
+        v27tfaxDiag(V27tfaxDiag),
+        v18Diag(V18Diag),
+        v70Diag(V70Diag),
+        v61Diag(V61Diag),
+        nSMDiag(NSMDiag),
+        cnxDiag(CnxDiag),
+        lineConDiag(LineConDiag),
+        callProgress(CallProgress),
+        protocol(Protocol),
+        errorControl(ErrorControl),
+        compression(Compression),
+        dteDce(DTEDCE),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=40"))]
+    pub struct V59String(pub Ia5String);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV61Diag {}
+    impl AnonymousV61Diag {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for AnonymousV61Diag {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V61Diag(pub SequenceOf<AnonymousV61Diag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV70Diag {}
+    impl AnonymousV70Diag {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for AnonymousV70Diag {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V70Diag(pub SequenceOf<AnonymousV70Diag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousV8DiagV8Result {
+        v8ComNeg = 0,
+        v8NoComNeg = 1,
+        v8NoNegAuto = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousV8Diag {
+        pub ci: V59String,
+        pub cm: V59String,
+        pub jm: V59String,
+        #[rasn(identifier = "v8Result")]
+        pub v8_result: AnonymousV8DiagV8Result,
+    }
+    impl AnonymousV8Diag {
+        pub fn new(
+            ci: V59String,
+            cm: V59String,
+            jm: V59String,
+            v8_result: AnonymousV8DiagV8Result,
+        ) -> Self {
+            Self {
+                ci,
+                cm,
+                jm,
+                v8_result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V8Diag(pub SequenceOf<AnonymousV8Diag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousV8bisDiagMR {
+        #[rasn(identifier = "mRtype")]
+        pub m_rtype: V8bisSignalType,
+        #[rasn(identifier = "mRSequence")]
+        pub m_rsequence: V59String,
+    }
+    impl AnonymousV8bisDiagMR {
+        pub fn new(m_rtype: V8bisSignalType, m_rsequence: V59String) -> Self {
+            Self {
+                m_rtype,
+                m_rsequence,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousV8bisDiagCR {
+        #[rasn(identifier = "cRtype")]
+        pub c_rtype: V8bisSignalType,
+        #[rasn(identifier = "cRSequence")]
+        pub c_rsequence: V59String,
+    }
+    impl AnonymousV8bisDiagCR {
+        pub fn new(c_rtype: V8bisSignalType, c_rsequence: V59String) -> Self {
+            Self {
+                c_rtype,
+                c_rsequence,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousV8bisDiagCL {
+        #[rasn(identifier = "cLSequence")]
+        pub c_lsequence: V59String,
+    }
+    impl AnonymousV8bisDiagCL {
+        pub fn new(c_lsequence: V59String) -> Self {
+            Self { c_lsequence }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousV8bisDiagCLR {
+        #[rasn(identifier = "cLRSequence")]
+        pub c_lrsequence: V59String,
+    }
+    impl AnonymousV8bisDiagCLR {
+        pub fn new(c_lrsequence: V59String) -> Self {
+            Self { c_lrsequence }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum AnonymousV8bisDiagESESType {
+        #[rasn(value("0"))]
+        nONE(u8),
+        #[rasn(value("1"))]
+        i(u8),
+        #[rasn(value("2"))]
+        r(u8),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousV8bisDiagES {
+        #[rasn(identifier = "eSType")]
+        pub e_stype: AnonymousV8bisDiagESESType,
+        #[rasn(identifier = "eSSequence")]
+        pub e_ssequence: V59String,
+    }
+    impl AnonymousV8bisDiagES {
+        pub fn new(e_stype: AnonymousV8bisDiagESESType, e_ssequence: V59String) -> Self {
+            Self {
+                e_stype,
+                e_ssequence,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum AnonymousV8bisDiagAckNakACK {
+        #[rasn(value("0"))]
+        nONE(u8),
+        #[rasn(value("1"))]
+        aCK1(u8),
+        #[rasn(value("2"))]
+        aCK2(u8),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum AnonymousV8bisDiagAckNakNAK {
+        #[rasn(value("0"))]
+        none(u8),
+        #[rasn(value("1"))]
+        nAK1(u8),
+        #[rasn(value("2"))]
+        nAK2(u8),
+        #[rasn(value("3"))]
+        nAK3(u8),
+        #[rasn(value("4"))]
+        nAK4(u8),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousV8bisDiagAckNak {
+        #[rasn(identifier = "aCK")]
+        pub a_ck: AnonymousV8bisDiagAckNakACK,
+        #[rasn(identifier = "nAK")]
+        pub n_ak: AnonymousV8bisDiagAckNakNAK,
+    }
+    impl AnonymousV8bisDiagAckNak {
+        pub fn new(a_ck: AnonymousV8bisDiagAckNakACK, n_ak: AnonymousV8bisDiagAckNakNAK) -> Self {
+            Self { a_ck, n_ak }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousV8bisDiag {
+        #[rasn(value("1..=13"), identifier = "v8bisTransaction")]
+        pub v8bis_transaction: u8,
+        #[rasn(identifier = "mR")]
+        pub m_r: AnonymousV8bisDiagMR,
+        #[rasn(identifier = "cR")]
+        pub c_r: AnonymousV8bisDiagCR,
+        #[rasn(identifier = "cL")]
+        pub c_l: AnonymousV8bisDiagCL,
+        #[rasn(identifier = "cLR")]
+        pub c_lr: AnonymousV8bisDiagCLR,
+        #[rasn(identifier = "eS")]
+        pub e_s: AnonymousV8bisDiagES,
+        #[rasn(identifier = "ackNak")]
+        pub ack_nak: AnonymousV8bisDiagAckNak,
+    }
+    impl AnonymousV8bisDiag {
+        pub fn new(
+            v8bis_transaction: u8,
+            m_r: AnonymousV8bisDiagMR,
+            c_r: AnonymousV8bisDiagCR,
+            c_l: AnonymousV8bisDiagCL,
+            c_lr: AnonymousV8bisDiagCLR,
+            e_s: AnonymousV8bisDiagES,
+            ack_nak: AnonymousV8bisDiagAckNak,
+        ) -> Self {
+            Self {
+                v8bis_transaction,
+                m_r,
+                c_r,
+                c_l,
+                c_lr,
+                e_s,
+                ack_nak,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V8bisDiag(pub SequenceOf<AnonymousV8bisDiag>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum V8bisSignalType {
+        #[rasn(value("0"))]
+        nONE(u8),
+        #[rasn(value("1"))]
+        e(u8),
+        #[rasn(value("2"))]
+        d(u8),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV90Diag {
+        #[rasn(identifier = "modeV90")]
+        pub mode_v90: Capabilities,
+        #[rasn(identifier = "iNFO0Tx")]
+        pub i_nfo0_tx: V59String,
+        #[rasn(identifier = "iNFO0Rx")]
+        pub i_nfo0_rx: V59String,
+        #[rasn(identifier = "iNFO1A")]
+        pub i_nfo1_a: V59String,
+        #[rasn(identifier = "iNFO1d")]
+        pub i_nfo1d: V59String,
+        #[rasn(identifier = "mP")]
+        pub m_p: V59String,
+        #[rasn(identifier = "cP")]
+        pub c_p: V59String,
+        #[rasn(identifier = "cPt")]
+        pub c_pt: V59String,
+        #[rasn(identifier = "jAsequence")]
+        pub j_asequence: V59String,
+        #[rasn(identifier = "jDsequence")]
+        pub j_dsequence: V59String,
+        #[rasn(identifier = "v90TxLevel")]
+        pub v90_tx_level: TxPowerLevel,
+        #[rasn(identifier = "txSymbolRate")]
+        pub tx_symbol_rate: Option<SymbolRate>,
+        #[rasn(identifier = "rxSymbolRate")]
+        pub rx_symbol_rate: Option<SymbolRate>,
+        #[rasn(identifier = "txCarrierFreq")]
+        pub tx_carrier_freq: Option<CarrierFreq>,
+        #[rasn(identifier = "rxCarrierFreq")]
+        pub rx_carrier_freq: Option<CarrierFreq>,
+        #[rasn(identifier = "txDataHistory")]
+        pub tx_data_history: V59String,
+        #[rasn(identifier = "rxDataHistory")]
+        pub rx_data_history: V59String,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+        #[rasn(identifier = "nearEchoEstimate")]
+        pub near_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "farEchoEstimate")]
+        pub far_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "roundTripDelay")]
+        pub round_trip_delay: Option<V59String>,
+        #[rasn(identifier = "rBSpattern")]
+        pub r_bspattern: Option<RobBitPatt>,
+        #[rasn(identifier = "digitalPadLoss")]
+        pub digital_pad_loss: Option<V59String>,
+        #[rasn(identifier = "codecLaw")]
+        pub codec_law: Option<bool>,
+    }
+    impl AnonymousV90Diag {
+        pub fn new(
+            mode_v90: Capabilities,
+            i_nfo0_tx: V59String,
+            i_nfo0_rx: V59String,
+            i_nfo1_a: V59String,
+            i_nfo1d: V59String,
+            m_p: V59String,
+            c_p: V59String,
+            c_pt: V59String,
+            j_asequence: V59String,
+            j_dsequence: V59String,
+            v90_tx_level: TxPowerLevel,
+            tx_symbol_rate: Option<SymbolRate>,
+            rx_symbol_rate: Option<SymbolRate>,
+            tx_carrier_freq: Option<CarrierFreq>,
+            rx_carrier_freq: Option<CarrierFreq>,
+            tx_data_history: V59String,
+            rx_data_history: V59String,
+            rx_level_estimate: Option<V59String>,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+            near_echo_estimate: Option<V59String>,
+            far_echo_estimate: Option<V59String>,
+            round_trip_delay: Option<V59String>,
+            r_bspattern: Option<RobBitPatt>,
+            digital_pad_loss: Option<V59String>,
+            codec_law: Option<bool>,
+        ) -> Self {
+            Self {
+                mode_v90,
+                i_nfo0_tx,
+                i_nfo0_rx,
+                i_nfo1_a,
+                i_nfo1d,
+                m_p,
+                c_p,
+                c_pt,
+                j_asequence,
+                j_dsequence,
+                v90_tx_level,
+                tx_symbol_rate,
+                rx_symbol_rate,
+                tx_carrier_freq,
+                rx_carrier_freq,
+                tx_data_history,
+                rx_data_history,
+                rx_level_estimate,
+                noise_estimate,
+                rx_signal_quality,
+                near_echo_estimate,
+                far_echo_estimate,
+                round_trip_delay,
+                r_bspattern,
+                digital_pad_loss,
+                codec_law,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V90Diag(pub SequenceOf<AnonymousV90Diag>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV91Diag {
+        #[rasn(identifier = "modeV91")]
+        pub mode_v91: Capabilities,
+        #[rasn(identifier = "iNFO0TX")]
+        pub i_nfo0_tx: V59String,
+        #[rasn(identifier = "iNFO0RX")]
+        pub i_nfo0_rx: V59String,
+        #[rasn(identifier = "cP")]
+        pub c_p: V59String,
+        #[rasn(identifier = "controlChannel")]
+        pub control_channel: bool,
+        #[rasn(identifier = "v91TxPowerLevel")]
+        pub v91_tx_power_level: TxPowerLevel,
+        #[rasn(identifier = "transparentMode")]
+        pub transparent_mode: bool,
+        #[rasn(identifier = "txDataHistory")]
+        pub tx_data_history: V59String,
+        #[rasn(identifier = "rxDataHistory")]
+        pub rx_data_history: V59String,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+        #[rasn(identifier = "rBSpattern")]
+        pub r_bspattern: Option<RobBitPatt>,
+        #[rasn(identifier = "digitalPadLoss")]
+        pub digital_pad_loss: Option<V59String>,
+        #[rasn(identifier = "localCodecLaw")]
+        pub local_codec_law: Option<bool>,
+        #[rasn(identifier = "remoteCodecLaw")]
+        pub remote_codec_law: Option<bool>,
+        #[rasn(value("0..=256"), identifier = "frameSlipsDetected")]
+        pub frame_slips_detected: Option<u16>,
+    }
+    impl AnonymousV91Diag {
+        pub fn new(
+            mode_v91: Capabilities,
+            i_nfo0_tx: V59String,
+            i_nfo0_rx: V59String,
+            c_p: V59String,
+            control_channel: bool,
+            v91_tx_power_level: TxPowerLevel,
+            transparent_mode: bool,
+            tx_data_history: V59String,
+            rx_data_history: V59String,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+            r_bspattern: Option<RobBitPatt>,
+            digital_pad_loss: Option<V59String>,
+            local_codec_law: Option<bool>,
+            remote_codec_law: Option<bool>,
+            frame_slips_detected: Option<u16>,
+        ) -> Self {
+            Self {
+                mode_v91,
+                i_nfo0_tx,
+                i_nfo0_rx,
+                c_p,
+                control_channel,
+                v91_tx_power_level,
+                transparent_mode,
+                tx_data_history,
+                rx_data_history,
+                noise_estimate,
+                rx_signal_quality,
+                r_bspattern,
+                digital_pad_loss,
+                local_codec_law,
+                remote_codec_law,
+                frame_slips_detected,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V91Diag(pub SequenceOf<AnonymousV91Diag>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AnonymousV92ModDiagLastMOHaction {
+        mohaccepted = 0,
+        mohdeclined = 1,
+        mohdenied = 2,
+        mohclrdn = 3,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousV92ModDiag {
+        #[rasn(identifier = "modeV92")]
+        pub mode_v92: Capabilities,
+        #[rasn(identifier = "iNFO0d")]
+        pub i_nfo0d: V59String,
+        #[rasn(identifier = "iNFO0a")]
+        pub i_nfo0a: V59String,
+        #[rasn(identifier = "iNFO1d")]
+        pub i_nfo1d: V59String,
+        #[rasn(identifier = "iNFO1a-US")]
+        pub i_nfo1a_us: V59String,
+        #[rasn(identifier = "iNFO1a-SP2")]
+        pub i_nfo1a_sp2: V59String,
+        #[rasn(identifier = "jA")]
+        pub j_a: V59String,
+        #[rasn(identifier = "jD")]
+        pub j_d: V59String,
+        #[rasn(identifier = "jDP")]
+        pub j_dp: V59String,
+        #[rasn(identifier = "cP")]
+        pub c_p: V59String,
+        #[rasn(identifier = "v92TxLevel")]
+        pub v92_tx_level: TxPowerLevel,
+        #[rasn(identifier = "v92SymbolRate")]
+        pub v92_symbol_rate: Option<SymbolRate>,
+        #[rasn(identifier = "txDataHistory")]
+        pub tx_data_history: V59String,
+        #[rasn(identifier = "rxDataHistory")]
+        pub rx_data_history: V59String,
+        #[rasn(identifier = "rxLevelEstimate")]
+        pub rx_level_estimate: Option<V59String>,
+        #[rasn(identifier = "noiseEstimate")]
+        pub noise_estimate: Option<V59String>,
+        #[rasn(identifier = "rxSignalQuality")]
+        pub rx_signal_quality: Option<V59String>,
+        #[rasn(identifier = "nearEchoEstimate")]
+        pub near_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "farEchoEstimate")]
+        pub far_echo_estimate: Option<V59String>,
+        #[rasn(identifier = "roundTripDelay")]
+        pub round_trip_delay: Option<V59String>,
+        #[rasn(identifier = "rBSpattern")]
+        pub r_bspattern: Option<RobBitPatt>,
+        #[rasn(identifier = "digitalPadLoss")]
+        pub digital_pad_loss: Option<V59String>,
+        #[rasn(identifier = "localCodecLaw")]
+        pub local_codec_law: Option<bool>,
+        #[rasn(identifier = "remoteCodecLaw")]
+        pub remote_codec_law: Option<bool>,
+        #[rasn(identifier = "sP1Enable")]
+        pub s_p1_enable: bool,
+        #[rasn(identifier = "lastCallSP1")]
+        pub last_call_sp1: bool,
+        #[rasn(size("1..=10"), identifier = "qC1a")]
+        pub q_c1a: Ia5String,
+        #[rasn(size("1..=10"), identifier = "qC1d")]
+        pub q_c1d: Ia5String,
+        #[rasn(size("1..=2"), identifier = "qC2a")]
+        pub q_c2a: Ia5String,
+        #[rasn(size("1..=2"), identifier = "qC2d")]
+        pub q_c2d: Ia5String,
+        #[rasn(size("1..=10"), identifier = "qCA1a")]
+        pub q_ca1a: Ia5String,
+        #[rasn(size("1..=10"), identifier = "qCA1d")]
+        pub q_ca1d: Ia5String,
+        #[rasn(size("1..=2"), identifier = "qCA2a")]
+        pub q_ca2a: Ia5String,
+        #[rasn(size("1..=2"), identifier = "qCA2d")]
+        pub q_ca2d: Ia5String,
+        #[rasn(identifier = "cWDEnable")]
+        pub c_wdenable: bool,
+        #[rasn(identifier = "mOHEnable")]
+        pub m_ohenable: bool,
+        #[rasn(identifier = "lastMOHaction")]
+        pub last_mohaction: AnonymousV92ModDiagLastMOHaction,
+        #[rasn(identifier = "mohTimeout")]
+        pub moh_timeout: V59String,
+        #[rasn(identifier = "lastMOHduration")]
+        pub last_mohduration: V59String,
+        #[rasn(size("1..=5"), identifier = "mHreq")]
+        pub m_hreq: Ia5String,
+        #[rasn(size("1..=5"), identifier = "mHack")]
+        pub m_hack: Ia5String,
+        #[rasn(size("1..=5"), identifier = "mHnak")]
+        pub m_hnak: Ia5String,
+        #[rasn(size("1..=5"), identifier = "mHcld")]
+        pub m_hcld: Ia5String,
+        #[rasn(size("1..=5"), identifier = "mHcda")]
+        pub m_hcda: Ia5String,
+        #[rasn(size("1..=5"), identifier = "mHfrr")]
+        pub m_hfrr: Ia5String,
+    }
+    impl AnonymousV92ModDiag {
+        pub fn new(
+            mode_v92: Capabilities,
+            i_nfo0d: V59String,
+            i_nfo0a: V59String,
+            i_nfo1d: V59String,
+            i_nfo1a_us: V59String,
+            i_nfo1a_sp2: V59String,
+            j_a: V59String,
+            j_d: V59String,
+            j_dp: V59String,
+            c_p: V59String,
+            v92_tx_level: TxPowerLevel,
+            v92_symbol_rate: Option<SymbolRate>,
+            tx_data_history: V59String,
+            rx_data_history: V59String,
+            rx_level_estimate: Option<V59String>,
+            noise_estimate: Option<V59String>,
+            rx_signal_quality: Option<V59String>,
+            near_echo_estimate: Option<V59String>,
+            far_echo_estimate: Option<V59String>,
+            round_trip_delay: Option<V59String>,
+            r_bspattern: Option<RobBitPatt>,
+            digital_pad_loss: Option<V59String>,
+            local_codec_law: Option<bool>,
+            remote_codec_law: Option<bool>,
+            s_p1_enable: bool,
+            last_call_sp1: bool,
+            q_c1a: Ia5String,
+            q_c1d: Ia5String,
+            q_c2a: Ia5String,
+            q_c2d: Ia5String,
+            q_ca1a: Ia5String,
+            q_ca1d: Ia5String,
+            q_ca2a: Ia5String,
+            q_ca2d: Ia5String,
+            c_wdenable: bool,
+            m_ohenable: bool,
+            last_mohaction: AnonymousV92ModDiagLastMOHaction,
+            moh_timeout: V59String,
+            last_mohduration: V59String,
+            m_hreq: Ia5String,
+            m_hack: Ia5String,
+            m_hnak: Ia5String,
+            m_hcld: Ia5String,
+            m_hcda: Ia5String,
+            m_hfrr: Ia5String,
+        ) -> Self {
+            Self {
+                mode_v92,
+                i_nfo0d,
+                i_nfo0a,
+                i_nfo1d,
+                i_nfo1a_us,
+                i_nfo1a_sp2,
+                j_a,
+                j_d,
+                j_dp,
+                c_p,
+                v92_tx_level,
+                v92_symbol_rate,
+                tx_data_history,
+                rx_data_history,
+                rx_level_estimate,
+                noise_estimate,
+                rx_signal_quality,
+                near_echo_estimate,
+                far_echo_estimate,
+                round_trip_delay,
+                r_bspattern,
+                digital_pad_loss,
+                local_codec_law,
+                remote_codec_law,
+                s_p1_enable,
+                last_call_sp1,
+                q_c1a,
+                q_c1d,
+                q_c2a,
+                q_c2d,
+                q_ca1a,
+                q_ca1d,
+                q_ca2a,
+                q_ca2d,
+                c_wdenable,
+                m_ohenable,
+                last_mohaction,
+                moh_timeout,
+                last_mohduration,
+                m_hreq,
+                m_hack,
+                m_hnak,
+                m_hcld,
+                m_hcda,
+                m_hfrr,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct V92ModDiag(pub SequenceOf<AnonymousV92ModDiag>);
+}

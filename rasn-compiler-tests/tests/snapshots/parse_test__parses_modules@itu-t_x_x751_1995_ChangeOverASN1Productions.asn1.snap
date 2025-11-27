@@ -1,0 +1,299 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x751_1995_ChangeOverASN1Productions.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod change_over_asn1_productions {
+    extern crate alloc;
+    use super::cmip_1::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BackUpInfo {
+        #[rasn(
+            tag(context, 0),
+            default = "back_up_info_backed_up_object_specified_default",
+            identifier = "backedUpObjectSpecified"
+        )]
+        pub backed_up_object_specified: OptionalObject,
+        #[rasn(
+            tag(context, 1),
+            default = "back_up_info_back_up_object_specified_default",
+            identifier = "backUpObjectSpecified"
+        )]
+        pub back_up_object_specified: OptionalObject,
+        #[rasn(
+            tag(context, 2),
+            default = "back_up_info_backed_up_object_existing_default",
+            identifier = "backedUpObjectExisting"
+        )]
+        pub backed_up_object_existing: OptionalObject,
+        #[rasn(
+            tag(context, 3),
+            default = "back_up_info_back_up_object_existing_default",
+            identifier = "backUpObjectExisting"
+        )]
+        pub back_up_object_existing: OptionalObject,
+    }
+    impl BackUpInfo {
+        pub fn new(
+            backed_up_object_specified: OptionalObject,
+            back_up_object_specified: OptionalObject,
+            backed_up_object_existing: OptionalObject,
+            back_up_object_existing: OptionalObject,
+        ) -> Self {
+            Self {
+                backed_up_object_specified,
+                back_up_object_specified,
+                backed_up_object_existing,
+                back_up_object_existing,
+            }
+        }
+    }
+    impl std::default::Default for BackUpInfo {
+        fn default() -> Self {
+            Self {
+                backed_up_object_specified: back_up_info_backed_up_object_specified_default(),
+                back_up_object_specified: back_up_info_back_up_object_specified_default(),
+                backed_up_object_existing: back_up_info_backed_up_object_existing_default(),
+                back_up_object_existing: back_up_info_back_up_object_existing_default(),
+            }
+        }
+    }
+    fn back_up_info_backed_up_object_specified_default() -> OptionalObject {
+        OptionalObject::noObject(())
+    }
+    fn back_up_info_back_up_object_specified_default() -> OptionalObject {
+        OptionalObject::noObject(())
+    }
+    fn back_up_info_backed_up_object_existing_default() -> OptionalObject {
+        OptionalObject::noObject(())
+    }
+    fn back_up_info_back_up_object_existing_default() -> OptionalObject {
+        OptionalObject::noObject(())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BackUpObject(pub OptionalObject);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChangeBackInfo {
+        #[rasn(tag(context, 0), identifier = "backedUpObject")]
+        pub backed_up_object: ObjectInstance,
+        #[rasn(
+            tag(context, 1),
+            default = "change_back_info_back_up_object_default",
+            identifier = "backUpObject"
+        )]
+        pub back_up_object: OptionalObject,
+        #[rasn(tag(context, 2), identifier = "backedUpObjectChanges")]
+        pub backed_up_object_changes: Option<ExpectedAttributeList>,
+        #[rasn(tag(context, 3), identifier = "backUpObjectChanges")]
+        pub back_up_object_changes: Option<ExpectedAttributeList>,
+    }
+    impl ChangeBackInfo {
+        pub fn new(
+            backed_up_object: ObjectInstance,
+            back_up_object: OptionalObject,
+            backed_up_object_changes: Option<ExpectedAttributeList>,
+            back_up_object_changes: Option<ExpectedAttributeList>,
+        ) -> Self {
+            Self {
+                backed_up_object,
+                back_up_object,
+                backed_up_object_changes,
+                back_up_object_changes,
+            }
+        }
+    }
+    fn change_back_info_back_up_object_default() -> OptionalObject {
+        OptionalObject::noObject(())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ChangeOverInfo {
+        #[rasn(tag(context, 0))]
+        pub primary: ObjectInstance,
+        #[rasn(tag(context, 1), default = "change_over_info_secondary_default")]
+        pub secondary: OptionalObject,
+        #[rasn(tag(context, 2), identifier = "primaryChanges")]
+        pub primary_changes: Option<ExpectedAttributeList>,
+        #[rasn(tag(context, 3), identifier = "secondaryChanges")]
+        pub secondary_changes: Option<ExpectedAttributeList>,
+    }
+    impl ChangeOverInfo {
+        pub fn new(
+            primary: ObjectInstance,
+            secondary: OptionalObject,
+            primary_changes: Option<ExpectedAttributeList>,
+            secondary_changes: Option<ExpectedAttributeList>,
+        ) -> Self {
+            Self {
+                primary,
+                secondary,
+                primary_changes,
+                secondary_changes,
+            }
+        }
+    }
+    fn change_over_info_secondary_default() -> OptionalObject {
+        OptionalObject::noObject(())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Condition {
+        pub object: ObjectInstance,
+        pub details: SetOf<Attribute>,
+    }
+    impl Condition {
+        pub fn new(object: ObjectInstance, details: SetOf<Attribute>) -> Self {
+            Self { object, details }
+        }
+    }
+    #[doc = " At least one of the two components of Conditions must be present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Conditions {
+        #[rasn(tag(context, 0))]
+        pub primary: Option<Condition>,
+        #[rasn(tag(context, 1))]
+        pub secondary: Option<Condition>,
+    }
+    impl Conditions {
+        pub fn new(primary: Option<Condition>, secondary: Option<Condition>) -> Self {
+            Self { primary, secondary }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousExpectedAttributeList {
+        #[rasn(
+            tag(context, 0),
+            default = "anonymous_expected_attribute_list_modify_operator_default",
+            identifier = "modifyOperator"
+        )]
+        pub modify_operator: ModifyOperator,
+        #[rasn(tag(context, 1), identifier = "attributeId")]
+        pub attribute_id: Any,
+        #[rasn(tag(context, 2), identifier = "attributeValue")]
+        pub attribute_value: Option<Any>,
+    }
+    impl AnonymousExpectedAttributeList {
+        pub fn new(
+            modify_operator: ModifyOperator,
+            attribute_id: Any,
+            attribute_value: Option<Any>,
+        ) -> Self {
+            Self {
+                modify_operator,
+                attribute_id,
+                attribute_value,
+            }
+        }
+    }
+    fn anonymous_expected_attribute_list_modify_operator_default() -> ModifyOperator {
+        REPLACE
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExpectedAttributeList(pub SetOf<AnonymousExpectedAttributeList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchParticipant {
+        #[rasn(tag(context, 0))]
+        pub role: ObjectIdentifier,
+        #[rasn(tag(context, 1), identifier = "objectInstance")]
+        pub object_instance: ObjectInstance,
+    }
+    impl NoSuchParticipant {
+        pub fn new(role: ObjectIdentifier, object_instance: ObjectInstance) -> Self {
+            Self {
+                role,
+                object_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoSuchRelationship {
+        #[rasn(identifier = "relationshipClass")]
+        pub relationship_class: ObjectIdentifier,
+        #[rasn(identifier = "relationshipBinding")]
+        pub relationship_binding: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 0), identifier = "relationshipInstance")]
+        pub relationship_instance: Option<RelationshipInstance>,
+    }
+    impl NoSuchRelationship {
+        pub fn new(
+            relationship_class: ObjectIdentifier,
+            relationship_binding: Option<ObjectIdentifier>,
+            relationship_instance: Option<RelationshipInstance>,
+        ) -> Self {
+            Self {
+                relationship_class,
+                relationship_binding,
+                relationship_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1.."))]
+    pub struct OneToN(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1"))]
+    pub struct OneToOne(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OptionalObject {
+        noObject(()),
+        object(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrimaryObject(pub ObjectInstance);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PrimaryObjectSpecified(pub OptionalObject);
+    #[doc = " At least one of the two components of UnattainableAttributeList must be present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RelationshipInstance(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UnattainableAttributeList {
+        #[rasn(tag(context, 0), identifier = "primaryChanges")]
+        pub primary_changes: Option<ExpectedAttributeList>,
+        #[rasn(tag(context, 1), identifier = "secondaryChanges")]
+        pub secondary_changes: Option<ExpectedAttributeList>,
+    }
+    impl UnattainableAttributeList {
+        pub fn new(
+            primary_changes: Option<ExpectedAttributeList>,
+            secondary_changes: Option<ExpectedAttributeList>,
+        ) -> Self {
+            Self {
+                primary_changes,
+                secondary_changes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=1"))]
+    pub struct ZeroToOne(pub u8);
+    pub static PART17_ACTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 9u32]).to_owned());
+    pub static PART17_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 7u32]).to_owned());
+    pub static PART17_MOBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 3u32]).to_owned());
+    pub static PART17_MREL_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 11u32]).to_owned());
+    pub static PART17_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 4u32]).to_owned());
+    pub static PART17_PARAMETER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 5u32]).to_owned());
+    pub static PART17_ROLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 2u32, 17u32, 13u32]).to_owned());
+}

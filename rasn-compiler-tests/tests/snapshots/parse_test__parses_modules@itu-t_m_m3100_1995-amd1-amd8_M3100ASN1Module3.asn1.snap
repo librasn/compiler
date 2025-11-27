@@ -1,0 +1,195 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3100_1995-amd1-amd8_M3100ASN1Module3.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3100_asn1_module3 {
+    extern crate alloc;
+    use super::attribute_asn1_module::{AdditionalInformation, ProbableCause};
+    use super::cmip_1::{ObjectInstance, RelativeDistinguishedName};
+    use super::sdhprot_asn1::SwitchStatus;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AutoSwitchReason {
+        waitToRestore = 0,
+        resourceDegrade = 1,
+        resourceFailed = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum FromAndToProtectionUnit {
+        #[rasn(tag(context, 0))]
+        fromProtectionUnitNumber(RelativeDistinguishedName),
+        #[rasn(tag(context, 1))]
+        toProtectionUnitNumber(RelativeDistinguishedName),
+    }
+    #[doc = " For a protected PU, both the fromProtectionUnitNumber and the toProtectionUnitNumber hold the number of the"]
+    #[doc = " related protecting PU. When switching to the protecting PU (service on the protecting PU), the"]
+    #[doc = " toProtectionUnitNumber choice is used. When switching back to the protected PU (service on the protected PU),"]
+    #[doc = " the fromProtectionUnitNumber choice is used."]
+    #[doc = " For a protecting PU, both the fromProtectionUnitNumber and the toProtectionUnitNumber hold the number of the"]
+    #[doc = " related protected PU. When switching to the protected PU (service on the protected PU), the toProtectionUnitNumber"]
+    #[doc = " choice is used. When switching back to the protecting PU (service on the protecting PU), the"]
+    #[doc = " fromProtectionUnitNumber choice is used."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LockedInCondition {
+        #[rasn(tag(context, 0), identifier = "settingWindowTime")]
+        pub setting_window_time: Integer,
+        #[rasn(tag(context, 1), identifier = "releasingWindowTime")]
+        pub releasing_window_time: Integer,
+        #[rasn(tag(context, 2), identifier = "hitsCount")]
+        pub hits_count: Integer,
+    }
+    impl LockedInCondition {
+        pub fn new(
+            setting_window_time: Integer,
+            releasing_window_time: Integer,
+            hits_count: Integer,
+        ) -> Self {
+            Self {
+                setting_window_time,
+                releasing_window_time,
+                hits_count,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectionAlarmInfo {
+        #[rasn(identifier = "probableCause")]
+        pub probable_cause: ProbableCause,
+        #[rasn(identifier = "additionalInfo")]
+        pub additional_info: AdditionalInformation,
+    }
+    impl ProtectionAlarmInfo {
+        pub fn new(probable_cause: ProbableCause, additional_info: AdditionalInformation) -> Self {
+            Self {
+                probable_cause,
+                additional_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectionStatusParameterR1 {
+        #[rasn(identifier = "oldProtectionStatus")]
+        pub old_protection_status: ProtectionStatusR1,
+        #[rasn(identifier = "newProtectionStatus")]
+        pub new_protection_status: ProtectionStatusR1,
+    }
+    impl ProtectionStatusParameterR1 {
+        pub fn new(
+            old_protection_status: ProtectionStatusR1,
+            new_protection_status: ProtectionStatusR1,
+        ) -> Self {
+            Self {
+                old_protection_status,
+                new_protection_status,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousProtectionStatusR1ManualSwitch {
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(tag(context, 2), identifier = "relatedUnit")]
+        pub related_unit: FromAndToProtectionUnit,
+    }
+    impl AnonymousProtectionStatusR1ManualSwitch {
+        pub fn new(switch_status: SwitchStatus, related_unit: FromAndToProtectionUnit) -> Self {
+            Self {
+                switch_status,
+                related_unit,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousProtectionStatusR1AutoSwitch {
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(tag(context, 2), identifier = "relatedUnit")]
+        pub related_unit: FromAndToProtectionUnit,
+        #[rasn(tag(context, 3), identifier = "autoSwitchReason")]
+        pub auto_switch_reason: AutoSwitchReason,
+    }
+    impl AnonymousProtectionStatusR1AutoSwitch {
+        pub fn new(
+            switch_status: SwitchStatus,
+            related_unit: FromAndToProtectionUnit,
+            auto_switch_reason: AutoSwitchReason,
+        ) -> Self {
+            Self {
+                switch_status,
+                related_unit,
+                auto_switch_reason,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousProtectionStatusR1ForcedSwitch {
+        #[rasn(tag(context, 1), identifier = "switchStatus")]
+        pub switch_status: SwitchStatus,
+        #[rasn(tag(context, 2), identifier = "relatedUnit")]
+        pub related_unit: FromAndToProtectionUnit,
+    }
+    impl AnonymousProtectionStatusR1ForcedSwitch {
+        pub fn new(switch_status: SwitchStatus, related_unit: FromAndToProtectionUnit) -> Self {
+            Self {
+                switch_status,
+                related_unit,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousProtectionStatusR1Lockout {
+        #[rasn(tag(context, 1))]
+        switchStatus(SwitchStatus),
+        #[rasn(tag(context, 2))]
+        releaseFailed(()),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousProtectionStatusR1 {
+        #[rasn(tag(context, 0))]
+        noRequest(()),
+        #[rasn(tag(context, 1))]
+        doNotRevert(()),
+        #[rasn(tag(context, 2))]
+        manualSwitch(AnonymousProtectionStatusR1ManualSwitch),
+        #[rasn(tag(context, 3))]
+        autoSwitch(AnonymousProtectionStatusR1AutoSwitch),
+        #[rasn(tag(context, 4))]
+        forcedSwitch(AnonymousProtectionStatusR1ForcedSwitch),
+        #[rasn(tag(context, 5))]
+        lockout(AnonymousProtectionStatusR1Lockout),
+        #[rasn(tag(context, 6))]
+        releaseFailed(()),
+        #[rasn(tag(context, 7))]
+        resourceFailed(()),
+        #[rasn(tag(context, 8))]
+        lockedIn(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtectionStatusR1(pub SetOf<AnonymousProtectionStatusR1>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ResourcePointer {
+        null(()),
+        objectInstances(SetOf<ObjectInstance>),
+    }
+}

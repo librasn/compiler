@@ -1,0 +1,196 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2981_1999_CC-operations.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve argument CALLCONTROLOBJECTCLASS.&objectClassIdentifier of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve argument CALLCONTROLOBJECTCLASS.&ArgumentType of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cc_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::PartyNumber;
+    use super::call_control_object_super_class::*;
+    use super::call_object_class_definitions::{
+        CALL, DIRECT_CALL_ASSOCIATION, LOCAL_PARTY_EP, REMOTE_CALL_ASSOCIATION, REMOTE_PARTY_EP,
+        SERVICE_COMPONENT,
+    };
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Used to indicate action to be taken if a parameter in an operation is not recognized"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BearerEstablishmentAddress(pub PartyNumber);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallChangedParameterModifiedNetworkRelevantPart(
+        pub SequenceOf<ModifiedNetworkRelevantObjectDescription>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallChangedParameterModifiedEndToEndRelevantPart(
+        pub SequenceOf<ModifiedEndToEndRelevantObjectDescription>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CallChangedParameter {
+        #[rasn(identifier = "modifiedNetworkRelevantPart")]
+        pub modified_network_relevant_part: CallChangedParameterModifiedNetworkRelevantPart,
+        #[rasn(identifier = "modifiedEndToEndRelevantPart")]
+        pub modified_end_to_end_relevant_part:
+            Option<CallChangedParameterModifiedEndToEndRelevantPart>,
+    }
+    impl CallChangedParameter {
+        pub fn new(
+            modified_network_relevant_part: CallChangedParameterModifiedNetworkRelevantPart,
+            modified_end_to_end_relevant_part: Option<
+                CallChangedParameterModifiedEndToEndRelevantPart,
+            >,
+        ) -> Self {
+            Self {
+                modified_network_relevant_part,
+                modified_end_to_end_relevant_part,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallDescriptionNetworkRelevantPart(pub SequenceOf<NetworkRelevantObjectDescription>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CallDescriptionEndToEndRelevantPart(
+        pub SequenceOf<EndToEndRelevantObjectDescription>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CallDescription {
+        #[rasn(identifier = "networkRelevantPart")]
+        pub network_relevant_part: CallDescriptionNetworkRelevantPart,
+        #[rasn(identifier = "endToEndRelevantPart")]
+        pub end_to_end_relevant_part: Option<CallDescriptionEndToEndRelevantPart>,
+    }
+    impl CallDescription {
+        pub fn new(
+            network_relevant_part: CallDescriptionNetworkRelevantPart,
+            end_to_end_relevant_part: Option<CallDescriptionEndToEndRelevantPart>,
+        ) -> Self {
+            Self {
+                network_relevant_part,
+                end_to_end_relevant_part,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CallSegmentId {
+        #[rasn(identifier = "precedingSideCallSegId")]
+        pub preceding_side_call_seg_id: CallSegmentIdComponent,
+        #[rasn(identifier = "succeedingSideCallSegId")]
+        pub succeeding_side_call_seg_id: CallSegmentIdComponent,
+    }
+    impl CallSegmentId {
+        pub fn new(
+            preceding_side_call_seg_id: CallSegmentIdComponent,
+            succeeding_side_call_seg_id: CallSegmentIdComponent,
+        ) -> Self {
+            Self {
+                preceding_side_call_seg_id,
+                succeeding_side_call_seg_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-2147483648..=2147483647"))]
+    pub struct CallSegmentIdComponent(pub i32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CauseValue {
+        callDescriptionNotAccepted = 0,
+        normalCallClearing = 3,
+        temporaryFailure = 11,
+        recoveryOnTimerExpiry = 12,
+        unspecified = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Location {
+        unspecified = 0,
+        user = 1,
+        networkLocalCallSegment = 2,
+        networkNonLocalCallSegment = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ObjectActionIndicator {
+        clearCall = 0,
+        discardNotify = 1,
+        discardUnknown = 2,
+        progressTransit = 3,
+    }
+    #[doc = " Used to indicate action to be taken if an object or object attribute is not recognized"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ObjectStatus {
+        mandatory = 0,
+        optional = 1,
+        conditional = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ParameterActionIndicator {
+        clearCallAndItsInformationModel = 0,
+        discardApduAndReject = 1,
+        discardApduNoReject = 2,
+        discardParameterAndPassApduToApplication = 3,
+        ignoreParameterAndPassApduToApplication = 4,
+    }
+    #[doc = " 4 octets"]
+    #[doc = " The value 0 is to be used as a null value for the succeeding side call segment identifier"]
+    #[doc = " in the callEstablish invoke APDU."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ReleaseCause {
+        #[rasn(identifier = "causeValue")]
+        pub cause_value: CauseValue,
+        pub location: Location,
+    }
+    impl ReleaseCause {
+        pub fn new(cause_value: CauseValue, location: Location) -> Self {
+            Self {
+                cause_value,
+                location,
+            }
+        }
+    }
+    pub static CC_OPERATIONS_DEFINITIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[2981u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CC_OPERATIONS_ERRORS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[2981u32, 3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

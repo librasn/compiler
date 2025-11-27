@@ -1,0 +1,73 @@
+---
+source: rasn-compiler-tests/tests/structured_types.rs
+description: "\n        TFCS-ReconfAdd-r12 ::= SEQUENCE {\n            ctfcSize\t\t\t\t\t\t\tCHOICE {\n                ctfc8Bit\t\t\t\t\t\t\tSEQUENCE (SIZE (1..maxTFC)) OF SEQUENCE {\n                    ctfc8\t\t\t\t\t\t\t\tINTEGER (0..255),\n                },\n                ctfc16Bit\t\t\t\t\t\t\tSEQUENCE (SIZE (1..maxTFC)) OF SEQUENCE {\n                    ctfc16\t\t\t\t\t\t\t\tINTEGER(0..65535),\n                }\n            }\n        }\n\n        maxTFC\t\t\t\t\t\tINTEGER ::= 1024\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousTFCSReconfAddR12CtfcSizeCtfc8Bit {
+        #[rasn(value("0..=255"))]
+        pub ctfc8: u8,
+    }
+    impl AnonymousTFCSReconfAddR12CtfcSizeCtfc8Bit {
+        pub fn new(ctfc8: u8) -> Self {
+            Self { ctfc8 }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=1024"))]
+    pub struct TFCSReconfAddR12CtfcSizeCtfc8Bit(
+        pub SequenceOf<AnonymousTFCSReconfAddR12CtfcSizeCtfc8Bit>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousTFCSReconfAddR12CtfcSizeCtfc16Bit {
+        #[rasn(value("0..=65535"))]
+        pub ctfc16: u16,
+    }
+    impl AnonymousTFCSReconfAddR12CtfcSizeCtfc16Bit {
+        pub fn new(ctfc16: u16) -> Self {
+            Self { ctfc16 }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=1024"))]
+    pub struct TFCSReconfAddR12CtfcSizeCtfc16Bit(
+        pub SequenceOf<AnonymousTFCSReconfAddR12CtfcSizeCtfc16Bit>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum TFCSReconfAddR12CtfcSize {
+        ctfc8Bit(TFCSReconfAddR12CtfcSizeCtfc8Bit),
+        ctfc16Bit(TFCSReconfAddR12CtfcSizeCtfc16Bit),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "TFCS-ReconfAdd-r12")]
+    pub struct TFCSReconfAddR12 {
+        #[rasn(identifier = "ctfcSize")]
+        pub ctfc_size: TFCSReconfAddR12CtfcSize,
+    }
+    impl TFCSReconfAddR12 {
+        pub fn new(ctfc_size: TFCSReconfAddR12CtfcSize) -> Self {
+            Self { ctfc_size }
+        }
+    }
+    pub static MAX_TFC: LazyLock<Integer> = LazyLock::new(|| Integer::from(1024));
+}

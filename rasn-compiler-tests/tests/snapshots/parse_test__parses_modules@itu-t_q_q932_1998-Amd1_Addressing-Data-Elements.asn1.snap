@@ -1,0 +1,253 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q932_1998-Amd1_Addressing-Data-Elements.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod addressing_data_elements {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Address {
+        #[rasn(identifier = "partyNumber")]
+        pub party_number: PartyNumber,
+        #[rasn(identifier = "partySubaddress")]
+        pub party_subaddress: Option<PartySubaddress>,
+    }
+    impl Address {
+        pub fn new(party_number: PartyNumber, party_subaddress: Option<PartySubaddress>) -> Self {
+            Self {
+                party_number,
+                party_subaddress,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AddressScreened {
+        #[rasn(identifier = "partyNumber")]
+        pub party_number: PartyNumber,
+        pub screeninglndicator: ScreeningIndicator,
+        #[rasn(identifier = "partySubaddress")]
+        pub party_subaddress: Option<PartySubaddress>,
+    }
+    impl AddressScreened {
+        pub fn new(
+            party_number: PartyNumber,
+            screeninglndicator: ScreeningIndicator,
+            party_subaddress: Option<PartySubaddress>,
+        ) -> Self {
+            Self {
+                party_number,
+                screeninglndicator,
+                party_subaddress,
+            }
+        }
+    }
+    #[doc = "  used when the coding of subaddress is BCD"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=20"))]
+    pub struct NSAPSubaddress(pub OctetString);
+    #[doc = "  not used, value reserved."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NsapEncodedNumber(pub FixedOctetString<20usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=20"))]
+    pub struct NumberDigits(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NumberScreened {
+        #[rasn(identifier = "partyNumber")]
+        pub party_number: PartyNumber,
+        #[rasn(identifier = "screeningIndicator")]
+        pub screening_indicator: ScreeningIndicator,
+    }
+    impl NumberScreened {
+        pub fn new(party_number: PartyNumber, screening_indicator: ScreeningIndicator) -> Self {
+            Self {
+                party_number,
+                screening_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PartyNumber {
+        #[rasn(tag(context, 0))]
+        unknownPartyNumber(NumberDigits),
+        #[rasn(tag(context, 1))]
+        publicPartyNumber(PublicPartyNumber),
+        #[rasn(tag(context, 2))]
+        nsapEncodedNumber(NsapEncodedNumber),
+        #[rasn(tag(context, 3))]
+        dataPartyNumber(NumberDigits),
+        #[rasn(tag(context, 4))]
+        telexPartyNumber(NumberDigits),
+        #[rasn(tag(context, 5))]
+        privatePartyNumber(PrivatePartyNumber),
+        #[rasn(tag(context, 8))]
+        nationalStandardPartyNumber(NumberDigits),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PartySubaddress {
+        userSpecifiedSubaddress(UserSpecifiedSubaddress),
+        nSAPSubaddress(NSAPSubaddress),
+    }
+    #[doc = "  number was provided by local"]
+    #[doc = "  public or local"]
+    #[doc = "  private network"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct PresentationAllowedIndicator(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PresentedAddressScreened {
+        #[rasn(tag(context, 0))]
+        presentationAlIowedAddress(AddressScreened),
+        #[rasn(tag(context, 1))]
+        presentationRestricted(()),
+        #[rasn(tag(context, 2))]
+        numberNotAvailableDueTolnterworking(()),
+        #[rasn(tag(context, 3))]
+        presentationRestrictedAddress(AddressScreened),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PresentedAddressUnscreened {
+        #[rasn(tag(context, 0))]
+        presentationAllowedAddress(Address),
+        #[rasn(tag(context, 1))]
+        presentationRestricted(()),
+        #[rasn(tag(context, 2))]
+        numberNotAvailableDueTolnterworking(()),
+        #[rasn(tag(context, 3))]
+        presentationRestrictedAddress(Address),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PresentedNumberScreened {
+        #[rasn(tag(context, 0))]
+        presentationAllowedNumber(NumberScreened),
+        #[rasn(tag(context, 1))]
+        presentationRestricted(()),
+        #[rasn(tag(context, 2))]
+        numberNotAvailableDueToInterworking(()),
+        #[rasn(tag(context, 3))]
+        presentationRestrictedNumber(NumberScreened),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PresentedNumberUnscreened {
+        #[rasn(tag(explicit(context, 0)))]
+        presentationAllowedNumber(PartyNumber),
+        #[rasn(tag(context, 1))]
+        presentationRestricted(()),
+        #[rasn(tag(context, 2))]
+        numberNotAvailableDueToInterworking(()),
+        #[rasn(tag(explicit(context, 3)))]
+        presentationRestrictedNumber(PartyNumber),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PrivatePartyNumber {
+        #[rasn(identifier = "privateTypeOfNumber")]
+        pub private_type_of_number: PrivateTypeOfNumber,
+        #[rasn(identifier = "privateNumberDigits")]
+        pub private_number_digits: NumberDigits,
+    }
+    impl PrivatePartyNumber {
+        pub fn new(
+            private_type_of_number: PrivateTypeOfNumber,
+            private_number_digits: NumberDigits,
+        ) -> Self {
+            Self {
+                private_type_of_number,
+                private_number_digits,
+            }
+        }
+    }
+    #[doc = "  valid only for called party number at the"]
+    #[doc = "  outgoing access, network substitutes"]
+    #[doc = "  appropriate number"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PrivateTypeOfNumber {
+        unknown = 0,
+        level2RegionalNumber = 1,
+        level1RegionalNumber = 2,
+        pTNSpecificNumber = 3,
+        localNumber = 4,
+        abbreviatedNumber = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PublicPartyNumber {
+        #[rasn(identifier = "publicTypeOfNumber")]
+        pub public_type_of_number: PublicTypeOfNumber,
+        #[rasn(identifier = "publicNumberDigits")]
+        pub public_number_digits: NumberDigits,
+    }
+    impl PublicPartyNumber {
+        pub fn new(
+            public_type_of_number: PublicTypeOfNumber,
+            public_number_digits: NumberDigits,
+        ) -> Self {
+            Self {
+                public_type_of_number,
+                public_number_digits,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PublicTypeOfNumber {
+        unknown = 0,
+        internationalNumber = 1,
+        nationalNumber = 2,
+        networkSpecificNumber = 3,
+        subscriberNumber = 4,
+        abbreviatedNumber = 6,
+    }
+    #[doc = "  coded according to user requirements. Some"]
+    #[doc = "  networks may limit the subaddress value to some"]
+    #[doc = "  other length, e.g. 4 octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ScreeningIndicator {
+        userProvidedNotScreened = 0,
+        userProvidedVerifiedAndPassed = 1,
+        userProvidedVerifiedAndFailed = 2,
+        networkProvided = 3,
+    }
+    #[doc = "  specified according to ITU-T Recommendation X.213. Some networks"]
+    #[doc = "  may limit the subaddress value to some other"]
+    #[doc = "  length, e.g. 4 octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=20"))]
+    pub struct SubaddressInformation(pub OctetString);
+    #[doc = "  according to ITU-T Recommendation X.213"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserSpecifiedSubaddress {
+        #[rasn(identifier = "subaddressInformation")]
+        pub subaddress_information: SubaddressInformation,
+        #[rasn(identifier = "oddCountIndicator")]
+        pub odd_count_indicator: Option<bool>,
+    }
+    impl UserSpecifiedSubaddress {
+        pub fn new(
+            subaddress_information: SubaddressInformation,
+            odd_count_indicator: Option<bool>,
+        ) -> Self {
+            Self {
+                subaddress_information,
+                odd_count_indicator,
+            }
+        }
+    }
+}

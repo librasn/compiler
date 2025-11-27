@@ -1,0 +1,125 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q822_1994_Q822-PM-ASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod q822_pm_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::attribute_asn1_module::{AttributeList, DEFAULT_DISCRIMINATOR_CONSTRUCT};
+    use super::cmip_1::{AttributeId, ObjectClass, ObjectInstance};
+    use super::metric_module::{SeverityIndicatingGaugeThreshold, SeverityIndicatingThreshold};
+    use super::q821_asn1_module::TimeInterval;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CounterThresholdAttributeList(pub SetOf<CounterThresholdSetting>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CounterThresholdSetting {
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: AttributeId,
+        #[rasn(identifier = "severityIndicatingThreshold")]
+        pub severity_indicating_threshold: SeverityIndicatingThreshold,
+    }
+    impl CounterThresholdSetting {
+        pub fn new(
+            attribute_id: AttributeId,
+            severity_indicating_threshold: SeverityIndicatingThreshold,
+        ) -> Self {
+            Self {
+                attribute_id,
+                severity_indicating_threshold,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ElapsedTime {
+        elapsedTime(TimeInterval),
+        notAvailable(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GaugeThresholdAttributeList(pub SetOf<GaugeThresholdSetting>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GaugeThresholdSetting {
+        #[rasn(identifier = "attributeId")]
+        pub attribute_id: AttributeId,
+        #[rasn(identifier = "severityIndicatingGaugeThreshold")]
+        pub severity_indicating_gauge_threshold: SeverityIndicatingGaugeThreshold,
+    }
+    impl GaugeThresholdSetting {
+        pub fn new(
+            attribute_id: AttributeId,
+            severity_indicating_gauge_threshold: SeverityIndicatingGaugeThreshold,
+        ) -> Self {
+            Self {
+                attribute_id,
+                severity_indicating_gauge_threshold,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HistoryRetention(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxSuppressedIntervals(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MonitoredEntityTypes(pub SetOf<ObjectClass>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumSuppressedIntervals(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PeriodEndTime(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ReportAllAttributes(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SuppressAdditionalThresholds(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SuspectIntervalFlag(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ThresholdDataInstance(pub SetOf<ObjectInstance>);
+    pub const DEFAULT_CURRENT_DATA_SUSPECT_INTERVAL_FLAG: SuspectIntervalFlag =
+        SuspectIntervalFlag(false);
+    pub const DEFAULT_REPORT_ALL_ATTRIBUTES: ReportAllAttributes = ReportAllAttributes(false);
+    pub const DEFAULT_SUPPRESS_ADDITIONAL_THRESHOLDS: SuppressAdditionalThresholds =
+        SuppressAdditionalThresholds(false);
+    pub static Q822_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q822_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q822_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 822u32, 0u32]).to_owned());
+    pub static Q822_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q822_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q822_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q822_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static Q822_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***Q822_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

@@ -1,0 +1,100 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x435_1999_EDIMUseOfDirectory.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod edimuse_of_directory {
+    extern crate alloc;
+    use super::edimsinformation_objects::{
+        EDIBodyPartType, EDIMessageTypeFieldSubField, SyntaxIdentifier, SyntaxVersion,
+    };
+    use super::edimsobject_identifiers::*;
+    use super::edimsupper_bounds::{
+        UB_EDI_ASSOCIATION_ASSIGNED_CODE, UB_EDI_CONTROLLING_AGENCY, UB_EDI_DOCUMENT_RELEASE,
+        UB_EDI_DOCUMENT_VERSION, UB_EDI_STRING_SIZE,
+    };
+    use super::information_framework::*;
+    use super::mhsdirectory_objects_and_attributes::{MHS_MESSAGE_STORE, MHS_USER, MHS_USER_AGENT};
+    use super::selected_attribute_types::{
+        DirectoryString, OBJECT_IDENTIFIER_FIRST_COMPONENT_MATCH,
+    };
+    use super::selected_object_classes::APPLICATION_ENTITY;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AssociationAssignedCode(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ControllingAgency(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DocumentRelease(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DocumentVersion(pub TeletexString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EDIProcessableDocument {
+        #[rasn(tag(context, 0), identifier = "standardVersion")]
+        pub standard_version: Option<SyntaxVersion>,
+        #[rasn(tag(context, 1), identifier = "standardSyntaxId")]
+        pub standard_syntax_id: Option<SyntaxIdentifier>,
+        #[rasn(tag(context, 2), identifier = "documentType")]
+        pub document_type: Option<EDIMessageTypeFieldSubField>,
+        #[rasn(tag(context, 3), identifier = "documentVersion")]
+        pub document_version: Option<DocumentVersion>,
+        #[rasn(tag(context, 4), identifier = "documentRelease")]
+        pub document_release: Option<DocumentRelease>,
+        #[rasn(tag(context, 5), identifier = "controllingAgency")]
+        pub controlling_agency: Option<ControllingAgency>,
+        #[rasn(tag(context, 6), identifier = "associationAssignedCode")]
+        pub association_assigned_code: Option<AssociationAssignedCode>,
+    }
+    impl EDIProcessableDocument {
+        pub fn new(
+            standard_version: Option<SyntaxVersion>,
+            standard_syntax_id: Option<SyntaxIdentifier>,
+            document_type: Option<EDIMessageTypeFieldSubField>,
+            document_version: Option<DocumentVersion>,
+            document_release: Option<DocumentRelease>,
+            controlling_agency: Option<ControllingAgency>,
+            association_assigned_code: Option<AssociationAssignedCode>,
+        ) -> Self {
+            Self {
+                standard_version,
+                standard_syntax_id,
+                document_type,
+                document_version,
+                document_release,
+                controlling_agency,
+                association_assigned_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EDIUserCapability {
+        #[rasn(tag(context, 0), identifier = "edi-bodypart-type")]
+        pub edi_bodypart_type: Option<EDIBodyPartType>,
+        #[rasn(tag(context, 1), identifier = "edi-processable-document")]
+        pub edi_processable_document: Option<EDIProcessableDocument>,
+    }
+    impl EDIUserCapability {
+        pub fn new(
+            edi_bodypart_type: Option<EDIBodyPartType>,
+            edi_processable_document: Option<EDIProcessableDocument>,
+        ) -> Self {
+            Self {
+                edi_bodypart_type,
+                edi_processable_document,
+            }
+        }
+    }
+}

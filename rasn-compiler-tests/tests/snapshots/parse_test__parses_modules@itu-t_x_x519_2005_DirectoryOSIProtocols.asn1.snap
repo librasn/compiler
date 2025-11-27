@@ -1,0 +1,116 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x519_2005_DirectoryOSIProtocols.asn1
+---
+Warnings:
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+SyntaxMismatch in ASN grammar: Syntax mismatch while resolving information object.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OSI-PDU of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod directory_osiprotocols {
+    extern crate alloc;
+    use super::common_protocol_specification::*;
+    use super::directory_abstract_service::{
+        ABANDON, ADD_ENTRY, COMPARE, DIRECTORY_BIND, LIST, MODIFY_DN, MODIFY_ENTRY, READ,
+        REMOVE_ENTRY, SEARCH,
+    };
+    use super::directory_shadow_abstract_service::{
+        COORDINATE_SHADOW_UPDATE, D_SASHADOW_BIND, REQUEST_SHADOW_UPDATE, UPDATE_SHADOW,
+    };
+    use super::distributed_operations::{
+        CHAINED_ABANDON, CHAINED_ADD_ENTRY, CHAINED_COMPARE, CHAINED_LIST, CHAINED_MODIFY_DN,
+        CHAINED_MODIFY_ENTRY, CHAINED_READ, CHAINED_REMOVE_ENTRY, CHAINED_SEARCH, D_SABIND,
+    };
+    use super::operational_binding_management::{
+        D_SAOPERATIONAL_BINDING_MANAGEMENT_BIND, ESTABLISH_OPERATIONAL_BINDING,
+        MODIFY_OPERATIONAL_BINDING, TERMINATE_OPERATIONAL_BINDING,
+    };
+    use super::osiprotocol_specifications::*;
+    use super::useful_definitions::{
+        COMMON_PROTOCOL_SPECIFICATION, DIRECTORY_ABSTRACT_SERVICE,
+        DIRECTORY_SHADOW_ABSTRACT_SERVICE, DISTRIBUTED_OPERATIONS, ID_AC, ID_AS, ID_IDM,
+        I_DMPROTOCOL_SPECIFICATION, OP_BINDING_MANAGEMENT, O_SIPROTOCOL_SPECIFICATION,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " OSI protocols"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DAP-OSI-PDUs")]
+    pub struct DAPOSIPDUs(pub OSIPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DOP-OSI-PDUs")]
+    pub struct DOPOSIPDUs(pub OSIPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "DSP-OSI-PDUs")]
+    pub struct DSPOSIPDUs(pub OSIPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "ShadowConsumerInitiatedAsynchronousDISP-OSI-PDUs"
+    )]
+    pub struct ShadowConsumerInitiatedAsynchronousDISPOSIPDUs(pub OSIPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "ShadowConsumerInitiatedDISP-OSI-PDUs")]
+    pub struct ShadowConsumerInitiatedDISPOSIPDUs(pub OSIPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "ShadowSupplierInitiatedAsynchronousDISP-OSI-PDUs"
+    )]
+    pub struct ShadowSupplierInitiatedAsynchronousDISPOSIPDUs(pub OSIPDU);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "ShadowSupplierInitiatedDISP-OSI-PDUs")]
+    pub struct ShadowSupplierInitiatedDISPOSIPDUs(pub OSIPDU);
+    #[doc = " application context object identifiers"]
+    pub static ID_AC_DIRECTORY_ACCESS_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AC_DIRECTORY_OPERATIONAL_BINDING_MANAGEMENT_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AC_DIRECTORY_SYSTEM_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_AC_SHADOW_CONSUMER_INITIATED_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AC_SHADOW_CONSUMER_INITIATED_ASYNCHRONOUS_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_AC_SHADOW_SUPPLIER_INITIATED_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[5u32]].concat()).unwrap().to_owned());
+    #[doc = " id-ac-reliableShadowSupplierInitiatedAC\t\t\t\t\t\tOBJECT IDENTIFIER\t::=\t{id-ac 6}"]
+    #[doc = " id-ac-reliableShadowConsumerInitiatedAC\t\t\t\t\t\tOBJECT IDENTIFIER\t::=\t{id-ac 7}"]
+    pub static ID_AC_SHADOW_SUPPLIER_INITIATED_ASYNCHRONOUS_AC: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AC, &[8u32]].concat()).unwrap().to_owned());
+    #[doc = " id-as-directoryReliableShadowAS\t\t\t\tOBJECT IDENTIFIER\t::=\t{id-as 5}"]
+    #[doc = " id-as-reliableShadowBindingAS\t\t\t\t\tOBJECT IDENTIFIER\t::=\t{id-as 6}"]
+    #[doc = " id-as-2or3se\t\t\t\t\t\t\t\t\tOBJECT IDENTIFIER\t::=\t{id-as 7}"]
+    pub static ID_ACSE_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 2u32, 1u32, 0u32, 1u32]).to_owned());
+    #[doc = "  abstract syntaxes"]
+    pub static ID_AS_DIRECTORY_ACCESS_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_DIRECTORY_OPERATIONAL_BINDING_MANAGEMENT_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_DIRECTORY_SHADOW_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AS_DIRECTORY_SYSTEM_AS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AS, &[2u32]].concat()).unwrap().to_owned());
+}

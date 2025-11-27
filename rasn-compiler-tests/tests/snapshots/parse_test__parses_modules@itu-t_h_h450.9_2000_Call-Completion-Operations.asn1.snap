@@ -1,0 +1,139 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.9_2000_Call-Completion-Operations.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_completion_operations {
+    extern crate alloc;
+    use super::addressing_data_elements::EndpointAddress;
+    use super::call_hold_operations::{MixedExtension, UNDEFINED};
+    use super::h323_messages::CallIdentifier;
+    use super::h4501_general_error_list::SUPPLEMENTARY_SERVICE_INTERACTION_NOT_ALLOWED;
+    use super::manufacturer_specific_service_extension_definition::*;
+    use super::message_waiting_indication_operations::BasicService;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CcArg {
+        shortArg(CcShortArg),
+        longArg(CcLongArg),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CcLongArg {
+        #[rasn(identifier = "numberA")]
+        pub number_a: Option<EndpointAddress>,
+        #[rasn(identifier = "numberB")]
+        pub number_b: Option<EndpointAddress>,
+        #[rasn(identifier = "ccIdentifier")]
+        pub cc_identifier: Option<CallIdentifier>,
+        pub service: Option<BasicService>,
+        #[rasn(size("0..=255"))]
+        pub extension: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CcLongArg {
+        pub fn new(
+            number_a: Option<EndpointAddress>,
+            number_b: Option<EndpointAddress>,
+            cc_identifier: Option<CallIdentifier>,
+            service: Option<BasicService>,
+            extension: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                number_a,
+                number_b,
+                cc_identifier,
+                service,
+                extension,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CcRequestArg {
+        #[rasn(identifier = "numberA")]
+        pub number_a: EndpointAddress,
+        #[rasn(identifier = "numberB")]
+        pub number_b: EndpointAddress,
+        #[rasn(identifier = "ccIdentifier")]
+        pub cc_identifier: Option<CallIdentifier>,
+        pub service: BasicService,
+        #[rasn(identifier = "can-retain-service")]
+        pub can_retain_service: bool,
+        #[rasn(identifier = "retain-sig-connection")]
+        pub retain_sig_connection: Option<bool>,
+        #[rasn(size("0..=255"))]
+        pub extension: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CcRequestArg {
+        pub fn new(
+            number_a: EndpointAddress,
+            number_b: EndpointAddress,
+            cc_identifier: Option<CallIdentifier>,
+            service: BasicService,
+            can_retain_service: bool,
+            retain_sig_connection: Option<bool>,
+            extension: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                number_a,
+                number_b,
+                cc_identifier,
+                service,
+                can_retain_service,
+                retain_sig_connection,
+                extension,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CcRequestRes {
+        #[rasn(identifier = "retain-service")]
+        pub retain_service: bool,
+        #[rasn(size("0..=255"))]
+        pub extension: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CcRequestRes {
+        pub fn new(retain_service: bool, extension: Option<SequenceOf<MixedExtension>>) -> Self {
+            Self {
+                retain_service,
+                extension,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CcShortArg {
+        #[rasn(identifier = "ccIdentifier")]
+        pub cc_identifier: Option<CallIdentifier>,
+        #[rasn(size("0..=255"))]
+        pub extension: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CcShortArg {
+        pub fn new(
+            cc_identifier: Option<CallIdentifier>,
+            extension: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                cc_identifier,
+                extension,
+            }
+        }
+    }
+}

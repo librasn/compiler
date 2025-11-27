@@ -8,39 +8,50 @@ pub fn decode_hex(s: &str) -> Result<Vec<u8>, ParseIntError> {
 
 #[macro_export]
 macro_rules! e2e_pdu {
-    ($suite:ident, $asn1:literal, $expected:literal) => {
-        #[test]
-        fn $suite() {
-            rasn_compiler_derive::asn1!($asn1);
-            assert_eq!(
-                rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new()
-                    .add_asn_literal(&format!("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END", $asn1))
-                    .compile_to_string()
-                    .unwrap()
-                    .generated
-                    .replace(|c: char| c.is_whitespace(), "")
-                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused,clippy::too_many_arguments)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;userasn::prelude::*;usestd::sync::LazyLock;", ""),
-                format!("{}}}", $expected)
-                    .to_string()
-                    .replace(|c: char| c.is_whitespace(), ""),
-            )
-        }
+    ($suite:ident, $asn1:literal) => {
+        e2e_pdu!($suite, rasn_compiler::prelude::RasnConfig::default(), $asn1);
     };
-    ($suite:ident, $config:expr, $asn1:literal, $expected:literal) => {
+    ($suite:ident, $config:expr, $asn1:literal) => {
         #[test]
         fn $suite() {
             rasn_compiler_derive::asn1!($asn1);
-            assert_eq!(
-                rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new_with_config($config)
-                    .add_asn_literal(&format!("TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END", $asn1))
-                    .compile_to_string()
-                    .unwrap()
-                    .generated
-                    .replace(|c: char| c.is_whitespace(), "")
-                    .replace("#[allow(non_camel_case_types,non_snake_case,non_upper_case_globals,unused,clippy::too_many_arguments)]pubmodtest_module{externcratealloc;usecore::borrow::Borrow;userasn::prelude::*;usestd::sync::LazyLock;", ""),
-                format!("{}}}", $expected)
-                    .to_string()
-                    .replace(|c: char| c.is_whitespace(), ""),
+
+            let input = format!(
+                "TestModule DEFINITIONS AUTOMATIC TAGS::= BEGIN {} END",
+                $asn1
+            );
+
+            let result = rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new_with_config(
+                $config,
+            )
+            .add_asn_literal(&input)
+            .compile_to_string();
+
+            let output = match result {
+                Ok(result) => {
+                    let mut output = String::new();
+                    if !result.warnings.is_empty() {
+                        output.push_str("Warnings:\n");
+                        for warning in &result.warnings {
+                            output.push_str(&warning.contextualize(&input));
+                            output.push('\n');
+                        }
+                        output.push_str("\n\n");
+                    }
+                    output.push_str("Generated:\n");
+                    output.push_str(result.generated.trim());
+                    output.push('\n');
+                    output
+                }
+                Err(err) => err.contextualize(&input),
+            };
+
+            insta::with_settings!(
+                {
+                    description => $asn1,
+                    omit_expression => true,
+                },
+                { insta::assert_snapshot!(output); }
             )
         }
     };

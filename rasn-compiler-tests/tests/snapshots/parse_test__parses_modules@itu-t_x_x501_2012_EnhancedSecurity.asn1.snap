@@ -1,0 +1,308 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2012_EnhancedSecurity.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype HASH of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype HASH of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype HASH of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod enhanced_security {
+    extern crate alloc;
+    use super::authentication_framework::*;
+    use super::certificate_extensions::{GeneralName, KeyIdentifier};
+    use super::information_framework::*;
+    use super::useful_definitions::{
+        AUTHENTICATION_FRAMEWORK, BASIC_ACCESS_CONTROL, CERTIFICATE_EXTENSIONS, ID_AT, ID_AVC,
+        ID_MR, ID_OC, INFORMATION_FRAMEWORK,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AVIHash(pub HASH);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttribsHash(pub HASH);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeIntegrityInfo(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeIntegrityInfoContent {
+        pub scope: Scope,
+        pub signer: Option<Signer>,
+        #[rasn(identifier = "attribsHash")]
+        pub attribs_hash: AttribsHash,
+    }
+    impl AttributeIntegrityInfoContent {
+        pub fn new(scope: Scope, signer: Option<Signer>, attribs_hash: AttribsHash) -> Self {
+            Self {
+                scope,
+                signer,
+                attribs_hash,
+            }
+        }
+    }
+    #[doc = " Attribute type and value with associated context values"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeTypeValueContexts {
+        #[rasn(identifier = "type")]
+        pub r_type: Any,
+        pub value: Any,
+        #[rasn(size("1.."), identifier = "contextList")]
+        pub context_list: Option<SetOf<Context>>,
+    }
+    impl AttributeTypeValueContexts {
+        pub fn new(r_type: Any, value: Any, context_list: Option<SetOf<Context>>) -> Self {
+            Self {
+                r_type,
+                value,
+                context_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeValueIntegrityInfo(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeValueIntegrityInfoContent {
+        pub signer: Option<Signer>,
+        #[rasn(identifier = "aVIHash")]
+        pub a_vihash: AVIHash,
+    }
+    impl AttributeValueIntegrityInfoContent {
+        pub fn new(signer: Option<Signer>, a_vihash: AVIHash) -> Self {
+            Self { signer, a_vihash }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClassList(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct Clearance {
+        #[rasn(identifier = "policyId")]
+        pub policy_id: ObjectIdentifier,
+        #[rasn(default = "clearance_class_list_default", identifier = "classList")]
+        pub class_list: ClassList,
+        #[rasn(size("1.."), identifier = "securityCategories")]
+        pub security_categories: Option<SetOf<SecurityCategory>>,
+    }
+    impl Clearance {
+        pub fn new(
+            policy_id: ObjectIdentifier,
+            class_list: ClassList,
+            security_categories: Option<SetOf<SecurityCategory>>,
+        ) -> Self {
+            Self {
+                policy_id,
+                class_list,
+                security_categories,
+            }
+        }
+    }
+    fn clearance_class_list_default() -> ClassList {
+        ClassList(
+            [false, true, false, false, false, false]
+                .into_iter()
+                .collect(),
+        )
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct HashedAttributes(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct IssuerAndSerialNumber {
+        pub issuer: Name,
+        pub serial: CertificateSerialNumber,
+    }
+    impl IssuerAndSerialNumber {
+        pub fn new(issuer: Name, serial: CertificateSerialNumber) -> Self {
+            Self { issuer, serial }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PrivacyMark(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum Scope {
+        #[rasn(tag(context, 0))]
+        wholeEntry(()),
+        #[rasn(tag(context, 1))]
+        selectedTypes(SelectedTypes),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SecurityCategories(pub SetOf<SecurityCategory>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SecurityCategory {
+        #[rasn(tag(context, 0), identifier = "type")]
+        pub r_type: Any,
+        #[rasn(tag(explicit(context, 1)))]
+        pub value: Any,
+    }
+    impl SecurityCategory {
+        pub fn new(r_type: Any, value: Any) -> Self {
+            Self { r_type, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityClassification(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct SecurityLabel {
+        #[rasn(identifier = "security-policy-identifier")]
+        pub security_policy_identifier: Option<SecurityPolicyIdentifier>,
+        #[rasn(identifier = "security-classification")]
+        pub security_classification: Option<SecurityClassification>,
+        #[rasn(identifier = "privacy-mark")]
+        pub privacy_mark: Option<PrivacyMark>,
+        #[rasn(identifier = "security-categories")]
+        pub security_categories: Option<SecurityCategories>,
+    }
+    impl SecurityLabel {
+        pub fn new(
+            security_policy_identifier: Option<SecurityPolicyIdentifier>,
+            security_classification: Option<SecurityClassification>,
+            privacy_mark: Option<PrivacyMark>,
+            security_categories: Option<SecurityCategories>,
+        ) -> Self {
+            Self {
+                security_policy_identifier,
+                security_classification,
+                privacy_mark,
+                security_categories,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityPolicyIdentifier(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SelectedTypes(pub SequenceOf<AttributeType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignedSecurityLabel(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SignedSecurityLabelContent {
+        #[rasn(value("0.."), identifier = "attHash")]
+        pub att_hash: HASH,
+        pub issuer: Option<Name>,
+        #[rasn(identifier = "keyIdentifier")]
+        pub key_identifier: Option<KeyIdentifier>,
+        #[rasn(identifier = "securityLabel")]
+        pub security_label: SecurityLabel,
+    }
+    impl SignedSecurityLabelContent {
+        pub fn new(
+            att_hash: HASH,
+            issuer: Option<Name>,
+            key_identifier: Option<KeyIdentifier>,
+            security_label: SecurityLabel,
+        ) -> Self {
+            Self {
+                att_hash,
+                issuer,
+                key_identifier,
+                security_label,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum Signer {
+        #[rasn(tag(explicit(context, 0)))]
+        thisEntry(ThisEntry),
+        #[rasn(tag(context, 1))]
+        thirdParty(SpecificallyIdentified),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SpecificallyIdentified {
+        pub name: GeneralName,
+        pub issuer: Option<GeneralName>,
+        pub serial: Option<CertificateSerialNumber>,
+    }
+    impl SpecificallyIdentified {
+        pub fn new(
+            name: GeneralName,
+            issuer: Option<GeneralName>,
+            serial: Option<CertificateSerialNumber>,
+        ) -> Self {
+            Self {
+                name,
+                issuer,
+                serial,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ThisEntry {
+        onlyOne(()),
+        specific(IssuerAndSerialNumber),
+    }
+    #[doc = " id-at-defaultDirQop                    OBJECT IDENTIFIER ::= {id-at 56}"]
+    pub static ID_AT_ATTRIBUTE_INTEGRITY_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[57u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " attributes"]
+    pub static ID_AT_CLEARANCE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[55u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_ATTRIBUTE_VALUE_INTEGRITY_INFO_CONTEXT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AVC, &[4u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-confKeyInfo                      OBJECT IDENTIFIER ::= {id-at 60}"]
+    #[doc = " matching rules"]
+    #[doc = " id-mr-readerAndKeyIDMatch              OBJECT IDENTIFIER ::= {id-mr 43}"]
+    #[doc = " contexts"]
+    pub static ID_AVC_ATTRIBUTE_VALUE_SECURITY_LABEL_CONTEXT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AVC, &[3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " Object identifier assignments"]
+    #[doc = " object classes"]
+    pub static ID_OC_INTEGRITY_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_OC, &[40u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

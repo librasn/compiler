@@ -1,0 +1,1511 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h501_2002_H501-MESSAGES.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to link value with 'EnumeratedParameter'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod h501_messages {
+    extern crate alloc;
+    use super::h235_security_messages::{AuthenticationMechanism, ClearToken, TimeStamp};
+    use super::h323_messages::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AccessConfirmation {
+        pub templates: SequenceOf<AddressTemplate>,
+        #[rasn(identifier = "partialResponse")]
+        pub partial_response: bool,
+        #[rasn(extension_addition, identifier = "supportedProtocols")]
+        pub supported_protocols: Option<SequenceOf<SupportedProtocols>>,
+        #[rasn(extension_addition, identifier = "serviceControl")]
+        pub service_control: Option<SequenceOf<ServiceControlSession>>,
+    }
+    impl AccessConfirmation {
+        pub fn new(
+            templates: SequenceOf<AddressTemplate>,
+            partial_response: bool,
+            supported_protocols: Option<SequenceOf<SupportedProtocols>>,
+            service_control: Option<SequenceOf<ServiceControlSession>>,
+        ) -> Self {
+            Self {
+                templates,
+                partial_response,
+                supported_protocols,
+                service_control,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AccessRejection {
+        pub reason: AccessRejectionReason,
+        #[rasn(extension_addition, identifier = "serviceControl")]
+        pub service_control: Option<SequenceOf<ServiceControlSession>>,
+    }
+    impl AccessRejection {
+        pub fn new(
+            reason: AccessRejectionReason,
+            service_control: Option<SequenceOf<ServiceControlSession>>,
+        ) -> Self {
+            Self {
+                reason,
+                service_control,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AccessRejectionReason {
+        noMatch(()),
+        packetSizeExceeded(()),
+        security(()),
+        hopCountExceeded(()),
+        needCallInformation(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        destinationUnavailable(()),
+        #[rasn(extension_addition)]
+        aliasesInconsistent(()),
+        #[rasn(extension_addition)]
+        resourceUnavailable(()),
+        #[rasn(extension_addition)]
+        incompleteAddress(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+        #[rasn(extension_addition)]
+        usageUnavailable(()),
+        #[rasn(extension_addition)]
+        cannotSupportUsageSpec(()),
+        #[rasn(extension_addition)]
+        unknownUsageSendTo(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AccessRequest {
+        #[rasn(identifier = "destinationInfo")]
+        pub destination_info: PartyInformation,
+        #[rasn(identifier = "sourceInfo")]
+        pub source_info: Option<PartyInformation>,
+        #[rasn(identifier = "callInfo")]
+        pub call_info: Option<CallInformation>,
+        #[rasn(identifier = "usageSpec")]
+        pub usage_spec: Option<UsageSpecification>,
+        #[rasn(extension_addition, identifier = "desiredProtocols")]
+        pub desired_protocols: Option<SequenceOf<SupportedProtocols>>,
+    }
+    impl AccessRequest {
+        pub fn new(
+            destination_info: PartyInformation,
+            source_info: Option<PartyInformation>,
+            call_info: Option<CallInformation>,
+            usage_spec: Option<UsageSpecification>,
+            desired_protocols: Option<SequenceOf<SupportedProtocols>>,
+        ) -> Self {
+            Self {
+                destination_info,
+                source_info,
+                call_info,
+                usage_spec,
+                desired_protocols,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AccessToken {
+        token(ClearToken),
+        cryptoToken(CryptoH323Token),
+        #[rasn(extension_addition)]
+        genericData(GenericData),
+    }
+    #[doc = ""]
+    #[doc = " structures common to multiple messages"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AddressTemplate {
+        pub pattern: SequenceOf<Pattern>,
+        #[rasn(identifier = "routeInfo")]
+        pub route_info: SequenceOf<RouteInformation>,
+        #[rasn(value("1..=4294967295"), identifier = "timeToLive")]
+        pub time_to_live: u32,
+        #[rasn(extension_addition, identifier = "supportedProtocols")]
+        pub supported_protocols: Option<SequenceOf<SupportedProtocols>>,
+        #[rasn(extension_addition, identifier = "featureSet")]
+        pub feature_set: Option<FeatureSet>,
+    }
+    impl AddressTemplate {
+        pub fn new(
+            pattern: SequenceOf<Pattern>,
+            route_info: SequenceOf<RouteInformation>,
+            time_to_live: u32,
+            supported_protocols: Option<SequenceOf<SupportedProtocols>>,
+            feature_set: Option<FeatureSet>,
+        ) -> Self {
+            Self {
+                pattern,
+                route_info,
+                time_to_live,
+                supported_protocols,
+                feature_set,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AlternatePE {
+        #[rasn(identifier = "contactAddress")]
+        pub contact_address: AliasAddress,
+        #[rasn(value("1..=127"))]
+        pub priority: u8,
+        #[rasn(identifier = "elementIdentifier")]
+        pub element_identifier: Option<ElementIdentifier>,
+    }
+    impl AlternatePE {
+        pub fn new(
+            contact_address: AliasAddress,
+            priority: u8,
+            element_identifier: Option<ElementIdentifier>,
+        ) -> Self {
+            Self {
+                contact_address,
+                priority,
+                element_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AlternatePEInfo {
+        #[rasn(identifier = "alternatePE")]
+        pub alternate_pe: SequenceOf<AlternatePE>,
+        #[rasn(identifier = "alternateIsPermanent")]
+        pub alternate_is_permanent: bool,
+    }
+    impl AlternatePEInfo {
+        pub fn new(alternate_pe: SequenceOf<AlternatePE>, alternate_is_permanent: bool) -> Self {
+            Self {
+                alternate_pe,
+                alternate_is_permanent,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationMessage(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AuthenticationConfirmation {}
+    impl AuthenticationConfirmation {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for AuthenticationConfirmation {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AuthenticationRejection {
+        pub reason: AuthenticationRejectionReason,
+    }
+    impl AuthenticationRejection {
+        pub fn new(reason: AuthenticationRejectionReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AuthenticationRejectionReason {
+        security(()),
+        hopCountExceeded(()),
+        noServiceRelationship(()),
+        undefined(()),
+        neededFeature(()),
+        genericDataReason(()),
+        unknownServiceID(()),
+        securityWrongSyncTime(()),
+        securityReplay(()),
+        securityWrongGeneralID(()),
+        securityWrongSendersID(()),
+        securityIntegrityFailed(()),
+        securityWrongOID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AuthenticationRequest {
+        #[rasn(identifier = "applicationMessage")]
+        pub application_message: ApplicationMessage,
+    }
+    impl AuthenticationRequest {
+        pub fn new(application_message: ApplicationMessage) -> Self {
+            Self {
+                application_message,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CallInformation {
+        #[rasn(identifier = "callIdentifier")]
+        pub call_identifier: CallIdentifier,
+        #[rasn(identifier = "conferenceID")]
+        pub conference_id: ConferenceIdentifier,
+        #[rasn(extension_addition, identifier = "circuitID")]
+        pub circuit_id: Option<CircuitInfo>,
+    }
+    impl CallInformation {
+        pub fn new(
+            call_identifier: CallIdentifier,
+            conference_id: ConferenceIdentifier,
+            circuit_id: Option<CircuitInfo>,
+        ) -> Self {
+            Self {
+                call_identifier,
+                conference_id,
+                circuit_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ContactInformation {
+        #[rasn(identifier = "transportAddress")]
+        pub transport_address: AliasAddress,
+        #[rasn(value("0..=127"))]
+        pub priority: u8,
+        #[rasn(identifier = "transportQoS")]
+        pub transport_qo_s: Option<TransportQOS>,
+        pub security: Option<SequenceOf<SecurityMode>>,
+        #[rasn(identifier = "accessTokens")]
+        pub access_tokens: Option<SequenceOf<AccessToken>>,
+        #[rasn(extension_addition, identifier = "multipleCalls")]
+        pub multiple_calls: Option<bool>,
+        #[rasn(extension_addition, identifier = "featureSet")]
+        pub feature_set: Option<FeatureSet>,
+        #[rasn(extension_addition, identifier = "circuitID")]
+        pub circuit_id: Option<CircuitInfo>,
+        #[rasn(extension_addition, identifier = "supportedCircuits")]
+        pub supported_circuits: Option<SequenceOf<CircuitIdentifier>>,
+    }
+    impl ContactInformation {
+        pub fn new(
+            transport_address: AliasAddress,
+            priority: u8,
+            transport_qo_s: Option<TransportQOS>,
+            security: Option<SequenceOf<SecurityMode>>,
+            access_tokens: Option<SequenceOf<AccessToken>>,
+            multiple_calls: Option<bool>,
+            feature_set: Option<FeatureSet>,
+            circuit_id: Option<CircuitInfo>,
+            supported_circuits: Option<SequenceOf<CircuitIdentifier>>,
+        ) -> Self {
+            Self {
+                transport_address,
+                priority,
+                transport_qo_s,
+                security,
+                access_tokens,
+                multiple_calls,
+                feature_set,
+                circuit_id,
+                supported_circuits,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Descriptor {
+        #[rasn(identifier = "descriptorInfo")]
+        pub descriptor_info: DescriptorInfo,
+        pub templates: SequenceOf<AddressTemplate>,
+        #[rasn(identifier = "gatekeeperID")]
+        pub gatekeeper_id: Option<GatekeeperIdentifier>,
+    }
+    impl Descriptor {
+        pub fn new(
+            descriptor_info: DescriptorInfo,
+            templates: SequenceOf<AddressTemplate>,
+            gatekeeper_id: Option<GatekeeperIdentifier>,
+        ) -> Self {
+            Self {
+                descriptor_info,
+                templates,
+                gatekeeper_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorConfirmation {
+        pub descriptor: SequenceOf<Descriptor>,
+    }
+    impl DescriptorConfirmation {
+        pub fn new(descriptor: SequenceOf<Descriptor>) -> Self {
+            Self { descriptor }
+        }
+    }
+    #[doc = "\tshall be set to"]
+    #[doc = "\t{itu-t(0) recommendation(0) h(8) h-225-0(2250) annex(1) g(7)"]
+    #[doc = "\tversion(0) 2} in field annexGversion;"]
+    #[doc = "\t{itu-t(0) recommendation(0) h(8) 501 version(0) 1}"]
+    #[doc = "\tin field version"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DescriptorID(pub GloballyUniqueID);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorIDConfirmation {
+        #[rasn(identifier = "descriptorInfo")]
+        pub descriptor_info: SequenceOf<DescriptorInfo>,
+    }
+    impl DescriptorIDConfirmation {
+        pub fn new(descriptor_info: SequenceOf<DescriptorInfo>) -> Self {
+            Self { descriptor_info }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorIDRejection {
+        pub reason: DescriptorIDRejectionReason,
+    }
+    impl DescriptorIDRejection {
+        pub fn new(reason: DescriptorIDRejectionReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DescriptorIDRejectionReason {
+        noDescriptors(()),
+        security(()),
+        hopCountExceeded(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorIDRequest {}
+    impl DescriptorIDRequest {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for DescriptorIDRequest {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorInfo {
+        #[rasn(identifier = "descriptorID")]
+        pub descriptor_id: DescriptorID,
+        #[rasn(identifier = "lastChanged")]
+        pub last_changed: GlobalTimeStamp,
+    }
+    impl DescriptorInfo {
+        pub fn new(descriptor_id: DescriptorID, last_changed: GlobalTimeStamp) -> Self {
+            Self {
+                descriptor_id,
+                last_changed,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorRejection {
+        pub reason: DescriptorRejectionReason,
+        #[rasn(identifier = "descriptorID")]
+        pub descriptor_id: Option<DescriptorID>,
+    }
+    impl DescriptorRejection {
+        pub fn new(reason: DescriptorRejectionReason, descriptor_id: Option<DescriptorID>) -> Self {
+            Self {
+                reason,
+                descriptor_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum DescriptorRejectionReason {
+        packetSizeExceeded(()),
+        illegalID(()),
+        security(()),
+        hopCountExceeded(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorRequest {
+        #[rasn(identifier = "descriptorID")]
+        pub descriptor_id: SequenceOf<DescriptorID>,
+    }
+    impl DescriptorRequest {
+        pub fn new(descriptor_id: SequenceOf<DescriptorID>) -> Self {
+            Self { descriptor_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorUpdate {
+        pub sender: AliasAddress,
+        #[rasn(identifier = "updateInfo")]
+        pub update_info: SequenceOf<UpdateInformation>,
+    }
+    impl DescriptorUpdate {
+        pub fn new(sender: AliasAddress, update_info: SequenceOf<UpdateInformation>) -> Self {
+            Self {
+                sender,
+                update_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct DescriptorUpdateAck {}
+    impl DescriptorUpdateAck {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for DescriptorUpdateAck {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=128"))]
+    pub struct ElementIdentifier(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("14"))]
+    pub struct GlobalTimeStamp(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Message {
+        pub body: MessageBody,
+        pub common: MessageCommonInfo,
+    }
+    impl Message {
+        pub fn new(body: MessageBody, common: MessageCommonInfo) -> Self {
+            Self { body, common }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum MessageBody {
+        serviceRequest(ServiceRequest),
+        serviceConfirmation(ServiceConfirmation),
+        serviceRejection(ServiceRejection),
+        serviceRelease(ServiceRelease),
+        descriptorRequest(DescriptorRequest),
+        descriptorConfirmation(DescriptorConfirmation),
+        descriptorRejection(DescriptorRejection),
+        descriptorIDRequest(DescriptorIDRequest),
+        descriptorIDConfirmation(DescriptorIDConfirmation),
+        descriptorIDRejection(DescriptorIDRejection),
+        descriptorUpdate(DescriptorUpdate),
+        descriptorUpdateAck(DescriptorUpdateAck),
+        accessRequest(AccessRequest),
+        accessConfirmation(AccessConfirmation),
+        accessRejection(AccessRejection),
+        requestInProgress(RequestInProgress),
+        nonStandardRequest(NonStandardRequest),
+        nonStandardConfirmation(NonStandardConfirmation),
+        nonStandardRejection(NonStandardRejection),
+        unknownMessageResponse(UnknownMessageResponse),
+        usageRequest(UsageRequest),
+        usageConfirmation(UsageConfirmation),
+        usageIndication(UsageIndication),
+        usageIndicationConfirmation(UsageIndicationConfirmation),
+        usageIndicationRejection(UsageIndicationRejection),
+        usageRejection(UsageRejection),
+        validationRequest(ValidationRequest),
+        validationConfirmation(ValidationConfirmation),
+        validationRejection(ValidationRejection),
+        #[rasn(extension_addition)]
+        authenticationRequest(AuthenticationRequest),
+        #[rasn(extension_addition)]
+        authenticationConfirmation(AuthenticationConfirmation),
+        #[rasn(extension_addition)]
+        authenticationRejection(AuthenticationRejection),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MessageCommonInfo {
+        #[rasn(value("0..=65535"), identifier = "sequenceNumber")]
+        pub sequence_number: u16,
+        #[rasn(identifier = "annexGversion")]
+        pub annex_gversion: ProtocolVersion,
+        #[rasn(value("1..=255"), identifier = "hopCount")]
+        pub hop_count: u8,
+        #[rasn(identifier = "replyAddress")]
+        pub reply_address: Option<SequenceOf<TransportAddress>>,
+        #[rasn(identifier = "integrityCheckValue")]
+        pub integrity_check_value: Option<ICV>,
+        pub tokens: Option<SequenceOf<ClearToken>>,
+        #[rasn(identifier = "cryptoTokens")]
+        pub crypto_tokens: Option<SequenceOf<CryptoH323Token>>,
+        #[rasn(identifier = "nonStandard")]
+        pub non_standard: Option<SequenceOf<NonStandardParameter>>,
+        #[rasn(extension_addition, identifier = "serviceID")]
+        pub service_id: Option<ServiceID>,
+        #[rasn(extension_addition, identifier = "genericData")]
+        pub generic_data: Option<SequenceOf<GenericData>>,
+        #[rasn(extension_addition, identifier = "featureSet")]
+        pub feature_set: Option<FeatureSet>,
+        #[rasn(extension_addition)]
+        pub version: ProtocolVersion,
+    }
+    impl MessageCommonInfo {
+        pub fn new(
+            sequence_number: u16,
+            annex_gversion: ProtocolVersion,
+            hop_count: u8,
+            reply_address: Option<SequenceOf<TransportAddress>>,
+            integrity_check_value: Option<ICV>,
+            tokens: Option<SequenceOf<ClearToken>>,
+            crypto_tokens: Option<SequenceOf<CryptoH323Token>>,
+            non_standard: Option<SequenceOf<NonStandardParameter>>,
+            service_id: Option<ServiceID>,
+            generic_data: Option<SequenceOf<GenericData>>,
+            feature_set: Option<FeatureSet>,
+            version: ProtocolVersion,
+        ) -> Self {
+            Self {
+                sequence_number,
+                annex_gversion,
+                hop_count,
+                reply_address,
+                integrity_check_value,
+                tokens,
+                crypto_tokens,
+                non_standard,
+                service_id,
+                generic_data,
+                feature_set,
+                version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardConfirmation {}
+    impl NonStandardConfirmation {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for NonStandardConfirmation {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardRejection {
+        pub reason: NonStandardRejectionReason,
+    }
+    impl NonStandardRejection {
+        pub fn new(reason: NonStandardRejectionReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NonStandardRejectionReason {
+        notSupported(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardRequest {}
+    impl NonStandardRequest {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for NonStandardRequest {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PartyInformation {
+        #[rasn(identifier = "logicalAddresses")]
+        pub logical_addresses: SequenceOf<AliasAddress>,
+        #[rasn(identifier = "domainIdentifier")]
+        pub domain_identifier: Option<AliasAddress>,
+        #[rasn(identifier = "transportAddress")]
+        pub transport_address: Option<AliasAddress>,
+        #[rasn(identifier = "endpointType")]
+        pub endpoint_type: Option<EndpointType>,
+        #[rasn(identifier = "userInfo")]
+        pub user_info: Option<UserInformation>,
+        #[rasn(identifier = "timeZone")]
+        pub time_zone: Option<TimeZone>,
+    }
+    impl PartyInformation {
+        pub fn new(
+            logical_addresses: SequenceOf<AliasAddress>,
+            domain_identifier: Option<AliasAddress>,
+            transport_address: Option<AliasAddress>,
+            endpoint_type: Option<EndpointType>,
+            user_info: Option<UserInformation>,
+            time_zone: Option<TimeZone>,
+        ) -> Self {
+            Self {
+                logical_addresses,
+                domain_identifier,
+                transport_address,
+                endpoint_type,
+                user_info,
+                time_zone,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PatternRange {
+        #[rasn(identifier = "startOfRange")]
+        pub start_of_range: PartyNumber,
+        #[rasn(identifier = "endOfRange")]
+        pub end_of_range: PartyNumber,
+    }
+    impl PatternRange {
+        pub fn new(start_of_range: PartyNumber, end_of_range: PartyNumber) -> Self {
+            Self {
+                start_of_range,
+                end_of_range,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Pattern {
+        specific(AliasAddress),
+        wildcard(AliasAddress),
+        range(PatternRange),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PriceElementUnits {
+        seconds(()),
+        packets(()),
+        bytes(()),
+        initial(()),
+        minimum(()),
+        maximum(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PriceElement {
+        #[rasn(value("0..=4294967295"))]
+        pub amount: u32,
+        #[rasn(value("0..=4294967295"))]
+        pub quantum: u32,
+        pub units: PriceElementUnits,
+    }
+    impl PriceElement {
+        pub fn new(amount: u32, quantum: u32, units: PriceElementUnits) -> Self {
+            Self {
+                amount,
+                quantum,
+                units,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PriceInfoSpec {
+        #[rasn(size("3"))]
+        pub currency: Ia5String,
+        #[rasn(value("-127..=127"), identifier = "currencyScale")]
+        pub currency_scale: i8,
+        #[rasn(identifier = "validFrom")]
+        pub valid_from: Option<GlobalTimeStamp>,
+        #[rasn(identifier = "validUntil")]
+        pub valid_until: Option<GlobalTimeStamp>,
+        #[rasn(size("6"), identifier = "hoursFrom")]
+        pub hours_from: Option<Ia5String>,
+        #[rasn(size("6"), identifier = "hoursUntil")]
+        pub hours_until: Option<Ia5String>,
+        #[rasn(identifier = "priceElement")]
+        pub price_element: Option<SequenceOf<PriceElement>>,
+        #[rasn(size("1..=2048"), identifier = "priceFormula")]
+        pub price_formula: Option<Ia5String>,
+    }
+    impl PriceInfoSpec {
+        pub fn new(
+            currency: Ia5String,
+            currency_scale: i8,
+            valid_from: Option<GlobalTimeStamp>,
+            valid_until: Option<GlobalTimeStamp>,
+            hours_from: Option<Ia5String>,
+            hours_until: Option<Ia5String>,
+            price_element: Option<SequenceOf<PriceElement>>,
+            price_formula: Option<Ia5String>,
+        ) -> Self {
+            Self {
+                currency,
+                currency_scale,
+                valid_from,
+                valid_until,
+                hours_from,
+                hours_until,
+                price_element,
+                price_formula,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtocolVersion(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RequestInProgress {
+        #[rasn(value("1..=65535"))]
+        pub delay: u16,
+        #[rasn(extension_addition, identifier = "serviceControl")]
+        pub service_control: Option<SequenceOf<ServiceControlSession>>,
+    }
+    impl RequestInProgress {
+        pub fn new(delay: u16, service_control: Option<SequenceOf<ServiceControlSession>>) -> Self {
+            Self {
+                delay,
+                service_control,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Role {
+        originator(()),
+        destination(()),
+        nonStandardData(NonStandardParameter),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RouteInformationMessageType {
+        sendAccessRequest(()),
+        sendSetup(()),
+        nonExistent(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RouteInformation {
+        #[rasn(identifier = "messageType")]
+        pub message_type: RouteInformationMessageType,
+        #[rasn(identifier = "callSpecific")]
+        pub call_specific: bool,
+        #[rasn(identifier = "usageSpec")]
+        pub usage_spec: Option<UsageSpecification>,
+        #[rasn(identifier = "priceInfo")]
+        pub price_info: Option<SequenceOf<PriceInfoSpec>>,
+        pub contacts: SequenceOf<ContactInformation>,
+        #[rasn(identifier = "type")]
+        pub r_type: Option<EndpointType>,
+        #[rasn(extension_addition, identifier = "featureSet")]
+        pub feature_set: Option<FeatureSet>,
+        #[rasn(extension_addition, identifier = "circuitID")]
+        pub circuit_id: Option<CircuitInfo>,
+        #[rasn(extension_addition, identifier = "supportedCircuits")]
+        pub supported_circuits: Option<SequenceOf<CircuitIdentifier>>,
+    }
+    impl RouteInformation {
+        pub fn new(
+            message_type: RouteInformationMessageType,
+            call_specific: bool,
+            usage_spec: Option<UsageSpecification>,
+            price_info: Option<SequenceOf<PriceInfoSpec>>,
+            contacts: SequenceOf<ContactInformation>,
+            r_type: Option<EndpointType>,
+            feature_set: Option<FeatureSet>,
+            circuit_id: Option<CircuitInfo>,
+            supported_circuits: Option<SequenceOf<CircuitIdentifier>>,
+        ) -> Self {
+            Self {
+                message_type,
+                call_specific,
+                usage_spec,
+                price_info,
+                contacts,
+                r_type,
+                feature_set,
+                circuit_id,
+                supported_circuits,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct SecurityMode {
+        pub authentication: Option<AuthenticationMechanism>,
+        pub integrity: Option<IntegrityMechanism>,
+        #[rasn(identifier = "algorithmOIDs")]
+        pub algorithm_oids: Option<SequenceOf<ObjectIdentifier>>,
+    }
+    impl SecurityMode {
+        pub fn new(
+            authentication: Option<AuthenticationMechanism>,
+            integrity: Option<IntegrityMechanism>,
+            algorithm_oids: Option<SequenceOf<ObjectIdentifier>>,
+        ) -> Self {
+            Self {
+                authentication,
+                integrity,
+                algorithm_oids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceConfirmation {
+        #[rasn(identifier = "elementIdentifier")]
+        pub element_identifier: ElementIdentifier,
+        #[rasn(identifier = "domainIdentifier")]
+        pub domain_identifier: AliasAddress,
+        pub alternates: Option<AlternatePEInfo>,
+        #[rasn(identifier = "securityMode")]
+        pub security_mode: Option<SecurityMode>,
+        #[rasn(value("1..=4294967295"), identifier = "timeToLive")]
+        pub time_to_live: Option<u32>,
+        #[rasn(extension_addition, identifier = "usageSpec")]
+        pub usage_spec: Option<UsageSpecification>,
+    }
+    impl ServiceConfirmation {
+        pub fn new(
+            element_identifier: ElementIdentifier,
+            domain_identifier: AliasAddress,
+            alternates: Option<AlternatePEInfo>,
+            security_mode: Option<SecurityMode>,
+            time_to_live: Option<u32>,
+            usage_spec: Option<UsageSpecification>,
+        ) -> Self {
+            Self {
+                element_identifier,
+                domain_identifier,
+                alternates,
+                security_mode,
+                time_to_live,
+                usage_spec,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceID(pub GloballyUniqueID);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceRejection {
+        pub reason: ServiceRejectionReason,
+        pub alternates: Option<AlternatePEInfo>,
+    }
+    impl ServiceRejection {
+        pub fn new(reason: ServiceRejectionReason, alternates: Option<AlternatePEInfo>) -> Self {
+            Self { reason, alternates }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ServiceRejectionReason {
+        serviceUnavailable(()),
+        serviceRedirected(()),
+        security(()),
+        #[rasn(identifier = "continue")]
+        R_continue(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+        #[rasn(extension_addition)]
+        cannotSupportUsageSpec(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        usageUnavailable(()),
+        #[rasn(extension_addition)]
+        unknownUsageSendTo(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceRelease {
+        pub reason: ServiceReleaseReason,
+        pub alternates: Option<AlternatePEInfo>,
+    }
+    impl ServiceRelease {
+        pub fn new(reason: ServiceReleaseReason, alternates: Option<AlternatePEInfo>) -> Self {
+            Self { reason, alternates }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ServiceReleaseReason {
+        outOfService(()),
+        maintenance(()),
+        terminated(()),
+        expired(()),
+    }
+    #[doc = ""]
+    #[doc = " H.501 messages"]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServiceRequest {
+        #[rasn(identifier = "elementIdentifier")]
+        pub element_identifier: Option<ElementIdentifier>,
+        #[rasn(identifier = "domainIdentifier")]
+        pub domain_identifier: Option<AliasAddress>,
+        #[rasn(identifier = "securityMode")]
+        pub security_mode: Option<SequenceOf<SecurityMode>>,
+        #[rasn(value("1..=4294967295"), identifier = "timeToLive")]
+        pub time_to_live: Option<u32>,
+        #[rasn(extension_addition, identifier = "usageSpec")]
+        pub usage_spec: Option<UsageSpecification>,
+    }
+    impl ServiceRequest {
+        pub fn new(
+            element_identifier: Option<ElementIdentifier>,
+            domain_identifier: Option<AliasAddress>,
+            security_mode: Option<SequenceOf<SecurityMode>>,
+            time_to_live: Option<u32>,
+            usage_spec: Option<UsageSpecification>,
+        ) -> Self {
+            Self {
+                element_identifier,
+                domain_identifier,
+                security_mode,
+                time_to_live,
+                usage_spec,
+            }
+        }
+    }
+    #[doc = " number of seconds relative to UTC"]
+    #[doc = " including DST if appropriate"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TerminationCause {
+        #[rasn(identifier = "releaseCompleteReason")]
+        pub release_complete_reason: ReleaseCompleteReason,
+        #[rasn(value("1..=65535"), identifier = "causeIE")]
+        pub cause_ie: Option<u16>,
+        #[rasn(identifier = "nonStandardData")]
+        pub non_standard_data: Option<NonStandardParameter>,
+    }
+    impl TerminationCause {
+        pub fn new(
+            release_complete_reason: ReleaseCompleteReason,
+            cause_ie: Option<u16>,
+            non_standard_data: Option<NonStandardParameter>,
+        ) -> Self {
+            Self {
+                release_complete_reason,
+                cause_ie,
+                non_standard_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-43200..=43200"))]
+    pub struct TimeZone(pub i32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UnknownMessageReason {
+        notUnderstood(()),
+        undefined(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UnknownMessageResponse {
+        #[rasn(identifier = "unknownMessage")]
+        pub unknown_message: OctetString,
+        pub reason: UnknownMessageReason,
+    }
+    impl UnknownMessageResponse {
+        pub fn new(unknown_message: OctetString, reason: UnknownMessageReason) -> Self {
+            Self {
+                unknown_message,
+                reason,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UpdateInformationDescriptorInfo {
+        descriptorID(DescriptorID),
+        descriptor(Descriptor),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UpdateInformationUpdateType {
+        added(()),
+        deleted(()),
+        changed(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UpdateInformation {
+        #[rasn(identifier = "descriptorInfo")]
+        pub descriptor_info: UpdateInformationDescriptorInfo,
+        #[rasn(identifier = "updateType")]
+        pub update_type: UpdateInformationUpdateType,
+    }
+    impl UpdateInformation {
+        pub fn new(
+            descriptor_info: UpdateInformationDescriptorInfo,
+            update_type: UpdateInformationUpdateType,
+        ) -> Self {
+            Self {
+                descriptor_info,
+                update_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UsageCallStatus {
+        preConnect(()),
+        callInProgress(()),
+        callEnded(()),
+        #[rasn(extension_addition)]
+        registrationLost(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageConfirmation {}
+    impl UsageConfirmation {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for UsageConfirmation {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageField {
+        pub id: ObjectIdentifier,
+        pub value: OctetString,
+    }
+    impl UsageField {
+        pub fn new(id: ObjectIdentifier, value: OctetString) -> Self {
+            Self { id, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageIndication {
+        #[rasn(identifier = "callInfo")]
+        pub call_info: CallInformation,
+        #[rasn(identifier = "accessTokens")]
+        pub access_tokens: Option<SequenceOf<AccessToken>>,
+        #[rasn(identifier = "senderRole")]
+        pub sender_role: Role,
+        #[rasn(identifier = "usageCallStatus")]
+        pub usage_call_status: UsageCallStatus,
+        #[rasn(identifier = "srcInfo")]
+        pub src_info: Option<PartyInformation>,
+        #[rasn(identifier = "destAddress")]
+        pub dest_address: PartyInformation,
+        #[rasn(identifier = "startTime")]
+        pub start_time: Option<TimeStamp>,
+        #[rasn(identifier = "endTime")]
+        pub end_time: Option<TimeStamp>,
+        #[rasn(identifier = "terminationCause")]
+        pub termination_cause: Option<TerminationCause>,
+        #[rasn(identifier = "usageFields")]
+        pub usage_fields: SequenceOf<UsageField>,
+    }
+    impl UsageIndication {
+        pub fn new(
+            call_info: CallInformation,
+            access_tokens: Option<SequenceOf<AccessToken>>,
+            sender_role: Role,
+            usage_call_status: UsageCallStatus,
+            src_info: Option<PartyInformation>,
+            dest_address: PartyInformation,
+            start_time: Option<TimeStamp>,
+            end_time: Option<TimeStamp>,
+            termination_cause: Option<TerminationCause>,
+            usage_fields: SequenceOf<UsageField>,
+        ) -> Self {
+            Self {
+                call_info,
+                access_tokens,
+                sender_role,
+                usage_call_status,
+                src_info,
+                dest_address,
+                start_time,
+                end_time,
+                termination_cause,
+                usage_fields,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageIndicationConfirmation {}
+    impl UsageIndicationConfirmation {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for UsageIndicationConfirmation {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageIndicationRejection {
+        pub reason: UsageIndicationRejectionReason,
+    }
+    impl UsageIndicationRejection {
+        pub fn new(reason: UsageIndicationRejectionReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UsageIndicationRejectionReason {
+        unknownCall(()),
+        incomplete(()),
+        security(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum UsageRejectReason {
+        invalidCall(()),
+        unavailable(()),
+        security(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageRejection {
+        pub reason: UsageRejectReason,
+    }
+    impl UsageRejection {
+        pub fn new(reason: UsageRejectReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageRequest {
+        #[rasn(identifier = "callInfo")]
+        pub call_info: CallInformation,
+        #[rasn(identifier = "usageSpec")]
+        pub usage_spec: UsageSpecification,
+    }
+    impl UsageRequest {
+        pub fn new(call_info: CallInformation, usage_spec: UsageSpecification) -> Self {
+            Self {
+                call_info,
+                usage_spec,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageSpecificationWhen {
+        pub never: Option<()>,
+        pub start: Option<()>,
+        pub end: Option<()>,
+        #[rasn(value("1..=65535"))]
+        pub period: Option<u16>,
+        pub failures: Option<()>,
+    }
+    impl UsageSpecificationWhen {
+        pub fn new(
+            never: Option<()>,
+            start: Option<()>,
+            end: Option<()>,
+            period: Option<u16>,
+            failures: Option<()>,
+        ) -> Self {
+            Self {
+                never,
+                start,
+                end,
+                period,
+                failures,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UsageSpecification {
+        #[rasn(identifier = "sendTo")]
+        pub send_to: ElementIdentifier,
+        pub when: UsageSpecificationWhen,
+        pub required: SequenceOf<ObjectIdentifier>,
+        pub preferred: SequenceOf<ObjectIdentifier>,
+        #[rasn(extension_addition, identifier = "sendToPEAddress")]
+        pub send_to_peaddress: Option<AliasAddress>,
+    }
+    impl UsageSpecification {
+        pub fn new(
+            send_to: ElementIdentifier,
+            when: UsageSpecificationWhen,
+            required: SequenceOf<ObjectIdentifier>,
+            preferred: SequenceOf<ObjectIdentifier>,
+            send_to_peaddress: Option<AliasAddress>,
+        ) -> Self {
+            Self {
+                send_to,
+                when,
+                required,
+                preferred,
+                send_to_peaddress,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UserInformation {
+        #[rasn(identifier = "userIdentifier")]
+        pub user_identifier: AliasAddress,
+        #[rasn(identifier = "userAuthenticator")]
+        pub user_authenticator: Option<SequenceOf<CryptoH323Token>>,
+    }
+    impl UserInformation {
+        pub fn new(
+            user_identifier: AliasAddress,
+            user_authenticator: Option<SequenceOf<CryptoH323Token>>,
+        ) -> Self {
+            Self {
+                user_identifier,
+                user_authenticator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ValidationConfirmation {
+        #[rasn(identifier = "destinationInfo")]
+        pub destination_info: Option<PartyInformation>,
+        #[rasn(identifier = "usageSpec")]
+        pub usage_spec: Option<UsageSpecification>,
+    }
+    impl ValidationConfirmation {
+        pub fn new(
+            destination_info: Option<PartyInformation>,
+            usage_spec: Option<UsageSpecification>,
+        ) -> Self {
+            Self {
+                destination_info,
+                usage_spec,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ValidationRejection {
+        pub reason: ValidationRejectionReason,
+    }
+    impl ValidationRejection {
+        pub fn new(reason: ValidationRejectionReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ValidationRejectionReason {
+        tokenNotValid(()),
+        security(()),
+        hopCountExceeded(()),
+        missingSourceInfo(()),
+        missingDestInfo(()),
+        noServiceRelationship(()),
+        undefined(()),
+        #[rasn(extension_addition)]
+        neededFeature(()),
+        #[rasn(extension_addition)]
+        genericDataReason(()),
+        #[rasn(extension_addition)]
+        unknownServiceID(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ValidationRequest {
+        #[rasn(identifier = "accessToken")]
+        pub access_token: Option<SequenceOf<AccessToken>>,
+        #[rasn(identifier = "destinationInfo")]
+        pub destination_info: Option<PartyInformation>,
+        #[rasn(identifier = "sourceInfo")]
+        pub source_info: Option<PartyInformation>,
+        #[rasn(identifier = "callInfo")]
+        pub call_info: CallInformation,
+        #[rasn(identifier = "usageSpec")]
+        pub usage_spec: Option<UsageSpecification>,
+    }
+    impl ValidationRequest {
+        pub fn new(
+            access_token: Option<SequenceOf<AccessToken>>,
+            destination_info: Option<PartyInformation>,
+            source_info: Option<PartyInformation>,
+            call_info: CallInformation,
+            usage_spec: Option<UsageSpecification>,
+        ) -> Self {
+            Self {
+                access_token,
+                destination_info,
+                source_info,
+                call_info,
+                usage_spec,
+            }
+        }
+    }
+    pub static ID_ANNEX_GPROFILE_A: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
+    #[doc = " UTC,  in the form YYYYMMDDHHmmSS"]
+    #[doc = " where YYYY = year, MM = month, DD = day,"]
+    #[doc = " HH = hour, mm = minute, SS = second"]
+    #[doc = " (for example, 19981219120000 for noon"]
+    #[doc = " 19 December 1998)"]
+    #[doc = ""]
+    #[doc = " REPOSITORY FOR APPLICATION SPECIFIC DATA"]
+    #[doc = ""]
+    #[doc = " H.225.0 Annex-G profile data"]
+    #[doc = ""]
+    pub static ID_ANNEX_GPROFILES: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+}

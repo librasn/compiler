@@ -1,0 +1,395 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1089_2008_TAI.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+LinkerError in ASN grammar: No syntax definition for information object class found!
+LinkerError in ASN grammar: No syntax definition for information object class found!
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype AlgorithmIdentifier of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+LinkerError in ASN grammar: Failed to link value with 'ID'
+LinkerError in ASN grammar: Failed to link value with 'ID'
+LinkerError in ASN grammar: Failed to link value with 'ID'
+LinkerError in ASN grammar: Failed to link value with 'ID'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod tai {
+    extern crate alloc;
+    use super::attribute_certificate_definitions::AttributeCertificateInfo;
+    use super::attribute_certificate_definitions::{IssuerSerial, ObjectDigestInfo};
+    use super::authentication_framework::*;
+    use super::bip::BioAPIFMR;
+    use super::cbeff_data_elements::BiometricType;
+    use super::cbeff_smartcard_bido::BiometricInformationTemplate;
+    use super::certificate_extensions::{GeneralNames, KeyUsage};
+    use super::information_framework::*;
+    use super::selected_attribute_types::UniqueIdentifier;
+    use super::useful_definitions::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributesSyntax(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BCBiometricInformationTemplate(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BCBiometricInformationTemplateContent {
+        #[rasn(identifier = "biometricTemplateVersion")]
+        pub biometric_template_version: BiometricTemplateVersion,
+        #[rasn(identifier = "biometricTemplateInfo")]
+        pub biometric_template_info: BiometricTemplateInfo,
+        #[rasn(value("0.."), identifier = "issuerDigitalSignatureAlgorithm")]
+        pub issuer_digital_signature_algorithm: Option<AlgorithmIdentifier>,
+        #[rasn(identifier = "bioTempIssuer")]
+        pub bio_temp_issuer: Option<BioTempIssuer>,
+    }
+    impl BCBiometricInformationTemplateContent {
+        pub fn new(
+            biometric_template_version: BiometricTemplateVersion,
+            biometric_template_info: BiometricTemplateInfo,
+            issuer_digital_signature_algorithm: Option<AlgorithmIdentifier>,
+            bio_temp_issuer: Option<BioTempIssuer>,
+        ) -> Self {
+            Self {
+                biometric_template_version,
+                biometric_template_info,
+                issuer_digital_signature_algorithm,
+                bio_temp_issuer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BDCCertificateReferer {
+        #[rasn(identifier = "bdcIssuer")]
+        pub bdc_issuer: Name,
+        #[rasn(identifier = "bdcSerialNumber")]
+        pub bdc_serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "bdcUsage")]
+        pub bdc_usage: KeyUsage,
+    }
+    impl BDCCertificateReferer {
+        pub fn new(
+            bdc_issuer: Name,
+            bdc_serial_number: CertificateSerialNumber,
+            bdc_usage: KeyUsage,
+        ) -> Self {
+            Self {
+                bdc_issuer,
+                bdc_serial_number,
+                bdc_usage,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BDCReportContentInformation {
+        #[rasn(identifier = "bdcPKCInformation")]
+        pub bdc_pkcinformation: BdcPKCInformation,
+        #[rasn(identifier = "bdcReportInformation")]
+        pub bdc_report_information: BPUReportInformation,
+    }
+    impl BDCReportContentInformation {
+        pub fn new(
+            bdc_pkcinformation: BdcPKCInformation,
+            bdc_report_information: BPUReportInformation,
+        ) -> Self {
+            Self {
+                bdc_pkcinformation,
+                bdc_report_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BPUReport {
+        #[rasn(identifier = "contentType")]
+        pub content_type: Any,
+        #[rasn(tag(explicit(context, 0)))]
+        pub content: Any,
+    }
+    impl BPUReport {
+        pub fn new(content_type: Any, content: Any) -> Self {
+            Self {
+                content_type,
+                content,
+            }
+        }
+    }
+    #[doc = " BPUReportInformation as defined in ACBio[ISO/IEC 24761]"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BPUReportInformation {
+        bpuReport(BPUReport),
+        bpuReportReferrer(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BdcPKCInformation {
+        bdcPublicKeyCertificate(Certificate),
+        bpuCertificateReference(URI),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BioCert {
+        #[rasn(tag(context, 0), identifier = "baseCertificateID")]
+        pub base_certificate_id: Option<IssuerSerial>,
+        #[rasn(tag(context, 1), identifier = "entityName")]
+        pub entity_name: Option<GeneralNames>,
+        #[rasn(tag(context, 2), identifier = "objectDigestInfo")]
+        pub object_digest_info: Option<ObjectDigestInfo>,
+    }
+    impl BioCert {
+        pub fn new(
+            base_certificate_id: Option<IssuerSerial>,
+            entity_name: Option<GeneralNames>,
+            object_digest_info: Option<ObjectDigestInfo>,
+        ) -> Self {
+            Self {
+                base_certificate_id,
+                entity_name,
+                object_digest_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(tag(context, 0))]
+    pub struct BioTempIssuer {
+        #[rasn(identifier = "issuerName")]
+        pub issuer_name: Option<GeneralNames>,
+        #[rasn(tag(context, 0), identifier = "baseCertificateID")]
+        pub base_certificate_id: Option<IssuerSerial>,
+        #[rasn(tag(context, 1), identifier = "objectDigestInfo")]
+        pub object_digest_info: Option<ObjectDigestInfo>,
+    }
+    impl BioTempIssuer {
+        pub fn new(
+            issuer_name: Option<GeneralNames>,
+            base_certificate_id: Option<IssuerSerial>,
+            object_digest_info: Option<ObjectDigestInfo>,
+        ) -> Self {
+            Self {
+                issuer_name,
+                base_certificate_id,
+                object_digest_info,
+            }
+        }
+    }
+    #[doc = " BC definition \u{96} (see 8.2 for additional comments)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricCertificate(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricCertificateInfo(pub AttributeCertificateInfo);
+    #[doc = " BDC definition \u{96} (see clause 10 for additional comments)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricDeviceCertificate(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricDeviceCertificateInfo(pub AttributeCertificateInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BiometricInformationTemplateorPointer {
+        bcBiometricInformationTemplate(BCBiometricInformationTemplate),
+        referenceToBCBiometricInformationTemplate(URI),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousBiometricPara {
+        #[rasn(identifier = "biometricType")]
+        pub biometric_type: BiometricType,
+        #[rasn(identifier = "fMR-Value")]
+        pub f_mr_value: BioAPIFMR,
+        #[rasn(identifier = "trialNumber")]
+        pub trial_number: Option<Integer>,
+        #[rasn(identifier = "requestQuality")]
+        pub request_quality: Option<Integer>,
+    }
+    impl AnonymousBiometricPara {
+        pub fn new(
+            biometric_type: BiometricType,
+            f_mr_value: BioAPIFMR,
+            trial_number: Option<Integer>,
+            request_quality: Option<Integer>,
+        ) -> Self {
+            Self {
+                biometric_type,
+                f_mr_value,
+                trial_number,
+                request_quality,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricPara(pub SequenceOf<AnonymousBiometricPara>);
+    #[doc = " BPC definition \u{96} (see clause 9 for additional comments)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricPolicyCertificate(pub SIGNED);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricPolicyCertificateInfo(pub AttributeCertificateInfo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricSecurityLevelId(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum BiometricTemplateInfo {
+        biometricTemplateInfo19785(BiometricInformationTemplate),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BiometricTemplateVersion(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DkgExtensionDataSyntax {
+        #[rasn(size("1.."), identifier = "alignmentHelpData")]
+        pub alignment_help_data: OctetString,
+        #[rasn(size("1.."), identifier = "biometricKeyBindingData")]
+        pub biometric_key_binding_data: OctetString,
+    }
+    impl DkgExtensionDataSyntax {
+        pub fn new(
+            alignment_help_data: OctetString,
+            biometric_key_binding_data: OctetString,
+        ) -> Self {
+            Self {
+                alignment_help_data,
+                biometric_key_binding_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PublicKeyCert {
+        #[rasn(identifier = "pkcIssuer")]
+        pub pkc_issuer: Name,
+        #[rasn(identifier = "pkcSerialNumber")]
+        pub pkc_serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "pkcUsage")]
+        pub pkc_usage: KeyUsage,
+    }
+    impl PublicKeyCert {
+        pub fn new(
+            pkc_issuer: Name,
+            pkc_serial_number: CertificateSerialNumber,
+            pkc_usage: KeyUsage,
+        ) -> Self {
+            Self {
+                pkc_issuer,
+                pkc_serial_number,
+                pkc_usage,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SecurityLevelBioRef {
+        #[rasn(identifier = "biometricSecurityLevelId")]
+        pub biometric_security_level_id: BiometricSecurityLevelId,
+        #[rasn(identifier = "modalityPolicy")]
+        pub modality_policy: ModalityPolicy,
+        #[rasn(identifier = "biometricPara")]
+        pub biometric_para: BiometricPara,
+    }
+    impl SecurityLevelBioRef {
+        pub fn new(
+            biometric_security_level_id: BiometricSecurityLevelId,
+            modality_policy: ModalityPolicy,
+            biometric_para: BiometricPara,
+        ) -> Self {
+            Self {
+                biometric_security_level_id,
+                modality_policy,
+                biometric_para,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SecurityLevelBioReference {
+        #[rasn(identifier = "securityLevelNum")]
+        pub security_level_num: Integer,
+        #[rasn(identifier = "securityLevelBioRef")]
+        pub security_level_bio_ref: SecurityLevelBioRef,
+    }
+    impl SecurityLevelBioReference {
+        pub fn new(
+            security_level_num: Integer,
+            security_level_bio_ref: SecurityLevelBioRef,
+        ) -> Self {
+            Self {
+                security_level_num,
+                security_level_bio_ref,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum SecurityLevelofPrivilegeBioSecLevel {
+        x520identifier(UniqueIdentifierOfBioParaInfo),
+        simpleidentifier(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SecurityLevelofPrivilege {
+        #[rasn(identifier = "bioSecLevel")]
+        pub bio_sec_level: SecurityLevelofPrivilegeBioSecLevel,
+    }
+    impl SecurityLevelofPrivilege {
+        pub fn new(bio_sec_level: SecurityLevelofPrivilegeBioSecLevel) -> Self {
+            Self { bio_sec_level }
+        }
+    }
+    #[doc = " START OF X.tai definitions."]
+    #[doc = " URI definition - used in a BDC and in a BPC"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct URI(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniqueIdentifierOfBioParaInfo(pub UniqueIdentifier);
+    pub static ID_BPU_REPORT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[1u32, 0u32, 24761u32, 2u32, 4u32]).to_owned());
+    pub static ID_TAI: LazyLock<ID> =
+        LazyLock::new(|| ID(ID(Oid::const_new(&[0u32, 0u32, 24u32, 1089u32]).to_owned())));
+    pub static ID_TAI_AT: LazyLock<ID> = LazyLock::new(|| {
+        ID(ID(Oid::new(&[&***ID_TAI, &[1u32]].concat())
+            .unwrap()
+            .to_owned()))
+    });
+    #[doc = " ID values used in this module"]
+    pub static ID_TAI_AT_BIOMETRIC_INFORMATION_TEMPLATE: LazyLock<ID> = LazyLock::new(|| {
+        ID(ID(Oid::const_new(&[
+            1u32, 1u32, 19785u32, 0u32, 257u32, 1u32, 5u32,
+        ])
+        .to_owned()))
+    });
+    pub static ID_TAI_CE: LazyLock<ID> = LazyLock::new(|| {
+        ID(ID(Oid::new(&[&***ID_TAI, &[2u32]].concat())
+            .unwrap()
+            .to_owned()))
+    });
+}

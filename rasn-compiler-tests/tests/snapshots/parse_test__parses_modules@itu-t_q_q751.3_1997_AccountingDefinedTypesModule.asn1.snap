@@ -1,0 +1,204 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q751.3_1997_AccountingDefinedTypesModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod accounting_defined_types_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::PointerOrNull;
+    use super::attribute_asn1_module::{ControlStatus, ObjectInstance};
+    use super::mtpdefined_types_module::AdditionalName;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " ASN.1 type definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DataProblem {
+        noProblem = 0,
+        intervalNotComplete = 1,
+        configurationChanged = 2,
+        notReliable = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EndOfMeasurementTime(pub GeneralizedTime);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousMeasurementControlStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MeasurementControlStatus(pub SetOf<AnonymousMeasurementControlStatus>);
+    #[doc = " h this number is only for compilability"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SelectionGroup {
+        #[rasn(tag(context, 0), identifier = "selectionItem")]
+        pub selection_item: ObjectInstance,
+        #[rasn(tag(context, 1), identifier = "optionalSelectionItem")]
+        pub optional_selection_item: Option<ObjectInstance>,
+    }
+    impl SelectionGroup {
+        pub fn new(
+            selection_item: ObjectInstance,
+            optional_selection_item: Option<ObjectInstance>,
+        ) -> Self {
+            Self {
+                selection_item,
+                optional_selection_item,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=8"))]
+    pub struct SelectionGroupSet(pub SetOf<SelectionGroup>);
+    pub static ACCOUNTING_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_ATTRIBUTE_GROUP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_OR_VERIFICATION_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ACCOUNTING_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SS7_ACCOUNTING_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONTROL_POINTER_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static CONTROL_POINTER_PACKAGE_POI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_PACKAGE, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static END_OF_MEASUREMENT_TIME_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MAX_NUMBER_REFERENCES_IN_SELECTION_GROUP_SET: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(8));
+    pub static MEASUREMENT_CONTROL_STATUS_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static MEASUREMENT_CONTROL_STATUS_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[2u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " ASN.1 OBJECT IDENTIFIER definitions for specific errors"]
+    pub static OBJECT_STILL_REFERENCED_ERROR_OID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PARAMETER, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static OPERATOR_NAME_AOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SELECTION_GROUP_SET_FOR_ACCOUNTING_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[4u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SELECTION_GROUP_SET_FOR_VERIFICATION_AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_ATTRIBUTE, &[5u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SS7_ACCOUNTING_NOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NOTIFICATION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SS7_ACCOUNTING_AND_VERIFICATION_CONTROL_OOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SS7_ACCOUNTING_AND_VERIFICATION_CONTROL_MANAGED_ELEMENT_NBOI: LazyLock<
+        ObjectIdentifier,
+    > = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SS7_ACCOUNTING_AND_VERIFICATION_CONTROL_MANAGED_SWITCHING_ELEMENT_NBOI: LazyLock<
+        ObjectIdentifier,
+    > = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_NAME_BINDING, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SS7_ACCOUNTING_AND_VERIFICATION_CONTROL_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " ASN.1 OBJECT IDENTIFIER definitions"]
+    pub static SS7_ACCOUNTING_INFORMATION_MODEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 17u32, 751u32, 3u32]).to_owned());
+    pub static SS7_ACCOUNTING_LOG_RECORD_OOI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ACCOUNTING_OBJECT_CLASS, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SS7_ACCOUNTING_LOG_RECORD_PACKAGE_POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ACCOUNTING_PACKAGE, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+}

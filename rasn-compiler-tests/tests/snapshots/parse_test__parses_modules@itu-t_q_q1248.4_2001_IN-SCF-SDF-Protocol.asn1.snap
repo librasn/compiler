@@ -1,0 +1,80 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.4_2001_IN-SCF-SDF-Protocol.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Bind of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype TCMessage of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Bind of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype TCMessage of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype TCMessage of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_scf_sdf_protocol {
+    extern crate alloc;
+    use super::directory_abstract_service::{
+        ADD_ENTRY, DIRECTORY_BIND, MODIFY_ENTRY, REMOVE_ENTRY, SEARCH,
+    };
+    use super::directory_security_exchanges::SPKM_THREE_WAY;
+    use super::in_common_classes::{EmptyReturnable, IN_UNBIND};
+    use super::in_object_identifiers::{
+        COMMON_CLASSES, DS_USEFUL_DEFINITIONS, ID_AC_INDIRECTORY_ACCESS_AC,
+        ID_AC_INDIRECTORY_ACCESS_WITH3SE_AC, ID_AC_IN_EXTENDED_DIRECTORY_ACCESS_AC,
+        ID_AC_IN_EXTENDED_DIRECTORY_ACCESS_WITH3SE_AC, ID_AC_TRAFFIC_FLOW_CONTROL_AC,
+        ID_AS_INDIRECTORY_BINDING_AS, ID_AS_INDIRECTORY_OPERATIONS_AS,
+        ID_AS_IN_EXTENDED_DIRECTORY_OPERATIONS_AS, ID_AS_IN_SESEAS, ID_AS_TFC_BINDING_AS,
+        ID_AS_TFC_OPERATIONS_AS, ID_CONTRACT_DAP, ID_CONTRACT_DAP_EXECUTE, ID_CONTRACT_TFC,
+        ID_PACKAGE_DAP_CONNECTION, ID_PACKAGE_EXECUTE, ID_PACKAGE_MODIFY, ID_PACKAGE_SEARCH,
+        ID_PACKAGE_TFC_CONNECTION, ID_PACKAGE_TFC_OPERATIONS, ROS_GENERIC_PDUS,
+        ROS_INFORMATION_OBJECTS, SCF_SDF_OPERATIONS, SESE_APDUS, TC_MESSAGES,
+        TC_NOTATION_EXTENSIONS,
+    };
+    use super::in_scf_sdf_operations::{EXECUTE, TFC_BIND, TRAFFIC_FLOW_CONTROL};
+    use super::protocol_object_identifiers::ID_SE_THREEWAYSE;
+    use super::remote_operations_generic_ros_pdus::{Bind, Unbind};
+    use super::remote_operations_information_objects::*;
+    use super::sese_apdus::{NoInvocationId, SESEapdus};
+    use super::tc_notation_extensions::*;
+    use super::tcapmessages::TCMessage;
+    use super::useful_definitions::{DIRECTORY_ABSTRACT_SERVICE, PROTOCOL_OBJECT_IDENTIFIERS};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BasicDAP-PDUs")]
+    pub struct BasicDAPPDUs(pub TCMessage);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "BasicTFC-PDUs")]
+    pub struct BasicTFCPDUs(pub TCMessage);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "DAPBinding-PDUs")]
+    pub enum DAPBindingPDUs {
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Extended-BasicDAP-PDUs")]
+    pub struct ExtendedBasicDAPPDUs(pub TCMessage);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "TFCBinding-PDUs")]
+    pub enum TFCBindingPDUs {
+        #[rasn(value("0.."))]
+        bind(Bind),
+        #[rasn(value("0.."))]
+        unbind(Unbind),
+    }
+}

@@ -1,0 +1,28 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x518_2001_HierarchicalOperationalBindings.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 100, column 2]
+     │
+     │ 
+ 099 │  -- operational binding information objects
+ 100 │  hierarchicalOperationalBinding OPERATIONAL-BINDING ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 101 │    AGREEMENT             HierarchicalAgreement
+ 102 │    APPLICATION CONTEXTS  {{directorySystemAC}}
+ 103 │    ASYMMETRIC ROLE-A
+ 104 │      { -- superior DSAESTABLISHMENT-INITIATOR  TRUE
+ 105 │                       ESTABLISHMENT-PARAMETER  SuperiorToSubordinate
+ 106 │                       MODIFICATION-INITIATOR   TRUE
+ 107 │                       MODIFICATION-PARAMETER   SuperiorToSubordinateModification
+ 108 │                       TERMINATION-INITIATOR    TRUE}
+ 109 │    ROLE-B
+ 110 │      { -- subordinate DSAESTABLISHMENT-INITIATOR  TRUE
+ 111 │                          ESTABLISHMENT-PARAMETER  SubordinateToSuperior
+ 112 │                          MODIFICATION-INITIATOR   TRUE
+ 113 │                          MODIFICATION-PARAMETER   SubordinateToSuperior
+ 114 │                          TERMINATION-INITIATOR    TRUE}
+ 115 │    ID                    id-op-binding-hierarchical
+ 116 │  }
+     │
+─────╯

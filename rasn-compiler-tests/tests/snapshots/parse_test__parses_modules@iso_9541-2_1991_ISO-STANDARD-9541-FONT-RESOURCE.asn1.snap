@@ -1,0 +1,1438 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_9541-2_1991_ISO-STANDARD-9541-FONT-RESOURCE.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : VideotexString is currently unsupported!
+NotYetInplemented generating bindings for : VideotexString is currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod iso_standard_9541_font_resource {
+    extern crate alloc;
+    use super::iso9541_sn::StructuredName;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Adjust {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-escadjname")]
+        pub iso_standard_9541_escadjname: GlobalName,
+        #[rasn(tag(context, 1), identifier = "adjust-properties")]
+        pub adjust_properties: AdjustProperties,
+    }
+    impl Adjust {
+        pub fn new(
+            iso_standard_9541_escadjname: GlobalName,
+            adjust_properties: AdjustProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_escadjname,
+                adjust_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Adjust-Properties")]
+    pub struct AdjustProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-cpea")]
+        pub iso_standard_9541_cpea: Option<CPEAProperties>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-sec")]
+        pub iso_standard_9541_sec: Option<SECProperties>,
+        #[rasn(tag(context, 2), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl AdjustProperties {
+        pub fn new(
+            iso_standard_9541_cpea: Option<CPEAProperties>,
+            iso_standard_9541_sec: Option<SECProperties>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_cpea,
+                iso_standard_9541_sec,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Adjusts {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-adjust")]
+        pub iso_standard_9541_adjust: SetOf<Adjust>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl Adjusts {
+        pub fn new(
+            iso_standard_9541_adjust: SetOf<Adjust>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_adjust,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Align-Properties")]
+    pub struct AlignProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-alignoffsetx")]
+        pub iso_standard_9541_alignoffsetx: Option<RelRational>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-alignoffsety")]
+        pub iso_standard_9541_alignoffsety: Option<RelRational>,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-alignscalex")]
+        pub iso_standard_9541_alignscalex: Option<Rational>,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-alignscaley")]
+        pub iso_standard_9541_alignscaley: Option<Rational>,
+        #[rasn(tag(context, 4), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl AlignProperties {
+        pub fn new(
+            iso_standard_9541_alignoffsetx: Option<RelRational>,
+            iso_standard_9541_alignoffsety: Option<RelRational>,
+            iso_standard_9541_alignscalex: Option<Rational>,
+            iso_standard_9541_alignscaley: Option<Rational>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_alignoffsetx,
+                iso_standard_9541_alignoffsety,
+                iso_standard_9541_alignscalex,
+                iso_standard_9541_alignscaley,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Alignment {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-alignname")]
+        pub iso_standard_9541_alignname: GlobalName,
+        #[rasn(tag(context, 1), identifier = "alignment-property-list")]
+        pub alignment_property_list: AlignProperties,
+    }
+    impl Alignment {
+        pub fn new(
+            iso_standard_9541_alignname: GlobalName,
+            alignment_property_list: AlignProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_alignname,
+                alignment_property_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Alignment-Modes")]
+    pub struct AlignmentModes {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-align")]
+        pub iso_standard_9541_align: Option<SetOf<Alignment>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl AlignmentModes {
+        pub fn new(
+            iso_standard_9541_align: Option<SetOf<Alignment>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_align,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Alignment-Spacing")]
+    pub struct AlignmentSpacing {
+        #[rasn(tag(context, 0), identifier = "minlinesp-left")]
+        pub minlinesp_left: RelRational,
+        #[rasn(tag(context, 1), identifier = "minlinesp-right")]
+        pub minlinesp_right: RelRational,
+    }
+    impl AlignmentSpacing {
+        pub fn new(minlinesp_left: RelRational, minlinesp_right: RelRational) -> Self {
+            Self {
+                minlinesp_left,
+                minlinesp_right,
+            }
+        }
+    }
+    #[doc = " expresses glyph coordinate units"]
+    #[doc = " denominator defaults to relunits"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Angle(pub Rational);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "C-Indicator")]
+    pub struct CIndicator {
+        #[rasn(tag(context, 0), identifier = "c-forward")]
+        pub c_forward: Cardinal,
+        #[rasn(tag(context, 1), identifier = "c-backward")]
+        pub c_backward: Cardinal,
+    }
+    impl CIndicator {
+        pub fn new(c_forward: Cardinal, c_backward: Cardinal) -> Self {
+            Self {
+                c_forward,
+                c_backward,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "CPEA-Properties")]
+    pub struct CPEAProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-ncpeaforwd")]
+        pub iso_standard_9541_ncpeaforwd: Cardinal,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-ncpeabackwd")]
+        pub iso_standard_9541_ncpeabackwd: Cardinal,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-cpeax")]
+        pub iso_standard_9541_cpeax: Option<SequenceOf<RelRational>>,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-cpeay")]
+        pub iso_standard_9541_cpeay: Option<SequenceOf<RelRational>>,
+        #[rasn(tag(context, 4), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl CPEAProperties {
+        pub fn new(
+            iso_standard_9541_ncpeaforwd: Cardinal,
+            iso_standard_9541_ncpeabackwd: Cardinal,
+            iso_standard_9541_cpeax: Option<SequenceOf<RelRational>>,
+            iso_standard_9541_cpeay: Option<SequenceOf<RelRational>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_ncpeaforwd,
+                iso_standard_9541_ncpeabackwd,
+                iso_standard_9541_cpeax,
+                iso_standard_9541_cpeay,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Cardinal(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Code(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Copyfit {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-copyfitname")]
+        pub iso_standard_9541_copyfitname: GlobalName,
+        #[rasn(tag(context, 1), identifier = "copyfit-properties")]
+        pub copyfit_properties: CopyfitProperties,
+    }
+    impl Copyfit {
+        pub fn new(
+            iso_standard_9541_copyfitname: GlobalName,
+            copyfit_properties: CopyfitProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_copyfitname,
+                copyfit_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Copyfit-Properties")]
+    pub struct CopyfitProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-copyfitmeasure")]
+        pub iso_standard_9541_copyfitmeasure: Option<Rational>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl CopyfitProperties {
+        pub fn new(
+            iso_standard_9541_copyfitmeasure: Option<Rational>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_copyfitmeasure,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Copyfits {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-copyfit")]
+        pub iso_standard_9541_copyfit: Option<SetOf<Copyfit>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl Copyfits {
+        pub fn new(
+            iso_standard_9541_copyfit: Option<SetOf<Copyfit>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_copyfit,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Data-Version")]
+    pub struct DataVersion {
+        #[rasn(tag(context, 0))]
+        pub major: Option<Cardinal>,
+        #[rasn(tag(context, 1))]
+        pub minor: Option<Cardinal>,
+        #[rasn(tag(context, 2))]
+        pub timestamp: Option<UtcTime>,
+    }
+    impl DataVersion {
+        pub fn new(
+            major: Option<Cardinal>,
+            minor: Option<Cardinal>,
+            timestamp: Option<UtcTime>,
+        ) -> Self {
+            Self {
+                major,
+                minor,
+                timestamp,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Design-Group")]
+    pub struct DesignGroup {
+        #[rasn(tag(context, 0), identifier = "group-code")]
+        pub group_code: Code,
+        #[rasn(tag(context, 1), identifier = "subgroup-code")]
+        pub subgroup_code: Code,
+        #[rasn(tag(context, 2), identifier = "specific-group-code")]
+        pub specific_group_code: Code,
+    }
+    impl DesignGroup {
+        pub fn new(group_code: Code, subgroup_code: Code, specific_group_code: Code) -> Self {
+            Self {
+                group_code,
+                subgroup_code,
+                specific_group_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "E-Code")]
+    pub struct ECode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Esc-Class-Code")]
+    pub struct EscClassCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Extents {
+        #[rasn(tag(context, 0))]
+        pub minx: Option<RelRational>,
+        #[rasn(tag(context, 1))]
+        pub miny: Option<RelRational>,
+        #[rasn(tag(context, 2))]
+        pub maxx: Option<RelRational>,
+        #[rasn(tag(context, 3))]
+        pub maxy: Option<RelRational>,
+    }
+    impl Extents {
+        pub fn new(
+            minx: Option<RelRational>,
+            miny: Option<RelRational>,
+            maxx: Option<RelRational>,
+            maxy: Option<RelRational>,
+        ) -> Self {
+            Self {
+                minx,
+                miny,
+                maxx,
+                maxy,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Font-Description")]
+    pub struct FontDescription {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-dataversion")]
+        pub iso_standard_9541_dataversion: Option<DataVersion>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-Standardversion")]
+        pub iso_standard_9541_standardversion: Cardinal,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-datasource")]
+        pub iso_standard_9541_datasource: Option<GlobalName>,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-datacopyright")]
+        pub iso_standard_9541_datacopyright: Option<Message>,
+        #[rasn(tag(context, 4), identifier = "iso-standard-9541-dsnsource")]
+        pub iso_standard_9541_dsnsource: GlobalName,
+        #[rasn(tag(context, 5), identifier = "iso-standard-9541-dsncopyright")]
+        pub iso_standard_9541_dsncopyright: Option<Message>,
+        #[rasn(
+            tag(context, 6),
+            default = "font_description_iso_standard_9541_relunits_default",
+            identifier = "iso-standard-9541-relunits"
+        )]
+        pub iso_standard_9541_relunits: Cardinal,
+        #[rasn(tag(context, 7), identifier = "iso-standard-9541-typeface")]
+        pub iso_standard_9541_typeface: Option<Message>,
+        #[rasn(tag(context, 8), identifier = "iso-standard-9541-fontfamily")]
+        pub iso_standard_9541_fontfamily: MatchString,
+        #[rasn(tag(context, 9), identifier = "iso-standard-9541-posture")]
+        pub iso_standard_9541_posture: PostureCode,
+        #[rasn(tag(context, 10), identifier = "iso-standard-9541-postureangle")]
+        pub iso_standard_9541_postureangle: Option<Angle>,
+        #[rasn(tag(context, 11), identifier = "iso-standard-9541-weight")]
+        pub iso_standard_9541_weight: WeightCode,
+        #[rasn(tag(context, 12), identifier = "iso-standard-9541-propwidth")]
+        pub iso_standard_9541_propwidth: WidthCode,
+        #[rasn(tag(context, 13), identifier = "iso-standard-9541-glyphcomp")]
+        pub iso_standard_9541_glyphcomp: GlyphComplement,
+        #[rasn(tag(context, 14), identifier = "iso-standard-9541-nomwrmode")]
+        pub iso_standard_9541_nomwrmode: Option<GlobalName>,
+        #[rasn(tag(context, 15), identifier = "iso-standard-9541-dsnsize")]
+        pub iso_standard_9541_dsnsize: Rational,
+        #[rasn(tag(context, 16), identifier = "iso-standard-9541-minsize")]
+        pub iso_standard_9541_minsize: Rational,
+        #[rasn(tag(context, 17), identifier = "iso-standard-9541-maxsize")]
+        pub iso_standard_9541_maxsize: Rational,
+        #[rasn(tag(context, 18), identifier = "iso-standard-9541-capheight")]
+        pub iso_standard_9541_capheight: Option<RelRational>,
+        #[rasn(tag(context, 19), identifier = "iso-standard-9541-lcheight")]
+        pub iso_standard_9541_lcheight: Option<RelRational>,
+        #[rasn(tag(context, 20), identifier = "iso-standard-9541-dsngroup")]
+        pub iso_standard_9541_dsngroup: DesignGroup,
+        #[rasn(tag(context, 21), identifier = "iso-standard-9541-structure")]
+        pub iso_standard_9541_structure: StructureCode,
+        #[rasn(tag(context, 22), identifier = "iso-standard-9541-minfeatsz")]
+        pub iso_standard_9541_minfeatsz: Option<RelRational>,
+        #[rasn(tag(context, 23), identifier = "iso-standard-9541-nomcapstemwidth")]
+        pub iso_standard_9541_nomcapstemwidth: Option<RelRational>,
+        #[rasn(tag(context, 24), identifier = "iso-standard-9541-nomlcstemwidth")]
+        pub iso_standard_9541_nomlcstemwidth: Option<RelRational>,
+        #[rasn(tag(context, 25), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl FontDescription {
+        pub fn new(
+            iso_standard_9541_dataversion: Option<DataVersion>,
+            iso_standard_9541_standardversion: Cardinal,
+            iso_standard_9541_datasource: Option<GlobalName>,
+            iso_standard_9541_datacopyright: Option<Message>,
+            iso_standard_9541_dsnsource: GlobalName,
+            iso_standard_9541_dsncopyright: Option<Message>,
+            iso_standard_9541_relunits: Cardinal,
+            iso_standard_9541_typeface: Option<Message>,
+            iso_standard_9541_fontfamily: MatchString,
+            iso_standard_9541_posture: PostureCode,
+            iso_standard_9541_postureangle: Option<Angle>,
+            iso_standard_9541_weight: WeightCode,
+            iso_standard_9541_propwidth: WidthCode,
+            iso_standard_9541_glyphcomp: GlyphComplement,
+            iso_standard_9541_nomwrmode: Option<GlobalName>,
+            iso_standard_9541_dsnsize: Rational,
+            iso_standard_9541_minsize: Rational,
+            iso_standard_9541_maxsize: Rational,
+            iso_standard_9541_capheight: Option<RelRational>,
+            iso_standard_9541_lcheight: Option<RelRational>,
+            iso_standard_9541_dsngroup: DesignGroup,
+            iso_standard_9541_structure: StructureCode,
+            iso_standard_9541_minfeatsz: Option<RelRational>,
+            iso_standard_9541_nomcapstemwidth: Option<RelRational>,
+            iso_standard_9541_nomlcstemwidth: Option<RelRational>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_dataversion,
+                iso_standard_9541_standardversion,
+                iso_standard_9541_datasource,
+                iso_standard_9541_datacopyright,
+                iso_standard_9541_dsnsource,
+                iso_standard_9541_dsncopyright,
+                iso_standard_9541_relunits,
+                iso_standard_9541_typeface,
+                iso_standard_9541_fontfamily,
+                iso_standard_9541_posture,
+                iso_standard_9541_postureangle,
+                iso_standard_9541_weight,
+                iso_standard_9541_propwidth,
+                iso_standard_9541_glyphcomp,
+                iso_standard_9541_nomwrmode,
+                iso_standard_9541_dsnsize,
+                iso_standard_9541_minsize,
+                iso_standard_9541_maxsize,
+                iso_standard_9541_capheight,
+                iso_standard_9541_lcheight,
+                iso_standard_9541_dsngroup,
+                iso_standard_9541_structure,
+                iso_standard_9541_minfeatsz,
+                iso_standard_9541_nomcapstemwidth,
+                iso_standard_9541_nomlcstemwidth,
+                non_iso_properties,
+            }
+        }
+    }
+    fn font_description_iso_standard_9541_relunits_default() -> Cardinal {
+        Cardinal(Integer::from(1))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Font-Resource")]
+    pub struct FontResource {
+        #[rasn(tag(context, 0), identifier = "name-prefixes")]
+        pub name_prefixes: Option<SetOf<NamePrefix>>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-fontname")]
+        pub iso_standard_9541_fontname: GlobalName,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-fontdescription")]
+        pub iso_standard_9541_fontdescription: FontDescription,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-wrmodes")]
+        pub iso_standard_9541_wrmodes: WritingModes,
+        #[rasn(tag(context, 4), identifier = "iso-standard-9541-shapes")]
+        pub iso_standard_9541_shapes: Option<GlyphShapes>,
+        #[rasn(tag(context, 2), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl FontResource {
+        pub fn new(
+            name_prefixes: Option<SetOf<NamePrefix>>,
+            iso_standard_9541_fontname: GlobalName,
+            iso_standard_9541_fontdescription: FontDescription,
+            iso_standard_9541_wrmodes: WritingModes,
+            iso_standard_9541_shapes: Option<GlyphShapes>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                name_prefixes,
+                iso_standard_9541_fontname,
+                iso_standard_9541_fontdescription,
+                iso_standard_9541_wrmodes,
+                iso_standard_9541_shapes,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Global-Name")]
+    pub struct GlobalName {
+        #[rasn(tag(context, 0), identifier = "prefix-index")]
+        pub prefix_index: Option<Code>,
+        #[rasn(tag(context, 1), identifier = "name-value")]
+        pub name_value: StructuredName,
+    }
+    impl GlobalName {
+        pub fn new(prefix_index: Option<Code>, name_value: StructuredName) -> Self {
+            Self {
+                prefix_index,
+                name_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Glyph-Complement")]
+    pub struct GlyphComplement {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-numglyphs")]
+        pub iso_standard_9541_numglyphs: Option<Cardinal>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-incglyphcols")]
+        pub iso_standard_9541_incglyphcols: Option<SetOf<GlobalName>>,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-excglyphcols")]
+        pub iso_standard_9541_excglyphcols: Option<SetOf<GlobalName>>,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-incglyphs")]
+        pub iso_standard_9541_incglyphs: Option<SetOf<GlobalName>>,
+        #[rasn(tag(context, 4), identifier = "iso-standard-9541-excglyphs")]
+        pub iso_standard_9541_excglyphs: Option<SetOf<GlobalName>>,
+        #[rasn(tag(context, 5), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl GlyphComplement {
+        pub fn new(
+            iso_standard_9541_numglyphs: Option<Cardinal>,
+            iso_standard_9541_incglyphcols: Option<SetOf<GlobalName>>,
+            iso_standard_9541_excglyphcols: Option<SetOf<GlobalName>>,
+            iso_standard_9541_incglyphs: Option<SetOf<GlobalName>>,
+            iso_standard_9541_excglyphs: Option<SetOf<GlobalName>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_numglyphs,
+                iso_standard_9541_incglyphcols,
+                iso_standard_9541_excglyphcols,
+                iso_standard_9541_incglyphs,
+                iso_standard_9541_excglyphs,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Glyph-Metrics")]
+    pub struct GlyphMetrics {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-gmetric")]
+        pub iso_standard_9541_gmetric: SetOf<GlyphPropertyList>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl GlyphMetrics {
+        pub fn new(
+            iso_standard_9541_gmetric: SetOf<GlyphPropertyList>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_gmetric,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Glyph-Properties")]
+    pub struct GlyphProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-px")]
+        pub iso_standard_9541_px: Option<RelRational>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-py")]
+        pub iso_standard_9541_py: Option<RelRational>,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-ex")]
+        pub iso_standard_9541_ex: RelRational,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-ey")]
+        pub iso_standard_9541_ey: RelRational,
+        #[rasn(tag(context, 4), identifier = "iso-standard-9541-ext")]
+        pub iso_standard_9541_ext: Extents,
+        #[rasn(tag(context, 5), identifier = "iso-standard-9541-lgs")]
+        pub iso_standard_9541_lgs: Option<Ligatures>,
+        #[rasn(tag(context, 6), identifier = "iso-standard-9541-peas")]
+        pub iso_standard_9541_peas: Option<PAdjusts>,
+        #[rasn(tag(context, 7), identifier = "iso-standard-9541-cpeai")]
+        pub iso_standard_9541_cpeai: Option<CIndicator>,
+        #[rasn(tag(context, 8), identifier = "iso-standard-9541-eai")]
+        pub iso_standard_9541_eai: Option<ECode>,
+        #[rasn(tag(context, 9), identifier = "iso-standard-9541-minex")]
+        pub iso_standard_9541_minex: Option<RelRational>,
+        #[rasn(tag(context, 10), identifier = "iso-standard-9541-miney")]
+        pub iso_standard_9541_miney: Option<RelRational>,
+        #[rasn(tag(context, 11), identifier = "iso-standard-9541-maxex")]
+        pub iso_standard_9541_maxex: Option<RelRational>,
+        #[rasn(tag(context, 12), identifier = "iso-standard-9541-maxey")]
+        pub iso_standard_9541_maxey: Option<RelRational>,
+        #[rasn(tag(context, 13), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl GlyphProperties {
+        pub fn new(
+            iso_standard_9541_px: Option<RelRational>,
+            iso_standard_9541_py: Option<RelRational>,
+            iso_standard_9541_ex: RelRational,
+            iso_standard_9541_ey: RelRational,
+            iso_standard_9541_ext: Extents,
+            iso_standard_9541_lgs: Option<Ligatures>,
+            iso_standard_9541_peas: Option<PAdjusts>,
+            iso_standard_9541_cpeai: Option<CIndicator>,
+            iso_standard_9541_eai: Option<ECode>,
+            iso_standard_9541_minex: Option<RelRational>,
+            iso_standard_9541_miney: Option<RelRational>,
+            iso_standard_9541_maxex: Option<RelRational>,
+            iso_standard_9541_maxey: Option<RelRational>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_px,
+                iso_standard_9541_py,
+                iso_standard_9541_ex,
+                iso_standard_9541_ey,
+                iso_standard_9541_ext,
+                iso_standard_9541_lgs,
+                iso_standard_9541_peas,
+                iso_standard_9541_cpeai,
+                iso_standard_9541_eai,
+                iso_standard_9541_minex,
+                iso_standard_9541_miney,
+                iso_standard_9541_maxex,
+                iso_standard_9541_maxey,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Glyph-Property-List")]
+    pub struct GlyphPropertyList {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-gname")]
+        pub iso_standard_9541_gname: GlobalName,
+        #[rasn(tag(context, 1), identifier = "glyph-properties")]
+        pub glyph_properties: GlyphProperties,
+    }
+    impl GlyphPropertyList {
+        pub fn new(iso_standard_9541_gname: GlobalName, glyph_properties: GlyphProperties) -> Self {
+            Self {
+                iso_standard_9541_gname,
+                glyph_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Glyph-Shape")]
+    pub struct GlyphShape(pub Any);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Glyph-Shapes")]
+    pub struct GlyphShapes(pub SetOf<GlyphShape>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Ligature {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-lgn")]
+        pub iso_standard_9541_lgn: GlobalName,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-lgsn")]
+        pub iso_standard_9541_lgsn: SequenceOf<GlobalName>,
+    }
+    impl Ligature {
+        pub fn new(
+            iso_standard_9541_lgn: GlobalName,
+            iso_standard_9541_lgsn: SequenceOf<GlobalName>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_lgn,
+                iso_standard_9541_lgsn,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Ligatures {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-lg")]
+        pub iso_standard_9541_lg: Option<SetOf<Ligature>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl Ligatures {
+        pub fn new(
+            iso_standard_9541_lg: Option<SetOf<Ligature>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_lg,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Max-Extents")]
+    pub struct MaxExtents {
+        #[rasn(tag(context, 0), identifier = "max-minx")]
+        pub max_minx: RelRational,
+        #[rasn(tag(context, 1), identifier = "max-miny")]
+        pub max_miny: RelRational,
+        #[rasn(tag(context, 2), identifier = "max-maxx")]
+        pub max_maxx: RelRational,
+        #[rasn(tag(context, 3), identifier = "max-maxy")]
+        pub max_maxy: RelRational,
+    }
+    impl MaxExtents {
+        pub fn new(
+            max_minx: RelRational,
+            max_miny: RelRational,
+            max_maxx: RelRational,
+            max_maxy: RelRational,
+        ) -> Self {
+            Self {
+                max_minx,
+                max_miny,
+                max_maxx,
+                max_maxy,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Modal-Properties")]
+    pub struct ModalProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-nomescdir")]
+        pub iso_standard_9541_nomescdir: Angle,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-escclass")]
+        pub iso_standard_9541_escclass: EscClassCode,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-avgescx")]
+        pub iso_standard_9541_avgescx: RelRational,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-avgescy")]
+        pub iso_standard_9541_avgescy: RelRational,
+        #[rasn(tag(context, 4), identifier = "iso-standard-9541-avglcescx")]
+        pub iso_standard_9541_avglcescx: RelRational,
+        #[rasn(tag(context, 5), identifier = "iso-standard-9541-avglcescy")]
+        pub iso_standard_9541_avglcescy: RelRational,
+        #[rasn(tag(context, 6), identifier = "iso-standard-9541-avgcapescx")]
+        pub iso_standard_9541_avgcapescx: RelRational,
+        #[rasn(tag(context, 7), identifier = "iso-standard-9541-avgcapescy")]
+        pub iso_standard_9541_avgcapescy: RelRational,
+        #[rasn(tag(context, 8), identifier = "iso-standard-9541-tabescx")]
+        pub iso_standard_9541_tabescx: RelRational,
+        #[rasn(tag(context, 9), identifier = "iso-standard-9541-tabescy")]
+        pub iso_standard_9541_tabescy: RelRational,
+        #[rasn(tag(context, 10), identifier = "iso-standard-9541-maxfontext")]
+        pub iso_standard_9541_maxfontext: MaxExtents,
+        #[rasn(tag(context, 11), identifier = "iso-standard-9541-sectors")]
+        pub iso_standard_9541_sectors: Option<Sectors>,
+        #[rasn(tag(context, 12), identifier = "iso-standard-9541-escadjs")]
+        pub iso_standard_9541_escadjs: Option<SetOf<Adjusts>>,
+        #[rasn(tag(context, 13), identifier = "iso-standard-9541-minescadjsze")]
+        pub iso_standard_9541_minescadjsze: Option<Rational>,
+        #[rasn(tag(context, 14), identifier = "iso-standard-9541-maxescadjsze")]
+        pub iso_standard_9541_maxescadjsze: Option<Rational>,
+        #[rasn(tag(context, 15), identifier = "iso-standard-9541-scores")]
+        pub iso_standard_9541_scores: Option<Scores>,
+        #[rasn(tag(context, 16), identifier = "iso-standard-9541-vscripts")]
+        pub iso_standard_9541_vscripts: Option<VariantScripts>,
+        #[rasn(tag(context, 17), identifier = "iso-standard-9541-minlinesp")]
+        pub iso_standard_9541_minlinesp: Option<AlignmentSpacing>,
+        #[rasn(tag(context, 18), identifier = "iso-standard-9541-minanascale")]
+        pub iso_standard_9541_minanascale: Option<Rational>,
+        #[rasn(tag(context, 19), identifier = "iso-standard-9541-maxanascale")]
+        pub iso_standard_9541_maxanascale: Option<Rational>,
+        #[rasn(tag(context, 20), identifier = "iso-standard-9541-nomalign")]
+        pub iso_standard_9541_nomalign: Option<GlobalName>,
+        #[rasn(tag(context, 21), identifier = "iso-standard-9541-alignmodes")]
+        pub iso_standard_9541_alignmodes: Option<AlignmentModes>,
+        #[rasn(tag(context, 22), identifier = "iso-standard-9541-copyfits")]
+        pub iso_standard_9541_copyfits: Option<Copyfits>,
+        #[rasn(tag(context, 23), identifier = "iso-standard-9541-dsnwordadd")]
+        pub iso_standard_9541_dsnwordadd: Option<RelRational>,
+        #[rasn(tag(context, 24), identifier = "iso-standard-9541-dsnwordampl")]
+        pub iso_standard_9541_dsnwordampl: Option<Rational>,
+        #[rasn(tag(context, 25), identifier = "iso-standard-9541-minwordadd")]
+        pub iso_standard_9541_minwordadd: Option<RelRational>,
+        #[rasn(tag(context, 26), identifier = "iso-standard-9541-minwordampl")]
+        pub iso_standard_9541_minwordampl: Option<Rational>,
+        #[rasn(tag(context, 27), identifier = "iso-standard-9541-maxwordadd")]
+        pub iso_standard_9541_maxwordadd: Option<RelRational>,
+        #[rasn(tag(context, 28), identifier = "iso-standard-9541-maxwordampl")]
+        pub iso_standard_9541_maxwordampl: Option<Rational>,
+        #[rasn(tag(context, 29), identifier = "iso-standard-9541-dsnletteradd")]
+        pub iso_standard_9541_dsnletteradd: Option<RelRational>,
+        #[rasn(tag(context, 30), identifier = "iso-standard-9541-dsnletterampl")]
+        pub iso_standard_9541_dsnletterampl: Option<Rational>,
+        #[rasn(tag(context, 31), identifier = "iso-standard-9541-minletteradd")]
+        pub iso_standard_9541_minletteradd: Option<RelRational>,
+        #[rasn(tag(context, 32), identifier = "iso-standard-9541-minletterampl")]
+        pub iso_standard_9541_minletterampl: Option<Rational>,
+        #[rasn(tag(context, 33), identifier = "iso-standard-9541-maxletteradd")]
+        pub iso_standard_9541_maxletteradd: Option<RelRational>,
+        #[rasn(tag(context, 34), identifier = "iso-standard-9541-maxletterampl")]
+        pub iso_standard_9541_maxletterampl: Option<Rational>,
+        #[rasn(tag(context, 35), identifier = "iso-standard-9541-glyphmetrics")]
+        pub iso_standard_9541_glyphmetrics: GlyphMetrics,
+        #[rasn(tag(context, 36), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl ModalProperties {
+        pub fn new(
+            iso_standard_9541_nomescdir: Angle,
+            iso_standard_9541_escclass: EscClassCode,
+            iso_standard_9541_avgescx: RelRational,
+            iso_standard_9541_avgescy: RelRational,
+            iso_standard_9541_avglcescx: RelRational,
+            iso_standard_9541_avglcescy: RelRational,
+            iso_standard_9541_avgcapescx: RelRational,
+            iso_standard_9541_avgcapescy: RelRational,
+            iso_standard_9541_tabescx: RelRational,
+            iso_standard_9541_tabescy: RelRational,
+            iso_standard_9541_maxfontext: MaxExtents,
+            iso_standard_9541_sectors: Option<Sectors>,
+            iso_standard_9541_escadjs: Option<SetOf<Adjusts>>,
+            iso_standard_9541_minescadjsze: Option<Rational>,
+            iso_standard_9541_maxescadjsze: Option<Rational>,
+            iso_standard_9541_scores: Option<Scores>,
+            iso_standard_9541_vscripts: Option<VariantScripts>,
+            iso_standard_9541_minlinesp: Option<AlignmentSpacing>,
+            iso_standard_9541_minanascale: Option<Rational>,
+            iso_standard_9541_maxanascale: Option<Rational>,
+            iso_standard_9541_nomalign: Option<GlobalName>,
+            iso_standard_9541_alignmodes: Option<AlignmentModes>,
+            iso_standard_9541_copyfits: Option<Copyfits>,
+            iso_standard_9541_dsnwordadd: Option<RelRational>,
+            iso_standard_9541_dsnwordampl: Option<Rational>,
+            iso_standard_9541_minwordadd: Option<RelRational>,
+            iso_standard_9541_minwordampl: Option<Rational>,
+            iso_standard_9541_maxwordadd: Option<RelRational>,
+            iso_standard_9541_maxwordampl: Option<Rational>,
+            iso_standard_9541_dsnletteradd: Option<RelRational>,
+            iso_standard_9541_dsnletterampl: Option<Rational>,
+            iso_standard_9541_minletteradd: Option<RelRational>,
+            iso_standard_9541_minletterampl: Option<Rational>,
+            iso_standard_9541_maxletteradd: Option<RelRational>,
+            iso_standard_9541_maxletterampl: Option<Rational>,
+            iso_standard_9541_glyphmetrics: GlyphMetrics,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_nomescdir,
+                iso_standard_9541_escclass,
+                iso_standard_9541_avgescx,
+                iso_standard_9541_avgescy,
+                iso_standard_9541_avglcescx,
+                iso_standard_9541_avglcescy,
+                iso_standard_9541_avgcapescx,
+                iso_standard_9541_avgcapescy,
+                iso_standard_9541_tabescx,
+                iso_standard_9541_tabescy,
+                iso_standard_9541_maxfontext,
+                iso_standard_9541_sectors,
+                iso_standard_9541_escadjs,
+                iso_standard_9541_minescadjsze,
+                iso_standard_9541_maxescadjsze,
+                iso_standard_9541_scores,
+                iso_standard_9541_vscripts,
+                iso_standard_9541_minlinesp,
+                iso_standard_9541_minanascale,
+                iso_standard_9541_maxanascale,
+                iso_standard_9541_nomalign,
+                iso_standard_9541_alignmodes,
+                iso_standard_9541_copyfits,
+                iso_standard_9541_dsnwordadd,
+                iso_standard_9541_dsnwordampl,
+                iso_standard_9541_minwordadd,
+                iso_standard_9541_minwordampl,
+                iso_standard_9541_maxwordadd,
+                iso_standard_9541_maxwordampl,
+                iso_standard_9541_dsnletteradd,
+                iso_standard_9541_dsnletterampl,
+                iso_standard_9541_minletteradd,
+                iso_standard_9541_minletterampl,
+                iso_standard_9541_maxletteradd,
+                iso_standard_9541_maxletterampl,
+                iso_standard_9541_glyphmetrics,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Name-Prefix")]
+    pub struct NamePrefix {
+        #[rasn(tag(context, 0))]
+        pub index: Code,
+        #[rasn(tag(context, 1))]
+        pub prefix: StructuredName,
+    }
+    impl NamePrefix {
+        pub fn new(index: Code, prefix: StructuredName) -> Self {
+            Self { index, prefix }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Ordered-Property-List")]
+    pub struct OrderedPropertyList(pub SequenceOf<Property>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Ordered-Value-List")]
+    pub struct OrderedValueList(pub SequenceOf<Value>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "P-Adjust")]
+    pub struct PAdjust {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-pean")]
+        pub iso_standard_9541_pean: GlobalName,
+        #[rasn(tag(context, 1), identifier = "p-adjust-property-list")]
+        pub p_adjust_property_list: PAdjustProperties,
+    }
+    impl PAdjust {
+        pub fn new(
+            iso_standard_9541_pean: GlobalName,
+            p_adjust_property_list: PAdjustProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_pean,
+                p_adjust_property_list,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPAdjustPropertiesIsoStandard9541Peax {
+        #[rasn(tag(context, 0), identifier = "global-name")]
+        pub global_name: GlobalName,
+        #[rasn(tag(context, 1), identifier = "rel-rational")]
+        pub rel_rational: RelRational,
+    }
+    impl AnonymousPAdjustPropertiesIsoStandard9541Peax {
+        pub fn new(global_name: GlobalName, rel_rational: RelRational) -> Self {
+            Self {
+                global_name,
+                rel_rational,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PAdjustPropertiesIsoStandard9541Peax(
+        pub SequenceOf<AnonymousPAdjustPropertiesIsoStandard9541Peax>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPAdjustPropertiesIsoStandard9541Peay {
+        #[rasn(tag(context, 0), identifier = "global-name")]
+        pub global_name: GlobalName,
+        #[rasn(tag(context, 1), identifier = "rel-rational")]
+        pub rel_rational: RelRational,
+    }
+    impl AnonymousPAdjustPropertiesIsoStandard9541Peay {
+        pub fn new(global_name: GlobalName, rel_rational: RelRational) -> Self {
+            Self {
+                global_name,
+                rel_rational,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PAdjustPropertiesIsoStandard9541Peay(
+        pub SequenceOf<AnonymousPAdjustPropertiesIsoStandard9541Peay>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "P-Adjust-Properties")]
+    pub struct PAdjustProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-peax")]
+        pub iso_standard_9541_peax: Option<PAdjustPropertiesIsoStandard9541Peax>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-peay")]
+        pub iso_standard_9541_peay: Option<PAdjustPropertiesIsoStandard9541Peay>,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-speaforwdx")]
+        pub iso_standard_9541_speaforwdx: Option<SequenceOf<RelRational>>,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-speaforwdy")]
+        pub iso_standard_9541_speaforwdy: Option<SequenceOf<RelRational>>,
+        #[rasn(tag(context, 4), identifier = "iso-standard-9541-speabackwdx")]
+        pub iso_standard_9541_speabackwdx: Option<SequenceOf<RelRational>>,
+        #[rasn(tag(context, 5), identifier = "iso-standard-9541-speabackwdy")]
+        pub iso_standard_9541_speabackwdy: Option<SequenceOf<RelRational>>,
+        #[rasn(tag(context, 6), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl PAdjustProperties {
+        pub fn new(
+            iso_standard_9541_peax: Option<PAdjustPropertiesIsoStandard9541Peax>,
+            iso_standard_9541_peay: Option<PAdjustPropertiesIsoStandard9541Peay>,
+            iso_standard_9541_speaforwdx: Option<SequenceOf<RelRational>>,
+            iso_standard_9541_speaforwdy: Option<SequenceOf<RelRational>>,
+            iso_standard_9541_speabackwdx: Option<SequenceOf<RelRational>>,
+            iso_standard_9541_speabackwdy: Option<SequenceOf<RelRational>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_peax,
+                iso_standard_9541_peay,
+                iso_standard_9541_speaforwdx,
+                iso_standard_9541_speaforwdy,
+                iso_standard_9541_speabackwdx,
+                iso_standard_9541_speabackwdy,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "P-Adjusts")]
+    pub struct PAdjusts {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-pea")]
+        pub iso_standard_9541_pea: Option<SetOf<PAdjust>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl PAdjusts {
+        pub fn new(
+            iso_standard_9541_pea: Option<SetOf<PAdjust>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_pea,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Posture-Code")]
+    pub struct PostureCode(pub Integer);
+    #[doc = " see 9541-3 Glyph Shape Representation"]
+    #[doc = " The following Data Types are used in the above structures"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Property {
+        #[rasn(tag(context, 0), identifier = "property-name")]
+        pub property_name: GlobalName,
+        #[rasn(tag(context, 1), identifier = "property-value")]
+        pub property_value: PropertyValue,
+    }
+    impl Property {
+        pub fn new(property_name: GlobalName, property_value: PropertyValue) -> Self {
+            Self {
+                property_name,
+                property_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Property-List")]
+    pub struct PropertyList(pub SetOf<Property>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Property-Value")]
+    pub enum PropertyValue {
+        #[rasn(tag(context, 0))]
+        value(Value),
+        #[rasn(tag(context, 1), identifier = "value-list")]
+        value_list(ValueList),
+        #[rasn(tag(context, 2), identifier = "ordered-value-list")]
+        ordered_value_list(OrderedValueList),
+        #[rasn(tag(context, 3), identifier = "property-list")]
+        property_list(PropertyList),
+        #[rasn(tag(context, 4), identifier = "ordered-property-list")]
+        ordered_property_list(OrderedPropertyList),
+    }
+    #[doc = " expresses units of degrees, with a"]
+    #[doc = " value range of -360 to +360"]
+    #[doc = " denominator defaults to 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Proprietary-Data")]
+    pub struct ProprietaryData {
+        #[rasn(tag(context, 0), identifier = "prop-data-message")]
+        pub prop_data_message: Option<Message>,
+        #[rasn(tag(context, 1), identifier = "prop-data-key")]
+        pub prop_data_key: Option<OctetString>,
+        #[rasn(tag(context, 2), identifier = "prop-data")]
+        pub prop_data: OctetString,
+    }
+    impl ProprietaryData {
+        pub fn new(
+            prop_data_message: Option<Message>,
+            prop_data_key: Option<OctetString>,
+            prop_data: OctetString,
+        ) -> Self {
+            Self {
+                prop_data_message,
+                prop_data_key,
+                prop_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Rational {
+        #[rasn(tag(context, 0))]
+        pub numerator: Integer,
+        #[rasn(tag(context, 1))]
+        pub denominator: Option<Integer>,
+    }
+    impl Rational {
+        pub fn new(numerator: Integer, denominator: Option<Integer>) -> Self {
+            Self {
+                numerator,
+                denominator,
+            }
+        }
+    }
+    #[doc = " denominator defaults to 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Rel-Rational")]
+    pub struct RelRational(pub Rational);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSECPropertiesIsoStandard9541Secx {
+        #[rasn(tag(context, 0))]
+        pub rational: Rational,
+        #[rasn(tag(context, 1), identifier = "rel-rational")]
+        pub rel_rational: RelRational,
+    }
+    impl AnonymousSECPropertiesIsoStandard9541Secx {
+        pub fn new(rational: Rational, rel_rational: RelRational) -> Self {
+            Self {
+                rational,
+                rel_rational,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SECPropertiesIsoStandard9541Secx(
+        pub SequenceOf<AnonymousSECPropertiesIsoStandard9541Secx>,
+    );
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSECPropertiesIsoStandard9541Secy {
+        #[rasn(tag(context, 0))]
+        pub rational: Rational,
+        #[rasn(tag(context, 1), identifier = "rel-rational")]
+        pub rel_rational: RelRational,
+    }
+    impl AnonymousSECPropertiesIsoStandard9541Secy {
+        pub fn new(rational: Rational, rel_rational: RelRational) -> Self {
+            Self {
+                rational,
+                rel_rational,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SECPropertiesIsoStandard9541Secy(
+        pub SequenceOf<AnonymousSECPropertiesIsoStandard9541Secy>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SEC-Properties")]
+    pub struct SECProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-secx")]
+        pub iso_standard_9541_secx: Option<SECPropertiesIsoStandard9541Secx>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-secy")]
+        pub iso_standard_9541_secy: Option<SECPropertiesIsoStandard9541Secy>,
+        #[rasn(tag(context, 2), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl SECProperties {
+        pub fn new(
+            iso_standard_9541_secx: Option<SECPropertiesIsoStandard9541Secx>,
+            iso_standard_9541_secy: Option<SECPropertiesIsoStandard9541Secy>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_secx,
+                iso_standard_9541_secy,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Score {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-scorename")]
+        pub iso_standard_9541_scorename: GlobalName,
+        #[rasn(tag(context, 1), identifier = "score-property-list")]
+        pub score_property_list: ScoreProperties,
+    }
+    impl Score {
+        pub fn new(
+            iso_standard_9541_scorename: GlobalName,
+            score_property_list: ScoreProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_scorename,
+                score_property_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Score-Properties")]
+    pub struct ScoreProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-scoreoffsetx")]
+        pub iso_standard_9541_scoreoffsetx: Option<RelRational>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-scoreoffsety")]
+        pub iso_standard_9541_scoreoffsety: Option<RelRational>,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-scorethick")]
+        pub iso_standard_9541_scorethick: Option<RelRational>,
+        #[rasn(tag(context, 3), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl ScoreProperties {
+        pub fn new(
+            iso_standard_9541_scoreoffsetx: Option<RelRational>,
+            iso_standard_9541_scoreoffsety: Option<RelRational>,
+            iso_standard_9541_scorethick: Option<RelRational>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_scoreoffsetx,
+                iso_standard_9541_scoreoffsety,
+                iso_standard_9541_scorethick,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Scores {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-Score")]
+        pub iso_standard_9541_score: Option<SetOf<Score>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl Scores {
+        pub fn new(
+            iso_standard_9541_score: Option<SetOf<Score>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_score,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Sector {
+        #[rasn(tag(context, 0), identifier = "sector-left")]
+        pub sector_left: RelRational,
+        #[rasn(tag(context, 1), identifier = "sector-right")]
+        pub sector_right: RelRational,
+    }
+    impl Sector {
+        pub fn new(sector_left: RelRational, sector_right: RelRational) -> Self {
+            Self {
+                sector_left,
+                sector_right,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct Sectors {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-sector")]
+        pub iso_standard_9541_sector: Option<SequenceOf<Sector>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl Sectors {
+        pub fn new(
+            iso_standard_9541_sector: Option<SequenceOf<Sector>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_sector,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Structure-Code")]
+    pub struct StructureCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Value {
+        #[rasn(tag(context, 0), identifier = "global-Name")]
+        global_Name(GlobalName),
+        #[rasn(tag(context, 1), identifier = "match-String")]
+        match_String(MatchString),
+        #[rasn(tag(context, 2))]
+        message(Message),
+        #[rasn(tag(context, 3))]
+        octetString(OctetString),
+        #[rasn(tag(context, 4))]
+        boolean(bool),
+        #[rasn(tag(context, 5))]
+        integer(Integer),
+        #[rasn(tag(context, 6))]
+        cardinal(Cardinal),
+        #[rasn(tag(context, 7))]
+        code(Code),
+        #[rasn(tag(context, 8))]
+        rational(Rational),
+        #[rasn(tag(context, 9), identifier = "rel-Rational")]
+        rel_Rational(RelRational),
+        #[rasn(tag(context, 10))]
+        angle(Angle),
+        #[rasn(tag(context, 11), identifier = "proprietary-Data")]
+        proprietary_Data(ProprietaryData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Value-List")]
+    pub struct ValueList(pub SetOf<Value>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Variant-Scripts")]
+    pub struct VariantScripts {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-vscript")]
+        pub iso_standard_9541_vscript: Option<SetOf<Vscript>>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl VariantScripts {
+        pub fn new(
+            iso_standard_9541_vscript: Option<SetOf<Vscript>>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_vscript,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Vscript {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-vsname")]
+        pub iso_standard_9541_vsname: GlobalName,
+        #[rasn(tag(context, 1), identifier = "vscript-property-list")]
+        pub vscript_property_list: VscriptProperties,
+    }
+    impl Vscript {
+        pub fn new(
+            iso_standard_9541_vsname: GlobalName,
+            vscript_property_list: VscriptProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_vsname,
+                vscript_property_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Vscript-Properties")]
+    pub struct VscriptProperties {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-vsoffsetx")]
+        pub iso_standard_9541_vsoffsetx: Option<RelRational>,
+        #[rasn(tag(context, 1), identifier = "iso-standard-9541-vsoffsety")]
+        pub iso_standard_9541_vsoffsety: Option<RelRational>,
+        #[rasn(tag(context, 2), identifier = "iso-standard-9541-vsscalex")]
+        pub iso_standard_9541_vsscalex: Option<Rational>,
+        #[rasn(tag(context, 3), identifier = "iso-standard-9541-vsscaley")]
+        pub iso_standard_9541_vsscaley: Option<Rational>,
+        #[rasn(tag(context, 4), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl VscriptProperties {
+        pub fn new(
+            iso_standard_9541_vsoffsetx: Option<RelRational>,
+            iso_standard_9541_vsoffsety: Option<RelRational>,
+            iso_standard_9541_vsscalex: Option<Rational>,
+            iso_standard_9541_vsscaley: Option<Rational>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_vsoffsetx,
+                iso_standard_9541_vsoffsety,
+                iso_standard_9541_vsscalex,
+                iso_standard_9541_vsscaley,
+                non_iso_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Weight-Code")]
+    pub struct WeightCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Width-Code")]
+    pub struct WidthCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Writing-Mode")]
+    pub struct WritingMode {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-wrmodename")]
+        pub iso_standard_9541_wrmodename: GlobalName,
+        #[rasn(tag(context, 1), identifier = "wrmode-properties")]
+        pub wrmode_properties: ModalProperties,
+    }
+    impl WritingMode {
+        pub fn new(
+            iso_standard_9541_wrmodename: GlobalName,
+            wrmode_properties: ModalProperties,
+        ) -> Self {
+            Self {
+                iso_standard_9541_wrmodename,
+                wrmode_properties,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Writing-Modes")]
+    pub struct WritingModes {
+        #[rasn(tag(context, 0), identifier = "iso-standard-9541-wrmode")]
+        pub iso_standard_9541_wrmode: SetOf<WritingMode>,
+        #[rasn(tag(context, 1), identifier = "non-iso-properties")]
+        pub non_iso_properties: Option<PropertyList>,
+    }
+    impl WritingModes {
+        pub fn new(
+            iso_standard_9541_wrmode: SetOf<WritingMode>,
+            non_iso_properties: Option<PropertyList>,
+        ) -> Self {
+            Self {
+                iso_standard_9541_wrmode,
+                non_iso_properties,
+            }
+        }
+    }
+}

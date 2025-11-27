@@ -1,0 +1,587 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x843_2000_GeneralModule.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod general_module {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, Certificate, CertificateList, Extensions, SubjectPublicKeyInfo,
+    };
+    use super::certificate_extensions::{GeneralName, KeyIdentifier, ReasonFlags};
+    use super::crmf::{CertId, CertReqMessages, CertTemplate, EncryptedValue, PKIPublicationInfo};
+    use super::information_framework::{Attribute, Name};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Attributes(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CAKeyUpdAnnContent {
+        #[rasn(identifier = "oldWithNew")]
+        pub old_with_new: Certificate,
+        #[rasn(identifier = "newWithOld")]
+        pub new_with_old: Certificate,
+        #[rasn(identifier = "newWithNew")]
+        pub new_with_new: Certificate,
+    }
+    impl CAKeyUpdAnnContent {
+        pub fn new(
+            old_with_new: Certificate,
+            new_with_old: Certificate,
+            new_with_new: Certificate,
+        ) -> Self {
+            Self {
+                old_with_new,
+                new_with_old,
+                new_with_new,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CRLAnnContent(pub SequenceOf<CertificateList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertAnnContent(pub Certificate);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CertOrEncCert {
+        #[rasn(tag(explicit(context, 0)))]
+        certificate(Certificate),
+        #[rasn(tag(explicit(context, 1)))]
+        encryptedCert(EncryptedValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertRepMessage {
+        #[rasn(size("1.."), tag(explicit(context, 1)), identifier = "caPubs")]
+        pub ca_pubs: Option<SequenceOf<Certificate>>,
+        pub response: SequenceOf<CertResponse>,
+    }
+    impl CertRepMessage {
+        pub fn new(
+            ca_pubs: Option<SequenceOf<Certificate>>,
+            response: SequenceOf<CertResponse>,
+        ) -> Self {
+            Self { ca_pubs, response }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertResponse {
+        #[rasn(identifier = "certReqId")]
+        pub cert_req_id: Integer,
+        pub status: PKIStatusInfo,
+        #[rasn(identifier = "certifiedKeyPair")]
+        pub certified_key_pair: Option<CertifiedKeyPair>,
+        #[rasn(identifier = "rspInfo")]
+        pub rsp_info: Option<OctetString>,
+    }
+    impl CertResponse {
+        pub fn new(
+            cert_req_id: Integer,
+            status: PKIStatusInfo,
+            certified_key_pair: Option<CertifiedKeyPair>,
+            rsp_info: Option<OctetString>,
+        ) -> Self {
+            Self {
+                cert_req_id,
+                status,
+                certified_key_pair,
+                rsp_info,
+            }
+        }
+    }
+    #[doc = " CertificationRequest compatible to PKCS#10"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertificationRequest {
+        #[rasn(identifier = "certificationRequestInfo")]
+        pub certification_request_info: CertificationRequestInfo,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: AlgorithmIdentifier,
+        pub signature: BitString,
+    }
+    impl CertificationRequest {
+        pub fn new(
+            certification_request_info: CertificationRequestInfo,
+            signature_algorithm: AlgorithmIdentifier,
+            signature: BitString,
+        ) -> Self {
+            Self {
+                certification_request_info,
+                signature_algorithm,
+                signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertificationRequestInfo {
+        pub version: Integer,
+        pub subject: Name,
+        #[rasn(identifier = "subjectPKInfo")]
+        pub subject_pkinfo: SubjectPublicKeyInfo,
+        #[rasn(tag(context, 0))]
+        pub attributes: Attributes,
+    }
+    impl CertificationRequestInfo {
+        pub fn new(
+            version: Integer,
+            subject: Name,
+            subject_pkinfo: SubjectPublicKeyInfo,
+            attributes: Attributes,
+        ) -> Self {
+            Self {
+                version,
+                subject,
+                subject_pkinfo,
+                attributes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CertifiedKeyPair {
+        #[rasn(identifier = "certOrEncCert")]
+        pub cert_or_enc_cert: CertOrEncCert,
+        #[rasn(tag(explicit(context, 0)), identifier = "privateKey")]
+        pub private_key: Option<EncryptedValue>,
+        #[rasn(tag(explicit(context, 1)), identifier = "publicationInfo")]
+        pub publication_info: Option<PKIPublicationInfo>,
+    }
+    impl CertifiedKeyPair {
+        pub fn new(
+            cert_or_enc_cert: CertOrEncCert,
+            private_key: Option<EncryptedValue>,
+            publication_info: Option<PKIPublicationInfo>,
+        ) -> Self {
+            Self {
+                cert_or_enc_cert,
+                private_key,
+                publication_info,
+            }
+        }
+    }
+    #[doc = "{1 2 840 113533 7 66 30}"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DHBMParameter {
+        pub owf: AlgorithmIdentifier,
+        pub mac: AlgorithmIdentifier,
+    }
+    impl DHBMParameter {
+        pub fn new(owf: AlgorithmIdentifier, mac: AlgorithmIdentifier) -> Self {
+            Self { owf, mac }
+        }
+    }
+    #[doc = " or HMAC as in RFC2104, RFC2202)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DHBasedMac(pub ObjectIdentifier);
+    #[doc = " The receiver is free to ignore any contained OBJECT IDs that it does"]
+    #[doc = " not recognize."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ErrorMsgContent {
+        #[rasn(identifier = "pKIStatusInfo")]
+        pub p_kistatus_info: PKIStatusInfo,
+        #[rasn(identifier = "errorCode")]
+        pub error_code: Option<Integer>,
+        #[rasn(identifier = "errorDetails")]
+        pub error_details: Option<PKIFreeText>,
+    }
+    impl ErrorMsgContent {
+        pub fn new(
+            p_kistatus_info: PKIStatusInfo,
+            error_code: Option<Integer>,
+            error_details: Option<PKIFreeText>,
+        ) -> Self {
+            Self {
+                p_kistatus_info,
+                error_code,
+                error_details,
+            }
+        }
+    }
+    #[doc = " Example InfoTypeAndValue contents include, but are not limited to:"]
+    #[doc = "  { CAProtEncCert    = {id-it 1}, Certificate                     }"]
+    #[doc = "  { SignKeyPairTypes = {id-it 2}, SEQUENCE OF AlgorithmIdentifier }"]
+    #[doc = "  { EncKeyPairTypes  = {id-it 3}, SEQUENCE OF AlgorithmIdentifier }"]
+    #[doc = "  { PreferredSymmAlg = {id-it 4}, AlgorithmIdentifier             }"]
+    #[doc = "  { CAKeyUpdateInfo  = {id-it 5}, CAKeyUpdAnnContent              }"]
+    #[doc = "  { CurrentCRL       = {id-it 6}, CertificateList                 }"]
+    #[doc = " where {id-it} = {id-pkix 4} = {1 3 6 1 5 5 7 4}"]
+    #[doc = " This construct may also be used to define new PKIX Certificate"]
+    #[doc = " Management Protocol request and response messages, or general-"]
+    #[doc = " purpose (e.g. announcement) messages for future needs or for"]
+    #[doc = " specific environments."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenMsgContent(pub SequenceOf<InfoTypeAndValue>);
+    #[doc = " May be sent by EE, RA, or CA (depending on message content)."]
+    #[doc = " The OPTIONAL infoValue parameter of InfoTypeAndValue will typically"]
+    #[doc = " be omitted for some of the examples given above.  The receiver is"]
+    #[doc = " free to ignore any contained OBJECT IDs that it does not recognize."]
+    #[doc = " If sent from EE to CA, the empty set indicates that the CA may send"]
+    #[doc = " any/all information that it wishes."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenRepContent(pub SequenceOf<InfoTypeAndValue>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InfoTypeAndValue {
+        #[rasn(identifier = "infoType")]
+        pub info_type: Any,
+        #[rasn(identifier = "infoValue")]
+        pub info_value: Option<Any>,
+    }
+    impl InfoTypeAndValue {
+        pub fn new(info_type: Any, info_value: Option<Any>) -> Self {
+            Self {
+                info_type,
+                info_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct KeyRecRepContent {
+        pub status: PKIStatusInfo,
+        #[rasn(tag(explicit(context, 0)), identifier = "newSigCert")]
+        pub new_sig_cert: Option<Certificate>,
+        #[rasn(size("1.."), tag(explicit(context, 1)), identifier = "caCerts")]
+        pub ca_certs: Option<SequenceOf<Certificate>>,
+        #[rasn(size("1.."), tag(explicit(context, 2)), identifier = "keyPairHist")]
+        pub key_pair_hist: Option<SequenceOf<CertifiedKeyPair>>,
+    }
+    impl KeyRecRepContent {
+        pub fn new(
+            status: PKIStatusInfo,
+            new_sig_cert: Option<Certificate>,
+            ca_certs: Option<SequenceOf<Certificate>>,
+            key_pair_hist: Option<SequenceOf<CertifiedKeyPair>>,
+        ) -> Self {
+            Self {
+                status,
+                new_sig_cert,
+                ca_certs,
+                key_pair_hist,
+            }
+        }
+    }
+    #[doc = " or HMAC RFC2104, RFC2202)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NestedMessageContent(pub PKIMessage);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OOBCert(pub Certificate);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OOBCertHash {
+        #[rasn(tag(explicit(context, 0)), identifier = "hashAlg")]
+        pub hash_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(explicit(context, 1)), identifier = "certId")]
+        pub cert_id: Option<CertId>,
+        #[rasn(identifier = "hashVal")]
+        pub hash_val: BitString,
+    }
+    impl OOBCertHash {
+        pub fn new(
+            hash_alg: Option<AlgorithmIdentifier>,
+            cert_id: Option<CertId>,
+            hash_val: BitString,
+        ) -> Self {
+            Self {
+                hash_alg,
+                cert_id,
+                hash_val,
+            }
+        }
+    }
+    #[doc = "{1 2 840 113533 7 66 13}"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PBMParameter {
+        pub salt: OctetString,
+        pub owf: AlgorithmIdentifier,
+        #[rasn(identifier = "iterationCount")]
+        pub iteration_count: Integer,
+        pub mac: AlgorithmIdentifier,
+    }
+    impl PBMParameter {
+        pub fn new(
+            salt: OctetString,
+            owf: AlgorithmIdentifier,
+            iteration_count: Integer,
+            mac: AlgorithmIdentifier,
+        ) -> Self {
+            Self {
+                salt,
+                owf,
+                iteration_count,
+                mac,
+            }
+        }
+    }
+    #[doc = " text encoded as UTF-8 String (NOTE - each UTF8String should"]
+    #[doc = " include an RFC 1766 language tag to indicate the language"]
+    #[doc = " of the contained text)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PKIBody {
+        #[rasn(tag(explicit(context, 0)))]
+        ir(CertReqMessages),
+        #[rasn(tag(explicit(context, 1)))]
+        ip(CertRepMessage),
+        #[rasn(tag(explicit(context, 2)))]
+        cr(CertReqMessages),
+        #[rasn(tag(explicit(context, 3)))]
+        cp(CertRepMessage),
+        #[rasn(tag(explicit(context, 4)))]
+        p10cr(CertificationRequest),
+        #[rasn(tag(explicit(context, 7)))]
+        kur(CertReqMessages),
+        #[rasn(tag(explicit(context, 8)))]
+        kup(CertRepMessage),
+        #[rasn(tag(explicit(context, 11)))]
+        rr(RevReqContent),
+        #[rasn(tag(explicit(context, 12)))]
+        rp(RevRepContent),
+        #[rasn(tag(explicit(context, 13)))]
+        ccr(CertReqMessages),
+        #[rasn(tag(explicit(context, 14)))]
+        ccp(CertRepMessage),
+        #[rasn(tag(explicit(context, 15)))]
+        ckuann(CAKeyUpdAnnContent),
+        #[rasn(tag(explicit(context, 16)))]
+        cann(CertAnnContent),
+        #[rasn(tag(explicit(context, 17)))]
+        rann(RevAnnContent),
+        #[rasn(tag(explicit(context, 18)))]
+        crlann(CRLAnnContent),
+        #[rasn(tag(explicit(context, 19)))]
+        conf(PKIConfirmContent),
+        #[rasn(tag(explicit(context, 20)))]
+        nested(NestedMessageContent),
+        #[rasn(tag(explicit(context, 21)))]
+        genm(GenMsgContent),
+        #[rasn(tag(explicit(context, 22)))]
+        genp(GenRepContent),
+        #[rasn(tag(explicit(context, 23)))]
+        error(ErrorMsgContent),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct PKIConfirmContent(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PKIFailureInfo(pub BitString);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "UTF8String")]
+    pub struct AnonymousPKIFreeText(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PKIFreeText(pub SequenceOf<AnonymousPKIFreeText>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PKIHeader {
+        pub pvno: Integer,
+        pub sender: GeneralName,
+        pub recipient: GeneralName,
+        #[rasn(tag(explicit(context, 0)), identifier = "messageTime")]
+        pub message_time: Option<GeneralizedTime>,
+        #[rasn(tag(explicit(context, 1)), identifier = "protectionAlg")]
+        pub protection_alg: Option<AlgorithmIdentifier>,
+        #[rasn(tag(explicit(context, 2)), identifier = "senderKID")]
+        pub sender_kid: Option<KeyIdentifier>,
+        #[rasn(tag(explicit(context, 3)), identifier = "recipKID")]
+        pub recip_kid: Option<KeyIdentifier>,
+        #[rasn(tag(explicit(context, 4)), identifier = "transactionID")]
+        pub transaction_id: Option<OctetString>,
+        #[rasn(tag(explicit(context, 5)), identifier = "senderNonce")]
+        pub sender_nonce: Option<OctetString>,
+        #[rasn(tag(explicit(context, 6)), identifier = "recipNonce")]
+        pub recip_nonce: Option<OctetString>,
+        #[rasn(tag(explicit(context, 7)), identifier = "freeText")]
+        pub free_text: Option<PKIFreeText>,
+        #[rasn(size("1.."), tag(explicit(context, 8)), identifier = "generalInfo")]
+        pub general_info: Option<SequenceOf<InfoTypeAndValue>>,
+    }
+    impl PKIHeader {
+        pub fn new(
+            pvno: Integer,
+            sender: GeneralName,
+            recipient: GeneralName,
+            message_time: Option<GeneralizedTime>,
+            protection_alg: Option<AlgorithmIdentifier>,
+            sender_kid: Option<KeyIdentifier>,
+            recip_kid: Option<KeyIdentifier>,
+            transaction_id: Option<OctetString>,
+            sender_nonce: Option<OctetString>,
+            recip_nonce: Option<OctetString>,
+            free_text: Option<PKIFreeText>,
+            general_info: Option<SequenceOf<InfoTypeAndValue>>,
+        ) -> Self {
+            Self {
+                pvno,
+                sender,
+                recipient,
+                message_time,
+                protection_alg,
+                sender_kid,
+                recip_kid,
+                transaction_id,
+                sender_nonce,
+                recip_nonce,
+                free_text,
+                general_info,
+            }
+        }
+    }
+    #[doc = "  Locally defined OIDs "]
+    #[doc = " Note that tagging is EXPLICIT in this module."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PKIMessage {
+        pub header: PKIHeader,
+        pub body: Box<PKIBody>,
+        #[rasn(tag(explicit(context, 0)))]
+        pub protection: Option<PKIProtection>,
+        #[rasn(size("1.."), tag(explicit(context, 1)), identifier = "extraCerts")]
+        pub extra_certs: Option<SequenceOf<Certificate>>,
+    }
+    impl PKIMessage {
+        pub fn new(
+            header: PKIHeader,
+            body: Box<PKIBody>,
+            protection: Option<PKIProtection>,
+            extra_certs: Option<SequenceOf<Certificate>>,
+        ) -> Self {
+            Self {
+                header,
+                body,
+                protection,
+                extra_certs,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PKIProtection(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PKIStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PKIStatusInfo {
+        pub status: PKIStatus,
+        #[rasn(identifier = "statusString")]
+        pub status_string: Option<PKIFreeText>,
+        #[rasn(identifier = "failInfo")]
+        pub fail_info: Option<PKIFailureInfo>,
+    }
+    impl PKIStatusInfo {
+        pub fn new(
+            status: PKIStatus,
+            status_string: Option<PKIFreeText>,
+            fail_info: Option<PKIFailureInfo>,
+        ) -> Self {
+            Self {
+                status,
+                status_string,
+                fail_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PasswordBasedMac(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectedPart {
+        pub header: PKIHeader,
+        pub body: PKIBody,
+    }
+    impl ProtectedPart {
+        pub fn new(header: PKIHeader, body: PKIBody) -> Self {
+            Self { header, body }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevAnnContent {
+        pub status: PKIStatus,
+        #[rasn(identifier = "certId")]
+        pub cert_id: CertId,
+        #[rasn(identifier = "willBeRevokedAt")]
+        pub will_be_revoked_at: GeneralizedTime,
+        #[rasn(identifier = "badSinceDate")]
+        pub bad_since_date: GeneralizedTime,
+        #[rasn(identifier = "crlDetails")]
+        pub crl_details: Option<Extensions>,
+    }
+    impl RevAnnContent {
+        pub fn new(
+            status: PKIStatus,
+            cert_id: CertId,
+            will_be_revoked_at: GeneralizedTime,
+            bad_since_date: GeneralizedTime,
+            crl_details: Option<Extensions>,
+        ) -> Self {
+            Self {
+                status,
+                cert_id,
+                will_be_revoked_at,
+                bad_since_date,
+                crl_details,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevDetails {
+        #[rasn(identifier = "certDetails")]
+        pub cert_details: CertTemplate,
+        #[rasn(identifier = "revocationReason")]
+        pub revocation_reason: Option<ReasonFlags>,
+        #[rasn(identifier = "badSinceDate")]
+        pub bad_since_date: Option<GeneralizedTime>,
+        #[rasn(identifier = "crlEntryDetails")]
+        pub crl_entry_details: Option<Extensions>,
+    }
+    impl RevDetails {
+        pub fn new(
+            cert_details: CertTemplate,
+            revocation_reason: Option<ReasonFlags>,
+            bad_since_date: Option<GeneralizedTime>,
+            crl_entry_details: Option<Extensions>,
+        ) -> Self {
+            Self {
+                cert_details,
+                revocation_reason,
+                bad_since_date,
+                crl_entry_details,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RevRepContent {
+        #[rasn(size("1.."))]
+        pub status: SequenceOf<PKIStatusInfo>,
+        #[rasn(size("1.."), tag(explicit(context, 0)), identifier = "revCerts")]
+        pub rev_certs: Option<SequenceOf<CertId>>,
+        #[rasn(size("1.."), tag(explicit(context, 1)))]
+        pub crls: Option<SequenceOf<CertificateList>>,
+    }
+    impl RevRepContent {
+        pub fn new(
+            status: SequenceOf<PKIStatusInfo>,
+            rev_certs: Option<SequenceOf<CertId>>,
+            crls: Option<SequenceOf<CertificateList>>,
+        ) -> Self {
+            Self {
+                status,
+                rev_certs,
+                crls,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RevReqContent(pub SequenceOf<RevDetails>);
+}

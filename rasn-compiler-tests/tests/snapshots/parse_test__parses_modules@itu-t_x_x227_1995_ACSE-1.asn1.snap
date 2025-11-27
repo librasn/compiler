@@ -1,0 +1,37 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x227_1995_ACSE-1.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 48, column 2]
+    │
+    │ 
+ 48 │  AARQ-apdu ::= [APPLICATION 0] IMPLICIT SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 49 │    protocol-version
+ 50 │      [0] IMPLICIT BIT STRING {version1(0)} DEFAULT {version1},
+ 51 │    application-context-name          [1]  Application-context-name,
+ 52 │    called-AP-title                   [2]  AP-title OPTIONAL,
+ 53 │    called-AE-qualifier               [3]  AE-qualifier OPTIONAL,
+ 54 │    called-AP-invocation-identifier   [4]  AP-invocation-identifier OPTIONAL,
+ 55 │    called-AE-invocation-identifier   [5]  AE-invocation-identifier OPTIONAL,
+ 56 │    calling-AP-title                  [6]  AP-title OPTIONAL,
+ 57 │    calling-AE-qualifier              [7]  AE-qualifier OPTIONAL,
+ 58 │    calling-AP-invocation-identifier  [8]  AP-invocation-identifier OPTIONAL,
+ 59 │    calling-AE-invocation-identifier  [9]  AE-invocation-identifier OPTIONAL,
+ 60 │    --  The following field shall not be present if only the Kernel is used.
+ 61 │    sender-acse-requirements          [10] IMPLICIT ACSE-requirements OPTIONAL,
+ 62 │    --  The following field shall only be present if the Authentication functional unit is selected.
+ 63 │    mechanism-name                    [11] IMPLICIT Mechanism-name OPTIONAL,
+ 64 │    --  The following field shall only be present if the Authentication functional unit is selected.
+ 65 │    calling-authentication-value      [12] EXPLICIT Authentication-value OPTIONAL,
+ 66 │    application-context-name-list
+ 67 │      [13] IMPLICIT Application-context-name-list OPTIONAL,
+ 68 │    --  The above field shall only be present if the Application Context Negotiation functional unit is selected
+ 69 │    implementation-information        [29] IMPLICIT Implementation-data OPTIONAL,
+ 70 │    ...,
+ 71 │    ...,
+ 72 │    user-information
+ 73 │      [30] IMPLICIT Association-information OPTIONAL
+ 74 │  }
+    │
+────╯

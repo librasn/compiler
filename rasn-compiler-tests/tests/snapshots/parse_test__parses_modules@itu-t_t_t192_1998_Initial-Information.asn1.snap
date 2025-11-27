@@ -1,0 +1,115 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t192_1998_Initial-Information.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod initial_information {
+    extern crate alloc;
+    use super::cmip_1::DistinguishedName;
+    use super::document_profile_descriptor::DocumentReference;
+    use super::dor_definition::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DocId {
+        #[rasn(tag(context, 0))]
+        pub document: DocumentId,
+        #[rasn(tag(context, 1))]
+        pub site: SiteId,
+    }
+    impl DocId {
+        pub fn new(document: DocumentId, site: SiteId) -> Self {
+            Self { document, site }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DocIds(pub SequenceOf<DocId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DocumentId {
+        #[rasn(tag(context, 0))]
+        oda(DocumentReference),
+        #[rasn(tag(context, 1))]
+        doam(DOR),
+        #[rasn(tag(context, 2))]
+        directory(DistinguishedName),
+        #[rasn(tag(context, 3))]
+        object(ObjectIdentifier),
+        #[rasn(tag(context, 4))]
+        informal(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct InitialInformation {
+        #[rasn(tag(context, 0), identifier = "complexServiceId")]
+        pub complex_service_id: OctetString,
+        #[rasn(tag(context, 1), identifier = "staticInformation")]
+        pub static_information: StaticInformation,
+    }
+    impl InitialInformation {
+        pub fn new(complex_service_id: OctetString, static_information: StaticInformation) -> Self {
+            Self {
+                complex_service_id,
+                static_information,
+            }
+        }
+    }
+    #[doc = " An alternative representation may be used in the future."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModeratorId(pub UserId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Name {
+        #[rasn(tag(context, 0))]
+        formal(DistinguishedName),
+        #[rasn(tag(context, 1))]
+        informal(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Non-ODA-format")]
+    pub struct NonODAFormat(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SiteId(pub Name);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct StaticInformation {
+        #[rasn(tag(context, 0), identifier = "userIds")]
+        pub user_ids: UserIds,
+        #[rasn(tag(context, 1), identifier = "docIds")]
+        pub doc_ids: DocIds,
+        #[rasn(tag(context, 2), identifier = "non-ODA-format")]
+        pub non_oda_format: NonODAFormat,
+        #[rasn(tag(context, 3), identifier = "moderatorId")]
+        pub moderator_id: ModeratorId,
+    }
+    impl StaticInformation {
+        pub fn new(
+            user_ids: UserIds,
+            doc_ids: DocIds,
+            non_oda_format: NonODAFormat,
+            moderator_id: ModeratorId,
+        ) -> Self {
+            Self {
+                user_ids,
+                doc_ids,
+                non_oda_format,
+                moderator_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserId(pub Name);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserIds(pub SequenceOf<UserId>);
+}

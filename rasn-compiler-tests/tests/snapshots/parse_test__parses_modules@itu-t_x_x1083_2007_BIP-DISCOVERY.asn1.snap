@@ -1,0 +1,128 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1083_2007_BIP-DISCOVERY.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod bip_discovery {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Announcement {
+        #[rasn(identifier = "protocolVersion")]
+        pub protocol_version: ProtocolVersion,
+        #[rasn(identifier = "slaveEndpointIPAddress")]
+        pub slave_endpoint_ipaddress: IPAddress,
+        #[rasn(identifier = "slaveEndpointMACAddress")]
+        pub slave_endpoint_macaddress: MACAddress,
+        #[rasn(size("1..=32"), identifier = "slaveEndpointName")]
+        pub slave_endpoint_name: Ia5String,
+        #[rasn(
+            default = "announcement_bip_message_port_default",
+            identifier = "bipMessagePort"
+        )]
+        pub bip_message_port: Port,
+        #[rasn(identifier = "securityProtocols")]
+        pub security_protocols: Option<SequenceOf<SecurityProtocol>>,
+    }
+    impl Announcement {
+        pub fn new(
+            protocol_version: ProtocolVersion,
+            slave_endpoint_ipaddress: IPAddress,
+            slave_endpoint_macaddress: MACAddress,
+            slave_endpoint_name: Ia5String,
+            bip_message_port: Port,
+            security_protocols: Option<SequenceOf<SecurityProtocol>>,
+        ) -> Self {
+            Self {
+                protocol_version,
+                slave_endpoint_ipaddress,
+                slave_endpoint_macaddress,
+                slave_endpoint_name,
+                bip_message_port,
+                security_protocols,
+            }
+        }
+    }
+    fn announcement_bip_message_port_default() -> Port {
+        Port(4376)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Discovery {
+        #[rasn(identifier = "protocolVersion")]
+        pub protocol_version: ProtocolVersion,
+        #[rasn(identifier = "masterEndpointAddress")]
+        pub master_endpoint_address: IPAddress,
+        #[rasn(
+            default = "discovery_master_end_port_default",
+            identifier = "masterEndPort"
+        )]
+        pub master_end_port: Port,
+    }
+    impl Discovery {
+        pub fn new(
+            protocol_version: ProtocolVersion,
+            master_endpoint_address: IPAddress,
+            master_end_port: Port,
+        ) -> Self {
+            Self {
+                protocol_version,
+                master_endpoint_address,
+                master_end_port,
+            }
+        }
+    }
+    fn discovery_master_end_port_default() -> Port {
+        Port(4376)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum IPAddress {
+        #[rasn(size("4"))]
+        ipv4(OctetString),
+        #[rasn(size("16"))]
+        ipv6(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MACAddress(pub FixedOctetString<6usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct Port(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProtocolVersion {
+        #[rasn(value("0..=255"))]
+        pub major: u8,
+        #[rasn(value("0..=255"))]
+        pub minor: u8,
+    }
+    impl ProtocolVersion {
+        pub fn new(major: u8, minor: u8) -> Self {
+            Self { major, minor }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SecurityProtocol {
+        pub id: ObjectIdentifier,
+        pub parameter: Any,
+    }
+    impl SecurityProtocol {
+        pub fn new(id: ObjectIdentifier, parameter: Any) -> Self {
+            Self { id, parameter }
+        }
+    }
+}

@@ -1,0 +1,20 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x882_1994-TC1_Remote-Operations-Abstract-Syntaxes.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 82, column 2]
+    │
+    │ 
+ 82 │  AllValues{APPLICATION-CONTEXT:ac} ::= CHOICE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 83 │    bind          Bind{ac.&associationContract.&connection.&bind},
+ 84 │    unbind        Unbind{ac.&associationContract.&connection.&unbind},
+ 85 │    ros-singleAS
+ 86 │      ROS-SingleAS{{ROSEInvokeIds},
+ 87 │                  combine{{ac.&associationContract.&OperationsOf |
+ 88 │                         ac.&associationContract.&InitiatorConsumerOf |
+ 89 │                         ac.&associationContract.&ResponderConsumerOf},
+ 90 │                         {...}, {ID  {1 2--OID to be provided -- }}}}
+ 91 │  }
+    │
+────╯

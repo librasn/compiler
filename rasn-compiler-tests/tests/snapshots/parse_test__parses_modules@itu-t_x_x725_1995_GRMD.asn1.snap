@@ -1,0 +1,34 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x725_1995_GRMD.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod grmd {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    pub static GRM_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 7u32]).to_owned());
+    pub static GRM_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 6u32]).to_owned());
+    pub static GRM_OBJECT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 3u32]).to_owned());
+    pub static GRM_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 4u32]).to_owned());
+    pub static GRM_PARAMETER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 5u32]).to_owned());
+    pub static GRM_RELATIONSHIP_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 11u32]).to_owned());
+    pub static GRM_RELATIONSHIP_MAPPING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 12u32]).to_owned());
+    pub static GRM_RELATIONSHIP_ROLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 9u32, 3u32, 7u32, 13u32]).to_owned());
+}

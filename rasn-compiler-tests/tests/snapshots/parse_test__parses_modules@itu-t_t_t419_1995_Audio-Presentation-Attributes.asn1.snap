@@ -1,0 +1,179 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t419_1995_Audio-Presentation-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod audio_presentation_attributes {
+    extern crate alloc;
+    use super::document_profile_descriptor::CharacterData;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Attenuation(pub SetOf<AttenuationPair>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Attenuation-Pair")]
+    pub struct AttenuationPair {
+        #[rasn(tag(context, 0), identifier = "channel-name")]
+        pub channel_name: PrintableString,
+        #[rasn(tag(context, 1), identifier = "attenuation-value")]
+        pub attenuation_value: f64,
+    }
+    impl AttenuationPair {
+        pub fn new(channel_name: PrintableString, attenuation_value: f64) -> Self {
+            Self {
+                channel_name,
+                attenuation_value,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AudioAttributesTemporalEnvelope {
+        #[rasn(tag(context, 0), identifier = "beginning-Envelope")]
+        pub beginning_envelope: Option<BeginningEnvelope>,
+        #[rasn(tag(context, 1), identifier = "ending-Envelope")]
+        pub ending_envelope: Option<EndingEnvelope>,
+    }
+    impl AudioAttributesTemporalEnvelope {
+        pub fn new(
+            beginning_envelope: Option<BeginningEnvelope>,
+            ending_envelope: Option<EndingEnvelope>,
+        ) -> Self {
+            Self {
+                beginning_envelope,
+                ending_envelope,
+            }
+        }
+    }
+    #[doc = "  see ITU-T Rec. T.415 | ISO/IEC 8613-5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Audio-Attributes")]
+    pub struct AudioAttributes {
+        #[rasn(tag(context, 0), identifier = "temporal-envelope")]
+        pub temporal_envelope: Option<AudioAttributesTemporalEnvelope>,
+        #[rasn(tag(context, 1))]
+        pub clipping: Option<Clipping>,
+        #[rasn(tag(context, 3))]
+        pub attenuation: Option<Attenuation>,
+        #[rasn(tag(context, 4), identifier = "frequency-envelope")]
+        pub frequency_envelope: Option<SetOf<FrequencyEnvelopePoint>>,
+    }
+    impl AudioAttributes {
+        pub fn new(
+            temporal_envelope: Option<AudioAttributesTemporalEnvelope>,
+            clipping: Option<Clipping>,
+            attenuation: Option<Attenuation>,
+            frequency_envelope: Option<SetOf<FrequencyEnvelopePoint>>,
+        ) -> Self {
+            Self {
+                temporal_envelope,
+                clipping,
+                attenuation,
+                frequency_envelope,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Beginning-Envelope")]
+    pub struct BeginningEnvelope(pub SequenceOf<TemporalEnvelopePoint>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ClippingStartTime {
+        #[rasn(tag(context, 0), identifier = "time-Offset")]
+        time_Offset(TimeOffset),
+        #[rasn(tag(context, 1), identifier = "marker-Reference")]
+        marker_Reference(MarkerReference),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ClippingEndTime {
+        #[rasn(tag(context, 0), identifier = "time-Offset")]
+        time_Offset(TimeOffset),
+        #[rasn(tag(context, 1), identifier = "marker-Reference")]
+        marker_Reference(MarkerReference),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Clipping {
+        #[rasn(tag(context, 0), identifier = "start-time")]
+        pub start_time: Option<ClippingStartTime>,
+        #[rasn(tag(context, 1), identifier = "end-time")]
+        pub end_time: Option<ClippingEndTime>,
+    }
+    impl Clipping {
+        pub fn new(
+            start_time: Option<ClippingStartTime>,
+            end_time: Option<ClippingEndTime>,
+        ) -> Self {
+            Self {
+                start_time,
+                end_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Ending-Envelope")]
+    pub struct EndingEnvelope(pub SequenceOf<TemporalEnvelopePoint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Frequency-Envelope-Point")]
+    pub struct FrequencyEnvelopePoint {
+        #[rasn(tag(context, 0), identifier = "one-third-oct-pref-freq")]
+        pub one_third_oct_pref_freq: f64,
+        #[rasn(tag(context, 1))]
+        pub attenuation: Attenuation,
+    }
+    impl FrequencyEnvelopePoint {
+        pub fn new(one_third_oct_pref_freq: f64, attenuation: Attenuation) -> Self {
+            Self {
+                one_third_oct_pref_freq,
+                attenuation,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Marker-Reference")]
+    pub enum MarkerReference {
+        #[rasn(tag(context, 0), identifier = "unique-label")]
+        unique_label(ObjectIdentifier),
+        #[rasn(tag(context, 1))]
+        description(CharacterData),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TemporalEnvelopePointOffset {
+        #[rasn(tag(context, 0), identifier = "time-Offset")]
+        time_Offset(TimeOffset),
+        #[rasn(tag(context, 1), identifier = "marker-Reference")]
+        marker_Reference(MarkerReference),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Temporal-Envelope-Point")]
+    pub struct TemporalEnvelopePoint {
+        #[rasn(tag(context, 0))]
+        pub offset: TemporalEnvelopePointOffset,
+        #[rasn(tag(context, 1))]
+        pub attenuation: Attenuation,
+    }
+    impl TemporalEnvelopePoint {
+        pub fn new(offset: TemporalEnvelopePointOffset, attenuation: Attenuation) -> Self {
+            Self {
+                offset,
+                attenuation,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Time-Offset")]
+    pub struct TimeOffset(pub Integer);
+}

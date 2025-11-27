@@ -1,0 +1,194 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_m_m3100_1995_M3100ASN1TypeModule6.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'ProblemCause'
+LinkerError in ASN grammar: Failed to link value with 'ProblemCause'
+LinkerError in ASN grammar: Failed to link value with 'ProblemCause'
+LinkerError in ASN grammar: Failed to link value with 'ProblemCause'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod m3100_asn1_type_module6 {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{Failed, PointerOrNull, ProblemCause};
+    use super::attribute_asn1_module::{AdditionalInformation, ManagementExtension};
+    use super::cmip_1::ObjectInstance;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CoincidentProtectedUnidirectionalConnections {
+        #[rasn(identifier = "protectedXC")]
+        pub protected_xc: ProtectedXC,
+        #[rasn(identifier = "multicastXC")]
+        pub multicast_xc: MulticastXC,
+    }
+    impl CoincidentProtectedUnidirectionalConnections {
+        pub fn new(protected_xc: ProtectedXC, multicast_xc: MulticastXC) -> Self {
+            Self {
+                protected_xc,
+                multicast_xc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CoincidentUnidirectionalConnections {
+        #[rasn(tag(context, 0))]
+        unprotected(CoincidentUnprotectedUnidirectionalConnections),
+        #[rasn(tag(context, 1))]
+        protected(CoincidentProtectedUnidirectionalConnections),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CoincidentUnprotectedUnidirectionalConnections {
+        #[rasn(identifier = "xcA")]
+        pub xc_a: ObjectInstance,
+        #[rasn(identifier = "xcB")]
+        pub xc_b: ObjectInstance,
+    }
+    impl CoincidentUnprotectedUnidirectionalConnections {
+        pub fn new(xc_a: ObjectInstance, xc_b: ObjectInstance) -> Self {
+            Self { xc_a, xc_b }
+        }
+    }
+    #[doc = " the term \"coincident\" is used to describe unidirectional connections between"]
+    #[doc = " the same bidirectional termination points."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConvertMulticastToPtoPInfo(pub SequenceOf<ObjectInstance>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousConvertMulticastToPtoPReply {
+        failed(Failed),
+        success(ObjectInstance),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConvertMulticastToPtoPReply(pub SequenceOf<AnonymousConvertMulticastToPtoPReply>);
+    #[doc = " the ith element of the reply corresponds to the ith element of the information"]
+    #[doc = " syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConvertPtoPToMulticastInfo(pub SequenceOf<ObjectInstance>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousConvertPtoPToMulticastReplySuccess {
+        #[rasn(identifier = "mpXC")]
+        pub mp_xc: ObjectInstance,
+        #[rasn(identifier = "xC")]
+        pub x_c: ObjectInstance,
+    }
+    impl AnonymousConvertPtoPToMulticastReplySuccess {
+        pub fn new(mp_xc: ObjectInstance, x_c: ObjectInstance) -> Self {
+            Self { mp_xc, x_c }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousConvertPtoPToMulticastReply {
+        #[rasn(tag(context, 0))]
+        failed(Failed),
+        #[rasn(tag(context, 1))]
+        success(AnonymousConvertPtoPToMulticastReplySuccess),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConvertPtoPToMulticastReply(pub SequenceOf<AnonymousConvertPtoPToMulticastReply>);
+    #[doc = " the ith element of the reply corresponds to the ith element of the information"]
+    #[doc = " syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct JoinXCInfo(pub SequenceOf<CoincidentUnidirectionalConnections>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousJoinXCReplySuccess {
+        unprotected(ObjectInstance),
+        protected(ProtectedXC),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousJoinXCReply {
+        #[rasn(tag(context, 0))]
+        failed(Failed),
+        #[rasn(tag(context, 1))]
+        success(AnonymousJoinXCReplySuccess),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct JoinXCReply(pub SequenceOf<AnonymousJoinXCReply>);
+    #[doc = " the ith element of the reply corresponds to the ith element of the information"]
+    #[doc = " syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MulticastXC {
+        #[rasn(identifier = "mpXC")]
+        pub mp_xc: ObjectInstance,
+        #[rasn(identifier = "xcA")]
+        pub xc_a: ObjectInstance,
+        #[rasn(identifier = "xcB")]
+        pub xc_b: ObjectInstance,
+    }
+    impl MulticastXC {
+        pub fn new(mp_xc: ObjectInstance, xc_a: ObjectInstance, xc_b: ObjectInstance) -> Self {
+            Self { mp_xc, xc_a, xc_b }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectedXC {
+        #[rasn(identifier = "conProtGroup")]
+        pub con_prot_group: ObjectInstance,
+        #[rasn(identifier = "conProtA")]
+        pub con_prot_a: ObjectInstance,
+        #[rasn(identifier = "conProtB")]
+        pub con_prot_b: ObjectInstance,
+    }
+    impl ProtectedXC {
+        pub fn new(
+            con_prot_group: ObjectInstance,
+            con_prot_a: ObjectInstance,
+            con_prot_b: ObjectInstance,
+        ) -> Self {
+            Self {
+                con_prot_group,
+                con_prot_a,
+                con_prot_b,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SplitXCInfo(pub SequenceOf<ObjectInstance>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousSplitXCReply {
+        failed(Failed),
+        success(CoincidentUnidirectionalConnections),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SplitXCReply(pub SequenceOf<AnonymousSplitXCReply>);
+    pub static ENDPOINTS_NOT_THE_SAME: LazyLock<ProblemCause> =
+        LazyLock::new(|| ProblemCause(ProblemCause(ProblemCause::integerValue(15))));
+    pub static NOT_BIDIRECTIONAL: LazyLock<ProblemCause> =
+        LazyLock::new(|| ProblemCause(ProblemCause(ProblemCause::integerValue(17))));
+    #[doc = " the ith element of the reply corresponds to the ith element of the information"]
+    #[doc = " syntax"]
+    #[doc = " additional integer values of ProblemCause:"]
+    pub static NOT_MULTICAST_WITH_ONLY_ONE_SUBORDINATE_LEG: LazyLock<ProblemCause> =
+        LazyLock::new(|| ProblemCause(ProblemCause(ProblemCause::integerValue(14))));
+    pub static NOT_UNIDIRECTIONAL: LazyLock<ProblemCause> =
+        LazyLock::new(|| ProblemCause(ProblemCause(ProblemCause::integerValue(16))));
+}

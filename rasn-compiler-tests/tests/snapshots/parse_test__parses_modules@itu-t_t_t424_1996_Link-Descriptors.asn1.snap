@@ -1,0 +1,223 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t424_1996_Link-Descriptors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod link_descriptors {
+    extern crate alloc;
+    use super::external_references::ReferenceName;
+    use super::identifiers_and_expressions::{ProtectedPartIdentifier, StyleIdentifier};
+    use super::layout_descriptors::{CommentString, Sealed};
+    use super::location_expressions::LocationExpression;
+    use super::temporal_relationships::{PresentationTime, TemporalRelations};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Enciphered-Link-Descriptor")]
+    pub struct EncipheredLinkDescriptor {
+        #[rasn(identifier = "protected-part-identifier")]
+        pub protected_part_identifier: ProtectedPartIdentifier,
+        #[rasn(identifier = "enciphered-information")]
+        pub enciphered_information: OctetString,
+    }
+    impl EncipheredLinkDescriptor {
+        pub fn new(
+            protected_part_identifier: ProtectedPartIdentifier,
+            enciphered_information: OctetString,
+        ) -> Self {
+            Self {
+                protected_part_identifier,
+                enciphered_information,
+            }
+        }
+    }
+    #[doc = "\tonly digits and space are used in the present version of this Recommendation | International Standard;"]
+    #[doc = "\tother characters are reserved for extensions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Link-Class-Descriptor")]
+    pub struct LinkClassDescriptor {
+        #[rasn(identifier = "link-class-identifier")]
+        pub link_class_identifier: LinkOrLinkClassIdentifier,
+        #[rasn(tag(context, 1), identifier = "link-roles")]
+        pub link_roles: Option<SequenceOf<LinkRole>>,
+        #[rasn(tag(context, 2), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 3), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 35))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 38), identifier = "temporal-relations")]
+        pub temporal_relations: Option<TemporalRelations>,
+        #[rasn(tag(context, 39), identifier = "presentation-time")]
+        pub presentation_time: Option<PresentationTime>,
+    }
+    impl LinkClassDescriptor {
+        pub fn new(
+            link_class_identifier: LinkOrLinkClassIdentifier,
+            link_roles: Option<SequenceOf<LinkRole>>,
+            user_readable_comments: Option<CommentString>,
+            user_visible_name: Option<CommentString>,
+            application_comments: Option<OctetString>,
+            sealed: Option<Sealed>,
+            temporal_relations: Option<TemporalRelations>,
+            presentation_time: Option<PresentationTime>,
+        ) -> Self {
+            Self {
+                link_class_identifier,
+                link_roles,
+                user_readable_comments,
+                user_visible_name,
+                application_comments,
+                sealed,
+                temporal_relations,
+                presentation_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Link-Descriptor")]
+    pub struct LinkDescriptor {
+        #[rasn(identifier = "link-identifier")]
+        pub link_identifier: LinkOrLinkClassIdentifier,
+        #[rasn(tag(context, 0), identifier = "link-class")]
+        pub link_class: Option<LinkOrLinkClassIdentifier>,
+        #[rasn(tag(context, 1), identifier = "link-roles")]
+        pub link_roles: Option<SequenceOf<LinkRole>>,
+        #[rasn(tag(context, 2), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 3), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 35))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 38), identifier = "temporal-relations")]
+        pub temporal_relations: Option<TemporalRelations>,
+        #[rasn(tag(context, 39), identifier = "presentation-time")]
+        pub presentation_time: Option<PresentationTime>,
+    }
+    impl LinkDescriptor {
+        pub fn new(
+            link_identifier: LinkOrLinkClassIdentifier,
+            link_class: Option<LinkOrLinkClassIdentifier>,
+            link_roles: Option<SequenceOf<LinkRole>>,
+            user_readable_comments: Option<CommentString>,
+            user_visible_name: Option<CommentString>,
+            application_comments: Option<OctetString>,
+            sealed: Option<Sealed>,
+            temporal_relations: Option<TemporalRelations>,
+            presentation_time: Option<PresentationTime>,
+        ) -> Self {
+            Self {
+                link_identifier,
+                link_class,
+                link_roles,
+                user_readable_comments,
+                user_visible_name,
+                application_comments,
+                sealed,
+                temporal_relations,
+                presentation_time,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct LinkEndReference {
+        #[rasn(tag(context, 0), identifier = "reference-name")]
+        pub reference_name: Option<ReferenceName>,
+        #[rasn(tag(context, 1), identifier = "reference-qualifier")]
+        pub reference_qualifier: Option<LocationExpression>,
+    }
+    impl LinkEndReference {
+        pub fn new(
+            reference_name: Option<ReferenceName>,
+            reference_qualifier: Option<LocationExpression>,
+        ) -> Self {
+            Self {
+                reference_name,
+                reference_qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Link-End")]
+    pub struct LinkEnd {
+        pub reference: LinkEndReference,
+        #[rasn(tag(context, 2), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 3), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 17), identifier = "presentation-style")]
+        pub presentation_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 19), identifier = "layout-style")]
+        pub layout_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+    }
+    impl LinkEnd {
+        pub fn new(
+            reference: LinkEndReference,
+            user_readable_comments: Option<CommentString>,
+            user_visible_name: Option<CommentString>,
+            presentation_style: Option<StyleIdentifier>,
+            layout_style: Option<StyleIdentifier>,
+            application_comments: Option<OctetString>,
+        ) -> Self {
+            Self {
+                reference,
+                user_readable_comments,
+                user_visible_name,
+                presentation_style,
+                layout_style,
+                application_comments,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Link-Role")]
+    pub struct LinkRole {
+        #[rasn(identifier = "link-ends")]
+        pub link_ends: SetOf<LinkEnd>,
+        #[rasn(tag(context, 2), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 3), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+    }
+    impl LinkRole {
+        pub fn new(
+            link_ends: SetOf<LinkEnd>,
+            user_readable_comments: Option<CommentString>,
+            user_visible_name: Option<CommentString>,
+            application_comments: Option<OctetString>,
+        ) -> Self {
+            Self {
+                link_ends,
+                user_readable_comments,
+                user_visible_name,
+                application_comments,
+            }
+        }
+    }
+    #[doc = "  see 7.5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        tag(application, 9),
+        identifier = "Link-or-Link-Class-Identifier"
+    )]
+    pub struct LinkOrLinkClassIdentifier(pub PrintableString);
+}

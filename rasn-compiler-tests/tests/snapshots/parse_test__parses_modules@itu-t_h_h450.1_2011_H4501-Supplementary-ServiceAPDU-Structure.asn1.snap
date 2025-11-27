@@ -1,0 +1,108 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.1_2011_H4501-Supplementary-ServiceAPDU-Structure.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype ROS of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod h4501_supplementary_service_apdu_structure {
+    extern crate alloc;
+    use super::h323_messages::AliasAddress;
+    use super::remote_operations_apdus::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddressInformation(pub AliasAddress);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum EntityType {
+        endpoint(()),
+        anyEntity(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct H4501SupplementaryService {
+        #[rasn(identifier = "networkFacilityExtension")]
+        pub network_facility_extension: Option<NetworkFacilityExtension>,
+        #[rasn(identifier = "interpretationApdu")]
+        pub interpretation_apdu: Option<InterpretationApdu>,
+        #[rasn(identifier = "serviceApdu")]
+        pub service_apdu: ServiceApdus,
+    }
+    impl H4501SupplementaryService {
+        pub fn new(
+            network_facility_extension: Option<NetworkFacilityExtension>,
+            interpretation_apdu: Option<InterpretationApdu>,
+            service_apdu: ServiceApdus,
+        ) -> Self {
+            Self {
+                network_facility_extension,
+                interpretation_apdu,
+                service_apdu,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum InterpretationApdu {
+        discardAnyUnrecognizedInvokePdu(()),
+        clearCallIfAnyInvokePduNotRecognized(()),
+        rejectAnyUnrecognizedInvokePdu(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct InvokeIDs(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NetworkFacilityExtension {
+        #[rasn(identifier = "sourceEntity")]
+        pub source_entity: EntityType,
+        #[rasn(identifier = "sourceEntityAddress")]
+        pub source_entity_address: Option<AddressInformation>,
+        #[rasn(identifier = "destinationEntity")]
+        pub destination_entity: EntityType,
+        #[rasn(identifier = "destinationEntityAddress")]
+        pub destination_entity_address: Option<AddressInformation>,
+    }
+    impl NetworkFacilityExtension {
+        pub fn new(
+            source_entity: EntityType,
+            source_entity_address: Option<AddressInformation>,
+            destination_entity: EntityType,
+            destination_entity_address: Option<AddressInformation>,
+        ) -> Self {
+            Self {
+                source_entity,
+                source_entity_address,
+                destination_entity,
+                destination_entity_address,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ServiceApdusRosApdus(pub SequenceOf<ROS>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ServiceApdus {
+        rosApdus(ServiceApdusRosApdus),
+    }
+}

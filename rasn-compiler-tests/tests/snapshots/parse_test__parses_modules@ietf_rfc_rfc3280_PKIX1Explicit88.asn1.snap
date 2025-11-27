@@ -1,0 +1,20 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc3280_PKIX1Explicit88.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 317, column 2]
+     │
+     │ 
+ 312 │                                           -- if present, MUST be v2
+ 314 │  -- Version, Time, CertificateSerialNumber, and Extensions were
+ 315 │  -- defined earlier for use in the certificate structure
+ 317 │  AlgorithmIdentifier  ::=  SEQUENCE  { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 318 │       algorithm               OBJECT IDENTIFIER,
+ 319 │       parameters              ANY DEFINED BY algorithm OPTIONAL  }
+ 320 │                                  -- contains a value of the type
+ 321 │                                  -- registered for use with the
+ 322 │                                  -- algorithm object identifier value
+ 324 │  -- X.400 address syntax starts here
+     │
+─────╯

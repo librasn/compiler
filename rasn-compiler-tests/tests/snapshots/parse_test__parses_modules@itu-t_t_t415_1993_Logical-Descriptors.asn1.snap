@@ -1,0 +1,237 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Logical-Descriptors.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod logical_descriptors {
+    extern crate alloc;
+    use super::default_value_lists::DefaultValueListsLogical;
+    use super::identifiers_and_expressions::{
+        ConstructionExpression, ObjectOrClassIdentifier, ResourceName, StringExpression,
+        StyleIdentifier,
+    };
+    use super::layout_descriptors::{BindingPair, CommentString, Enciphered, Sealed};
+    use super::style_descriptors::PresentationAttributes;
+    use super::temporal_relationships::TemporalRelations;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Logical-Class-Descriptor")]
+    pub struct LogicalClassDescriptor {
+        #[rasn(identifier = "object-type")]
+        pub object_type: LogicalObjectType,
+        #[rasn(identifier = "descriptor-body")]
+        pub descriptor_body: LogicalClassDescriptorBody,
+    }
+    impl LogicalClassDescriptor {
+        pub fn new(
+            object_type: LogicalObjectType,
+            descriptor_body: LogicalClassDescriptorBody,
+        ) -> Self {
+            Self {
+                object_type,
+                descriptor_body,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Logical-Class-Descriptor-Body")]
+    pub struct LogicalClassDescriptorBody {
+        #[rasn(identifier = "object-class-identifier")]
+        pub object_class_identifier: ObjectOrClassIdentifier,
+        #[rasn(tag(context, 0), identifier = "generator-for-subordinates")]
+        pub generator_for_subordinates: Option<ConstructionExpression>,
+        #[rasn(tag(context, 1), identifier = "content-portions")]
+        pub content_portions: Option<SequenceOf<NumericString>>,
+        #[rasn(tag(context, 6), identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<PresentationAttributes>,
+        #[rasn(tag(context, 7), identifier = "default-value-lists")]
+        pub default_value_lists: Option<DefaultValueListsLogical>,
+        #[rasn(tag(context, 8), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 9))]
+        pub bindings: Option<SetOf<BindingPair>>,
+        #[rasn(tag(context, 10), identifier = "content-generator")]
+        pub content_generator: Option<StringExpression>,
+        #[rasn(tag(context, 14), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 17), identifier = "presentation-style")]
+        pub presentation_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 19), identifier = "layout-style")]
+        pub layout_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 20))]
+        pub protection: Option<Protection>,
+        #[rasn(tag(context, 24))]
+        pub resource: Option<ResourceName>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 34))]
+        pub enciphered: Option<Enciphered>,
+        #[rasn(tag(context, 35))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 36), identifier = "temporal-relations")]
+        pub temporal_relations: Option<TemporalRelations>,
+    }
+    impl LogicalClassDescriptorBody {
+        pub fn new(
+            object_class_identifier: ObjectOrClassIdentifier,
+            generator_for_subordinates: Option<ConstructionExpression>,
+            content_portions: Option<SequenceOf<NumericString>>,
+            presentation_attributes: Option<PresentationAttributes>,
+            default_value_lists: Option<DefaultValueListsLogical>,
+            user_readable_comments: Option<CommentString>,
+            bindings: Option<SetOf<BindingPair>>,
+            content_generator: Option<StringExpression>,
+            user_visible_name: Option<CommentString>,
+            presentation_style: Option<StyleIdentifier>,
+            layout_style: Option<StyleIdentifier>,
+            protection: Option<Protection>,
+            resource: Option<ResourceName>,
+            application_comments: Option<OctetString>,
+            enciphered: Option<Enciphered>,
+            sealed: Option<Sealed>,
+            temporal_relations: Option<TemporalRelations>,
+        ) -> Self {
+            Self {
+                object_class_identifier,
+                generator_for_subordinates,
+                content_portions,
+                presentation_attributes,
+                default_value_lists,
+                user_readable_comments,
+                bindings,
+                content_generator,
+                user_visible_name,
+                presentation_style,
+                layout_style,
+                protection,
+                resource,
+                application_comments,
+                enciphered,
+                sealed,
+                temporal_relations,
+            }
+        }
+    }
+    #[doc = "  See ITU-T Rec. T.424 | ISO/IEC 8613-14"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Logical-Object-Descriptor")]
+    pub struct LogicalObjectDescriptor {
+        #[rasn(identifier = "object-type")]
+        pub object_type: Option<LogicalObjectType>,
+        #[rasn(identifier = "descriptor-body")]
+        pub descriptor_body: Option<LogicalObjectDescriptorBody>,
+    }
+    impl LogicalObjectDescriptor {
+        pub fn new(
+            object_type: Option<LogicalObjectType>,
+            descriptor_body: Option<LogicalObjectDescriptorBody>,
+        ) -> Self {
+            Self {
+                object_type,
+                descriptor_body,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Logical-Object-Descriptor-Body")]
+    pub struct LogicalObjectDescriptorBody {
+        #[rasn(identifier = "object-identifier")]
+        pub object_identifier: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 0))]
+        pub subordinates: Option<SequenceOf<NumericString>>,
+        #[rasn(tag(context, 1), identifier = "content-portions")]
+        pub content_portions: Option<SequenceOf<NumericString>>,
+        #[rasn(tag(context, 2), identifier = "object-class")]
+        pub object_class: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 6), identifier = "presentation-attributes")]
+        pub presentation_attributes: Option<PresentationAttributes>,
+        #[rasn(tag(context, 7), identifier = "default-value-lists")]
+        pub default_value_lists: Option<DefaultValueListsLogical>,
+        #[rasn(tag(context, 8), identifier = "user-readable-comments")]
+        pub user_readable_comments: Option<CommentString>,
+        #[rasn(tag(context, 9))]
+        pub bindings: Option<SetOf<BindingPair>>,
+        #[rasn(tag(context, 10), identifier = "content-generator")]
+        pub content_generator: Option<StringExpression>,
+        #[rasn(tag(context, 14), identifier = "user-visible-name")]
+        pub user_visible_name: Option<CommentString>,
+        #[rasn(tag(context, 17), identifier = "presentation-style")]
+        pub presentation_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 19), identifier = "layout-style")]
+        pub layout_style: Option<StyleIdentifier>,
+        #[rasn(tag(context, 20))]
+        pub protection: Option<Protection>,
+        #[rasn(tag(context, 25), identifier = "application-comments")]
+        pub application_comments: Option<OctetString>,
+        #[rasn(tag(context, 27))]
+        pub primary: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 28))]
+        pub alternative: Option<ObjectOrClassIdentifier>,
+        #[rasn(tag(context, 34))]
+        pub enciphered: Option<Enciphered>,
+        #[rasn(tag(context, 35))]
+        pub sealed: Option<Sealed>,
+        #[rasn(tag(context, 36), identifier = "temporal-relations")]
+        pub temporal_relations: Option<TemporalRelations>,
+    }
+    impl LogicalObjectDescriptorBody {
+        pub fn new(
+            object_identifier: Option<ObjectOrClassIdentifier>,
+            subordinates: Option<SequenceOf<NumericString>>,
+            content_portions: Option<SequenceOf<NumericString>>,
+            object_class: Option<ObjectOrClassIdentifier>,
+            presentation_attributes: Option<PresentationAttributes>,
+            default_value_lists: Option<DefaultValueListsLogical>,
+            user_readable_comments: Option<CommentString>,
+            bindings: Option<SetOf<BindingPair>>,
+            content_generator: Option<StringExpression>,
+            user_visible_name: Option<CommentString>,
+            presentation_style: Option<StyleIdentifier>,
+            layout_style: Option<StyleIdentifier>,
+            protection: Option<Protection>,
+            application_comments: Option<OctetString>,
+            primary: Option<ObjectOrClassIdentifier>,
+            alternative: Option<ObjectOrClassIdentifier>,
+            enciphered: Option<Enciphered>,
+            sealed: Option<Sealed>,
+            temporal_relations: Option<TemporalRelations>,
+        ) -> Self {
+            Self {
+                object_identifier,
+                subordinates,
+                content_portions,
+                object_class,
+                presentation_attributes,
+                default_value_lists,
+                user_readable_comments,
+                bindings,
+                content_generator,
+                user_visible_name,
+                presentation_style,
+                layout_style,
+                protection,
+                application_comments,
+                primary,
+                alternative,
+                enciphered,
+                sealed,
+                temporal_relations,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Logical-Object-Type")]
+    pub struct LogicalObjectType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Protection(pub Integer);
+}

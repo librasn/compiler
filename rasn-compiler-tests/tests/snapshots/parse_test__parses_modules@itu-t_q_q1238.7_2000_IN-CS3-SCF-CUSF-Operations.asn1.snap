@@ -1,0 +1,80 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1238.7_2000_IN-CS3-SCF-CUSF-Operations.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Extensions of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: Message
+NotYetInplemented in ASN grammar: Value references of path length > 2 are not yet supported! Found reference b7.&.numOfBCUSMEvents
+LinkerError in ASN grammar: Failed to interpret object identifier value as sequence value!
+LinkerError in ASN grammar: Failed to resolve supertype Cause of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype CalledPartyNumber of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype CalledPartyNumber of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype EventSpecificInformationBCUSM of parameterized implementation.
+LinkerError in ASN grammar: Failed to link value with 'MiscCallInfo'
+LinkerError in ASN grammar: Failed to resolve supertype Extensions of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype CalledPartyNumber of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype CallUnrelatedDpSpecificCommonParameters of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype CallUnrelatedDpSpecificCommonParameters of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype CallUnrelatedDpSpecificCommonParameters of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod in_cs3_scf_cusf_operations {
+    extern crate alloc;
+    use super::in_cs3_common_classes::*;
+    use super::in_cs3_common_datatypes::Extensions;
+    use super::in_cs3_errortypes::{
+        MISSING_CUSTOMER_RECORD, MISSING_PARAMETER, PARAMETER_OUT_OF_RANGE, SYSTEM_FAILURE,
+        TASK_REFUSED, UNEXPECTED_COMPONENT_SEQUENCE, UNEXPECTED_DATA_VALUE, UNEXPECTED_PARAMETER,
+        UNKNOWN_LEG_ID,
+    };
+    use super::in_cs3_object_identifiers::{
+        COMMON_CLASSES, COMMON_DATATYPES, ERRORTYPES, OPERATIONCODES, ROS_INFORMATION_OBJECTS,
+        SCF_CUSF_CLASSES, SCF_CUSF_DATATYPES, SSF_SCF_CLASSES, SSF_SCF_DATATYPES,
+    };
+    use super::in_cs3_operationcodes::{
+        OPCODE_ACTIVATION_RECEIVED_AND_AUTHORIZED, OPCODE_ASSOCIATION_RELEASE_REQUESTED,
+        OPCODE_COMPONENT_RECEIVED, OPCODE_CONNECT_ASSOCIATION, OPCODE_CONTINUE_ASSOCIATION,
+        OPCODE_EVENT_REPORT_BCUSM, OPCODE_INITIAL_ASSOCIATION_DP, OPCODE_INITIATE_ASSOCIATION,
+        OPCODE_RELEASE_ASSOCIATION, OPCODE_REQUEST_REPORT_BCUSMEVENT, OPCODE_SEND_COMPONENT,
+    };
+    use super::in_cs3_scf_cusf_classes::*;
+    use super::in_cs3_scf_cusf_datatypes::{
+        BCUSMEvent, CUApplicationInd, CallUnrelatedDpSpecificCommonParameters,
+        EventSpecificInformationBCUSM, EventTypeBCUSM, Message,
+    };
+    use super::in_cs3_ssf_scf_classes::*;
+    use super::in_cs3_ssf_scf_datatypes::{
+        BearerCapability, CalledPartyNumber, CallingPartyNumber, CallingPartySubaddress, Cause,
+        Component, ComponentCorrelationID, ComponentType, Duration, GenericNumbers,
+        HighLayerCompatibility, LegID, LocationNumber, MiscCallInfo, MonitorMode,
+        ServiceAddressInformation, ServiceKey, TerminalType, USIInformation, USIServiceIndicator,
+    };
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " The following three definitions are local short-hand notation for convenience."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B1(pub COMMONBOUNDS);
+    #[doc = " defined in Recommendation Q.1238.1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B2(pub SCFSSFBOUNDS);
+    #[doc = " defined in Recommendation Q.1238.2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct B7(pub SCFCUSFBOUNDS);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct InitiateAssociationResultArg(pub ());
+}

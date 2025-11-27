@@ -1,0 +1,3022 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t124_2007_GCC-PROTOCOL.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod gcc_protocol {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ATMConnectionNetworkAddress {
+        extendedE164(ExtendedE164NetworkAddress),
+        nsapAddress(TransportAddress),
+        nonStandard(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ATMConnection {
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: ATMConnectionNetworkAddress,
+        #[rasn(value("0.."), identifier = "maxTransferRate")]
+        pub max_transfer_rate: Option<Integer>,
+    }
+    impl ATMConnection {
+        pub fn new(
+            network_address: ATMConnectionNetworkAddress,
+            max_transfer_rate: Option<Integer>,
+        ) -> Self {
+            Self {
+                network_address,
+                max_transfer_rate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AlternativeNodeID {
+        #[rasn(size("2"))]
+        h243NodeID(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ApplicationInvokeIndication {
+        #[rasn(size("1..=65536"), identifier = "applicationProtocolEntiyList")]
+        pub application_protocol_entiy_list: SetOf<ApplicationInvokeSpecifier>,
+        #[rasn(size("1..=65536"), identifier = "destinationNodes")]
+        pub destination_nodes: Option<SetOf<UserID>>,
+    }
+    impl ApplicationInvokeIndication {
+        pub fn new(
+            application_protocol_entiy_list: SetOf<ApplicationInvokeSpecifier>,
+            destination_nodes: Option<SetOf<UserID>>,
+        ) -> Self {
+            Self {
+                application_protocol_entiy_list,
+                destination_nodes,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousApplicationInvokeSpecifierExpectedCapabilitySet {
+        #[rasn(identifier = "capabilityID")]
+        pub capability_id: CapabilityID,
+        #[rasn(identifier = "capabilityClass")]
+        pub capability_class: CapabilityClass,
+    }
+    impl AnonymousApplicationInvokeSpecifierExpectedCapabilitySet {
+        pub fn new(capability_id: CapabilityID, capability_class: CapabilityClass) -> Self {
+            Self {
+                capability_id,
+                capability_class,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationInvokeSpecifierExpectedCapabilitySet(
+        pub SetOf<AnonymousApplicationInvokeSpecifierExpectedCapabilitySet>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ApplicationInvokeSpecifier {
+        #[rasn(identifier = "sessionKey")]
+        pub session_key: SessionKey,
+        #[rasn(identifier = "expectedCapabilitySet")]
+        pub expected_capability_set: Option<ApplicationInvokeSpecifierExpectedCapabilitySet>,
+        #[rasn(identifier = "startupChannel")]
+        pub startup_channel: Option<ChannelType>,
+        #[rasn(identifier = "mandatoryFlag")]
+        pub mandatory_flag: bool,
+    }
+    impl ApplicationInvokeSpecifier {
+        pub fn new(
+            session_key: SessionKey,
+            expected_capability_set: Option<ApplicationInvokeSpecifierExpectedCapabilitySet>,
+            startup_channel: Option<ChannelType>,
+            mandatory_flag: bool,
+        ) -> Self {
+            Self {
+                session_key,
+                expected_capability_set,
+                startup_channel,
+                mandatory_flag,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousApplicationRecordNonCollapsingCapabilities {
+        #[rasn(identifier = "capabilityID")]
+        pub capability_id: CapabilityID,
+        #[rasn(identifier = "applicationData")]
+        pub application_data: Option<OctetString>,
+    }
+    impl AnonymousApplicationRecordNonCollapsingCapabilities {
+        pub fn new(capability_id: CapabilityID, application_data: Option<OctetString>) -> Self {
+            Self {
+                capability_id,
+                application_data,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ApplicationRecordNonCollapsingCapabilities(
+        pub SetOf<AnonymousApplicationRecordNonCollapsingCapabilities>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ApplicationRecord {
+        #[rasn(identifier = "applicationActive")]
+        pub application_active: bool,
+        #[rasn(identifier = "conductingOperationCapable")]
+        pub conducting_operation_capable: bool,
+        #[rasn(identifier = "startupChannel")]
+        pub startup_channel: Option<ChannelType>,
+        #[rasn(identifier = "applicationUserID")]
+        pub application_user_id: Option<UserID>,
+        #[rasn(identifier = "nonCollapsingCapabilities")]
+        pub non_collapsing_capabilities: Option<ApplicationRecordNonCollapsingCapabilities>,
+    }
+    impl ApplicationRecord {
+        pub fn new(
+            application_active: bool,
+            conducting_operation_capable: bool,
+            startup_channel: Option<ChannelType>,
+            application_user_id: Option<UserID>,
+            non_collapsing_capabilities: Option<ApplicationRecordNonCollapsingCapabilities>,
+        ) -> Self {
+            Self {
+                application_active,
+                conducting_operation_capable,
+                startup_channel,
+                application_user_id,
+                non_collapsing_capabilities,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum AsymmetryIndicator {
+        callingNode(()),
+        calledNode(()),
+        #[rasn(value("0..=4294967295"))]
+        unknown(u32),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousCSDNConnectionCircuitTypes {
+        #[rasn(identifier = "digital-56k")]
+        digital_56k(()),
+        #[rasn(identifier = "digital-64k")]
+        digital_64k(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CSDNConnectionCircuitTypes(pub SetOf<AnonymousCSDNConnectionCircuitTypes>);
+    #[doc = " Note 1:\tdigital-2x64k differs from multirate-base-64k"]
+    #[doc = " \t\t\twith a multiplier value of 2;"]
+    #[doc = "\t\t\tin the first case"]
+    #[doc = "\t\t\tthe network is requested an 8 kHz integrity with Restricted"]
+    #[doc = "\t\t\tDifferential Time Delay (RDTD);"]
+    #[doc = "\t\t\tin the second case"]
+    #[doc = "\t\t\tthe network is requested a Time Slot"]
+    #[doc = "\t\t\tSequence integrity (see 4.5.5/Q.931)"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CSDNConnection {
+        #[rasn(identifier = "circuitTypes")]
+        pub circuit_types: CSDNConnectionCircuitTypes,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: ExtendedE164NetworkAddress,
+    }
+    impl CSDNConnection {
+        pub fn new(
+            circuit_types: CSDNConnectionCircuitTypes,
+            network_address: ExtendedE164NetworkAddress,
+        ) -> Self {
+            Self {
+                circuit_types,
+                network_address,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CapabilityClass {
+        logical(()),
+        #[rasn(value("0.."))]
+        unsignedMin(Integer),
+        #[rasn(value("0.."))]
+        unsignedMax(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum CapabilityID {
+        #[rasn(value("0..=65535"))]
+        standard(u16),
+        nonStandard(Key),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ChallengeItem {
+        #[rasn(identifier = "responseAlgorithm")]
+        pub response_algorithm: ChallengeResponseAlgorithm,
+        #[rasn(identifier = "challengeData")]
+        pub challenge_data: UserData,
+    }
+    impl ChallengeItem {
+        pub fn new(
+            response_algorithm: ChallengeResponseAlgorithm,
+            challenge_data: UserData,
+        ) -> Self {
+            Self {
+                response_algorithm,
+                challenge_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ChallengeRequest {
+        #[rasn(identifier = "challengeTag")]
+        pub challenge_tag: Integer,
+        #[rasn(identifier = "challengeSet")]
+        pub challenge_set: SetOf<ChallengeItem>,
+    }
+    impl ChallengeRequest {
+        pub fn new(challenge_tag: Integer, challenge_set: SetOf<ChallengeItem>) -> Self {
+            Self {
+                challenge_tag,
+                challenge_set,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ChallengeResponse {
+        #[rasn(identifier = "challengeTag")]
+        pub challenge_tag: Integer,
+        #[rasn(identifier = "responseAlgorithm")]
+        pub response_algorithm: ChallengeResponseAlgorithm,
+        #[rasn(identifier = "responseItem")]
+        pub response_item: ChallengeResponseItem,
+    }
+    impl ChallengeResponse {
+        pub fn new(
+            challenge_tag: Integer,
+            response_algorithm: ChallengeResponseAlgorithm,
+            response_item: ChallengeResponseItem,
+        ) -> Self {
+            Self {
+                challenge_tag,
+                response_algorithm,
+                response_item,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ChallengeResponseAlgorithm {
+        passwordInTheClear(()),
+        nonStandardAlgorithm(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ChallengeResponseItem {
+        passwordString(PasswordSelector),
+        responseData(UserData),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ChannelAggregationMethod {
+        h221(()),
+        h244(()),
+        #[rasn(identifier = "iso-iec-13871")]
+        iso_iec_13871(()),
+        nonStandard(NonStandardParameter),
+    }
+    #[doc = " Export all symbols"]
+    #[doc = " ============================================================================="]
+    #[doc = " Part 1:  Elements of which messages are composed"]
+    #[doc = " ============================================================================="]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct ChannelID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ChannelType {
+        #[rasn(identifier = "static")]
+        R_static = 0,
+        dynamicMulticast = 1,
+        dynamicPrivate = 2,
+        dynamicUserId = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConductorAssignIndication {
+        #[rasn(identifier = "conductingNode")]
+        pub conducting_node: UserID,
+    }
+    impl ConductorAssignIndication {
+        pub fn new(conducting_node: UserID) -> Self {
+            Self { conducting_node }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConductorPermissionAskIndication {
+        #[rasn(identifier = "grantFlag")]
+        pub grant_flag: bool,
+    }
+    impl ConductorPermissionAskIndication {
+        pub fn new(grant_flag: bool) -> Self {
+            Self { grant_flag }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConductorPermissionGrantIndication {
+        #[rasn(size("0..=65535"), identifier = "permissionList")]
+        pub permission_list: SequenceOf<UserID>,
+        #[rasn(size("1..=65536"), identifier = "waitingList")]
+        pub waiting_list: Option<SequenceOf<UserID>>,
+    }
+    impl ConductorPermissionGrantIndication {
+        pub fn new(
+            permission_list: SequenceOf<UserID>,
+            waiting_list: Option<SequenceOf<UserID>>,
+        ) -> Self {
+            Self {
+                permission_list,
+                waiting_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConductorReleaseIndication {}
+    impl ConductorReleaseIndication {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for ConductorReleaseIndication {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceAddRequest {
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: NetworkAddress,
+        #[rasn(identifier = "requestingNode")]
+        pub requesting_node: UserID,
+        pub tag: Integer,
+        #[rasn(identifier = "addingMCU")]
+        pub adding_mcu: Option<UserID>,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "nodeCategory")]
+        pub node_category: Option<NodeCategory>,
+        #[rasn(extension_addition, identifier = "networkAddressV2")]
+        pub network_address_v2: NetworkAddressV2,
+    }
+    impl ConferenceAddRequest {
+        pub fn new(
+            network_address: NetworkAddress,
+            requesting_node: UserID,
+            tag: Integer,
+            adding_mcu: Option<UserID>,
+            user_data: Option<UserData>,
+            node_category: Option<NodeCategory>,
+            network_address_v2: NetworkAddressV2,
+        ) -> Self {
+            Self {
+                network_address,
+                requesting_node,
+                tag,
+                adding_mcu,
+                user_data,
+                node_category,
+                network_address_v2,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceAddResponseResult {
+        success = 0,
+        invalidRequester = 1,
+        invalidNetworkType = 2,
+        invalidNetworkAddress = 3,
+        addedNodeBusy = 4,
+        networkBusy = 5,
+        noPortsAvailable = 6,
+        connectionUnsuccessful = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceAddResponse {
+        pub tag: Integer,
+        pub result: ConferenceAddResponseResult,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+    }
+    impl ConferenceAddResponse {
+        pub fn new(
+            tag: Integer,
+            result: ConferenceAddResponseResult,
+            user_data: Option<UserData>,
+        ) -> Self {
+            Self {
+                tag,
+                result,
+                user_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceAssistanceIndication {
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+    }
+    impl ConferenceAssistanceIndication {
+        pub fn new(user_data: Option<UserData>) -> Self {
+            Self { user_data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceCreateRequest {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: ConferenceName,
+        #[rasn(identifier = "convenerPassword")]
+        pub convener_password: Option<Password>,
+        pub password: Option<Password>,
+        #[rasn(identifier = "lockedConference")]
+        pub locked_conference: bool,
+        #[rasn(identifier = "listedConference")]
+        pub listed_conference: bool,
+        #[rasn(identifier = "conductibleConference")]
+        pub conductible_conference: bool,
+        #[rasn(identifier = "terminationMethod")]
+        pub termination_method: TerminationMethod,
+        #[rasn(identifier = "conductorPrivileges")]
+        pub conductor_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "conductedPrivileges")]
+        pub conducted_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "nonConductedPrivileges")]
+        pub non_conducted_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "conferenceDescription")]
+        pub conference_description: Option<TextString>,
+        #[rasn(identifier = "callerIdentifier")]
+        pub caller_identifier: Option<TextString>,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "conferencePriority")]
+        pub conference_priority: Option<ConferencePriority>,
+        #[rasn(extension_addition, identifier = "conferenceMode")]
+        pub conference_mode: Option<ConferenceMode>,
+    }
+    impl ConferenceCreateRequest {
+        pub fn new(
+            conference_name: ConferenceName,
+            convener_password: Option<Password>,
+            password: Option<Password>,
+            locked_conference: bool,
+            listed_conference: bool,
+            conductible_conference: bool,
+            termination_method: TerminationMethod,
+            conductor_privileges: Option<SetOf<Privilege>>,
+            conducted_privileges: Option<SetOf<Privilege>>,
+            non_conducted_privileges: Option<SetOf<Privilege>>,
+            conference_description: Option<TextString>,
+            caller_identifier: Option<TextString>,
+            user_data: Option<UserData>,
+            conference_priority: Option<ConferencePriority>,
+            conference_mode: Option<ConferenceMode>,
+        ) -> Self {
+            Self {
+                conference_name,
+                convener_password,
+                password,
+                locked_conference,
+                listed_conference,
+                conductible_conference,
+                termination_method,
+                conductor_privileges,
+                conducted_privileges,
+                non_conducted_privileges,
+                conference_description,
+                caller_identifier,
+                user_data,
+                conference_priority,
+                conference_mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceCreateResponseResult {
+        success = 0,
+        userRejected = 1,
+        resourcesNotAvailable = 2,
+        rejectedForSymmetryBreaking = 3,
+        lockedConferenceNotSupported = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceCreateResponse {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        pub tag: Integer,
+        pub result: ConferenceCreateResponseResult,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+    }
+    impl ConferenceCreateResponse {
+        pub fn new(
+            node_id: UserID,
+            tag: Integer,
+            result: ConferenceCreateResponseResult,
+            user_data: Option<UserData>,
+        ) -> Self {
+            Self {
+                node_id,
+                tag,
+                result,
+                user_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceDescriptor {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: ConferenceName,
+        #[rasn(identifier = "conferenceNameModifier")]
+        pub conference_name_modifier: Option<ConferenceNameModifier>,
+        #[rasn(identifier = "conferenceDescription")]
+        pub conference_description: Option<TextString>,
+        #[rasn(identifier = "lockedConference")]
+        pub locked_conference: bool,
+        #[rasn(identifier = "passwordInTheClearRequired")]
+        pub password_in_the_clear_required: bool,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: Option<NetworkAddress>,
+        #[rasn(extension_addition, identifier = "defaultConferenceFlag")]
+        pub default_conference_flag: bool,
+        #[rasn(extension_addition, identifier = "conferenceMode")]
+        pub conference_mode: ConferenceMode,
+    }
+    impl ConferenceDescriptor {
+        pub fn new(
+            conference_name: ConferenceName,
+            conference_name_modifier: Option<ConferenceNameModifier>,
+            conference_description: Option<TextString>,
+            locked_conference: bool,
+            password_in_the_clear_required: bool,
+            network_address: Option<NetworkAddress>,
+            default_conference_flag: bool,
+            conference_mode: ConferenceMode,
+        ) -> Self {
+            Self {
+                conference_name,
+                conference_name_modifier,
+                conference_description,
+                locked_conference,
+                password_in_the_clear_required,
+                network_address,
+                default_conference_flag,
+                conference_mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceEjectUserIndicationReason {
+        userInitiated = 0,
+        higherNodeDisconnected = 1,
+        higherNodeEjected = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceEjectUserIndication {
+        #[rasn(identifier = "nodeToEject")]
+        pub node_to_eject: UserID,
+        pub reason: ConferenceEjectUserIndicationReason,
+    }
+    impl ConferenceEjectUserIndication {
+        pub fn new(node_to_eject: UserID, reason: ConferenceEjectUserIndicationReason) -> Self {
+            Self {
+                node_to_eject,
+                reason,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceEjectUserRequestReason {
+        userInitiated = 0,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceEjectUserRequest {
+        #[rasn(identifier = "nodeToEject")]
+        pub node_to_eject: UserID,
+        pub reason: ConferenceEjectUserRequestReason,
+    }
+    impl ConferenceEjectUserRequest {
+        pub fn new(node_to_eject: UserID, reason: ConferenceEjectUserRequestReason) -> Self {
+            Self {
+                node_to_eject,
+                reason,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceEjectUserResponseResult {
+        success = 0,
+        invalidRequester = 1,
+        invalidNode = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceEjectUserResponse {
+        #[rasn(identifier = "nodeToEject")]
+        pub node_to_eject: UserID,
+        pub result: ConferenceEjectUserResponseResult,
+    }
+    impl ConferenceEjectUserResponse {
+        pub fn new(node_to_eject: UserID, result: ConferenceEjectUserResponseResult) -> Self {
+            Self {
+                node_to_eject,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceInviteRequest {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: ConferenceName,
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        #[rasn(identifier = "topNodeID")]
+        pub top_node_id: UserID,
+        pub tag: Integer,
+        #[rasn(identifier = "passwordInTheClearRequired")]
+        pub password_in_the_clear_required: bool,
+        #[rasn(identifier = "lockedConference")]
+        pub locked_conference: bool,
+        #[rasn(identifier = "listedConference")]
+        pub listed_conference: bool,
+        #[rasn(identifier = "conductibleConference")]
+        pub conductible_conference: bool,
+        #[rasn(identifier = "terminationMethod")]
+        pub termination_method: TerminationMethod,
+        #[rasn(identifier = "conductorPrivileges")]
+        pub conductor_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "conductedPrivileges")]
+        pub conducted_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "nonConductedPrivileges")]
+        pub non_conducted_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "conferenceDescription")]
+        pub conference_description: Option<TextString>,
+        #[rasn(identifier = "callerIdentifier")]
+        pub caller_identifier: Option<TextString>,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "conferencePriority")]
+        pub conference_priority: Option<ConferencePriority>,
+        #[rasn(extension_addition, identifier = "nodeCategory")]
+        pub node_category: Option<NodeCategory>,
+        #[rasn(extension_addition, identifier = "conferenceMode")]
+        pub conference_mode: Option<ConferenceMode>,
+    }
+    impl ConferenceInviteRequest {
+        pub fn new(
+            conference_name: ConferenceName,
+            node_id: UserID,
+            top_node_id: UserID,
+            tag: Integer,
+            password_in_the_clear_required: bool,
+            locked_conference: bool,
+            listed_conference: bool,
+            conductible_conference: bool,
+            termination_method: TerminationMethod,
+            conductor_privileges: Option<SetOf<Privilege>>,
+            conducted_privileges: Option<SetOf<Privilege>>,
+            non_conducted_privileges: Option<SetOf<Privilege>>,
+            conference_description: Option<TextString>,
+            caller_identifier: Option<TextString>,
+            user_data: Option<UserData>,
+            conference_priority: Option<ConferencePriority>,
+            node_category: Option<NodeCategory>,
+            conference_mode: Option<ConferenceMode>,
+        ) -> Self {
+            Self {
+                conference_name,
+                node_id,
+                top_node_id,
+                tag,
+                password_in_the_clear_required,
+                locked_conference,
+                listed_conference,
+                conductible_conference,
+                termination_method,
+                conductor_privileges,
+                conducted_privileges,
+                non_conducted_privileges,
+                conference_description,
+                caller_identifier,
+                user_data,
+                conference_priority,
+                node_category,
+                conference_mode,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceInviteResponseResult {
+        success = 0,
+        userRejected = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceInviteResponse {
+        pub result: ConferenceInviteResponseResult,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+    }
+    impl ConferenceInviteResponse {
+        pub fn new(result: ConferenceInviteResponseResult, user_data: Option<UserData>) -> Self {
+            Self { result, user_data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceJoinRequest {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: Option<ConferenceNameSelector>,
+        #[rasn(identifier = "conferenceNameModifier")]
+        pub conference_name_modifier: Option<ConferenceNameModifier>,
+        pub tag: Option<Integer>,
+        pub password: Option<PasswordChallengeRequestResponse>,
+        #[rasn(identifier = "convenerPassword")]
+        pub convener_password: Option<PasswordSelector>,
+        #[rasn(identifier = "callerIdentifier")]
+        pub caller_identifier: Option<TextString>,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "nodeCategory")]
+        pub node_category: Option<NodeCategory>,
+    }
+    impl ConferenceJoinRequest {
+        pub fn new(
+            conference_name: Option<ConferenceNameSelector>,
+            conference_name_modifier: Option<ConferenceNameModifier>,
+            tag: Option<Integer>,
+            password: Option<PasswordChallengeRequestResponse>,
+            convener_password: Option<PasswordSelector>,
+            caller_identifier: Option<TextString>,
+            user_data: Option<UserData>,
+            node_category: Option<NodeCategory>,
+        ) -> Self {
+            Self {
+                conference_name,
+                conference_name_modifier,
+                tag,
+                password,
+                convener_password,
+                caller_identifier,
+                user_data,
+                node_category,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceJoinResponseResult {
+        success = 0,
+        userRejected = 1,
+        invalidConference = 2,
+        invalidPassword = 3,
+        invalidConvenerPassword = 4,
+        challengeResponseRequired = 5,
+        invalidChallengeResponse = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceJoinResponse {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: Option<UserID>,
+        #[rasn(identifier = "topNodeID")]
+        pub top_node_id: UserID,
+        pub tag: Integer,
+        #[rasn(identifier = "conferenceNameAlias")]
+        pub conference_name_alias: Option<ConferenceNameSelector>,
+        #[rasn(identifier = "passwordInTheClearRequired")]
+        pub password_in_the_clear_required: bool,
+        #[rasn(identifier = "lockedConference")]
+        pub locked_conference: bool,
+        #[rasn(identifier = "listedConference")]
+        pub listed_conference: bool,
+        #[rasn(identifier = "conductibleConference")]
+        pub conductible_conference: bool,
+        #[rasn(identifier = "terminationMethod")]
+        pub termination_method: TerminationMethod,
+        #[rasn(identifier = "conductorPrivileges")]
+        pub conductor_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "conductedPrivileges")]
+        pub conducted_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "nonConductedPrivileges")]
+        pub non_conducted_privileges: Option<SetOf<Privilege>>,
+        #[rasn(identifier = "conferenceDescription")]
+        pub conference_description: Option<TextString>,
+        pub password: Option<PasswordChallengeRequestResponse>,
+        pub result: ConferenceJoinResponseResult,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "nodeCategory")]
+        pub node_category: Option<NodeCategory>,
+        #[rasn(extension_addition, identifier = "conferenceMode")]
+        pub conference_mode: Option<ConferenceMode>,
+    }
+    impl ConferenceJoinResponse {
+        pub fn new(
+            node_id: Option<UserID>,
+            top_node_id: UserID,
+            tag: Integer,
+            conference_name_alias: Option<ConferenceNameSelector>,
+            password_in_the_clear_required: bool,
+            locked_conference: bool,
+            listed_conference: bool,
+            conductible_conference: bool,
+            termination_method: TerminationMethod,
+            conductor_privileges: Option<SetOf<Privilege>>,
+            conducted_privileges: Option<SetOf<Privilege>>,
+            non_conducted_privileges: Option<SetOf<Privilege>>,
+            conference_description: Option<TextString>,
+            password: Option<PasswordChallengeRequestResponse>,
+            result: ConferenceJoinResponseResult,
+            user_data: Option<UserData>,
+            node_category: Option<NodeCategory>,
+            conference_mode: Option<ConferenceMode>,
+        ) -> Self {
+            Self {
+                node_id,
+                top_node_id,
+                tag,
+                conference_name_alias,
+                password_in_the_clear_required,
+                locked_conference,
+                listed_conference,
+                conductible_conference,
+                termination_method,
+                conductor_privileges,
+                conducted_privileges,
+                non_conducted_privileges,
+                conference_description,
+                password,
+                result,
+                user_data,
+                node_category,
+                conference_mode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceLockIndication {}
+    impl ConferenceLockIndication {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for ConferenceLockIndication {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceLockRequest {}
+    impl ConferenceLockRequest {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for ConferenceLockRequest {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceLockResponseResult {
+        success = 0,
+        invalidRequester = 1,
+        alreadyLocked = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceLockResponse {
+        pub result: ConferenceLockResponseResult,
+    }
+    impl ConferenceLockResponse {
+        pub fn new(result: ConferenceLockResponseResult) -> Self {
+            Self { result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ConferenceMode {
+        #[rasn(identifier = "conventional-only")]
+        conventional_only(()),
+        #[rasn(identifier = "counted-only")]
+        counted_only(()),
+        #[rasn(identifier = "anonymous-only")]
+        anonymous_only(()),
+        #[rasn(identifier = "conventional-control")]
+        conventional_control(()),
+        #[rasn(identifier = "unrestricted-mode")]
+        unrestricted_mode(()),
+        #[rasn(identifier = "non-standard-mode")]
+        non_standard_mode(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceName {
+        pub numeric: SimpleNumericString,
+        pub text: Option<SimpleTextString>,
+        #[rasn(extension_addition, identifier = "unicodeText")]
+        pub unicode_text: Option<TextString>,
+    }
+    impl ConferenceName {
+        pub fn new(
+            numeric: SimpleNumericString,
+            text: Option<SimpleTextString>,
+            unicode_text: Option<TextString>,
+        ) -> Self {
+            Self {
+                numeric,
+                text,
+                unicode_text,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConferenceNameModifier(pub SimpleNumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ConferenceNameSelector {
+        numeric(SimpleNumericString),
+        text(SimpleTextString),
+        #[rasn(extension_addition)]
+        unicodeText(TextString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferencePriority {
+        #[rasn(value("0..=65535"))]
+        pub priority: u16,
+        pub scheme: ConferencePriorityScheme,
+    }
+    impl ConferencePriority {
+        pub fn new(priority: u16, scheme: ConferencePriorityScheme) -> Self {
+            Self { priority, scheme }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ConferencePriorityScheme {
+        nonStandardScheme(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceQueryRequest {
+        #[rasn(identifier = "nodeType")]
+        pub node_type: NodeType,
+        #[rasn(identifier = "asymmetryIndicator")]
+        pub asymmetry_indicator: Option<AsymmetryIndicator>,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+    }
+    impl ConferenceQueryRequest {
+        pub fn new(
+            node_type: NodeType,
+            asymmetry_indicator: Option<AsymmetryIndicator>,
+            user_data: Option<UserData>,
+        ) -> Self {
+            Self {
+                node_type,
+                asymmetry_indicator,
+                user_data,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceQueryResponseResult {
+        success = 0,
+        userRejected = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceQueryResponse {
+        #[rasn(identifier = "nodeType")]
+        pub node_type: NodeType,
+        #[rasn(identifier = "asymmetryIndicator")]
+        pub asymmetry_indicator: Option<AsymmetryIndicator>,
+        #[rasn(identifier = "conferenceList")]
+        pub conference_list: SetOf<ConferenceDescriptor>,
+        pub result: ConferenceQueryResponseResult,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "waitForInvitationFlag")]
+        pub wait_for_invitation_flag: Option<bool>,
+        #[rasn(extension_addition, identifier = "noUnlistedConferenceFlag")]
+        pub no_unlisted_conference_flag: Option<bool>,
+    }
+    impl ConferenceQueryResponse {
+        pub fn new(
+            node_type: NodeType,
+            asymmetry_indicator: Option<AsymmetryIndicator>,
+            conference_list: SetOf<ConferenceDescriptor>,
+            result: ConferenceQueryResponseResult,
+            user_data: Option<UserData>,
+            wait_for_invitation_flag: Option<bool>,
+            no_unlisted_conference_flag: Option<bool>,
+        ) -> Self {
+            Self {
+                node_type,
+                asymmetry_indicator,
+                conference_list,
+                result,
+                user_data,
+                wait_for_invitation_flag,
+                no_unlisted_conference_flag,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceTerminateIndicationReason {
+        userInitiated = 0,
+        timedConferenceTermination = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTerminateIndication {
+        pub reason: ConferenceTerminateIndicationReason,
+    }
+    impl ConferenceTerminateIndication {
+        pub fn new(reason: ConferenceTerminateIndicationReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceTerminateRequestReason {
+        userInitiated = 0,
+        timedConferenceTermination = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTerminateRequest {
+        pub reason: ConferenceTerminateRequestReason,
+    }
+    impl ConferenceTerminateRequest {
+        pub fn new(reason: ConferenceTerminateRequestReason) -> Self {
+            Self { reason }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceTerminateResponseResult {
+        success = 0,
+        invalidRequester = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTerminateResponse {
+        pub result: ConferenceTerminateResponseResult,
+    }
+    impl ConferenceTerminateResponse {
+        pub fn new(result: ConferenceTerminateResponseResult) -> Self {
+            Self { result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTimeExtendIndication {
+        #[rasn(identifier = "timeToExtend")]
+        pub time_to_extend: Time,
+        #[rasn(identifier = "nodeSpecificTimeFlag")]
+        pub node_specific_time_flag: bool,
+    }
+    impl ConferenceTimeExtendIndication {
+        pub fn new(time_to_extend: Time, node_specific_time_flag: bool) -> Self {
+            Self {
+                time_to_extend,
+                node_specific_time_flag,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTimeInquireIndication {
+        #[rasn(identifier = "nodeSpecificTimeFlag")]
+        pub node_specific_time_flag: bool,
+    }
+    impl ConferenceTimeInquireIndication {
+        pub fn new(node_specific_time_flag: bool) -> Self {
+            Self {
+                node_specific_time_flag,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTimeRemainingIndication {
+        #[rasn(identifier = "timeRemaining")]
+        pub time_remaining: Time,
+        #[rasn(identifier = "nodeID")]
+        pub node_id: Option<UserID>,
+    }
+    impl ConferenceTimeRemainingIndication {
+        pub fn new(time_remaining: Time, node_id: Option<UserID>) -> Self {
+            Self {
+                time_remaining,
+                node_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTransferIndication {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: ConferenceNameSelector,
+        #[rasn(identifier = "conferenceNameModifier")]
+        pub conference_name_modifier: Option<ConferenceNameModifier>,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: Option<NetworkAddress>,
+        #[rasn(size("1..=65536"), identifier = "transferringNodes")]
+        pub transferring_nodes: Option<SetOf<UserID>>,
+        pub password: Option<PasswordSelector>,
+        #[rasn(extension_addition, identifier = "networkAddressV2")]
+        pub network_address_v2: Option<NetworkAddressV2>,
+    }
+    impl ConferenceTransferIndication {
+        pub fn new(
+            conference_name: ConferenceNameSelector,
+            conference_name_modifier: Option<ConferenceNameModifier>,
+            network_address: Option<NetworkAddress>,
+            transferring_nodes: Option<SetOf<UserID>>,
+            password: Option<PasswordSelector>,
+            network_address_v2: Option<NetworkAddressV2>,
+        ) -> Self {
+            Self {
+                conference_name,
+                conference_name_modifier,
+                network_address,
+                transferring_nodes,
+                password,
+                network_address_v2,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTransferRequest {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: ConferenceNameSelector,
+        #[rasn(identifier = "conferenceNameModifier")]
+        pub conference_name_modifier: Option<ConferenceNameModifier>,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: Option<NetworkAddress>,
+        #[rasn(size("1..=65536"), identifier = "transferringNodes")]
+        pub transferring_nodes: Option<SetOf<UserID>>,
+        pub password: Option<PasswordSelector>,
+        #[rasn(extension_addition, identifier = "networkAddressV2")]
+        pub network_address_v2: Option<NetworkAddressV2>,
+    }
+    impl ConferenceTransferRequest {
+        pub fn new(
+            conference_name: ConferenceNameSelector,
+            conference_name_modifier: Option<ConferenceNameModifier>,
+            network_address: Option<NetworkAddress>,
+            transferring_nodes: Option<SetOf<UserID>>,
+            password: Option<PasswordSelector>,
+            network_address_v2: Option<NetworkAddressV2>,
+        ) -> Self {
+            Self {
+                conference_name,
+                conference_name_modifier,
+                network_address,
+                transferring_nodes,
+                password,
+                network_address_v2,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceTransferResponseResult {
+        success = 0,
+        invalidRequester = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceTransferResponse {
+        #[rasn(identifier = "conferenceName")]
+        pub conference_name: ConferenceNameSelector,
+        #[rasn(identifier = "conferenceNameModifier")]
+        pub conference_name_modifier: Option<ConferenceNameModifier>,
+        #[rasn(size("1..=65536"), identifier = "transferringNodes")]
+        pub transferring_nodes: Option<SetOf<UserID>>,
+        pub result: ConferenceTransferResponseResult,
+    }
+    impl ConferenceTransferResponse {
+        pub fn new(
+            conference_name: ConferenceNameSelector,
+            conference_name_modifier: Option<ConferenceNameModifier>,
+            transferring_nodes: Option<SetOf<UserID>>,
+            result: ConferenceTransferResponseResult,
+        ) -> Self {
+            Self {
+                conference_name,
+                conference_name_modifier,
+                transferring_nodes,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceUnlockIndication {}
+    impl ConferenceUnlockIndication {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for ConferenceUnlockIndication {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceUnlockRequest {}
+    impl ConferenceUnlockRequest {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for ConferenceUnlockRequest {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ConferenceUnlockResponseResult {
+        success = 0,
+        invalidRequester = 1,
+        alreadyUnlocked = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ConferenceUnlockResponse {
+        pub result: ConferenceUnlockResponseResult,
+    }
+    impl ConferenceUnlockResponse {
+        pub fn new(result: ConferenceUnlockResponseResult) -> Self {
+            Self { result }
+        }
+    }
+    #[doc = " =========================================================================="]
+    #[doc = " Part 3:  Messages sent as MCS-Connect-Provider user data"]
+    #[doc = " =========================================================================="]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ConnectData {
+        #[rasn(identifier = "t124Identifier")]
+        pub t124_identifier: Key,
+        #[rasn(identifier = "connectPDU")]
+        pub connect_pdu: OctetString,
+    }
+    impl ConnectData {
+        pub fn new(t124_identifier: Key, connect_pdu: OctetString) -> Self {
+            Self {
+                t124_identifier,
+                connect_pdu,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ConnectGCCPDU {
+        conferenceCreateRequest(ConferenceCreateRequest),
+        conferenceCreateResponse(ConferenceCreateResponse),
+        conferenceQueryRequest(ConferenceQueryRequest),
+        conferenceQueryResponse(ConferenceQueryResponse),
+        conferenceJoinRequest(ConferenceJoinRequest),
+        conferenceJoinResponse(ConferenceJoinResponse),
+        conferenceInviteRequest(ConferenceInviteRequest),
+        conferenceInviteResponse(ConferenceInviteResponse),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1..=16"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}"
+        )
+    )]
+    pub struct DiallingString(pub NumericString);
+    #[doc = " Those assigned by specifications"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1001..=65535"))]
+    pub struct DynamicChannelID(pub u16);
+    #[doc = " Those assigned by specifications"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("16384..=65535"))]
+    pub struct DynamicTokenID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct EntityID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ExtendedE164NetworkAddress {
+        #[rasn(identifier = "internationalNumber")]
+        pub international_number: DiallingString,
+        #[rasn(identifier = "subAddress")]
+        pub sub_address: Option<SubAddressString>,
+        #[rasn(identifier = "extraDialling")]
+        pub extra_dialling: Option<ExtraDiallingString>,
+    }
+    impl ExtendedE164NetworkAddress {
+        pub fn new(
+            international_number: DiallingString,
+            sub_address: Option<SubAddressString>,
+            extra_dialling: Option<ExtraDiallingString>,
+        ) -> Self {
+            Self {
+                international_number,
+                sub_address,
+                extra_dialling,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=255"))]
+    pub struct ExtraDiallingString(pub TextString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct FunctionNotSupportedResponse {
+        pub request: RequestPDU,
+    }
+    impl FunctionNotSupportedResponse {
+        pub fn new(request: RequestPDU) -> Self {
+            Self { request }
+        }
+    }
+    #[doc = " ============================================================================"]
+    #[doc = " Part 4:  Messages sent using MCS-Send-Data or MCS-Uniform-Send-Data"]
+    #[doc = " ============================================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum GCCPDU {
+        request(RequestPDU),
+        response(ResponsePDU),
+        indication(IndicationPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct GSTNConnection {
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: ExtendedE164NetworkAddress,
+    }
+    impl GSTNConnection {
+        pub fn new(network_address: ExtendedE164NetworkAddress) -> Self {
+            Self { network_address }
+        }
+    }
+    #[doc = " 32-bit value"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("4..=255"))]
+    pub struct H221NonStandardIdentifier(pub OctetString);
+    #[doc = " Time in seconds"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct Handle(pub u32);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousISDNConnectionCircuitTypes {
+        #[rasn(identifier = "digital-64k")]
+        digital_64k(()),
+        #[rasn(identifier = "digital-2x64k")]
+        digital_2x64k(()),
+        #[rasn(identifier = "digital-384k")]
+        digital_384k(()),
+        #[rasn(identifier = "digital-1536")]
+        digital_1536(()),
+        #[rasn(identifier = "digital-1920k")]
+        digital_1920k(()),
+        #[rasn(value("1..=30"), identifier = "multirate-base-64k")]
+        multirate_base_64k(u8),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ISDNConnectionCircuitTypes(pub SetOf<AnonymousISDNConnectionCircuitTypes>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ISDNConnectionHighLayerCompatibility {
+        #[rasn(identifier = "telephony3kHz")]
+        pub telephony3k_hz: bool,
+        #[rasn(identifier = "telephony7kHz")]
+        pub telephony7k_hz: bool,
+        pub videotelephony: bool,
+        pub videoconference: bool,
+        pub audiographic: bool,
+        pub audiovisual: bool,
+        pub multimedia: bool,
+    }
+    impl ISDNConnectionHighLayerCompatibility {
+        pub fn new(
+            telephony3k_hz: bool,
+            telephony7k_hz: bool,
+            videotelephony: bool,
+            videoconference: bool,
+            audiographic: bool,
+            audiovisual: bool,
+            multimedia: bool,
+        ) -> Self {
+            Self {
+                telephony3k_hz,
+                telephony7k_hz,
+                videotelephony,
+                videoconference,
+                audiographic,
+                audiovisual,
+                multimedia,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ISDNConnection {
+        #[rasn(identifier = "circuitTypes")]
+        pub circuit_types: ISDNConnectionCircuitTypes,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: ExtendedE164NetworkAddress,
+        #[rasn(identifier = "highLayerCompatibility")]
+        pub high_layer_compatibility: Option<ISDNConnectionHighLayerCompatibility>,
+    }
+    impl ISDNConnection {
+        pub fn new(
+            circuit_types: ISDNConnectionCircuitTypes,
+            network_address: ExtendedE164NetworkAddress,
+            high_layer_compatibility: Option<ISDNConnectionHighLayerCompatibility>,
+        ) -> Self {
+            Self {
+                circuit_types,
+                network_address,
+                high_layer_compatibility,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum IndicationPDU {
+        userIDIndication(UserIDIndication),
+        conferenceLockIndication(ConferenceLockIndication),
+        conferenceUnlockIndication(ConferenceUnlockIndication),
+        conferenceTerminateIndication(ConferenceTerminateIndication),
+        conferenceEjectUserIndication(ConferenceEjectUserIndication),
+        conferenceTransferIndication(ConferenceTransferIndication),
+        rosterUpdateIndication(RosterUpdateIndication),
+        applicationInvokeIndication(ApplicationInvokeIndication),
+        registryMonitorEntryIndication(RegistryMonitorEntryIndication),
+        conductorAssignIndication(ConductorAssignIndication),
+        conductorReleaseIndication(ConductorReleaseIndication),
+        conductorPermissionAskIndication(ConductorPermissionAskIndication),
+        conductorPermissionGrantIndication(ConductorPermissionGrantIndication),
+        conferenceTimeRemainingIndication(ConferenceTimeRemainingIndication),
+        conferenceTimeInquireIndication(ConferenceTimeInquireIndication),
+        conferenceTimeExtendIndication(ConferenceTimeExtendIndication),
+        conferenceAssistanceIndication(ConferenceAssistanceIndication),
+        textMessageIndication(TextMessageIndication),
+        nonStandardIndication(NonStandardPDU),
+    }
+    #[doc = " First four octets shall be country code and"]
+    #[doc = " Manufacturer code, assigned as specified in"]
+    #[doc = " Annex A/H.221 for NS-cap and NS-comm"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Key {
+        object(ObjectIdentifier),
+        h221NonStandard(H221NonStandardIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MediaList {
+        pub audio: bool,
+        pub video: bool,
+        pub data: bool,
+    }
+    impl MediaList {
+        pub fn new(audio: bool, video: bool, data: bool) -> Self {
+            Self { audio, video, data }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AnonymousNetworkAddressAggregatedChannelTransferModes {
+        pub speech: bool,
+        #[rasn(identifier = "voice-band")]
+        pub voice_band: bool,
+        #[rasn(identifier = "digital-56k")]
+        pub digital_56k: bool,
+        #[rasn(identifier = "digital-64k")]
+        pub digital_64k: bool,
+        #[rasn(identifier = "digital-128k")]
+        pub digital_128k: bool,
+        #[rasn(identifier = "digital-192k")]
+        pub digital_192k: bool,
+        #[rasn(identifier = "digital-256k")]
+        pub digital_256k: bool,
+        #[rasn(identifier = "digital-320k")]
+        pub digital_320k: bool,
+        #[rasn(identifier = "digital-384k")]
+        pub digital_384k: bool,
+        #[rasn(identifier = "digital-512k")]
+        pub digital_512k: bool,
+        #[rasn(identifier = "digital-768k")]
+        pub digital_768k: bool,
+        #[rasn(identifier = "digital-1152k")]
+        pub digital_1152k: bool,
+        #[rasn(identifier = "digital-1472k")]
+        pub digital_1472k: bool,
+        #[rasn(identifier = "digital-1536k")]
+        pub digital_1536k: bool,
+        #[rasn(identifier = "digital-1920k")]
+        pub digital_1920k: bool,
+        #[rasn(identifier = "packet-mode")]
+        pub packet_mode: bool,
+        #[rasn(identifier = "frame-mode")]
+        pub frame_mode: bool,
+        pub atm: bool,
+    }
+    impl AnonymousNetworkAddressAggregatedChannelTransferModes {
+        pub fn new(
+            speech: bool,
+            voice_band: bool,
+            digital_56k: bool,
+            digital_64k: bool,
+            digital_128k: bool,
+            digital_192k: bool,
+            digital_256k: bool,
+            digital_320k: bool,
+            digital_384k: bool,
+            digital_512k: bool,
+            digital_768k: bool,
+            digital_1152k: bool,
+            digital_1472k: bool,
+            digital_1536k: bool,
+            digital_1920k: bool,
+            packet_mode: bool,
+            frame_mode: bool,
+            atm: bool,
+        ) -> Self {
+            Self {
+                speech,
+                voice_band,
+                digital_56k,
+                digital_64k,
+                digital_128k,
+                digital_192k,
+                digital_256k,
+                digital_320k,
+                digital_384k,
+                digital_512k,
+                digital_768k,
+                digital_1152k,
+                digital_1472k,
+                digital_1536k,
+                digital_1920k,
+                packet_mode,
+                frame_mode,
+                atm,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AnonymousNetworkAddressAggregatedChannelHighLayerCompatibility {
+        #[rasn(identifier = "telephony3kHz")]
+        pub telephony3k_hz: bool,
+        #[rasn(identifier = "telephony7kHz")]
+        pub telephony7k_hz: bool,
+        pub videotelephony: bool,
+        pub videoconference: bool,
+        pub audiographic: bool,
+        pub audiovisual: bool,
+        pub multimedia: bool,
+    }
+    impl AnonymousNetworkAddressAggregatedChannelHighLayerCompatibility {
+        pub fn new(
+            telephony3k_hz: bool,
+            telephony7k_hz: bool,
+            videotelephony: bool,
+            videoconference: bool,
+            audiographic: bool,
+            audiovisual: bool,
+            multimedia: bool,
+        ) -> Self {
+            Self {
+                telephony3k_hz,
+                telephony7k_hz,
+                videotelephony,
+                videoconference,
+                audiographic,
+                audiovisual,
+                multimedia,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AnonymousNetworkAddressAggregatedChannel {
+        #[rasn(identifier = "transferModes")]
+        pub transfer_modes: AnonymousNetworkAddressAggregatedChannelTransferModes,
+        #[rasn(identifier = "internationalNumber")]
+        pub international_number: DiallingString,
+        #[rasn(identifier = "subAddress")]
+        pub sub_address: Option<SubAddressString>,
+        #[rasn(identifier = "extraDialling")]
+        pub extra_dialling: Option<ExtraDiallingString>,
+        #[rasn(identifier = "highLayerCompatibility")]
+        pub high_layer_compatibility:
+            Option<AnonymousNetworkAddressAggregatedChannelHighLayerCompatibility>,
+    }
+    impl AnonymousNetworkAddressAggregatedChannel {
+        pub fn new(
+            transfer_modes: AnonymousNetworkAddressAggregatedChannelTransferModes,
+            international_number: DiallingString,
+            sub_address: Option<SubAddressString>,
+            extra_dialling: Option<ExtraDiallingString>,
+            high_layer_compatibility: Option<
+                AnonymousNetworkAddressAggregatedChannelHighLayerCompatibility,
+            >,
+        ) -> Self {
+            Self {
+                transfer_modes,
+                international_number,
+                sub_address,
+                extra_dialling,
+                high_layer_compatibility,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AnonymousNetworkAddressTransportConnection {
+        #[rasn(size("1..=20"), identifier = "nsapAddress")]
+        pub nsap_address: OctetString,
+        #[rasn(identifier = "transportSelector")]
+        pub transport_selector: Option<OctetString>,
+    }
+    impl AnonymousNetworkAddressTransportConnection {
+        pub fn new(nsap_address: OctetString, transport_selector: Option<OctetString>) -> Self {
+            Self {
+                nsap_address,
+                transport_selector,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousNetworkAddress {
+        aggregatedChannel(AnonymousNetworkAddressAggregatedChannel),
+        transportConnection(AnonymousNetworkAddressTransportConnection),
+        nonStandard(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=64"))]
+    pub struct NetworkAddress(pub SequenceOf<AnonymousNetworkAddress>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousAnonymousNetworkAddressV2NetworkConnectionAggregatedConnectionsConnectionList {
+        isdnConnection(ISDNConnection),
+        csdnConnection(CSDNConnection),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=30"))]
+    pub struct AnonymousNetworkAddressV2NetworkConnectionAggregatedConnectionsConnectionList(
+        pub  SetOf<
+            AnonymousAnonymousNetworkAddressV2NetworkConnectionAggregatedConnectionsConnectionList,
+        >,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AnonymousNetworkAddressV2NetworkConnectionAggregatedConnections {
+        #[rasn(identifier = "connectionList")]
+        pub connection_list:
+            AnonymousNetworkAddressV2NetworkConnectionAggregatedConnectionsConnectionList,
+        #[rasn(identifier = "aggregationMethods")]
+        pub aggregation_methods: Option<SetOf<ChannelAggregationMethod>>,
+    }
+    impl AnonymousNetworkAddressV2NetworkConnectionAggregatedConnections {
+        pub fn new(
+            connection_list : AnonymousNetworkAddressV2NetworkConnectionAggregatedConnectionsConnectionList,
+            aggregation_methods: Option<SetOf<ChannelAggregationMethod>>,
+        ) -> Self {
+            Self {
+                connection_list,
+                aggregation_methods,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum AnonymousNetworkAddressV2NetworkConnection {
+        singleConnection(NetworkConnection),
+        aggregatedConnections(AnonymousNetworkAddressV2NetworkConnectionAggregatedConnections),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousNetworkAddressV2 {
+        #[rasn(identifier = "networkConnection")]
+        pub network_connection: AnonymousNetworkAddressV2NetworkConnection,
+        pub profiles: Option<SetOf<Profile>>,
+        #[rasn(identifier = "mediaConcerned")]
+        pub media_concerned: Option<MediaList>,
+    }
+    impl AnonymousNetworkAddressV2 {
+        pub fn new(
+            network_connection: AnonymousNetworkAddressV2NetworkConnection,
+            profiles: Option<SetOf<Profile>>,
+            media_concerned: Option<MediaList>,
+        ) -> Self {
+            Self {
+                network_connection,
+                profiles,
+                media_concerned,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NetworkAddressV2(pub SetOf<AnonymousNetworkAddressV2>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NetworkConnection {
+        gstnConnection(GSTNConnection),
+        isdnConnection(ISDNConnection),
+        csdnConnection(CSDNConnection),
+        psdnConnection(PSDNConnection),
+        atmConnection(ATMConnection),
+        extendedE164NetworkAddress(ExtendedE164NetworkAddress),
+        transportAddress(TransportAddress),
+        nonStandard(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum NodeCategory {
+        conventional(()),
+        counted(()),
+        anonymous(()),
+        nonStandardCategory(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NodeProperties {
+        #[rasn(identifier = "managementDevice")]
+        pub management_device: bool,
+        #[rasn(identifier = "peripheralDevice")]
+        pub peripheral_device: bool,
+    }
+    impl NodeProperties {
+        pub fn new(management_device: bool, peripheral_device: bool) -> Self {
+            Self {
+                management_device,
+                peripheral_device,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NodeRecord {
+        #[rasn(identifier = "superiorNode")]
+        pub superior_node: Option<UserID>,
+        #[rasn(identifier = "nodeType")]
+        pub node_type: NodeType,
+        #[rasn(identifier = "nodeProperties")]
+        pub node_properties: NodeProperties,
+        #[rasn(identifier = "nodeName")]
+        pub node_name: Option<TextString>,
+        #[rasn(identifier = "participantsList")]
+        pub participants_list: Option<SequenceOf<TextString>>,
+        #[rasn(identifier = "siteInformation")]
+        pub site_information: Option<TextString>,
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: Option<NetworkAddress>,
+        #[rasn(identifier = "alternativeNodeID")]
+        pub alternative_node_id: Option<AlternativeNodeID>,
+        #[rasn(identifier = "userData")]
+        pub user_data: Option<UserData>,
+        #[rasn(extension_addition, identifier = "nodeCategory")]
+        pub node_category: Option<NodeCategory>,
+        #[rasn(extension_addition, identifier = "networkAddressV2")]
+        pub network_address_v2: Option<NetworkAddressV2>,
+    }
+    impl NodeRecord {
+        pub fn new(
+            superior_node: Option<UserID>,
+            node_type: NodeType,
+            node_properties: NodeProperties,
+            node_name: Option<TextString>,
+            participants_list: Option<SequenceOf<TextString>>,
+            site_information: Option<TextString>,
+            network_address: Option<NetworkAddress>,
+            alternative_node_id: Option<AlternativeNodeID>,
+            user_data: Option<UserData>,
+            node_category: Option<NodeCategory>,
+            network_address_v2: Option<NetworkAddressV2>,
+        ) -> Self {
+            Self {
+                superior_node,
+                node_type,
+                node_properties,
+                node_name,
+                participants_list,
+                site_information,
+                network_address,
+                alternative_node_id,
+                user_data,
+                node_category,
+                network_address_v2,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum NodeType {
+        terminal = 0,
+        multiportTerminal = 1,
+        mcu = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct NonStandardPDU {
+        pub data: NonStandardParameter,
+    }
+    impl NonStandardPDU {
+        pub fn new(data: NonStandardParameter) -> Self {
+            Self { data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NonStandardParameter {
+        pub key: Key,
+        pub data: OctetString,
+    }
+    impl NonStandardParameter {
+        pub fn new(key: Key, data: OctetString) -> Self {
+            Self { key, data }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PSDNConnectionNetworkAddress {
+        extendedE164NetworkAddress(ExtendedE164NetworkAddress),
+        transportAddress(TransportAddress),
+        nonStandard(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PSDNConnection {
+        #[rasn(identifier = "networkAddress")]
+        pub network_address: PSDNConnectionNetworkAddress,
+    }
+    impl PSDNConnection {
+        pub fn new(network_address: PSDNConnectionNetworkAddress) -> Self {
+            Self { network_address }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct Password {
+        pub numeric: SimpleNumericString,
+        pub text: Option<SimpleTextString>,
+        #[rasn(extension_addition, identifier = "unicodeText")]
+        pub unicode_text: Option<TextString>,
+    }
+    impl Password {
+        pub fn new(
+            numeric: SimpleNumericString,
+            text: Option<SimpleTextString>,
+            unicode_text: Option<TextString>,
+        ) -> Self {
+            Self {
+                numeric,
+                text,
+                unicode_text,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PasswordChallengeRequestResponseChallengeRequestResponse {
+        #[rasn(identifier = "challengeRequest")]
+        pub challenge_request: Option<ChallengeRequest>,
+        #[rasn(identifier = "challengeResponse")]
+        pub challenge_response: Option<ChallengeResponse>,
+    }
+    impl PasswordChallengeRequestResponseChallengeRequestResponse {
+        pub fn new(
+            challenge_request: Option<ChallengeRequest>,
+            challenge_response: Option<ChallengeResponse>,
+        ) -> Self {
+            Self {
+                challenge_request,
+                challenge_response,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PasswordChallengeRequestResponse {
+        passwordInTheClear(PasswordSelector),
+        challengeRequestResponse(PasswordChallengeRequestResponseChallengeRequestResponse),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PasswordSelector {
+        numeric(SimpleNumericString),
+        text(SimpleTextString),
+        #[rasn(extension_addition)]
+        unicodeText(TextString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Privilege {
+        terminate = 0,
+        ejectUser = 1,
+        add = 2,
+        lockUnlock = 3,
+        transfer = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ProfileSimpleProfile {
+        speech(()),
+        #[rasn(identifier = "telephony-3kHz")]
+        telephony_3kHz(()),
+        #[rasn(identifier = "telephony-7kHz")]
+        telephony_7kHz(()),
+        #[rasn(identifier = "voice-band")]
+        voice_band(()),
+        frameRelay(()),
+        #[rasn(identifier = "t123-pstn-basic")]
+        t123_pstn_basic(()),
+        #[rasn(identifier = "t123-psdn-basic")]
+        t123_psdn_basic(()),
+        #[rasn(identifier = "t123-b-isdn-basic")]
+        t123_b_isdn_basic(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum ProfileMultimediaProfileProfile {
+        h310(()),
+        h320(()),
+        h321(()),
+        h322(()),
+        h323(()),
+        h324(()),
+        h324m(()),
+        asvd(()),
+        dsvd(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProfileMultimediaProfile {
+        pub profile: ProfileMultimediaProfileProfile,
+        #[rasn(identifier = "t120Data")]
+        pub t120_data: bool,
+    }
+    impl ProfileMultimediaProfile {
+        pub fn new(profile: ProfileMultimediaProfileProfile, t120_data: bool) -> Self {
+            Self { profile, t120_data }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Profile {
+        simpleProfile(ProfileSimpleProfile),
+        multimediaProfile(ProfileMultimediaProfile),
+        dsmccDownloadProfile(()),
+        nonStandard(NonStandardParameter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryAllocateHandleRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        #[rasn(value("1..=1024"), identifier = "numberOfHandles")]
+        pub number_of_handles: u16,
+    }
+    impl RegistryAllocateHandleRequest {
+        pub fn new(entity_id: EntityID, number_of_handles: u16) -> Self {
+            Self {
+                entity_id,
+                number_of_handles,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum RegistryAllocateHandleResponseResult {
+        successful = 0,
+        noHandlesAvailable = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryAllocateHandleResponse {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        #[rasn(value("1..=1024"), identifier = "numberOfHandles")]
+        pub number_of_handles: u16,
+        #[rasn(identifier = "firstHandle")]
+        pub first_handle: Handle,
+        pub result: RegistryAllocateHandleResponseResult,
+    }
+    impl RegistryAllocateHandleResponse {
+        pub fn new(
+            entity_id: EntityID,
+            number_of_handles: u16,
+            first_handle: Handle,
+            result: RegistryAllocateHandleResponseResult,
+        ) -> Self {
+            Self {
+                entity_id,
+                number_of_handles,
+                first_handle,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryAssignTokenRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        pub key: RegistryKey,
+    }
+    impl RegistryAssignTokenRequest {
+        pub fn new(entity_id: EntityID, key: RegistryKey) -> Self {
+            Self { entity_id, key }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryDeleteEntryRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        pub key: RegistryKey,
+    }
+    impl RegistryDeleteEntryRequest {
+        pub fn new(entity_id: EntityID, key: RegistryKey) -> Self {
+            Self { entity_id, key }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RegistryEntryOwnerOwned {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+    }
+    impl RegistryEntryOwnerOwned {
+        pub fn new(node_id: UserID, entity_id: EntityID) -> Self {
+            Self { node_id, entity_id }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum RegistryEntryOwner {
+        owned(RegistryEntryOwnerOwned),
+        notOwned(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RegistryItem {
+        channelID(DynamicChannelID),
+        tokenID(DynamicTokenID),
+        #[rasn(size("0..=64"))]
+        parameter(OctetString),
+        vacant(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct RegistryKey {
+        #[rasn(identifier = "sessionKey")]
+        pub session_key: SessionKey,
+        #[rasn(size("0..=64"), identifier = "resourceID")]
+        pub resource_id: OctetString,
+    }
+    impl RegistryKey {
+        pub fn new(session_key: SessionKey, resource_id: OctetString) -> Self {
+            Self {
+                session_key,
+                resource_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum RegistryModificationRights {
+        owner = 0,
+        session = 1,
+        public = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryMonitorEntryIndication {
+        pub key: RegistryKey,
+        pub item: RegistryItem,
+        pub owner: RegistryEntryOwner,
+        #[rasn(identifier = "modificationRights")]
+        pub modification_rights: Option<RegistryModificationRights>,
+    }
+    impl RegistryMonitorEntryIndication {
+        pub fn new(
+            key: RegistryKey,
+            item: RegistryItem,
+            owner: RegistryEntryOwner,
+            modification_rights: Option<RegistryModificationRights>,
+        ) -> Self {
+            Self {
+                key,
+                item,
+                owner,
+                modification_rights,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryMonitorEntryRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        pub key: RegistryKey,
+    }
+    impl RegistryMonitorEntryRequest {
+        pub fn new(entity_id: EntityID, key: RegistryKey) -> Self {
+            Self { entity_id, key }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryRegisterChannelRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        pub key: RegistryKey,
+        #[rasn(identifier = "channelID")]
+        pub channel_id: DynamicChannelID,
+    }
+    impl RegistryRegisterChannelRequest {
+        pub fn new(entity_id: EntityID, key: RegistryKey, channel_id: DynamicChannelID) -> Self {
+            Self {
+                entity_id,
+                key,
+                channel_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum RegistryResponsePrimitiveType {
+        registerChannel = 0,
+        assignToken = 1,
+        setParameter = 2,
+        retrieveEntry = 3,
+        deleteEntry = 4,
+        monitorEntry = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum RegistryResponseResult {
+        successful = 0,
+        belongsToOther = 1,
+        tooManyEntries = 2,
+        inconsistentType = 3,
+        entryNotFound = 4,
+        entryAlreadyExists = 5,
+        invalidRequester = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryResponse {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        #[rasn(identifier = "primitiveType")]
+        pub primitive_type: RegistryResponsePrimitiveType,
+        pub key: RegistryKey,
+        pub item: RegistryItem,
+        pub owner: RegistryEntryOwner,
+        #[rasn(identifier = "modificationRights")]
+        pub modification_rights: Option<RegistryModificationRights>,
+        pub result: RegistryResponseResult,
+    }
+    impl RegistryResponse {
+        pub fn new(
+            entity_id: EntityID,
+            primitive_type: RegistryResponsePrimitiveType,
+            key: RegistryKey,
+            item: RegistryItem,
+            owner: RegistryEntryOwner,
+            modification_rights: Option<RegistryModificationRights>,
+            result: RegistryResponseResult,
+        ) -> Self {
+            Self {
+                entity_id,
+                primitive_type,
+                key,
+                item,
+                owner,
+                modification_rights,
+                result,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistryRetrieveEntryRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        pub key: RegistryKey,
+    }
+    impl RegistryRetrieveEntryRequest {
+        pub fn new(entity_id: EntityID, key: RegistryKey) -> Self {
+            Self { entity_id, key }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RegistrySetParameterRequest {
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        pub key: RegistryKey,
+        #[rasn(size("0..=64"))]
+        pub parameter: OctetString,
+        #[rasn(identifier = "modificationRights")]
+        pub modification_rights: Option<RegistryModificationRights>,
+    }
+    impl RegistrySetParameterRequest {
+        pub fn new(
+            entity_id: EntityID,
+            key: RegistryKey,
+            parameter: OctetString,
+            modification_rights: Option<RegistryModificationRights>,
+        ) -> Self {
+            Self {
+                entity_id,
+                key,
+                parameter,
+                modification_rights,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RequestPDU {
+        conferenceJoinRequest(ConferenceJoinRequest),
+        conferenceAddRequest(ConferenceAddRequest),
+        conferenceLockRequest(ConferenceLockRequest),
+        conferenceUnlockRequest(ConferenceUnlockRequest),
+        conferenceTerminateRequest(ConferenceTerminateRequest),
+        conferenceEjectUserRequest(ConferenceEjectUserRequest),
+        conferenceTransferRequest(ConferenceTransferRequest),
+        registryRegisterChannelRequest(RegistryRegisterChannelRequest),
+        registryAssignTokenRequest(RegistryAssignTokenRequest),
+        registrySetParameterRequest(RegistrySetParameterRequest),
+        registryRetrieveEntryRequest(RegistryRetrieveEntryRequest),
+        registryDeleteEntryRequest(RegistryDeleteEntryRequest),
+        registryMonitorEntryRequest(RegistryMonitorEntryRequest),
+        registryAllocateHandleRequest(RegistryAllocateHandleRequest),
+        nonStandardRequest(NonStandardPDU),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ResponsePDU {
+        conferenceJoinResponse(ConferenceJoinResponse),
+        conferenceAddResponse(ConferenceAddResponse),
+        conferenceLockResponse(ConferenceLockResponse),
+        conferenceUnlockResponse(ConferenceUnlockResponse),
+        conferenceTerminateResponse(ConferenceTerminateResponse),
+        conferenceEjectUserResponse(ConferenceEjectUserResponse),
+        conferenceTransferResponse(ConferenceTransferResponse),
+        registryResponse(RegistryResponse),
+        registryAllocateHandleResponse(RegistryAllocateHandleResponse),
+        functionNotSupportedResponse(FunctionNotSupportedResponse),
+        nonStandardResponse(NonStandardPDU),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousRosterRefreshRequestApplicationListApplicationKeyList {
+        #[rasn(identifier = "applicationProtocolKey")]
+        pub application_protocol_key: Key,
+        #[rasn(identifier = "nonStandardParameter")]
+        pub non_standard_parameter: Option<NonStandardParameter>,
+    }
+    impl AnonymousRosterRefreshRequestApplicationListApplicationKeyList {
+        pub fn new(
+            application_protocol_key: Key,
+            non_standard_parameter: Option<NonStandardParameter>,
+        ) -> Self {
+            Self {
+                application_protocol_key,
+                non_standard_parameter,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RosterRefreshRequestApplicationListApplicationKeyList(
+        pub SetOf<AnonymousRosterRefreshRequestApplicationListApplicationKeyList>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RosterRefreshRequestApplicationList {
+        #[rasn(identifier = "applicationKeyList")]
+        pub application_key_list: RosterRefreshRequestApplicationListApplicationKeyList,
+        #[rasn(identifier = "nonStandardParameter")]
+        pub non_standard_parameter: Option<NonStandardParameter>,
+    }
+    impl RosterRefreshRequestApplicationList {
+        pub fn new(
+            application_key_list: RosterRefreshRequestApplicationListApplicationKeyList,
+            non_standard_parameter: Option<NonStandardParameter>,
+        ) -> Self {
+            Self {
+                application_key_list,
+                non_standard_parameter,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousRosterRefreshRequestSessionListSessionKeyList {
+        #[rasn(identifier = "sessionKey")]
+        pub session_key: SessionKey,
+        #[rasn(identifier = "nonStandardParameter")]
+        pub non_standard_parameter: Option<NonStandardParameter>,
+    }
+    impl AnonymousRosterRefreshRequestSessionListSessionKeyList {
+        pub fn new(
+            session_key: SessionKey,
+            non_standard_parameter: Option<NonStandardParameter>,
+        ) -> Self {
+            Self {
+                session_key,
+                non_standard_parameter,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RosterRefreshRequestSessionListSessionKeyList(
+        pub SetOf<AnonymousRosterRefreshRequestSessionListSessionKeyList>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RosterRefreshRequestSessionList {
+        #[rasn(identifier = "sessionKeyList")]
+        pub session_key_list: RosterRefreshRequestSessionListSessionKeyList,
+        #[rasn(identifier = "nonStandardParameter")]
+        pub non_standard_parameter: Option<NonStandardParameter>,
+    }
+    impl RosterRefreshRequestSessionList {
+        pub fn new(
+            session_key_list: RosterRefreshRequestSessionListSessionKeyList,
+            non_standard_parameter: Option<NonStandardParameter>,
+        ) -> Self {
+            Self {
+                session_key_list,
+                non_standard_parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RosterRefreshRequest {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        #[rasn(identifier = "nodeCategory")]
+        pub node_category: NodeCategory,
+        #[rasn(identifier = "fullRefresh")]
+        pub full_refresh: bool,
+        #[rasn(identifier = "sendConferenceRoster")]
+        pub send_conference_roster: Option<bool>,
+        #[rasn(identifier = "applicationList")]
+        pub application_list: Option<RosterRefreshRequestApplicationList>,
+        #[rasn(identifier = "sessionList")]
+        pub session_list: Option<RosterRefreshRequestSessionList>,
+        #[rasn(identifier = "nonStandardParameter")]
+        pub non_standard_parameter: Option<NonStandardParameter>,
+    }
+    impl RosterRefreshRequest {
+        pub fn new(
+            node_id: UserID,
+            node_category: NodeCategory,
+            full_refresh: bool,
+            send_conference_roster: Option<bool>,
+            application_list: Option<RosterRefreshRequestApplicationList>,
+            session_list: Option<RosterRefreshRequestSessionList>,
+            non_standard_parameter: Option<NonStandardParameter>,
+        ) -> Self {
+            Self {
+                node_id,
+                node_category,
+                full_refresh,
+                send_conference_roster,
+                application_list,
+                session_list,
+                non_standard_parameter,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousRosterUpdateIndicationNodeInformationNodeRecordListRefresh {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        #[rasn(identifier = "nodeRecord")]
+        pub node_record: NodeRecord,
+    }
+    impl AnonymousRosterUpdateIndicationNodeInformationNodeRecordListRefresh {
+        pub fn new(node_id: UserID, node_record: NodeRecord) -> Self {
+            Self {
+                node_id,
+                node_record,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=65536"))]
+    pub struct RosterUpdateIndicationNodeInformationNodeRecordListRefresh(
+        pub SetOf<AnonymousRosterUpdateIndicationNodeInformationNodeRecordListRefresh>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AnonymousRosterUpdateIndicationNodeInformationNodeRecordListUpdateNodeUpdate {
+        addRecord(NodeRecord),
+        replaceRecord(NodeRecord),
+        removeRecord(()),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousRosterUpdateIndicationNodeInformationNodeRecordListUpdate {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        #[rasn(identifier = "nodeUpdate")]
+        pub node_update:
+            AnonymousRosterUpdateIndicationNodeInformationNodeRecordListUpdateNodeUpdate,
+    }
+    impl AnonymousRosterUpdateIndicationNodeInformationNodeRecordListUpdate {
+        pub fn new(
+            node_id: UserID,
+            node_update : AnonymousRosterUpdateIndicationNodeInformationNodeRecordListUpdateNodeUpdate,
+        ) -> Self {
+            Self {
+                node_id,
+                node_update,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=65536"))]
+    pub struct RosterUpdateIndicationNodeInformationNodeRecordListUpdate(
+        pub SetOf<AnonymousRosterUpdateIndicationNodeInformationNodeRecordListUpdate>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum RosterUpdateIndicationNodeInformationNodeRecordList {
+        noChange(()),
+        refresh(RosterUpdateIndicationNodeInformationNodeRecordListRefresh),
+        update(RosterUpdateIndicationNodeInformationNodeRecordListUpdate),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RosterUpdateIndicationNodeInformation {
+        #[rasn(identifier = "nodeRecordList")]
+        pub node_record_list: RosterUpdateIndicationNodeInformationNodeRecordList,
+        #[rasn(value("0..=65535"), identifier = "rosterInstanceNumber")]
+        pub roster_instance_number: u16,
+        #[rasn(identifier = "nodesAdded")]
+        pub nodes_added: bool,
+        #[rasn(identifier = "nodesRemoved")]
+        pub nodes_removed: bool,
+    }
+    impl RosterUpdateIndicationNodeInformation {
+        pub fn new(
+            node_record_list: RosterUpdateIndicationNodeInformationNodeRecordList,
+            roster_instance_number: u16,
+            nodes_added: bool,
+            nodes_removed: bool,
+        ) -> Self {
+            Self {
+                node_record_list,
+                roster_instance_number,
+                nodes_added,
+                nodes_removed,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListRefresh
+    {
+        #[rasn(identifier = "nodeID")]
+        pub node_id: UserID,
+        #[rasn(identifier = "entityID")]
+        pub entity_id: EntityID,
+        #[rasn(identifier = "applicationRecord")]
+        pub application_record: ApplicationRecord,
+    }
+    impl AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListRefresh {
+        pub fn new(
+            node_id: UserID,
+            entity_id: EntityID,
+            application_record: ApplicationRecord,
+        ) -> Self {
+            Self {
+                node_id,
+                entity_id,
+                application_record,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=65535"))]
+    pub struct AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListRefresh (pub SetOf < AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListRefresh >) ;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdateApplicationUpdate
+    {
+        addRecord(ApplicationRecord),
+        replaceRecord(ApplicationRecord),
+        removeRecord(()),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdate { # [rasn (identifier = "nodeID")] pub node_id : UserID , # [rasn (identifier = "entityID")] pub entity_id : EntityID , # [rasn (identifier = "applicationUpdate")] pub application_update : AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdateApplicationUpdate , }
+    impl AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdate {
+        pub fn new(
+            node_id: UserID,
+            entity_id: EntityID,
+            application_update : AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdateApplicationUpdate,
+        ) -> Self {
+            Self {
+                node_id,
+                entity_id,
+                application_update,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=65536"))]
+    pub struct AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdate (pub SetOf < AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdate >) ;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordList {
+        noChange(()),
+        refresh(AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListRefresh),
+        update(AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordListUpdate),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesListRefresh
+    {
+        #[rasn(identifier = "capabilityID")]
+        pub capability_id: CapabilityID,
+        #[rasn(identifier = "capabilityClass")]
+        pub capability_class: CapabilityClass,
+        #[rasn(value("1..=65536"), identifier = "numberOfEntities")]
+        pub number_of_entities: u32,
+    }
+    impl AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesListRefresh { pub fn new (capability_id : CapabilityID , capability_class : CapabilityClass , number_of_entities : u32) -> Self { Self { capability_id , capability_class , number_of_entities } } }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesListRefresh (pub SetOf < AnonymousAnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesListRefresh >) ;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum AnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesList {
+        noChange(()),
+        refresh(
+            AnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesListRefresh,
+        ),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousRosterUpdateIndicationApplicationInformation {
+        #[rasn(identifier = "sessionKey")]
+        pub session_key: SessionKey,
+        #[rasn(identifier = "applicationRecordList")]
+        pub application_record_list:
+            AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordList,
+        #[rasn(identifier = "applicationCapabilitiesList")]
+        pub application_capabilities_list:
+            AnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesList,
+        #[rasn(value("0..=65535"), identifier = "rosterInstanceNumber")]
+        pub roster_instance_number: u16,
+        #[rasn(identifier = "peerEntitiesAdded")]
+        pub peer_entities_added: bool,
+        #[rasn(identifier = "peerEntitiesRemoved")]
+        pub peer_entities_removed: bool,
+    }
+    impl AnonymousRosterUpdateIndicationApplicationInformation {
+        pub fn new(
+            session_key: SessionKey,
+            application_record_list : AnonymousRosterUpdateIndicationApplicationInformationApplicationRecordList,
+            application_capabilities_list : AnonymousRosterUpdateIndicationApplicationInformationApplicationCapabilitiesList,
+            roster_instance_number: u16,
+            peer_entities_added: bool,
+            peer_entities_removed: bool,
+        ) -> Self {
+            Self {
+                session_key,
+                application_record_list,
+                application_capabilities_list,
+                roster_instance_number,
+                peer_entities_added,
+                peer_entities_removed,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=65535"))]
+    pub struct RosterUpdateIndicationApplicationInformation(
+        pub SetOf<AnonymousRosterUpdateIndicationApplicationInformation>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct RosterUpdateIndication {
+        #[rasn(identifier = "fullRefresh")]
+        pub full_refresh: bool,
+        #[rasn(identifier = "nodeInformation")]
+        pub node_information: RosterUpdateIndicationNodeInformation,
+        #[rasn(identifier = "applicationInformation")]
+        pub application_information: RosterUpdateIndicationApplicationInformation,
+    }
+    impl RosterUpdateIndication {
+        pub fn new(
+            full_refresh: bool,
+            node_information: RosterUpdateIndicationNodeInformation,
+            application_information: RosterUpdateIndicationApplicationInformation,
+        ) -> Self {
+            Self {
+                full_refresh,
+                node_information,
+                application_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SessionKey {
+        #[rasn(identifier = "applicationProtocolKey")]
+        pub application_protocol_key: Key,
+        #[rasn(identifier = "sessionID")]
+        pub session_id: Option<ChannelID>,
+    }
+    impl SessionKey {
+        pub fn new(application_protocol_key: Key, session_id: Option<ChannelID>) -> Self {
+            Self {
+                application_protocol_key,
+                session_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1..=255"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}"
+        )
+    )]
+    pub struct SimpleNumericString(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"), from("\u{0}..=\u{fffe}"))]
+    pub struct SimpleTextString(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=1000"))]
+    pub struct StaticChannelID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=16383"))]
+    pub struct StaticTokenID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        size("1..=40"),
+        from(
+            "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+            "\u{38}", "\u{39}"
+        )
+    )]
+    pub struct SubAddressString(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum TerminationMethod {
+        automatic = 0,
+        manual = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TextMessageIndication {
+        pub message: TextString,
+    }
+    impl TextMessageIndication {
+        pub fn new(message: TextString) -> Self {
+            Self { message }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct TextString(pub BmpString);
+    #[doc = " Those assigned by the registry"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-2147483648..=2147483647"))]
+    pub struct Time(pub i32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct TokenID(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TransportAddress {
+        #[rasn(size("1..=20"), identifier = "nsapAddress")]
+        pub nsap_address: OctetString,
+        #[rasn(identifier = "transportSelector")]
+        pub transport_selector: Option<OctetString>,
+    }
+    impl TransportAddress {
+        pub fn new(nsap_address: OctetString, transport_selector: Option<OctetString>) -> Self {
+            Self {
+                nsap_address,
+                transport_selector,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousUserData {
+        pub key: Key,
+        pub value: Option<OctetString>,
+    }
+    impl AnonymousUserData {
+        pub fn new(key: Key, value: Option<OctetString>) -> Self {
+            Self { key, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserData(pub SetOf<AnonymousUserData>);
+    #[doc = " Those created and deleted by MCS"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UserID(pub DynamicChannelID);
+    #[doc = " ============================================================================"]
+    #[doc = " Part 2:  PDU Messages"]
+    #[doc = " ============================================================================"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct UserIDIndication {
+        pub tag: Integer,
+    }
+    impl UserIDIndication {
+        pub fn new(tag: Integer) -> Self {
+            Self { tag }
+        }
+    }
+}

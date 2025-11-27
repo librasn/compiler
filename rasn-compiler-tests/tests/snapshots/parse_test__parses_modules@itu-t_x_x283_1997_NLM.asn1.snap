@@ -1,0 +1,687 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x283_1997_NLM.asn1
+---
+Warnings:
+Asn1TypeMismatch generating bindings for : Choice selection type should have been resolved at this point!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Could not find Choice ObjectInstance of selection type.
+LinkerError in ASN grammar: Choice selection types should be resolved by now
+LinkerError in ASN grammar: Failed to link value with 'Timer'
+LinkerError in ASN grammar: Failed to link value with 'Timer'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod nlm {
+    extern crate alloc;
+    use super::attribute_asn1_module::COMMUNICATIONS_PROTOCOL_ERROR;
+    use super::cmip_1::ObjectInstance;
+    use super::gmi_attribute_module::Timer;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BidirectionalValues {
+        #[rasn(tag(context, 0))]
+        pub incoming: ChoiceInteger,
+        #[rasn(tag(context, 1))]
+        pub outgoing: ChoiceInteger,
+    }
+    impl BidirectionalValues {
+        pub fn new(incoming: ChoiceInteger, outgoing: ChoiceInteger) -> Self {
+            Self { incoming, outgoing }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ChoiceInteger {
+        #[rasn(tag(context, 0))]
+        dontCare(()),
+        #[rasn(tag(context, 1))]
+        integer(Integer),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DTEAddressNumberingPlanId {
+        unknown = 0,
+        x121 = 1,
+        e164 = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DTEAddress {
+        #[rasn(tag(context, 0), identifier = "numberingPlanId")]
+        pub numbering_plan_id: DTEAddressNumberingPlanId,
+        #[rasn(tag(context, 1), identifier = "addressDigits")]
+        pub address_digits: OctetString,
+    }
+    impl DTEAddress {
+        pub fn new(
+            numbering_plan_id: DTEAddressNumberingPlanId,
+            address_digits: OctetString,
+        ) -> Self {
+            Self {
+                numbering_plan_id,
+                address_digits,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DefaultTCA {
+        #[rasn(tag(context, 0))]
+        pub subscription: bool,
+        #[rasn(tag(context, 1), identifier = "supportedThroughClasses")]
+        pub supported_through_classes: Option<SetOf<Integer>>,
+        #[rasn(tag(context, 2), identifier = "selectedThroughputClasses")]
+        pub selected_throughput_classes: Option<BidirectionalValues>,
+    }
+    impl DefaultTCA {
+        pub fn new(
+            subscription: bool,
+            supported_through_classes: Option<SetOf<Integer>>,
+            selected_throughput_classes: Option<BidirectionalValues>,
+        ) -> Self {
+            Self {
+                subscription,
+                supported_through_classes,
+                selected_throughput_classes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Direction {
+        incoming = 0,
+        outgoing = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct DiscardReason(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct EndToEndDelay(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct False(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FastSelect {
+        notSpecified = 0,
+        fastSelect = 1,
+        fastSelectWithRestrictedResponse = 2,
+        noFastSelect = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GraphicStringBase(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("2..=63"))]
+    pub struct HoldingTimerMultiplierPermitted(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("3"))]
+    pub struct HoldingTimerMultiplierRequired(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ISO9542Subsets(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=255"))]
+    pub struct Lifetime(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalDistinguishedNames(pub SetOf<LocalDistinguishedName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LogicalChannelAssignments {
+        #[rasn(tag(context, 0), identifier = "pVC")]
+        pub p_vc: SetOf<LogicalChannelId>,
+        #[rasn(tag(context, 1))]
+        pub incoming: Option<LogicalChannelRange>,
+        #[rasn(tag(context, 2), identifier = "twoWay")]
+        pub two_way: Option<LogicalChannelRange>,
+        #[rasn(tag(context, 3))]
+        pub outgoing: Option<LogicalChannelRange>,
+    }
+    impl LogicalChannelAssignments {
+        pub fn new(
+            p_vc: SetOf<LogicalChannelId>,
+            incoming: Option<LogicalChannelRange>,
+            two_way: Option<LogicalChannelRange>,
+            outgoing: Option<LogicalChannelRange>,
+        ) -> Self {
+            Self {
+                p_vc,
+                incoming,
+                two_way,
+                outgoing,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=4095"))]
+    pub struct LogicalChannelId(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LogicalChannelRange {
+        #[rasn(tag(context, 1))]
+        pub low: LogicalChannelId,
+        #[rasn(tag(context, 2))]
+        pub high: LogicalChannelId,
+    }
+    impl LogicalChannelRange {
+        pub fn new(low: LogicalChannelId, high: LogicalChannelId) -> Self {
+            Self { low, high }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ManualISSNPAAddress(pub SetOf<SNPAAddress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MaxActiveCircuits(pub ChoiceInteger);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=20"))]
+    pub struct NAddress(pub OctetString);
+    #[doc = "  up to 20 octets"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NAddresses(pub SetOf<NAddress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=255"))]
+    pub struct NUI(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NonStandardDPS {
+        #[rasn(tag(context, 0))]
+        pub subscription: bool,
+        #[rasn(tag(context, 1), identifier = "supportedPacketSizes")]
+        pub supported_packet_sizes: Option<SetOf<Integer>>,
+        #[rasn(tag(context, 2), identifier = "selectedPacketSizes")]
+        pub selected_packet_sizes: Option<BidirectionalValues>,
+    }
+    impl NonStandardDPS {
+        pub fn new(
+            subscription: bool,
+            supported_packet_sizes: Option<SetOf<Integer>>,
+            selected_packet_sizes: Option<BidirectionalValues>,
+        ) -> Self {
+            Self {
+                subscription,
+                supported_packet_sizes,
+                selected_packet_sizes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NonStandardDWS {
+        #[rasn(tag(context, 0))]
+        pub subscription: bool,
+        #[rasn(tag(context, 1), identifier = "supportedWindowSizes")]
+        pub supported_window_sizes: Option<SetOf<Integer>>,
+        #[rasn(tag(context, 2), identifier = "selectedWindowSizes")]
+        pub selected_window_sizes: Option<BidirectionalValues>,
+    }
+    impl NonStandardDWS {
+        pub fn new(
+            subscription: bool,
+            supported_window_sizes: Option<SetOf<Integer>>,
+            selected_window_sizes: Option<BidirectionalValues>,
+        ) -> Self {
+            Self {
+                subscription,
+                supported_window_sizes,
+                selected_window_sizes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NotificationDataSyntax {
+        #[rasn(tag(context, 1))]
+        pub channel: Option<LogicalChannelId>,
+        #[rasn(tag(context, 2), identifier = "packetHeader")]
+        pub packet_header: OctetString,
+        #[rasn(tag(context, 3), identifier = "diagnosticCode")]
+        pub diagnostic_code: OctetString,
+        #[rasn(tag(context, 4), identifier = "causeCode")]
+        pub cause_code: OctetString,
+    }
+    impl NotificationDataSyntax {
+        pub fn new(
+            channel: Option<LogicalChannelId>,
+            packet_header: OctetString,
+            diagnostic_code: OctetString,
+            cause_code: OctetString,
+        ) -> Self {
+            Self {
+                channel,
+                packet_header,
+                diagnostic_code,
+                cause_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OctetString(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PDUFormatErrorSyntax(pub PDUHeader);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=255"))]
+    pub struct PDUHeader(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PDUOtherErrorSyntax {
+        #[rasn(value("0..=255"), tag(context, 1), identifier = "errorCode")]
+        pub error_code: u8,
+        #[rasn(tag(context, 2))]
+        pub header: PDUHeader,
+    }
+    impl PDUOtherErrorSyntax {
+        pub fn new(error_code: u8, header: PDUHeader) -> Self {
+            Self { error_code, header }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PacketSequencing(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ProtocolVersion {
+        iSO8208V1 = 0,
+        iSO8208V2 = 1,
+        x2584 = 2,
+        x2588 = 3,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "NumericString", size("0..=4"))]
+    pub struct AnonymousROASequence(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ROASequence(pub SequenceOf<AnonymousROASequence>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReachabilityChangeSyntaxNewState {
+        down = 0,
+        up = 1,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReachabilityChangeSyntaxReason {
+        holdingTimerExpired = 0,
+        circuitDisabled = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReachabilityChangeSyntax {
+        #[rasn(tag(context, 1), identifier = "newState")]
+        pub new_state: ReachabilityChangeSyntaxNewState,
+        #[rasn(tag(context, 2), identifier = "nAddresses")]
+        pub n_addresses: SetOf<NAddress>,
+        #[rasn(tag(context, 3), identifier = "sNPAAddress")]
+        pub s_npaaddress: Option<SNPAAddress>,
+        #[rasn(tag(context, 4))]
+        pub reason: Option<ReachabilityChangeSyntaxReason>,
+    }
+    impl ReachabilityChangeSyntax {
+        pub fn new(
+            new_state: ReachabilityChangeSyntaxNewState,
+            n_addresses: SetOf<NAddress>,
+            s_npaaddress: Option<SNPAAddress>,
+            reason: Option<ReachabilityChangeSyntaxReason>,
+        ) -> Self {
+            Self {
+                new_state,
+                n_addresses,
+                s_npaaddress,
+                reason,
+            }
+        }
+    }
+    #[doc = " Down only"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct RedirectHoldingTime(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "RedirectHoldingTime-Permitted",
+        value("1..=65535")
+    )]
+    pub struct RedirectHoldingTimePermitted(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=127"))]
+    pub struct RedirectReason(pub u8);
+    #[doc = " each numeric string limited to 4 decimal digits"]
+    #[doc = " an empty sequence is permitted"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct SDUSize(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SNPAAddress {
+        #[rasn(tag(context, 1), identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        #[rasn(tag(context, 2))]
+        pub address: OctetString,
+    }
+    impl SNPAAddress {
+        pub fn new(r_type: ObjectIdentifier, address: OctetString) -> Self {
+            Self { r_type, address }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SupportedProtocol {
+        #[rasn(tag(context, 1))]
+        pub protocol: ObjectIdentifier,
+        #[rasn(tag(context, 2))]
+        pub versions: SetOf<ProtocolVersion>,
+        #[rasn(tag(context, 3), identifier = "defectsRepaired")]
+        pub defects_repaired: Option<SetOf<ObjectIdentifier>>,
+    }
+    impl SupportedProtocol {
+        pub fn new(
+            protocol: ObjectIdentifier,
+            versions: SetOf<ProtocolVersion>,
+            defects_repaired: Option<SetOf<ObjectIdentifier>>,
+        ) -> Self {
+            Self {
+                protocol,
+                versions,
+                defects_repaired,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupportedProtocols(pub SetOf<SupportedProtocol>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SystemType {
+        eS = 1,
+        iS = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SystemTypes(pub SetOf<SystemType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum X25PLEMode {
+        dTE = 0,
+        dCE = 1,
+        dTEasDCE = 2,
+    }
+    pub static ACOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[9u32]].concat()).unwrap().to_owned());
+    pub static AGOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[8u32]].concat()).unwrap().to_owned());
+    pub static AOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[7u32]].concat()).unwrap().to_owned());
+    pub static C_LNSID_VALUE: LazyLock<GraphicString> =
+        LazyLock::new(|| GraphicString::try_from(String::from("CLNS")).unwrap());
+    pub static C_ONSID_VALUE: LazyLock<GraphicString> =
+        LazyLock::new(|| GraphicString::try_from(String::from("CONS")).unwrap());
+    pub static CALL_REQUEST_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(200));
+    pub static CLEAR_REQUEST_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(180));
+    pub static CLEAR_REQUEST_RETRANSMISSION_COUNT_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    pub static D_BIT_MODIFICATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[139u32]].concat()).unwrap().to_owned());
+    pub static DATA_PACKET_RETRANSMISSION_COUNT_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    pub static DEFAULT_PACKET_SIZES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[103u32]].concat()).unwrap().to_owned());
+    pub static DEFAULT_THROUGHPUT_CLASSES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[112u32]].concat()).unwrap().to_owned());
+    pub static DEFAULT_WINDOW_SIZES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[104u32]].concat()).unwrap().to_owned());
+    pub static E_SREACHABILITY_CHANGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SSEOI, &[4u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static EXTENDED_PACKET_SEQUENCE_NUMBERING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[49u32]].concat()).unwrap().to_owned());
+    #[doc = "  Note that according to ISO/IEC 8208 or ITU-T Rec. X.25 a value of 65535 indicates that the delay is"]
+    #[doc = " unknown or exceeds 65534 milliseconds."]
+    pub const R_FALSE: bool = false;
+    pub static FAST_SELECT_ACCEPTANCE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[145u32]].concat()).unwrap().to_owned());
+    pub static FLOW_CONTROL_PARAMETER_NEGOTIATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[119u32]].concat()).unwrap().to_owned());
+    pub static HOLDING_TIMER_MULTIPLIER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(3));
+    pub static I_SO9542_PDUDISCARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SSEOI, &[3u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "  for communication information notification"]
+    pub static I_SREACHABILITY_CHANGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SSEOI, &[4u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static INCOMING_CALLS_BARRED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[148u32]].concat()).unwrap().to_owned());
+    pub static INTERRUPT_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(180));
+    pub static MOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[3u32]].concat()).unwrap().to_owned());
+    pub static NBOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[6u32]].concat()).unwrap().to_owned());
+    pub static NETWORK_LAYER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 13u32]).to_owned());
+    pub static NETWORK_SUBSYSTEM_ID_VALUE: LazyLock<GraphicString> =
+        LazyLock::new(|| GraphicString::try_from(String::from("NetworkSubsystem")).unwrap());
+    pub static NL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***NETWORK_LAYER, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static NLOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NL, &[2u32]].concat()).unwrap().to_owned());
+    pub static NOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[10u32]].concat()).unwrap().to_owned());
+    pub static NON_STANDARD_DEFAULT_PACKET_SIZES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[151u32]].concat()).unwrap().to_owned());
+    pub static NON_STANDARD_DEFAULT_WINDOW_SIZES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[152u32]].concat()).unwrap().to_owned());
+    pub static NULL_BIDIRECTIONAL_VALUES: LazyLock<BidirectionalValues> = LazyLock::new(|| {
+        BidirectionalValues::new(ChoiceInteger::dontCare(()), ChoiceInteger::dontCare(()))
+    });
+    pub const NULL_CHOICE_INTEGER: ChoiceInteger = ChoiceInteger::dontCare(());
+    pub static ONLINE_FACILITY_REGISTRATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[158u32]].concat()).unwrap().to_owned());
+    pub static OUTGOING_CALLS_BARRED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[159u32]].concat()).unwrap().to_owned());
+    #[doc = "  value assignments for specificProblems"]
+    pub static P_DUDISCARD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SSEOI, &[3u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static P_DUDISCARD_DESTINATION_ADDRESS_UNKNOWN: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[129u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_DESTINATION_ADDRESS_UNREACHABLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[128u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_DUPLICATE_OPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***P_DUDISCARD, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static P_DUDISCARD_HEADER_SYNTAX_ERROR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***P_DUDISCARD, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static P_DUDISCARD_INCOMPLETE_PDURECEIVED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[6u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_INCORRECT_CHECKSUM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***P_DUDISCARD, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static P_DUDISCARD_LIFETIME_EXPIRED_DURING_REASSEMBLY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[161u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_LIFETIME_EXPIRED_WHILE_DATA_UNIT_IN_TRANSIT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[160u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_PATH_NOT_ACCEPTABLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***P_DUDISCARD, &[147u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static P_DUDISCARD_PROTOCOL_PROCEDURE_ERROR: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_REASON_NOT_SPECIFIED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***P_DUDISCARD, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static P_DUDISCARD_REASSEMBLY_INTERFERENCE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[181u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_SEGMENTATION_NEEDED_BUT_NOT_PERMITTED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[5u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_SYNTAX_ERROR_IN_SOURCE_ROUTEING_FIELD: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[145u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNKNOWN_ADDRESS_IN_SOURCE_ROUTEING_FIELD: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[146u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNSPECIFIED_SOURCE_ROUTEING_ERROR: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[144u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNSUPPORTED_OPTION_NOT_SPECIFIED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[176u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNSUPPORTED_PROTOCOL_VERSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[177u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNSUPPORTED_RECORDING_OF_ROUTE_OPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[180u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNSUPPORTED_SECURITY_OPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[178u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static P_DUDISCARD_UNSUPPORTED_SOURCE_ROUTEING_OPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***P_DUDISCARD, &[179u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static PACKET_RETRANSMISSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[161u32]].concat()).unwrap().to_owned());
+    pub static POI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[4u32]].concat()).unwrap().to_owned());
+    pub static PROI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[5u32]].concat()).unwrap().to_owned());
+    pub static REDIRECT_HOLDING_TIME_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(600));
+    pub const REGISTRATION_PERMITTED_DEFAULT: bool = false;
+    pub static REGISTRATION_REQUEST_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(300));
+    pub static REGISTRATION_REQUEST_RETRANSMISSION_COUNT_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    pub static REJECT_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(60));
+    pub static REJECT_RETRANSMISSION_COUNT_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(0));
+    pub static RESET_REQUEST_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(180));
+    pub static RESET_REQUEST_RETRANSMISSION_COUNT_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    pub static RESTART_REQUEST_RESPONSE_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(180));
+    pub static RESTART_REQUEST_RETRANSMISSION_COUNT_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1));
+    #[doc = "  for SNPAAddress type"]
+    pub static S_NPADTEADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SSEOI, &[5u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static S_NPAMACADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SSEOI, &[5u32, 2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SSEOI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***NLOI, &[0u32]].concat()).unwrap().to_owned());
+    pub static SUCCESSFUL_CONNECTION_ESTABLISHMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***SSEOI, &[4u32, 3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static THROUGHPUT_CLASS_NEGOTIATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***AOI, &[168u32]].concat()).unwrap().to_owned());
+    pub static WINDOW_ROTATION_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(200));
+    pub static WINDOW_STATUS_TRANSMISSION_TIMER_DEFAULT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(60));
+}

@@ -1,0 +1,33 @@
+---
+source: rasn-compiler-tests/tests/structured_types.rs
+description: "PersonnelRecord ::=  SET {\n        title VisibleString,\n        children SEQUENCE SIZE(0..4) OF VisibleString DEFAULT {}\n    }"
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, automatic_tags)]
+    pub struct PersonnelRecord {
+        pub title: VisibleString,
+        #[rasn(size("0..=4"), default = "personnel_record_children_default")]
+        pub children: SequenceOf<VisibleString>,
+    }
+    impl PersonnelRecord {
+        pub fn new(title: VisibleString, children: SequenceOf<VisibleString>) -> Self {
+            Self { title, children }
+        }
+    }
+    fn personnel_record_children_default() -> SequenceOf<VisibleString> {
+        alloc::vec![]
+    }
+}

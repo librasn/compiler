@@ -1,0 +1,377 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_g_g774.4_2001_SDHSNCPASN1.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod sdhsncpasn1 {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        AddLeg, Connected, ConnectionType, ConnectionTypeBi, Directionality, ExplicitPtoMP,
+        ExplicitPtoP, ExplicitTP, Failed, PointToMultipoint, PointToPoint, PtoMPools, PtoTPPool,
+    };
+    use super::attribute_asn1_module::{AdministrativeState, OperationalState};
+    use super::cmip_1::ObjectInstance;
+    use super::sdhprot_asn1::{Boolean, Integer, ProtectionStatus, ProtectionStatusParameter};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectUnreliableTP {
+        #[rasn(tag(context, 0))]
+        notConnected(UnreliableTp),
+        #[rasn(tag(context, 1))]
+        connected(UnreliableTp),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Criterion(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HoldOffTime(pub Integer);
+    #[doc = "  The object Instance of the xCon of PointToPoint represents the object"]
+    #[doc = "  instance of the created connectionProtection"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PointToMultipointProtection {
+        #[rasn(identifier = "protectedPointToMultipoint")]
+        pub protected_point_to_multipoint: PointToMultipoint,
+        #[rasn(identifier = "protectingPointToMultipoint")]
+        pub protecting_point_to_multipoint: ProtectingConnection,
+    }
+    impl PointToMultipointProtection {
+        pub fn new(
+            protected_point_to_multipoint: PointToMultipoint,
+            protecting_point_to_multipoint: ProtectingConnection,
+        ) -> Self {
+            Self {
+                protected_point_to_multipoint,
+                protecting_point_to_multipoint,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PointToPointProtection {
+        #[rasn(identifier = "protectedPointToPoint")]
+        pub protected_point_to_point: PointToPoint,
+        #[rasn(identifier = "protectingPointToPoint")]
+        pub protecting_point_to_point: ProtectingConnection,
+    }
+    impl PointToPointProtection {
+        pub fn new(
+            protected_point_to_point: PointToPoint,
+            protecting_point_to_point: ProtectingConnection,
+        ) -> Self {
+            Self {
+                protected_point_to_point,
+                protecting_point_to_point,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousProtectUnprotectInformationConnectionType {
+        #[rasn(tag(context, 3))]
+        protect(ProtectedConnection),
+        #[rasn(tag(context, 4))]
+        unprotect(UnprotectConnection),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousProtectUnprotectInformation {
+        #[rasn(identifier = "connectionType")]
+        pub connection_type: AnonymousProtectUnprotectInformationConnectionType,
+        #[rasn(identifier = "administrativeState")]
+        pub administrative_state: Option<AdministrativeState>,
+    }
+    impl AnonymousProtectUnprotectInformation {
+        pub fn new(
+            connection_type: AnonymousProtectUnprotectInformationConnectionType,
+            administrative_state: Option<AdministrativeState>,
+        ) -> Self {
+            Self {
+                connection_type,
+                administrative_state,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtectUnprotectInformation(pub SequenceOf<AnonymousProtectUnprotectInformation>);
+    #[doc = "  The object Instance of the xConnections and mpXCon of PointToMultipoint"]
+    #[doc = "  represents the object instances of the created crossConnections and"]
+    #[doc = "  mpConnectionProtection"]
+    #[doc = "  The protectingPointToMultipoint represents the object instance of the"]
+    #[doc = "  unreliable TP and the object instance of the created mpConnectionProtection"]
+    #[doc = "  of the protecting connection"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtectedAddLeg {
+        #[rasn(tag(context, 0))]
+        protected(AddLeg),
+        #[rasn(tag(context, 1))]
+        unProtected(AddLeg),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtectedConnectInformationConnectionType {
+        #[rasn(tag(context, 0))]
+        connect(ProtectedConnection),
+        #[rasn(tag(context, 1))]
+        addleg(ProtectedAddLeg),
+        #[rasn(tag(context, 2))]
+        addUnreliable(ConnectUnreliableTP),
+    }
+    #[doc = "  The object Instance of the mpXCon of AddLeg represents the object instance of"]
+    #[doc = "  the mpConnectionProtection to which new legs are added"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectedConnectInformation {
+        #[rasn(identifier = "connectionType")]
+        pub connection_type: ProtectedConnectInformationConnectionType,
+        #[rasn(identifier = "administrativeState")]
+        pub administrative_state: Option<AdministrativeState>,
+    }
+    impl ProtectedConnectInformation {
+        pub fn new(
+            connection_type: ProtectedConnectInformationConnectionType,
+            administrative_state: Option<AdministrativeState>,
+        ) -> Self {
+            Self {
+                connection_type,
+                administrative_state,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousProtectedConnectResult {
+        #[rasn(tag(context, 0))]
+        failed(Failed),
+        #[rasn(tag(context, 1))]
+        protected(ProtectedConnectionResult),
+        #[rasn(tag(context, 2))]
+        unprotected(Unprotected),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtectedConnectResult(pub SequenceOf<AnonymousProtectedConnectResult>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectedConnection {
+        #[rasn(identifier = "protectionConnectionType")]
+        pub protection_connection_type: ProtectionConnectionType,
+        #[rasn(identifier = "protectingTP")]
+        pub protecting_tp: ExplicitTP,
+        pub revertive: Boolean,
+        #[rasn(tag(context, 0), identifier = "waitToRestore")]
+        pub wait_to_restore: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "holdOffTime")]
+        pub hold_off_time: Option<HoldOffTime>,
+    }
+    impl ProtectedConnection {
+        pub fn new(
+            protection_connection_type: ProtectionConnectionType,
+            protecting_tp: ExplicitTP,
+            revertive: Boolean,
+            wait_to_restore: Option<Integer>,
+            hold_off_time: Option<HoldOffTime>,
+        ) -> Self {
+            Self {
+                protection_connection_type,
+                protecting_tp,
+                revertive,
+                wait_to_restore,
+                hold_off_time,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtectedConnectionResultConnectionType {
+        #[rasn(tag(context, 0))]
+        pointToPoint(PointToPointProtection),
+        #[rasn(tag(context, 1))]
+        pointToMultipoint(PointToMultipointProtection),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectedConnectionResult {
+        #[rasn(identifier = "connectionType")]
+        pub connection_type: ProtectedConnectionResultConnectionType,
+        #[rasn(identifier = "connectionPG")]
+        pub connection_pg: ObjectInstance,
+    }
+    impl ProtectedConnectionResult {
+        pub fn new(
+            connection_type: ProtectedConnectionResultConnectionType,
+            connection_pg: ObjectInstance,
+        ) -> Self {
+            Self {
+                connection_type,
+                connection_pg,
+            }
+        }
+    }
+    #[doc = "  the n-th element in the \"SEQUENCE OF\" is related to the n-th element in the"]
+    #[doc = "  \"SEQUENCE OF\" of the \"ProtectedConnectInformation\" type."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtectingConnection {
+        #[rasn(identifier = "unreliableTp")]
+        pub unreliable_tp: ObjectInstance,
+        #[rasn(identifier = "conProt")]
+        pub con_prot: ObjectInstance,
+    }
+    impl ProtectingConnection {
+        pub fn new(unreliable_tp: ObjectInstance, con_prot: ObjectInstance) -> Self {
+            Self {
+                unreliable_tp,
+                con_prot,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProtectionConnectionType {
+        #[rasn(tag(context, 0))]
+        unidirectional(ConnectionType),
+        #[rasn(tag(context, 1))]
+        bidirectional(ConnectionTypeBi),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProtectionCriteria(pub SetOf<Criterion>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UnprotectBi {
+        #[rasn(tag(context, 0))]
+        uniformRoute(ExplicitPtoP),
+        #[rasn(tag(context, 1))]
+        diverseRoute(UnprotectMultiple),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UnprotectConnection {
+        #[rasn(tag(context, 0))]
+        uniPToP(ExplicitPtoP),
+        #[rasn(tag(context, 1))]
+        pToMp(ExplicitPtoMP),
+        #[rasn(tag(context, 2))]
+        bidirectional(UnprotectBi),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UnprotectMultiple {
+        #[rasn(identifier = "firstXCon")]
+        pub first_xcon: ExplicitPtoP,
+        #[rasn(identifier = "secondXCon")]
+        pub second_xcon: ExplicitPtoP,
+    }
+    impl UnprotectMultiple {
+        pub fn new(first_xcon: ExplicitPtoP, second_xcon: ExplicitPtoP) -> Self {
+            Self {
+                first_xcon,
+                second_xcon,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Unprotected {
+        #[rasn(tag(context, 0))]
+        uniform(Connected),
+        #[rasn(tag(context, 1))]
+        divers(UnprotectedMultiple),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UnprotectedMultiple {
+        pub sending: PointToPoint,
+        pub receiving: PointToPoint,
+    }
+    impl UnprotectedMultiple {
+        pub fn new(sending: PointToPoint, receiving: PointToPoint) -> Self {
+            Self { sending, receiving }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UnreliableTp {
+        #[rasn(identifier = "unreliableTp")]
+        pub unreliable_tp: ExplicitTP,
+        #[rasn(identifier = "connectionProtection")]
+        pub connection_protection: ObjectInstance,
+    }
+    impl UnreliableTp {
+        pub fn new(unreliable_tp: ExplicitTP, connection_protection: ObjectInstance) -> Self {
+            Self {
+                unreliable_tp,
+                connection_protection,
+            }
+        }
+    }
+    pub static G774_04_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_SNCP, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_04_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_SNCP, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_04_MOBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_SNCP, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_04_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_SNCP, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_04_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_SNCP, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_04_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SDH_SNCP, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static G774_04_STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***SDH_SNCP, &[0u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static SDH_SNCP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[0u32, 0u32, 7u32, 774u32, 127u32, 4u32, 0u32]).to_owned()
+    });
+    pub static SNCP_EXCESSIVE_ERROR_CRITERIA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***SNCP_PROTECTION_CRITERIA, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static SNCP_PATH_TRACE_MISMATCH_CRITERIA: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***SNCP_PROTECTION_CRITERIA, &[1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = "  The following value assignments are for the Protection Criteria in the"]
+    #[doc = "  context of SDH."]
+    #[doc = "  These values shall always be assigned by this Recommendation in the context"]
+    #[doc = "  of SDH."]
+    pub static SNCP_PROTECTION_CRITERIA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***G774_04_STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

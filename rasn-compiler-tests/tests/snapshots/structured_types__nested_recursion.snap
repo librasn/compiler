@@ -1,0 +1,41 @@
+---
+source: rasn-compiler-tests/tests/structured_types.rs
+description: "\n        TypeDescription ::= CHOICE {\n            boolean [0] IMPLICIT BOOLEAN,\n            string [2] IMPLICIT UTF8String,\n            array [3] IMPLICIT SEQUENCE {\n                size [0] IMPLICIT INTEGER (0..MAX),\n                element-type [1] TypeDescription\n            }\n        }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TypeDescriptionArray {
+        #[rasn(value("0.."), tag(context, 0))]
+        pub size: Integer,
+        #[rasn(tag(context, 1), identifier = "element-type")]
+        pub element_type: TypeDescription,
+    }
+    impl TypeDescriptionArray {
+        pub fn new(size: Integer, element_type: TypeDescription) -> Self {
+            Self { size, element_type }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TypeDescription {
+        #[rasn(tag(context, 0))]
+        boolean(bool),
+        #[rasn(tag(context, 2))]
+        string(Utf8String),
+        #[rasn(tag(context, 3))]
+        array(Box<TypeDescriptionArray>),
+    }
+}

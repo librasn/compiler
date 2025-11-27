@@ -1,0 +1,491 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q813_1998_Secure-Remote-Operations-APDUs.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype ROS of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod secure_remote_operations_apdus {
+    extern crate alloc;
+    use super::acse_1::AETitle;
+    use super::authentication_framework::{Certificate, CertificationPath};
+    use super::cmip_1::DistinguishedName;
+    use super::remote_operations_generic_ros_pdus::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConfidentialMACMac {
+        #[rasn(tag(context, 1))]
+        mac(Hash),
+        #[rasn(size("8..=64"), tag(context, 2))]
+        simpleMAC(OctetString),
+    }
+    #[doc = " encrypted represents the encryption of the DER encoded ROSE PDU."]
+    #[doc = " signature represents the signature of the DER encoded ROSE PDU in either a simple form"]
+    #[doc = " or as Signature type defined above."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConfidentialMAC {
+        pub encrypted: OctetString,
+        pub mac: ConfidentialMACMac,
+    }
+    impl ConfidentialMAC {
+        pub fn new(encrypted: OctetString, mac: ConfidentialMACMac) -> Self {
+            Self { encrypted, mac }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConfidentialSealedSeal {
+        #[rasn(tag(context, 1))]
+        sealed(Seal),
+        #[rasn(size("8..=64"), tag(context, 2))]
+        simpleSealed(OctetString),
+    }
+    #[doc = " encrypted represents the encryption of the DER encoded ROSE PDU."]
+    #[doc = " mac represents the MAC of the DER encoded ROSE PDU in either a simple form"]
+    #[doc = " or as Hash type defined above."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConfidentialSealed {
+        pub encrypted: OctetString,
+        pub seal: ConfidentialSealedSeal,
+    }
+    impl ConfidentialSealed {
+        pub fn new(encrypted: OctetString, seal: ConfidentialSealedSeal) -> Self {
+            Self { encrypted, seal }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConfidentialSignedSignature {
+        #[rasn(tag(context, 1))]
+        signature(Signature),
+        #[rasn(size("1..=4"), tag(context, 2))]
+        simpleSignature(SequenceOf<Integer>),
+    }
+    #[doc = " data contains the DER encoding of the ROSE PDU."]
+    #[doc = " signature represents the signature of the DER encoded ROSE PDU, either as a simple"]
+    #[doc = " INTEGER or the Signature structure defined above."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConfidentialSigned {
+        pub encrypted: OctetString,
+        pub signature: ConfidentialSignedSignature,
+    }
+    impl ConfidentialSigned {
+        pub fn new(encrypted: OctetString, signature: ConfidentialSignedSignature) -> Self {
+            Self {
+                encrypted,
+                signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Enciphered {
+        pub encrypted: OctetString,
+        #[rasn(identifier = "encryptionParameters")]
+        pub encryption_parameters: Option<EncryptionParameters>,
+    }
+    impl Enciphered {
+        pub fn new(
+            encrypted: OctetString,
+            encryption_parameters: Option<EncryptionParameters>,
+        ) -> Self {
+            Self {
+                encrypted,
+                encryption_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncryptedAuthenticatedSymmetricKey {
+        #[rasn(identifier = "encryptedSymmetricKey")]
+        pub encrypted_symmetric_key: Integer,
+        pub time: GeneralizedTime,
+        pub sender: SenderId,
+        pub receiver: ReceiverId,
+        pub signature: Signature,
+    }
+    impl EncryptedAuthenticatedSymmetricKey {
+        pub fn new(
+            encrypted_symmetric_key: Integer,
+            time: GeneralizedTime,
+            sender: SenderId,
+            receiver: ReceiverId,
+            signature: Signature,
+        ) -> Self {
+            Self {
+                encrypted_symmetric_key,
+                time,
+                sender,
+                receiver,
+                signature,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EncryptionCertificate {
+        #[rasn(tag(context, 0))]
+        certificate(Certificate),
+        #[rasn(tag(context, 1))]
+        certificationPath(CertificationPath),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EncryptionParametersPublicKey {
+        pub modulus: Integer,
+        pub exponent: Integer,
+    }
+    impl EncryptionParametersPublicKey {
+        pub fn new(modulus: Integer, exponent: Integer) -> Self {
+            Self { modulus, exponent }
+        }
+    }
+    #[doc = " encrypted represents the encryption of the DER encoded ROSE PDU."]
+    #[doc = " seal represents the seal of the DER encoded ROSE PDU in either a simple form"]
+    #[doc = " or as Seal type defined above."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct EncryptionParameters {
+        #[rasn(tag(context, 0), identifier = "symmetricKeyId")]
+        pub symmetric_key_id: Option<KeyId>,
+        #[rasn(tag(context, 1), identifier = "publicKeyId")]
+        pub public_key_id: Option<KeyId>,
+        #[rasn(tag(context, 2), identifier = "sealKeyId")]
+        pub seal_key_id: Option<KeyId>,
+        #[rasn(tag(context, 3), identifier = "signatureKeyId")]
+        pub signature_key_id: Option<KeyId>,
+        #[rasn(tag(context, 4), identifier = "passwordId")]
+        pub password_id: Option<KeyId>,
+        #[rasn(size("8"), tag(context, 5), identifier = "initializationVector")]
+        pub initialization_vector: Option<OctetString>,
+        #[rasn(value("1..=63"), tag(context, 6), identifier = "feedBackBits")]
+        pub feed_back_bits: Option<u8>,
+        #[rasn(tag(context, 7), identifier = "symmetricAlgorithm")]
+        pub symmetric_algorithm: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 8), identifier = "publicKeyAlgorithm")]
+        pub public_key_algorithm: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 9), identifier = "signatureAlgorithm")]
+        pub signature_algorithm: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 10), identifier = "sealAlgorithm")]
+        pub seal_algorithm: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 11), identifier = "hashAlgorithm")]
+        pub hash_algorithm: Option<ObjectIdentifier>,
+        #[rasn(size("8..=64"), tag(context, 12), identifier = "keyDigest")]
+        pub key_digest: Option<OctetString>,
+        #[rasn(tag(context, 13), identifier = "blockSize")]
+        pub block_size: Option<Integer>,
+        #[rasn(tag(context, 14), identifier = "keySize")]
+        pub key_size: Option<Integer>,
+        #[rasn(tag(context, 15), identifier = "publicKey")]
+        pub public_key: Option<EncryptionParametersPublicKey>,
+        #[rasn(tag(context, 16), identifier = "sequenceNumber")]
+        pub sequence_number: Option<Integer>,
+        #[rasn(tag(context, 17), identifier = "timeStamp")]
+        pub time_stamp: Option<GeneralizedTime>,
+        #[rasn(size("64..=128"), tag(context, 18), identifier = "encryptedKey")]
+        pub encrypted_key: Option<OctetString>,
+        #[rasn(tag(context, 19), identifier = "encryptedSymmetricKey")]
+        pub encrypted_symmetric_key: Option<Integer>,
+        #[rasn(size("1..=3"), tag(context, 20), identifier = "keyEncryptionKey")]
+        pub key_encryption_key: Option<SequenceOf<KeyId>>,
+        #[rasn(tag(context, 21), identifier = "publicKeyCertificate")]
+        pub public_key_certificate: Option<PublicKeyCertificate>,
+        #[rasn(tag(context, 22), identifier = "encryptionCertificate")]
+        pub encryption_certificate: Option<EncryptionCertificate>,
+        #[rasn(tag(context, 23), identifier = "signatureCertificate")]
+        pub signature_certificate: Option<SignatureCertificate>,
+        #[rasn(tag(context, 24), identifier = "encryptedAuthenticatedSymmetricKey")]
+        pub encrypted_authenticated_symmetric_key: Option<EncryptedAuthenticatedSymmetricKey>,
+        #[rasn(tag(context, 25), identifier = "macAlgorithm")]
+        pub mac_algorithm: Option<ObjectIdentifier>,
+    }
+    impl EncryptionParameters {
+        pub fn new(
+            symmetric_key_id: Option<KeyId>,
+            public_key_id: Option<KeyId>,
+            seal_key_id: Option<KeyId>,
+            signature_key_id: Option<KeyId>,
+            password_id: Option<KeyId>,
+            initialization_vector: Option<OctetString>,
+            feed_back_bits: Option<u8>,
+            symmetric_algorithm: Option<ObjectIdentifier>,
+            public_key_algorithm: Option<ObjectIdentifier>,
+            signature_algorithm: Option<ObjectIdentifier>,
+            seal_algorithm: Option<ObjectIdentifier>,
+            hash_algorithm: Option<ObjectIdentifier>,
+            key_digest: Option<OctetString>,
+            block_size: Option<Integer>,
+            key_size: Option<Integer>,
+            public_key: Option<EncryptionParametersPublicKey>,
+            sequence_number: Option<Integer>,
+            time_stamp: Option<GeneralizedTime>,
+            encrypted_key: Option<OctetString>,
+            encrypted_symmetric_key: Option<Integer>,
+            key_encryption_key: Option<SequenceOf<KeyId>>,
+            public_key_certificate: Option<PublicKeyCertificate>,
+            encryption_certificate: Option<EncryptionCertificate>,
+            signature_certificate: Option<SignatureCertificate>,
+            encrypted_authenticated_symmetric_key: Option<EncryptedAuthenticatedSymmetricKey>,
+            mac_algorithm: Option<ObjectIdentifier>,
+        ) -> Self {
+            Self {
+                symmetric_key_id,
+                public_key_id,
+                seal_key_id,
+                signature_key_id,
+                password_id,
+                initialization_vector,
+                feed_back_bits,
+                symmetric_algorithm,
+                public_key_algorithm,
+                signature_algorithm,
+                seal_algorithm,
+                hash_algorithm,
+                key_digest,
+                block_size,
+                key_size,
+                public_key,
+                sequence_number,
+                time_stamp,
+                encrypted_key,
+                encrypted_symmetric_key,
+                key_encryption_key,
+                public_key_certificate,
+                encryption_certificate,
+                signature_certificate,
+                encrypted_authenticated_symmetric_key,
+                mac_algorithm,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GssToken {
+        #[rasn(tag(context, 1))]
+        micToken(MicToken),
+        #[rasn(tag(context, 2))]
+        wrapToken(OctetString),
+    }
+    #[doc = " publicEncrypted represents the DER encoded and public key encrypted ROSE PDU."]
+    #[doc = " encryptionParameters represents the parameters used for encryption."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Hash {
+        #[rasn(size("8..=64"), identifier = "hashValue")]
+        pub hash_value: OctetString,
+        #[rasn(identifier = "encryptionParameters")]
+        pub encryption_parameters: Option<EncryptionParameters>,
+    }
+    impl Hash {
+        pub fn new(
+            hash_value: OctetString,
+            encryption_parameters: Option<EncryptionParameters>,
+        ) -> Self {
+            Self {
+                hash_value,
+                encryption_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum HashedROSEpduHash {
+        hash(Hash),
+        #[rasn(size("8..=64"))]
+        simpleHash(OctetString),
+    }
+    #[doc = " hashValue represents the message digest resulting from hashing the DER encoded"]
+    #[doc = " ROSE PDU."]
+    #[doc = " encryptionParameters represents the parameters used for the hashing algorithm."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct HashedROSEpdu {
+        pub data: OctetString,
+        pub hash: HashedROSEpduHash,
+    }
+    impl HashedROSEpdu {
+        pub fn new(data: OctetString, hash: HashedROSEpduHash) -> Self {
+            Self { data, hash }
+        }
+    }
+    #[doc = " EncryptionParameters is an extensible type that is used as a catch-all for any"]
+    #[doc = " parameters that may be used by any of the STs. In most applications only a small"]
+    #[doc = " number, if any, of the components of EncryptionParameters will be used."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum KeyId {
+        name(GraphicString),
+        number(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MicToken {
+        #[rasn(tag(context, 1), identifier = "rosePDU")]
+        pub rose_pdu: OctetString,
+        #[rasn(tag(context, 2))]
+        pub token: OctetString,
+    }
+    impl MicToken {
+        pub fn new(rose_pdu: OctetString, token: OctetString) -> Self {
+            Self { rose_pdu, token }
+        }
+    }
+    #[doc = " SimplePublicEnciphered represents the DER encoded and public key encrypted ROSE PDU."]
+    #[doc = " A large PDU may be broken into smaller blocks, each of which may be encrypted"]
+    #[doc = " as an INTEGER. The size of such blocks depends on the public key encryption algorithm"]
+    #[doc = " used and on the size of the public key; specification of such block sizes is outside the"]
+    #[doc = " scope of this Recommendation."]
+    #[doc = " In some cases the result of public key encryption may be represented as an OCTET STRING."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PublicEnciphered {
+        #[rasn(identifier = "publicEncrypted")]
+        pub public_encrypted: SimplePublicEnciphered,
+        #[rasn(identifier = "encryptionParameters")]
+        pub encryption_parameters: Option<EncryptionParameters>,
+    }
+    impl PublicEnciphered {
+        pub fn new(
+            public_encrypted: SimplePublicEnciphered,
+            encryption_parameters: Option<EncryptionParameters>,
+        ) -> Self {
+            Self {
+                public_encrypted,
+                encryption_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PublicKeyCertificate {
+        #[rasn(tag(context, 0))]
+        certificate(Certificate),
+        #[rasn(tag(context, 1))]
+        certificationPath(CertificationPath),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReceiverId(pub SenderId);
+    #[doc = " data represents the DER encoded ROSE PDU"]
+    #[doc = " hash represents the hash value either as a simple OCTET STRING or the Hash"]
+    #[doc = " structure defined above."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Seal {
+        #[rasn(size("8..=128"), identifier = "sealValue")]
+        pub seal_value: OctetString,
+        #[rasn(identifier = "encryptionParameters")]
+        pub encryption_parameters: Option<EncryptionParameters>,
+    }
+    impl Seal {
+        pub fn new(
+            seal_value: OctetString,
+            encryption_parameters: Option<EncryptionParameters>,
+        ) -> Self {
+            Self {
+                seal_value,
+                encryption_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SealedROSEpduSeal {
+        seal(Seal),
+        #[rasn(size("8..=64"))]
+        simpleSeal(OctetString),
+    }
+    #[doc = " sealValue represents the seal value for the DER encoded ROSE PDU."]
+    #[doc = " encryptionParameters represents the parameters used by the seal generation algorithm."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SealedROSEpdu {
+        pub data: OctetString,
+        pub seal: SealedROSEpduSeal,
+    }
+    impl SealedROSEpdu {
+        pub fn new(data: OctetString, seal: SealedROSEpduSeal) -> Self {
+            Self { data, seal }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SenderId {
+        #[rasn(tag(context, 1))]
+        identifier(DistinguishedName),
+        #[rasn(tag(context, 2))]
+        name(GraphicString),
+        #[rasn(tag(context, 3))]
+        application(AETitle),
+    }
+    #[doc = " data represents the DER encoded ROSE PDU"]
+    #[doc = " seal represents the seal value either as a simple OCTET STRING or the Seal structure"]
+    #[doc = " defined above."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Signature {
+        #[rasn(size("1..=4"), identifier = "signatureValue")]
+        pub signature_value: SequenceOf<Integer>,
+        #[rasn(identifier = "encryptionParameters")]
+        pub encryption_parameters: Option<Box<EncryptionParameters>>,
+    }
+    impl Signature {
+        pub fn new(
+            signature_value: SequenceOf<Integer>,
+            encryption_parameters: Option<Box<EncryptionParameters>>,
+        ) -> Self {
+            Self {
+                signature_value,
+                encryption_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SignatureCertificate {
+        #[rasn(tag(context, 0))]
+        certificate(Certificate),
+        #[rasn(tag(context, 1))]
+        certificationPath(CertificationPath),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SignedROSEpduSignature {
+        #[rasn(tag(context, 1))]
+        signature(Signature),
+        #[rasn(size("1..=4"), tag(context, 2))]
+        simpleSignature(SequenceOf<Integer>),
+    }
+    #[doc = " signatureValue represents the signature for the DER encoded ROSE PDU."]
+    #[doc = " encryptionParameters represents the parameters for the signature algorithm."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SignedROSEpdu {
+        pub data: OctetString,
+        pub signature: SignedROSEpduSignature,
+    }
+    impl SignedROSEpdu {
+        pub fn new(data: OctetString, signature: SignedROSEpduSignature) -> Self {
+            Self { data, signature }
+        }
+    }
+    #[doc = " encrypted represents the DER encoded and encrypted ROSE PDU."]
+    #[doc = " encryptionParameters represents the parameters used for encryption."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SimplePublicEnciphered {
+        integers(SequenceOf<Integer>),
+        string(OctetString),
+    }
+}

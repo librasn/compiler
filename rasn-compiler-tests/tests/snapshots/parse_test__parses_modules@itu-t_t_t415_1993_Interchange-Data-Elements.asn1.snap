@@ -1,0 +1,63 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t415_1993_Interchange-Data-Elements.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod interchange_data_elements {
+    extern crate alloc;
+    use super::document_profile_descriptor::DocumentProfileDescriptor;
+    use super::layout_descriptors::{LayoutClassDescriptor, LayoutObjectDescriptor};
+    use super::link_descriptors::{EncipheredLinkDescriptor, LinkClassDescriptor, LinkDescriptor};
+    use super::logical_descriptors::{LogicalClassDescriptor, LogicalObjectDescriptor};
+    use super::protected_part_descriptors::{
+        EncipheredDocProfDescriptor, PostencipheredBodypartDescriptor,
+        PreencipheredBodypartDescriptor, SealedDocProfDescriptor,
+    };
+    use super::style_descriptors::{LayoutStyleDescriptor, PresentationStyleDescriptor};
+    use super::text_units::TextUnit;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = "  See ITU-T Rec. T.424 | ISO/IEC 8613-14"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Interchange-Data-Element")]
+    pub enum InterchangeDataElement {
+        #[rasn(tag(context, 0), identifier = "document-profile")]
+        document_profile(DocumentProfileDescriptor),
+        #[rasn(tag(context, 1), identifier = "layout-object-class")]
+        layout_object_class(LayoutClassDescriptor),
+        #[rasn(tag(context, 2), identifier = "layout-object")]
+        layout_object(LayoutObjectDescriptor),
+        #[rasn(tag(context, 3), identifier = "content-portion")]
+        content_portion(TextUnit),
+        #[rasn(tag(context, 5), identifier = "logical-object-class")]
+        logical_object_class(LogicalClassDescriptor),
+        #[rasn(tag(context, 6), identifier = "logical-object")]
+        logical_object(LogicalObjectDescriptor),
+        #[rasn(tag(context, 7), identifier = "presentation-style")]
+        presentation_style(PresentationStyleDescriptor),
+        #[rasn(tag(context, 8), identifier = "layout-style")]
+        layout_style(LayoutStyleDescriptor),
+        #[rasn(tag(context, 9), identifier = "sealed-doc-prof-descriptor")]
+        sealed_doc_prof_descriptor(SealedDocProfDescriptor),
+        #[rasn(tag(context, 10), identifier = "enciphered-doc-prof-descriptor")]
+        enciphered_doc_prof_descriptor(EncipheredDocProfDescriptor),
+        #[rasn(tag(context, 11), identifier = "preenciphered-bodypart-descriptor")]
+        preenciphered_bodypart_descriptor(PreencipheredBodypartDescriptor),
+        #[rasn(tag(context, 12), identifier = "postenciphered-bodypart-descriptor")]
+        postenciphered_bodypart_descriptor(PostencipheredBodypartDescriptor),
+        #[rasn(tag(context, 13), identifier = "link-class")]
+        link_class(LinkClassDescriptor),
+        #[rasn(tag(context, 14))]
+        link(LinkDescriptor),
+        #[rasn(tag(context, 15), identifier = "enciphered-link-descriptor")]
+        enciphered_link_descriptor(EncipheredLinkDescriptor),
+    }
+}

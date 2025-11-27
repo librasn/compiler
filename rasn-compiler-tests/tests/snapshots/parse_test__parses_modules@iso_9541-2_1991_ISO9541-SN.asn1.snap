@@ -1,0 +1,75 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/iso_9541-2_1991_ISO9541-SN.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : VideotexString is currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod iso9541_sn {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " except for \"//\" and \"::\""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 0), identifier = "Object-Name-Component")]
+    pub struct ObjectNameComponent(pub VisibleString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Owner-Name")]
+    pub struct OwnerName {
+        #[rasn(tag(context, 0), identifier = "objectIdentifier")]
+        pub object_identifier: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 1), identifier = "ownerNameComponent")]
+        pub owner_name_component: Option<SequenceOf<OwnerNameComponent>>,
+    }
+    impl OwnerName {
+        pub fn new(
+            object_identifier: Option<ObjectIdentifier>,
+            owner_name_component: Option<SequenceOf<OwnerNameComponent>>,
+        ) -> Self {
+            Self {
+                object_identifier,
+                owner_name_component,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, tag(context, 0), identifier = "Owner-Name-Component")]
+    pub struct OwnerNameComponent(pub VisibleString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Structured-Name")]
+    pub struct StructuredName {
+        #[rasn(tag(context, 0), identifier = "owner-name")]
+        pub owner_name: Option<OwnerName>,
+        #[rasn(tag(context, 1), identifier = "owner-description")]
+        pub owner_description: Option<Message>,
+        #[rasn(tag(context, 2), identifier = "object-name")]
+        pub object_name: Option<SequenceOf<ObjectNameComponent>>,
+        #[rasn(tag(context, 3), identifier = "object-description")]
+        pub object_description: Option<Message>,
+    }
+    impl StructuredName {
+        pub fn new(
+            owner_name: Option<OwnerName>,
+            owner_description: Option<Message>,
+            object_name: Option<SequenceOf<ObjectNameComponent>>,
+            object_description: Option<Message>,
+        ) -> Self {
+            Self {
+                owner_name,
+                owner_description,
+                object_name,
+                object_description,
+            }
+        }
+    }
+}

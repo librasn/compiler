@@ -1,0 +1,2040 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x520_2016_SelectedAttributeTypes.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+LinkerError in ASN grammar: Failed to resolve supertype MAPPING-BASED-MATCHING of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod selected_attribute_types {
+    extern crate alloc;
+    use super::authentication_framework::{
+        AlgorithmIdentifier, Certificate, CertificateList, CertificatePair, SupportedAlgorithm,
+        SupportedAlgorithms,
+    };
+    use super::directory_abstract_service::{
+        FilterItem, HierarchySelections, SearchControlOptions, ServiceControlOptions,
+    };
+    use super::information_framework::*;
+    use super::password_policy::{PwdAlphabet, PwdVocabulary, UserPwd};
+    use super::pki_pmi_external_data_types::G3FacsimileNonBasicParameters;
+    use super::schema_administration::{
+        AttributeTypeDescription, DITContentRuleDescription, DITStructureRuleDescription,
+        MatchingRuleDescription, MatchingRuleUseDescription, NameFormDescription,
+        ObjectClassDescription,
+    };
+    use super::service_administration::{AttributeCombination, ContextCombination, MRMapping};
+    use super::useful_definitions::{
+        AUTHENTICATION_FRAMEWORK, CERTIFICATE_EXTENSIONS, DIRECTORY_ABSTRACT_SERVICE, ID, ID_ASX,
+        ID_AT, ID_AVC, ID_CAT, ID_COAT, ID_LMR, ID_LSX, ID_MR, ID_NOT, ID_PR,
+        INFORMATION_FRAMEWORK, PASSWORD_POLICY, PKI_PMI_EXTERNAL_DATA_TYPES, SCHEMA_ADMINISTRATION,
+        SERVICE_ADMINISTRATION,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "UTF8String")]
+    pub struct AnonymousAttributeOptionList(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeOptionList(pub SequenceOf<AnonymousAttributeOptionList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CaseIgnoreList(pub SequenceOf<UnboundedDirectoryString>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum CharacterMatchTypes {
+        characterExact = 0,
+        characterCaseIgnore = 1,
+        characterMapped = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommunicationsNetwork(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommunicationsService(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3"))]
+    pub struct CountryCode3c(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("3"))]
+    pub struct CountryCode3n(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2"))]
+    pub struct CountryName(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum Criteria {
+        #[rasn(tag(context, 0), identifier = "type")]
+        R_type(CriteriaItem),
+        #[rasn(tag(context, 1))]
+        and(SetOf<Criteria>),
+        #[rasn(tag(context, 2))]
+        or(SetOf<Criteria>),
+        #[rasn(tag(context, 3))]
+        not(Box<Criteria>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CriteriaItem {
+        #[rasn(tag(context, 0))]
+        equality(AttributeType),
+        #[rasn(tag(context, 1))]
+        substrings(AttributeType),
+        #[rasn(tag(context, 2))]
+        greaterOrEqual(AttributeType),
+        #[rasn(tag(context, 3))]
+        lessOrEqual(AttributeType),
+        #[rasn(tag(context, 4))]
+        approximateMatch(AttributeType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DayTime {
+        #[rasn(value("0..=23"), tag(context, 0))]
+        pub hour: u8,
+        #[rasn(value("0..=59"), tag(context, 1), default = "day_time_minute_default")]
+        pub minute: u8,
+        #[rasn(value("0..=59"), tag(context, 2), default = "day_time_second_default")]
+        pub second: u8,
+    }
+    impl DayTime {
+        pub fn new(hour: u8, minute: u8, second: u8) -> Self {
+            Self {
+                hour,
+                minute,
+                second,
+            }
+        }
+    }
+    fn day_time_minute_default() -> u8 {
+        0
+    }
+    fn day_time_second_default() -> u8 {
+        0
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DayTimeBand {
+        #[rasn(
+            tag(context, 0),
+            default = "day_time_band_start_day_time_default",
+            identifier = "startDayTime"
+        )]
+        pub start_day_time: DayTime,
+        #[rasn(
+            tag(context, 1),
+            default = "day_time_band_end_day_time_default",
+            identifier = "endDayTime"
+        )]
+        pub end_day_time: DayTime,
+    }
+    impl DayTimeBand {
+        pub fn new(start_day_time: DayTime, end_day_time: DayTime) -> Self {
+            Self {
+                start_day_time,
+                end_day_time,
+            }
+        }
+    }
+    impl std::default::Default for DayTimeBand {
+        fn default() -> Self {
+            Self {
+                start_day_time: day_time_band_start_day_time_default(),
+                end_day_time: day_time_band_end_day_time_default(),
+            }
+        }
+    }
+    fn day_time_band_start_day_time_default() -> DayTime {
+        DayTime(Oid::new(&[&***HOUR, &[0u32]].concat()).unwrap().to_owned())
+    }
+    fn day_time_band_end_day_time_default() -> DayTime {
+        DayTime(DayTime::new(23, 59, 59))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DestinationIndicator(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DomainName(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EnhancedGuide {
+        #[rasn(tag(context, 0), identifier = "objectClass")]
+        pub object_class: Any,
+        #[rasn(tag(context, 1))]
+        pub criteria: Criteria,
+        #[rasn(tag(context, 2), default = "enhanced_guide_subset_default")]
+        pub subset: Integer,
+    }
+    impl EnhancedGuide {
+        pub fn new(object_class: Any, criteria: Criteria, subset: Integer) -> Self {
+            Self {
+                object_class,
+                criteria,
+                subset,
+            }
+        }
+    }
+    fn enhanced_guide_subset_default() -> Integer {
+        Integer::from(1)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct FacsimileTelephoneNumber {
+        #[rasn(identifier = "telephoneNumber")]
+        pub telephone_number: TelephoneNumber,
+        pub parameters: Option<G3FacsimileNonBasicParameters>,
+    }
+    impl FacsimileTelephoneNumber {
+        pub fn new(
+            telephone_number: TelephoneNumber,
+            parameters: Option<G3FacsimileNonBasicParameters>,
+        ) -> Self {
+            Self {
+                telephone_number,
+                parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct Guide {
+        #[rasn(tag(context, 0), identifier = "objectClass")]
+        pub object_class: Option<Any>,
+        #[rasn(tag(context, 1))]
+        pub criteria: Criteria,
+    }
+    impl Guide {
+        pub fn new(object_class: Option<Any>, criteria: Criteria) -> Self {
+            Self {
+                object_class,
+                criteria,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=16"))]
+    pub struct InternationalISDNNumber(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=3"))]
+    pub struct LanguageContextSyntax(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum LocaleContextSyntax {
+        localeID1(ObjectIdentifier),
+        localeID2(UnboundedDirectoryString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MRMappings(pub SequenceOf<MRMapping>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct MultipleMatchingLocalities {
+        #[rasn(identifier = "matchingRuleUsed")]
+        pub matching_rule_used: Option<Any>,
+        #[rasn(identifier = "attributeList")]
+        pub attribute_list: SequenceOf<AttributeValueAssertion>,
+    }
+    impl MultipleMatchingLocalities {
+        pub fn new(
+            matching_rule_used: Option<Any>,
+            attribute_list: SequenceOf<AttributeValueAssertion>,
+        ) -> Self {
+            Self {
+                matching_rule_used,
+                attribute_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct NameAndOptionalUID {
+        pub dn: DistinguishedName,
+        pub uid: Option<UniqueIdentifier>,
+    }
+    impl NameAndOptionalUID {
+        pub fn new(dn: DistinguishedName, uid: Option<UniqueIdentifier>) -> Self {
+            Self { dn, uid }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NamedDayIntNamedDays {
+        sunday = 1,
+        monday = 2,
+        tuesday = 3,
+        wednesday = 4,
+        thursday = 5,
+        friday = 6,
+        saturday = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum NamedDay {
+        intNamedDays(NamedDayIntNamedDays),
+        bitNamedDays(BitString),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousOctetSubstringAssertion {
+        #[rasn(tag(context, 0))]
+        initial(OctetString),
+        #[rasn(tag(context, 1))]
+        any(OctetString),
+        #[rasn(tag(context, 2), identifier = "final")]
+        R_final(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OctetSubstringAssertion(pub SequenceOf<AnonymousOctetSubstringAssertion>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PeriodDays {
+        intDay(SetOf<Integer>),
+        bitDay(BitString),
+        dayOf(XDayOf),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PeriodWeeks {
+        allWeeks(()),
+        intWeek(SetOf<Integer>),
+        bitWeek(BitString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PeriodMonths {
+        allMonths(()),
+        intMonth(SetOf<Integer>),
+        bitMonth(BitString),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("1000.."))]
+    pub struct AnonymousPeriodYears(pub Integer);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PeriodYears(pub SetOf<AnonymousPeriodYears>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct Period {
+        #[rasn(size("1.."), tag(context, 0), identifier = "timesOfDay")]
+        pub times_of_day: Option<SetOf<DayTimeBand>>,
+        #[rasn(tag(context, 1))]
+        pub days: Option<PeriodDays>,
+        #[rasn(tag(context, 2))]
+        pub weeks: Option<PeriodWeeks>,
+        #[rasn(tag(context, 3))]
+        pub months: Option<PeriodMonths>,
+        #[rasn(tag(context, 4))]
+        pub years: Option<PeriodYears>,
+    }
+    impl Period {
+        pub fn new(
+            times_of_day: Option<SetOf<DayTimeBand>>,
+            days: Option<PeriodDays>,
+            weeks: Option<PeriodWeeks>,
+            months: Option<PeriodMonths>,
+            years: Option<PeriodYears>,
+        ) -> Self {
+            Self {
+                times_of_day,
+                days,
+                weeks,
+                months,
+                years,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PostalAddress(pub SequenceOf<UnboundedDirectoryString>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousPreferredDeliveryMethod(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PreferredDeliveryMethod(pub SequenceOf<AnonymousPreferredDeliveryMethod>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PresentationAddress {
+        #[rasn(tag(context, 0), identifier = "pSelector")]
+        pub p_selector: Option<OctetString>,
+        #[rasn(tag(context, 1), identifier = "sSelector")]
+        pub s_selector: Option<OctetString>,
+        #[rasn(tag(context, 2), identifier = "tSelector")]
+        pub t_selector: Option<OctetString>,
+        #[rasn(size("1.."), tag(context, 3), identifier = "nAddresses")]
+        pub n_addresses: SetOf<OctetString>,
+    }
+    impl PresentationAddress {
+        pub fn new(
+            p_selector: Option<OctetString>,
+            s_selector: Option<OctetString>,
+            t_selector: Option<OctetString>,
+            n_addresses: SetOf<OctetString>,
+        ) -> Self {
+            Self {
+                p_selector,
+                s_selector,
+                t_selector,
+                n_addresses,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ProtocolInformation {
+        #[rasn(identifier = "nAddress")]
+        pub n_address: OctetString,
+        pub profiles: SetOf<ObjectIdentifier>,
+    }
+    impl ProtocolInformation {
+        pub fn new(n_address: OctetString, profiles: SetOf<ObjectIdentifier>) -> Self {
+            Self {
+                n_address,
+                profiles,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PwdResponseWarning {
+        #[rasn(value("0.."), tag(context, 0))]
+        timeleft(Integer),
+        #[rasn(value("0.."), tag(context, 1))]
+        graceRemaining(Integer),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum PwdResponseError {
+        passwordExpired = 0,
+        changeAfterReset = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PwdResponse {
+        pub warning: Option<PwdResponseWarning>,
+        pub error: Option<PwdResponseError>,
+    }
+    impl PwdResponse {
+        pub fn new(warning: Option<PwdResponseWarning>, error: Option<PwdResponseError>) -> Self {
+            Self { warning, error }
+        }
+    }
+    #[doc = " defaulting to sequenceExact"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum SequenceMatchType {
+        sequenceExact = 0,
+        sequenceDeletion = 1,
+        sequenceRestrictedDeletion = 2,
+        sequencePermutation = 3,
+        sequencePermutationAndDeletion = 4,
+        sequenceProviderDefined = 5,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousSubstringAssertion {
+        #[rasn(tag(context, 0))]
+        initial(UnboundedDirectoryString),
+        #[rasn(tag(context, 1))]
+        any(UnboundedDirectoryString),
+        #[rasn(tag(context, 2), identifier = "final")]
+        R_final(UnboundedDirectoryString),
+        #[rasn(value("0.."))]
+        control(Attribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubstringAssertion(pub SequenceOf<AnonymousSubstringAssertion>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=32"))]
+    pub struct TelephoneNumber(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TelexNumber {
+        #[rasn(size("1..=14"), identifier = "telexNumber")]
+        pub telex_number: PrintableString,
+        #[rasn(size("1..=4"), identifier = "countryCode")]
+        pub country_code: PrintableString,
+        #[rasn(size("1..=8"))]
+        pub answerback: PrintableString,
+    }
+    impl TelexNumber {
+        pub fn new(
+            telex_number: PrintableString,
+            country_code: PrintableString,
+            answerback: PrintableString,
+        ) -> Self {
+            Self {
+                telex_number,
+                country_code,
+                answerback,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TimeAssertionBetween {
+        #[rasn(tag(context, 0), identifier = "startTime")]
+        pub start_time: GeneralizedTime,
+        #[rasn(tag(context, 1), identifier = "endTime")]
+        pub end_time: Option<GeneralizedTime>,
+        #[rasn(default = "time_assertion_between_entirely_default")]
+        pub entirely: bool,
+    }
+    impl TimeAssertionBetween {
+        pub fn new(
+            start_time: GeneralizedTime,
+            end_time: Option<GeneralizedTime>,
+            entirely: bool,
+        ) -> Self {
+            Self {
+                start_time,
+                end_time,
+                entirely,
+            }
+        }
+    }
+    fn time_assertion_between_entirely_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum TimeAssertion {
+        now(()),
+        at(GeneralizedTime),
+        between(TimeAssertionBetween),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TimeSpecificationTimeAbsolute {
+        #[rasn(tag(context, 0), identifier = "startTime")]
+        pub start_time: Option<GeneralizedTime>,
+        #[rasn(tag(context, 1), identifier = "endTime")]
+        pub end_time: Option<GeneralizedTime>,
+    }
+    impl TimeSpecificationTimeAbsolute {
+        pub fn new(start_time: Option<GeneralizedTime>, end_time: Option<GeneralizedTime>) -> Self {
+            Self {
+                start_time,
+                end_time,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TimeSpecificationTime {
+        absolute(TimeSpecificationTimeAbsolute),
+        #[rasn(size("1.."))]
+        periodic(SetOf<Period>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TimeSpecification {
+        pub time: TimeSpecificationTime,
+        #[rasn(
+            default = "time_specification_not_this_time_default",
+            identifier = "notThisTime"
+        )]
+        pub not_this_time: bool,
+        #[rasn(identifier = "timeZone")]
+        pub time_zone: Option<TimeZone>,
+    }
+    impl TimeSpecification {
+        pub fn new(
+            time: TimeSpecificationTime,
+            not_this_time: bool,
+            time_zone: Option<TimeZone>,
+        ) -> Self {
+            Self {
+                time,
+                not_this_time,
+                time_zone,
+            }
+        }
+    }
+    fn time_specification_not_this_time_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-12..=12"))]
+    pub struct TimeZone(pub i8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct URI(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UUID(pub FixedOctetString<16usize>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct UUIDPair {
+        #[rasn(identifier = "issuerUUID")]
+        pub issuer_uuid: UUID,
+        #[rasn(identifier = "subjectUUID")]
+        pub subject_uuid: UUID,
+    }
+    impl UUIDPair {
+        pub fn new(issuer_uuid: UUID, subject_uuid: UUID) -> Self {
+            Self {
+                issuer_uuid,
+                subject_uuid,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UiiFilter {
+        #[rasn(tag(context, 0))]
+        item(UiiItem),
+        #[rasn(tag(context, 1))]
+        and(SetOf<UiiFilter>),
+        #[rasn(tag(context, 2))]
+        or(SetOf<UiiFilter>),
+        #[rasn(tag(context, 3))]
+        not(Box<UiiFilter>),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UiiItem {
+        #[rasn(identifier = "type")]
+        pub r_type: Any,
+        pub length: Option<Integer>,
+    }
+    impl UiiItem {
+        pub fn new(r_type: Any, length: Option<Integer>) -> Self {
+            Self { r_type, length }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UniqueIdentifier(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UtmCoordinates {
+        pub zone: PrintableString,
+        pub easting: NumericString,
+        pub northing: NumericString,
+    }
+    impl UtmCoordinates {
+        pub fn new(zone: PrintableString, easting: NumericString, northing: NumericString) -> Self {
+            Self {
+                zone,
+                easting,
+                northing,
+            }
+        }
+    }
+    #[doc = " defaulting to wordExact"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum WordMatchTypes {
+        wordExact = 0,
+        wordTruncated = 1,
+        wordPhonetic = 2,
+        wordProviderDefined = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=15"))]
+    pub struct X121Address(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum XDayOf {
+        #[rasn(tag(context, 1))]
+        first(NamedDay),
+        #[rasn(tag(context, 2))]
+        second(NamedDay),
+        #[rasn(tag(context, 3))]
+        third(NamedDay),
+        #[rasn(tag(context, 4))]
+        fourth(NamedDay),
+        #[rasn(tag(context, 5))]
+        fifth(NamedDay),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "ZONAL-MATCHING")]
+    pub struct ZONALMATCHING(pub MAPPINGBASEDMATCHING);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum ZonalResult {
+        #[rasn(identifier = "cannot-select-mapping")]
+        cannot_select_mapping = 0,
+        #[rasn(identifier = "zero-mappings")]
+        zero_mappings = 2,
+        #[rasn(identifier = "multiple-mappings")]
+        multiple_mappings = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ZonalSelect(pub SequenceOf<AttributeType>);
+    pub static ID_ASX_COUNTRY_STRING3C: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ASX, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_COUNTRY_STRING3N: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ASX, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_DNS_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ASX, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_EPC_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ASX, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ASX_UII_FORM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ASX, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = "id-at-eepkCertificatRevocationList      OBJECT IDENTIFIER ::= {id-at 101} X.509|Part 8"]
+    #[doc = "id-at-eeAttrCertificateRevocationList   OBJECT IDENTIFIER ::= {id-at 102} X.509|Part 8"]
+    #[doc = " id-asx-userPwdDescription              OBJECT IDENTIFIER ::= {id-asx 0}"]
+    #[doc = " id-asx-pwdVocabularyDescription        OBJECT IDENTIFIER ::= {id-asx 1}"]
+    #[doc = " id-asx-pwdAlphabetDescription          OBJECT IDENTIFIER ::= {id-asx 2}"]
+    #[doc = " id-asx-pwdEncAlgDescription            OBJECT IDENTIFIER ::= {id-asx 3}"]
+    pub static ID_ASX_UTM_COORDS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ASX, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedSearchGuide             OBJECT IDENTIFIER ::= {id-at 14 2}"]
+    pub static ID_AT_BUSINESS_CATEGORY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedFacsimileTelephoneNumber"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 23 2}"]
+    pub static ID_AT_COLLECTIVE_FACSIMILE_TELEPHONE_NUMBER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[23u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedInternationalISDNNumber OBJECT IDENTIFIER ::= {id-at 25 2}"]
+    pub static ID_AT_COLLECTIVE_INTERNATIONAL_ISDNNUMBER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[25u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedLocalityName            OBJECT IDENTIFIER ::= {id-at 7 2}"]
+    pub static ID_AT_COLLECTIVE_LOCALITY_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[7u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedOrganizationName        OBJECT IDENTIFIER ::= {id-at 10 2}"]
+    pub static ID_AT_COLLECTIVE_ORGANIZATION_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[10u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedOrganizationalUnitName  OBJECT IDENTIFIER ::= {id-at 11 2}"]
+    pub static ID_AT_COLLECTIVE_ORGANIZATIONAL_UNIT_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[11u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AT_COLLECTIVE_PHYSICAL_DELIVERY_OFFICE_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[19u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AT_COLLECTIVE_POST_OFFICE_BOX: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[18u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedPostalAddress           OBJECT IDENTIFIER ::= {id-at 16 2}"]
+    pub static ID_AT_COLLECTIVE_POSTAL_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[16u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedPostalCode              OBJECT IDENTIFIER ::= {id-at 17 2}"]
+    pub static ID_AT_COLLECTIVE_POSTAL_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[17u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedStateOrProvinceName     OBJECT IDENTIFIER ::= {id-at 8 2}"]
+    pub static ID_AT_COLLECTIVE_STATE_OR_PROVINCE_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[8u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedStreetAddress           OBJECT IDENTIFIER ::= {id-at 9 2}"]
+    pub static ID_AT_COLLECTIVE_STREET_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[9u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedTelephoneNumber         OBJECT IDENTIFIER ::= {id-at 20 2}"]
+    pub static ID_AT_COLLECTIVE_TELEPHONE_NUMBER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[20u32, 1u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedTelexNumber             OBJECT IDENTIFIER ::= {id-at 21 2}"]
+    pub static ID_AT_COLLECTIVE_TELEX_NUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[21u32, 1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_COMMON_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_COMMUNICATIONS_NETWORK: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[67u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_COMMUNICATIONS_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[66u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_CONTENT_URL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[81u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_COUNTRY_CODE3C: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[98u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_COUNTRY_CODE3N: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[99u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedSerialNumber            OBJECT IDENTIFIER ::= {id-at 5 2}"]
+    pub static ID_AT_COUNTRY_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[6u32]].concat()).unwrap().to_owned());
+    #[doc = " id-at-encryptedTitle                   OBJECT IDENTIFIER ::= {id-at 12 2}"]
+    pub static ID_AT_DESCRIPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedRegisteredAddress       OBJECT IDENTIFIER ::= {id-at 26 2}"]
+    pub static ID_AT_DESTINATION_INDICATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedProtocolInformation     OBJECT IDENTIFIER ::= {id-at 48 2}"]
+    pub static ID_AT_DISTINGUISHED_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[49u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedHouseIdentifier         OBJECT IDENTIFIER ::= {id-at 51 2}"]
+    #[doc = " id-at-supportedAlgorithms              OBJECT IDENTIFIER ::= {id-at 52} X.509|Part 8"]
+    #[doc = " id-at-encryptedSupportedAlgorithms     OBJECT IDENTIFIER ::= {id-at 52 2}"]
+    #[doc = " id-at-deltaRevocationList              OBJECT IDENTIFIER ::= {id-at 53} X.509|Part 8"]
+    #[doc = " id-at-encryptedDeltaRevocationList     OBJECT IDENTIFIER ::= {id-at 53 2}"]
+    pub static ID_AT_DMD_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[54u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedUniqueIdentifier        OBJECT IDENTIFIER ::= {id-at 45 2}"]
+    pub static ID_AT_DN_QUALIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[46u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_DNS_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[100u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedDnQualifier             OBJECT IDENTIFIER ::= {id-at 46 2}"]
+    pub static ID_AT_ENHANCED_SEARCH_GUIDE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[47u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_EPC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[91u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_EPC_FORMAT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[93u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_EPC_IN_URN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[94u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveTelexNumber   OBJECT IDENTIFIER ::= {id-at 21 1 2}"]
+    #[doc = " id-at-teletexTerminalIdentifier        OBJECT IDENTIFIER ::= {id-at 22}"]
+    #[doc = " id-at-encryptedTeletexTerminalIdentifier"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 22 2}"]
+    #[doc = " id-at-collectiveTeletexTerminalIdentifier"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 22 1}"]
+    #[doc = " id-at-encryptedCollectiveTeletexTerminalIdentifier"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 22 1 2}"]
+    pub static ID_AT_FACSIMILE_TELEPHONE_NUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedInitials                OBJECT IDENTIFIER ::= {id-at 43 2}"]
+    pub static ID_AT_GENERATION_QUALIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[44u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_GIVEN_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[42u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedUniqueMember            OBJECT IDENTIFIER ::= {id-at 50 2}"]
+    pub static ID_AT_HOUSE_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[51u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedGivenName               OBJECT IDENTIFIER ::= {id-at 42 2}"]
+    pub static ID_AT_INITIALS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[43u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedX121Address             OBJECT IDENTIFIER ::= {id-at 24 2}"]
+    pub static ID_AT_INTERNATIONAL_ISDNNUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Object identifier assignments"]
+    #[doc = " object identifiers assigned in other modules are shown in comments"]
+    #[doc = " Attributes"]
+    #[doc = " id-at-objectClass                      OBJECT IDENTIFIER ::= {id-at 0}"]
+    #[doc = " id-at-aliasedEntryName                 OBJECT IDENTIFIER ::= {id-at 1}"]
+    #[doc = " id-at-encryptedAliasedEntryName        OBJECT IDENTIFIER ::= {id-at 1 2}"]
+    pub static ID_AT_KNOWLEDGE_INFORMATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_LDAP_URL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[95u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCountryName             OBJECT IDENTIFIER ::= {id-at 6 2}"]
+    pub static ID_AT_LOCALITY_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[7u32]].concat()).unwrap().to_owned());
+    #[doc = " id-at-encryptedSupportedApplicationContext"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 30 2}"]
+    pub static ID_AT_MEMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedSeeAlso                 OBJECT IDENTIFIER ::= {id-at 34 2}"]
+    #[doc = " id-at-userPassword                     OBJECT IDENTIFIER ::= {id-at 35} X.509|Part 8"]
+    #[doc = " id-at-encryptedUserPassword            OBJECT IDENTIFIER ::= {id-at 35 2}"]
+    #[doc = " id-at-userCertificate                  OBJECT IDENTIFIER ::= {id-at 36} X.509|Part 8"]
+    #[doc = " id-at-encryptedUserCertificate         OBJECT IDENTIFIER ::= {id-at 36 2}"]
+    #[doc = " id-at-cACertificate                    OBJECT IDENTIFIER ::= {id-at 37} X.509|Part 8"]
+    #[doc = " id-at-encryptedCACertificate           OBJECT IDENTIFIER ::= {id-at 37 2}"]
+    #[doc = " id-at-authorityRevocationList          OBJECT IDENTIFIER ::= {id-at 38} X.509|Part 8"]
+    #[doc = " id-at-encryptedAuthorityRevocationList OBJECT IDENTIFIER ::= {id-at 38 2}"]
+    #[doc = " id-at-certificateRevocationList        OBJECT IDENTIFIER ::= {id-at 39} X.509|Part 8"]
+    #[doc = " id-at-encryptedCertificateRevocationList"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 39 2}"]
+    #[doc = " id-at-crossCertificatePair             OBJECT IDENTIFIER ::= {id-at 40} X.509|Part 8"]
+    #[doc = " id-at-encryptedCrossCertificatePair    OBJECT IDENTIFIER ::= {id-at 40 2}"]
+    pub static ID_AT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_ORGANIZATION_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[97u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveStreetAddress OBJECT IDENTIFIER ::= {id-at 9 1 2}"]
+    pub static ID_AT_ORGANIZATION_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveOrganizationName"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 10 1 2}"]
+    pub static ID_AT_ORGANIZATIONAL_UNIT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedMember                  OBJECT IDENTIFIER ::= {id-at 31 2}"]
+    pub static ID_AT_OWNER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedPostOfficeBox           OBJECT IDENTIFIER ::= {id-at 18 2}"]
+    #[doc = " id-at-encryptedCollectivePostOfficeBox OBJECT IDENTIFIER ::= {id-at 18 1 2}"]
+    pub static ID_AT_PHYSICAL_DELIVERY_OFFICE_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[19u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedCollectivePostalCode    OBJECT IDENTIFIER ::= {id-at 17 1 2}"]
+    pub static ID_AT_POST_OFFICE_BOX: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedBusinessCategory        OBJECT IDENTIFIER ::= {id-at 15 2}"]
+    pub static ID_AT_POSTAL_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectivePostalAddress OBJECT IDENTIFIER ::= {id-at 16 1 2}"]
+    pub static ID_AT_POSTAL_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedDestinationIndicator    OBJECT IDENTIFIER ::= {id-at 27 2}"]
+    pub static ID_AT_PREFERRED_DELIVERY_METHOD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedPreferredDeliveryMethod OBJECT IDENTIFIER ::= {id-at 28 2}"]
+    pub static ID_AT_PRESENTATION_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedEnhancedSearchGuide     OBJECT IDENTIFIER ::= {id-at 47 2}"]
+    pub static ID_AT_PROTOCOL_INFORMATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[48u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedDmdName                 OBJECT IDENTIFIER ::= {id-at 54 2}"]
+    #[doc = " id-at-clearance                        OBJECT IDENTIFIER ::= {id-at 55}"]
+    #[doc = " id-at-encryptedClearance               OBJECT IDENTIFIER ::= {id-at 55 2}"]
+    #[doc = " id-at-defaultDirQop                    OBJECT IDENTIFIER ::= {id-at 56}"]
+    #[doc = " id-at-encryptedDefaultDirQop           OBJECT IDENTIFIER ::= {id-at 56 2}"]
+    #[doc = " id-at-attributeIntegrityInfo           OBJECT IDENTIFIER ::= {id-at 57}"]
+    #[doc = " id-at-encryptedAttributeIntegrityInfo  OBJECT IDENTIFIER ::= {id-at 57 2}"]
+    #[doc = " id-at-attributeCertificate             OBJECT IDENTIFIER ::= {id-at 58} X.509|Part 8"]
+    #[doc = " id-at-encryptedAttributeCertificate    OBJECT IDENTIFIER ::=\t{id-at 58 2}"]
+    #[doc = " id-at-attributeCertificateRevocationList"]
+    #[doc = "                                        OBJECT IDENTIFIER ::=\t{id-at 59} X.509|Part 8"]
+    #[doc = " id-at-encryptedAttributeCertificateRevocationList"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 59 2}"]
+    #[doc = " id-at-confKeyInfo                      OBJECT IDENTIFIER ::= {id-at 60}"]
+    #[doc = " id-at-encryptedConfKeyInfo             OBJECT IDENTIFIER ::= {id-at 60 2}"]
+    #[doc = " id-at-aACertificate                    OBJECT IDENTIFIER ::= {id-at 61} X.509|Part 8"]
+    #[doc = " id-at-attributeDescriptorCertificate   OBJECT IDENTIFIER ::= {id-at 62} X.509|Part 8"]
+    #[doc = " id-at-attributeAuthorityRevocationList OBJECT IDENTIFIER ::= {id-at 63} X.509|Part 8"]
+    #[doc = " id-at-family-information               OBJECT IDENTIFIER ::= {id-at 64}"]
+    pub static ID_AT_PSEUDONYM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[65u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveInternationalISDNNumber"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 25 1 2}"]
+    pub static ID_AT_REGISTERED_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedOwner                   OBJECT IDENTIFIER ::= {id-at 32 2}"]
+    pub static ID_AT_ROLE_OCCUPANT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedDescription             OBJECT IDENTIFIER ::= {id-at 13 2}"]
+    pub static ID_AT_SEARCH_GUIDE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedRoleOccupant            OBJECT IDENTIFIER ::= {id-at 33 2}"]
+    pub static ID_AT_SEE_ALSO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedSurname                 OBJECT IDENTIFIER ::= {id-at 4 2}"]
+    pub static ID_AT_SERIAL_NUMBER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[5u32]].concat()).unwrap().to_owned());
+    #[doc = " id-at-encryptedCollectiveLocalityName  OBJECT IDENTIFIER ::= {id-at 7 1 2}"]
+    pub static ID_AT_STATE_OR_PROVINCE_NAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[8u32]].concat()).unwrap().to_owned());
+    #[doc = " id-at-encryptedCollectiveStateOrProvinceName"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 8 1 2}"]
+    pub static ID_AT_STREET_ADDRESS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[9u32]].concat()).unwrap().to_owned());
+    #[doc = " id-at-encryptedPresentationAddress     OBJECT IDENTIFIER ::= {id-at 29 2}"]
+    pub static ID_AT_SUPPORTED_APPLICATION_CONTEXT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[30u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-at-encryptedCommonName              OBJECT IDENTIFIER ::= {id-at 3 2}"]
+    pub static ID_AT_SURNAME: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_TAG_AFI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[92u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_TAG_LOCATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[96u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_TAG_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[78u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedPhysicalDeliveryOfficeName"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 19 2}"]
+    #[doc = " id-at-encryptedCollectivePhysicalDeliveryOfficeName"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 19 1 2}"]
+    pub static ID_AT_TELEPHONE_NUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveTelephoneNumber"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 20 1 2}"]
+    pub static ID_AT_TELEX_NUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveOrganizationalUnitNam"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 11 1 2}"]
+    pub static ID_AT_TITLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_UII: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[90u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_UII_FORMAT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[79u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_UII_IN_URN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[80u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedGenerationQualifier     OBJECT IDENTIFIER ::= {id-at 44 2}"]
+    pub static ID_AT_UNIQUE_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[45u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedDistinguishedName       OBJECT IDENTIFIER ::= {id-at 49 2}"]
+    pub static ID_AT_UNIQUE_MEMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[50u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-permission                       OBJECT IDENTIFIER ::= {id-at 82} X.509|Part 8"]
+    pub static ID_AT_URI: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[83u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_URL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[87u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-pwdAttribute                     OBJECT IDENTIFIER ::= {id-at 84} X.501|Part 2"]
+    #[doc = " id-at-userPwd                          OBJECT IDENTIFIER ::= {id-at 85} Annex B"]
+    pub static ID_AT_URN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[86u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_URN_C: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[89u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_UTM_COORDINATES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[88u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-certificationPracticeStmt        OBJECT IDENTIFIER ::= {id-at 68} X.509|Part 8"]
+    #[doc = " id-at-certificatePolicy                OBJECT IDENTIFIER ::= {id-at 69} X.509|Part 8"]
+    #[doc = " id-at-pkiPath                          OBJECT IDENTIFIER ::= {id-at 70} X.509|Part 8"]
+    #[doc = " id-at-privPolicy                       OBJECT IDENTIFIER ::= {id-at 71} X.509|Part 8"]
+    #[doc = " id-at-role                             OBJECT IDENTIFIER ::= {id-at 72} X.509|Part 8"]
+    #[doc = " id-at-delegationPath                   OBJECT IDENTIFIER ::= {id-at 73} X.509|Part 8"]
+    #[doc = " id-at-protPrivPolicy                   OBJECT IDENTIFIER ::= {id-at 74} X.509|Part 8"]
+    #[doc = " id-at-xMLPrivilegeInfo                 OBJECT IDENTIFIER ::= {id-at 75} X.509|Part 8"]
+    #[doc = " id-at-xmlPrivPolicy                    OBJECT IDENTIFIER ::= {id-at 76} X.509|Part 8"]
+    pub static ID_AT_UUIDPAIR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[77u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-at-encryptedCollectiveFacsimileTelephoneNumber"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-at 23 1 2}"]
+    pub static ID_AT_X121_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " contexts"]
+    pub static ID_AVC_LANGUAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-avc-attributeValueSecurityLabelContext"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-avc 3}"]
+    #[doc = " id-avc-attributeValueIntegrityInfoContext"]
+    #[doc = "                                        OBJECT IDENTIFIER ::= {id-avc 4}"]
+    pub static ID_AVC_LDAP_ATTRIBUTE_OPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_LOCALE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AVC_TEMPORAL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AVC, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CAT_CHARACTER_MATCH_TYPES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CAT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CAT_SELECTED_CONTEXTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CAT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Control  attributes"]
+    pub static ID_CAT_SEQUENCE_MATCH_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CAT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CAT_WORD_MATCH_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CAT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_COAT_DC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_COAT, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_COAT_UID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_COAT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " LDAP defined matching rules"]
+    pub static ID_LMR_CASE_EXACT_IA5_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LMR, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LMR_CASE_IGNORE_IA5_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LMR, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LMR_CASE_IGNORE_IA5_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_LMR, &[3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_LSX_ATTRIBUTE_TYPE_DESCRIPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_LSX, &[3u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_LSX_BIT_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_BOOLEAN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-lsx-x509Certificate                 OBJECT IDENTIFIER ::= {id-lsx 8}  X.509|Part 8"]
+    #[doc = " id-lsx-x509CertificateList             OBJECT IDENTIFIER ::= {id-lsx 9}  X.509|Part 8"]
+    #[doc = " id-lsx-x509CertificatePair             OBJECT IDENTIFIER ::= {id-lsx 10} X.509|Part 8"]
+    pub static ID_LSX_COUNTRY_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_D_ITCONTENT_RULE_DESCRIPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_LSX, &[16u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_LSX_D_ITSTRUCTURE_RULE_DESCRIPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_LSX, &[17u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_LSX_DELIVERY_METHOD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_DIRECTORY_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_DN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_ENHANCED_GUIDE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_FACSIMILE_TELEPHONE_NR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_FAX: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_GENERALIZED_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_GUIDE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_IA5_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_INTEGER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_JPEG: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_LDAP_SYNTAX_DESCRIPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[54u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_MATCHING_RULE_DESCRIPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_MATCHING_RULE_USE_DESCRIPTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_LSX, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_LSX_NAME_AND_OPTIONAL_UID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_NAME_FORM_DESCRIPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_NUMERIC_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_OBJECT_CLASS_DESCRIPTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_OCTET_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[40u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_OID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[38u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_OTHER_MAILBOX: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[39u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_POSTAL_ADDR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_PRESENTATION_ADDR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[43u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_PRINTABLE_STRING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[44u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_SUBSTRING_ASSERTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[58u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_SUBTREE_SPEC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[45u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-lsx-x509SupportedAlgorithm          OBJECT IDENTIFIER ::= {id-lsx 49} X.509|Part 8"]
+    pub static ID_LSX_TELEPHONE_NR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[50u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_TELEX_NR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[52u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_LSX_UTC_TIME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_LSX, &[53u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_APPROXIMATE_STRING_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[49u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_BIT_STRING_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_BOOLEAN_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_CASE_EXACT_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_CASE_EXACT_ORDERING_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_CASE_EXACT_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_CASE_IGNORE_LIST_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_CASE_IGNORE_LIST_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " Matching rules"]
+    #[doc = " id-mr-objectIdentifierMatch            OBJECT IDENTIFIER ::= {id-mr 0} X.501|Part2"]
+    #[doc = " id-mr-distinguishedNameMatch           OBJECT IDENTIFIER ::= {id-mr 1} X.501|Part2"]
+    pub static ID_MR_CASE_IGNORE_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_CASE_IGNORE_ORDERING_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_CASE_IGNORE_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_DIRECTORY_STRING_FIRST_COMPONENT_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    #[doc = " id-mr-userPwdMatch                     OBJECT IDENTIFIER ::= {id-mr 71} Annex B"]
+    #[doc = " id-mr-pwdEncAlgMatch                   OBJECT IDENTIFIER ::= {id-mr 72} Annex B"]
+    #[doc = " id-mr-userPwdHistoryMatch              OBJECT IDENTIFIER ::= {id-mr 73} Annex B"]
+    pub static ID_MR_DNS_NAME_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[74u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-mr-authAttIdMatch                   OBJECT IDENTIFIER ::= {id-mr 53} X.509|Part8"]
+    #[doc = " id-mr-roleSpecCertIdMatch              OBJECT IDENTIFIER ::= {id-mr 54} X.509|Part8"]
+    #[doc = " id-mr-basicAttConstraintsMatch         OBJECT IDENTIFIER ::= {id-mr 55} X.509|Part8"]
+    #[doc = " id-mr-delegatedNameConstraintsMatch    OBJECT IDENTIFIER ::= {id-mr 56} X.509|Part8"]
+    #[doc = " id-mr-timeSpecMatch                    OBJECT IDENTIFIER ::= {id-mr 57} X.509|Part8"]
+    #[doc = " id-mr-attDescriptorMatch               OBJECT IDENTIFIER ::= {id-mr 58} X.509|Part8"]
+    #[doc = " id-mr-acceptableCertPoliciesMatch      OBJECT IDENTIFIER ::= {id-mr 59} X.509|Part8"]
+    #[doc = " id-mr-policyMatch                      OBJECT IDENTIFIER ::= {id-mr 60} X.509|Part8"]
+    #[doc = " id-mr-delegationPathMatch              OBJECT IDENTIFIER ::= {id-mr 61} X.509|Part8"]
+    #[doc = " id-mr-pkiPathMatch                     OBJECT IDENTIFIER ::= {id-mr 62} X.509|Part8"]
+    pub static ID_MR_FACSIMILE_NUMBER_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[63u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_FACSIMILE_NUMBER_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[64u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_GENERAL_WORD_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[48u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_GENERALIZED_TIME_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_GENERALIZED_TIME_ORDERING_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[28u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_IGNORE_IF_ABSENT_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[50u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_INTEGER_FIRST_COMPONENT_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[29u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_INTEGER_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_INTEGER_ORDERING_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_KEYWORD_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_NULL_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[51u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_NUMERIC_STRING_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_NUMERIC_STRING_ORDERING_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_MR, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_MR_NUMERIC_STRING_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[10u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_OBJECT_IDENTIFIER_FIRST_COMPONENT_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[30u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_OCTET_STRING_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_OCTET_STRING_ORDERING_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[18u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_OCTET_STRING_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[19u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_PRESENTATION_ADDRESS_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_PROTOCOL_INFORMATION_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-mr-certificateExactMatch            OBJECT IDENTIFIER ::= {id-mr 34} X.509|Part8"]
+    #[doc = " id-mr-certificateMatch                 OBJECT IDENTIFIER ::= {id-mr 35} X.509|Part8"]
+    #[doc = " id-mr-certificatePairExactMatch        OBJECT IDENTIFIER ::= {id-mr 36} X.509|Part8"]
+    #[doc = " id-mr-certificatePairMatch             OBJECT IDENTIFIER ::= {id-mr 37} X.509|Part8"]
+    #[doc = " id-mr-certificateListExactMatch        OBJECT IDENTIFIER ::= {id-mr 38} X.509|Part8"]
+    #[doc = " id-mr-certificateListMatch             OBJECT IDENTIFIER ::= {id-mr 39} X.509|Part8"]
+    #[doc = " id-mr-algorithmIdentifierMatch         OBJECT IDENTIFIER ::= {id-mr 40} X.509|Part8"]
+    pub static ID_MR_STORED_PREFIX_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[41u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-mr-attributeCertificateMatch        OBJECT IDENTIFIER ::= {id-mr 42} X.509|Part8"]
+    #[doc = " id-mr-readerAndKeyIDMatch              OBJECT IDENTIFIER ::= {id-mr 43}"]
+    #[doc = " id-mr-attributeIntegrityMatch          OBJECT IDENTIFIER ::= {id-mr 44}"]
+    #[doc = " id-mr-attributeCertificateExactMatch   OBJECT IDENTIFIER ::= {id-mr 45} X.509|Part8"]
+    #[doc = " id-mr-holderIssuerMatch                OBJECT IDENTIFIER ::= {id-mr 46} X.509|Part8"]
+    pub static ID_MR_SYSTEM_PROPOSED_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[47u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_TELEPHONE_NUMBER_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_TELEPHONE_NUMBER_SUBSTRINGS_MATCH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_MR, &[21u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_MR_U_TCTIME_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[25u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_U_TCTIME_ORDERING_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[26u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_UNIQUE_MEMBER_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-mr-dualStringMatch                  OBJECT IDENTIFIER ::= {id-mr 69} X.509|Part8"]
+    pub static ID_MR_URI_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[70u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " id-mr-enhancedCertificateMatch         OBJECT IDENTIFIER ::= {id-mr 65} X.509|Part8"]
+    #[doc = " id-mr-sOAIdentifierMatch               OBJECT IDENTIFIER ::= {id-mr 66} X.509|Part8"]
+    #[doc = " id-mr-extensionPresenceMatch           OBJECT IDENTIFIER ::= {id-mr 67} X.509|Part8"]
+    pub static ID_MR_UUIDPAIRMATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[68u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_WORD_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MR_ZONAL_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_MR, &[52u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_APPLIED_RELAXATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_ATTRIBUTE_COMBINATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_ATTRIBUTE_TYPE_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_CONTEXT_COMBINATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_CONTEXT_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_CONTEXT_TYPE_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Notification attributes"]
+    pub static ID_NOT_D_SAPROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_FILTER_ITEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_HIERARCHY_SELECT_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_LDAP_DIAGNOSTIC_MSG: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_MATCHING_RULE_LIST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_MULTIPLE_MATCHING_LOCALITIES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_NOT, &[13u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_NOT_PROPOSED_RELAXATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_PWD_RESPONSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_SEARCH_CONTROL_OPTIONS_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_NOT, &[11u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_NOT_SEARCH_SERVICE_PROBLEM: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NOT_SERVICE_CONTROL_OPTIONS_LIST: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_NOT, &[12u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_NOT_SERVICE_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_NOT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OID_C: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[2u32]].concat()).unwrap().to_owned());
+    #[doc = " Object identifiers for LDAP X.509 assertion syntaxes"]
+    #[doc = " id-ldx-certExactAssertion              OBJECT IDENTIFIER ::= {id-ldx 1} X.509|Part 8"]
+    #[doc = " id-ldx-certAssertion                   OBJECT IDENTIFIER ::= {id-ldx 2} X.509|Part 8"]
+    #[doc = " id-ldx-certPairExactAssertion          OBJECT IDENTIFIER ::= {id-ldx 3} X.509|Part 8"]
+    #[doc = " id-ldx-certPairAssertion               OBJECT IDENTIFIER ::= {id-ldx 4} X.509|Part 8"]
+    #[doc = " id-ldx-certListExactAssertion          OBJECT IDENTIFIER ::= {id-ldx 5} X.509|Part 8"]
+    #[doc = " id-ldx-certListAssertion               OBJECT IDENTIFIER ::= {id-ldx 6} X.509|Part 8"]
+    #[doc = " id-ldx-algorithmIdentifier             OBJECT IDENTIFIER ::= {id-ldx 7} X.509|Part 8"]
+    pub static ID_OID_C1: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[0u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_C2: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_ADMINISTRATOR_IMPOSED_LIMIT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[33u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_AMBIGUOUS_KEY_ATTRIBUTES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_ATTRIBUTE_MATCHING_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[20u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_ATTRIBUTE_NEGATION_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[10u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_DATA_SOURCE_UNAVAILABLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_EMPTY_HIERARCHY_SELECTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_HIERARCHY_SELECT_FORBIDDEN: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_INVALID_CONTEXT_SEARCH_VALUE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[18u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_INVALID_HIERARCHY_SELECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_INVALID_SEARCH_CONTROL_OPTIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[26u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_INVALID_SEARCH_VALUE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_INVALID_SERVICE_CONTROL_OPTIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[27u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_MATCHING_USE_VIOLATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[22u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_MISSING_SEARCH_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_MISSING_SEARCH_CONTEXT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_PERMANENT_RESTRICTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[34u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_RELAXATION_NOT_SUPPORTED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_SEARCH_ATTRIBUTE_COMBINATION_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_SEARCH_ATTRIBUTE_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_SEARCH_CONTEXT_COMBINATION_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[14u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_SEARCH_CONTEXT_VALUE_REQUIRED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[17u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_SEARCH_CONTEXT_VALUE_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[16u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_SEARCH_CONTEXT_VIOLATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_SEARCH_SUBSET_VIOLATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_SEARCH_VALUE_NOT_ALLOWED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_SEARCH_VALUE_REQUIRED: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_SEARCH_VALUE_VIOLATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[9u32]].concat()).unwrap().to_owned());
+    #[doc = " Problem definitions"]
+    pub static ID_PR_TARGET_DSA_UNAVAILABLE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_TEMPORARY_RESTRICTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_UNAVAILABLE_HIERARCHY_SELECT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[25u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_UNAVAILABLE_OPERATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_UNAVAILABLE_RELAXATION_LEVEL: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_PR, &[31u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_PR_UNIDENTIFIED_OPERATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PR, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_PR_UNMATCHED_KEY_ATTRIBUTES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_UNSUPPORTED_MATCHING_RULE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PR_UNSUPPORTED_MATCHING_USE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PR, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static UB_ANSWERBACK: LazyLock<Integer> = LazyLock::new(|| Integer::from(8));
+    pub static UB_COUNTRY_CODE: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));
+    #[doc = " String complying with Rec. ITU-T E.164 only"]
+    pub static UB_INTERNATIONAL_ISDN_NUMBER: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(16));
+    #[doc = " String complying with Rec. ITU-T E.123 only"]
+    pub static UB_TELEPHONE_NUMBER: LazyLock<Integer> = LazyLock::new(|| Integer::from(32));
+    pub static UB_TELEX_NUMBER: LazyLock<Integer> = LazyLock::new(|| Integer::from(14));
+    #[doc = " String as defined by Rec. ITU-T X.121"]
+    pub static UB_X121_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(15));
+}

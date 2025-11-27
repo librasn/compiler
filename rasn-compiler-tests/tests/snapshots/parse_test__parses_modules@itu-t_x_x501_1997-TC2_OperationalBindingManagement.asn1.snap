@@ -1,0 +1,146 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_1997-TC2_OperationalBindingManagement.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Choice values are currently unsupported!
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: OPERATION
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: OPERATION
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod operational_binding_management {
+    extern crate alloc;
+    use super::directory_abstract_service::{
+        CommonResultsSeq, SecurityParameters, DIRECTORY_BIND, DIRECTORY_UNBIND, SECURITY_ERROR,
+    };
+    use super::directory_operational_binding_management_protocol::{
+        ID_ERR_OPERATIONAL_BINDING_ERROR, ID_OP_ESTABLISH_OPERATIONAL_BINDING,
+        ID_OP_MODIFY_OPERATIONAL_BINDING, ID_OP_TERMINATE_OPERATIONAL_BINDING,
+    };
+    use super::directory_shadow_abstract_service::SHADOW_OPERATIONAL_BINDING;
+    use super::distributed_operations::AccessPoint;
+    use super::enhanced_security::*;
+    use super::hierarchical_operational_bindings::{
+        HIERARCHICAL_OPERATIONAL_BINDING, NON_SPECIFIC_HIERARCHICAL_OPERATIONAL_BINDING,
+    };
+    use super::remote_operations_information_objects::*;
+    use super::remote_operations_information_objects_extensions::*;
+    use super::useful_definitions::{
+        DIRECTORY_ABSTRACT_SERVICE, DIRECTORY_SHADOW_ABSTRACT_SERVICE, DISTRIBUTED_OPERATIONS, DOP,
+        ENHANCED_SECURITY, HIERARCHICAL_OPERATIONAL_BINDINGS,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EstablishOperationalBindingArgument(pub OPTIONALLYPROTECTEDSEQ);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EstablishOperationalBindingResult(pub OPTIONALLYPROTECTEDSEQ);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyOperationalBindingArgument(pub OPTIONALLYPROTECTEDSEQ);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ModifyOperationalBindingResult {
+        #[rasn(tag(context, 0))]
+        null(()),
+        #[rasn(value("0.."), tag(context, 1))]
+        protected(OPTIONALLYPROTECTEDSEQ),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OpBindingErrorParamProblem {
+        invalidID = 0,
+        duplicateID = 1,
+        unsupportedBindingType = 2,
+        notAllowedForRole = 3,
+        parametersMissing = 4,
+        roleAssignment = 5,
+        invalidStartTime = 6,
+        invalidEndTime = 7,
+        invalidAgreement = 8,
+        currentlyNotDecidable = 9,
+        modificationNotAllowed = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OpBindingErrorParam {
+        #[rasn(tag(context, 0))]
+        pub problem: OpBindingErrorParamProblem,
+        #[rasn(tag(context, 1), identifier = "bindingType")]
+        pub binding_type: Option<ObjectIdentifier>,
+        #[rasn(tag(context, 2), identifier = "agreementProposal")]
+        pub agreement_proposal: Option<Any>,
+        #[rasn(tag(context, 3), identifier = "retryAt")]
+        pub retry_at: Option<Time>,
+    }
+    impl OpBindingErrorParam {
+        pub fn new(
+            problem: OpBindingErrorParamProblem,
+            binding_type: Option<ObjectIdentifier>,
+            agreement_proposal: Option<Any>,
+            retry_at: Option<Time>,
+        ) -> Self {
+            Self {
+                problem,
+                binding_type,
+                agreement_proposal,
+                retry_at,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OperationalBindingID {
+        pub identifier: Integer,
+        pub version: Integer,
+    }
+    impl OperationalBindingID {
+        pub fn new(identifier: Integer, version: Integer) -> Self {
+            Self {
+                identifier,
+                version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TerminateOperationalBindingArgument(pub OPTIONALLYPROTECTEDSEQ);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TerminateOperationalBindingResult {
+        #[rasn(tag(context, 0))]
+        null(()),
+        #[rasn(value("0.."), tag(context, 1))]
+        protected(OPTIONALLYPROTECTEDSEQ),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Time {
+        utcTime(UtcTime),
+        generalizedTime(GeneralizedTime),
+    }
+    #[doc = "PROTECTED"]
+    #[doc = "\tFROM Notation { joint-iso-ccitt genericULS (20) modules (1) notation (1) }"]
+    #[doc = " bind and unbind"]
+    pub static D_SAOPERATIONAL_BINDING_MANAGEMENT_BIND: LazyLock<OPERATION> =
+        LazyLock::new(|| OPERATION(DIRECTORY_BIND));
+    pub static D_SAOPERATIONAL_BINDING_MANAGEMENT_UNBIND: LazyLock<OPERATION> =
+        LazyLock::new(|| OPERATION(DIRECTORY_UNBIND));
+}

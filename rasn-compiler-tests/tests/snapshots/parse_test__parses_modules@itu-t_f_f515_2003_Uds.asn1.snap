@@ -1,0 +1,743 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_f_f515_2003_Uds.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod uds {
+    extern crate alloc;
+    use super::xml::Lang;
+    use super::xsd::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddrCoverage(pub AddrCoverageType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrCoverageType {
+        international = 0,
+        national = 1,
+        stateOrProvince = 2,
+        locality = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddrRestriction(pub AddrRestrictionType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrRestrictionType {
+        public = 0,
+        secret = 1,
+        #[rasn(identifier = "call-screen")]
+        call_screen = 2,
+        #[rasn(identifier = "no-marketing")]
+        no_marketing = 3,
+        #[rasn(identifier = "complete-only")]
+        complete_only = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddrTariff(pub AddrTariffType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrTariffType {
+        normal = 0,
+        premium = 1,
+        #[rasn(identifier = "toll-free")]
+        toll_free = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddrValidFrom(pub DateTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddrValidUntil(pub DateTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AddrValidity(pub AddrValidityType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrValidityType {
+        current = 0,
+        old = 1,
+        future = 2,
+        temporary = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Assertion {
+        countryAs(CountryAs),
+        localityCodeAs(LocalityCodeAs),
+        localityNDCAs(LocalityNDCAs),
+        subscriberTypeAs(SubscriberTypeAs),
+        languageAs(LanguageAs),
+        commServiceAs(CommServiceAs),
+        addrValidityAs(AddrValidityAs),
+        addrCoverageAs(AddrCoverageAs),
+        addrTariffAs(AddrTariffAs),
+        addrRestrictionAs(AddrRestrictionAs),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Attribute {
+        country(Country),
+        locality(Locality),
+        stateOrProvince(StateOrProvince),
+        streetAddress(StreetAddress),
+        houseId(HouseId),
+        givenName(GivenName),
+        title(Title),
+        description(Description),
+        businessCategory(BusinessCategory),
+        postalCode(PostalCode),
+        postOfficeBox(PostOfficeBox),
+        dmdName(DmdName),
+        localityCode(LocalityCode),
+        localityNDC(LocalityNDC),
+        subscriberName(SubscriberName),
+        subscriberType(SubscriberType),
+        secondFamilyName(SecondFamilyName),
+        profession(Profession),
+        language(Language),
+        telephone(Telephone),
+        orAddress(OrAddress),
+        mail(Mail),
+        url(Url),
+        commService(CommService),
+        commNetwork(CommNetwork),
+        addrValidFrom(AddrValidFrom),
+        addrValidUntil(AddrValidUntil),
+        addrValidity(AddrValidity),
+        addrCoverage(AddrCoverage),
+        addrTariff(AddrTariff),
+        addrRestriction(AddrRestriction),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousAttributeCombinations {
+        attributeType(AttributeType),
+        or(Cor),
+        not(AttributeCombinations),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeCombinations(pub SequenceOf<AnonymousAttributeCombinations>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AttributeType {
+        country = 0,
+        locality = 1,
+        stateOrProvince = 2,
+        streetAddress = 3,
+        houseId = 4,
+        givenName = 5,
+        title = 6,
+        description = 7,
+        businessCategory = 8,
+        postalCode = 9,
+        postOfficeBox = 10,
+        dmdName = 11,
+        localityCode = 12,
+        localityNDC = 13,
+        subscriberName = 14,
+        subscriberType = 15,
+        secondFamilyName = 16,
+        profession = 17,
+        language = 18,
+        telephone = 19,
+        orAddress = 20,
+        mail = 21,
+        url = 22,
+        commService = 23,
+        commNetwork = 24,
+        addrValidFrom = 25,
+        addrValidUntil = 26,
+        addrValidity = 27,
+        addrCoverage = 28,
+        addrTariff = 29,
+        addrRestriction = 30,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeTypeList(pub AttributeTypes);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeTypes(pub SequenceOf<AttributeType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BusinessCategory {
+        pub lang: Option<Lang>,
+        pub base: Ub128,
+    }
+    impl BusinessCategory {
+        pub fn new(lang: Option<Lang>, base: Ub128) -> Self {
+            Self { lang, base }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousCand {
+        attributeType(AttributeType),
+        or(Cor),
+        not(AttributeCombinations),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Cand(pub SequenceOf<AnonymousCand>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CharacterMatchType {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CharacterMatchTypes(pub SequenceOf<CharacterMatchType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ComServiceType {
+        voice = 0,
+        fax = 1,
+        textPhone = 2,
+        videoPhone = 3,
+        publicPhoneBox = 4,
+        switchBoard = 5,
+        pager = 6,
+        data = 7,
+        #[rasn(identifier = "e-mail")]
+        e_mail = 8,
+        web = 9,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ComServiceTypes(pub SequenceOf<ComServiceType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommNetwork(pub NetworkType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommService(pub ComServiceTypes);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CommsAddress {
+        #[rasn(size("1.."))]
+        pub attribute: SequenceOf<Attribute>,
+    }
+    impl CommsAddress {
+        pub fn new(attribute: SequenceOf<Attribute>) -> Self {
+            Self { attribute }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousCor {
+        attributeType(AttributeType),
+        and(Cand),
+        not(AttributeCombinations),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Cor(pub SequenceOf<AnonymousCor>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Country(pub NMTOKEN);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Description {
+        pub lang: Option<Lang>,
+        pub base: Ub1024,
+    }
+    impl Description {
+        pub fn new(lang: Option<Lang>, base: Ub1024) -> Self {
+            Self { lang, base }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DmdName(pub Ub64);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Family {
+        commsAddress(CommsAddress),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousFilter {
+        assertion(Assertion),
+        substrings(Substrings),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Filter(pub SequenceOf<AnonymousFilter>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    pub enum AnonymousFilterItem {
+        assertion(Assertion),
+        substrings(Substrings),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct FilterItem(pub SequenceOf<AnonymousFilterItem>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FilterNot(pub Filter);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GivenName(pub Ub64);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HierarchySelectList(pub HierarchySelections);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum HierarchySelection {
+        #[rasn(identifier = "self")]
+        R_self = 0,
+        children = 1,
+        parent = 2,
+        hierarchy = 3,
+        top = 4,
+        subtree = 5,
+        all = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HierarchySelections(pub SequenceOf<HierarchySelection>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HouseId(pub Ub64);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Language(pub super::xsd::Language);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LimitProblem {
+        adminLimit = 0,
+        permanentRestriction = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Locality(pub Ub128);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalityCode(pub Ub64);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LocalityNDC(pub Ub16NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Mail(pub Ub256);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum NetworkType {
+        pstn = 0,
+        isdn = 1,
+        gsm = 2,
+        umts = 3,
+        internet = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NotSupported(pub Options);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Notification {
+        limitProblem(LimitProblem),
+        serviceProblem(ServiceProblem),
+        searchType(SearchType),
+        attributeTypeList(AttributeTypeList),
+        filterNot(FilterNot),
+        filterItem(FilterItem),
+        providerName(ProviderName),
+        hierarchySelectList(HierarchySelectList),
+        searchControlOptionsList(SearchControlOptionsList),
+        attributeCombinations(AttributeCombinations),
+        wordRestriction(WordRestriction),
+        notSupported(NotSupported),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "NumericString-1", from("\u{30}..=\u{39}"))]
+    pub struct NumericString1(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Option {
+        paging = 0,
+        weighting = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Options(pub SequenceOf<Option>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OrAddress(pub Ub1024);
+    #[doc = " The XSD module is defined in the ASN.1 standards."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PagedResults {
+        #[rasn(value("1.."), identifier = "pageSize")]
+        pub page_size: Option<Integer>,
+        #[rasn(value("1.."), identifier = "pageNumber")]
+        pub page_number: Option<Integer>,
+        #[rasn(identifier = "queryReference")]
+        pub query_reference: Option<OctetString>,
+    }
+    impl PagedResults {
+        pub fn new(
+            page_size: Option<Integer>,
+            page_number: Option<Integer>,
+            query_reference: Option<OctetString>,
+        ) -> Self {
+            Self {
+                page_size,
+                page_number,
+                query_reference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PostOfficeBox(pub Ub40);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PostalCode(pub Ub40);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Profession {
+        pub lang: Option<Lang>,
+        pub base: Ub128,
+    }
+    impl Profession {
+        pub fn new(lang: Option<Lang>, base: Ub128) -> Self {
+            Self { lang, base }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProviderId {
+        pub country: Country,
+        #[rasn(identifier = "dmdName")]
+        pub dmd_name: Option<DmdName>,
+    }
+    impl ProviderId {
+        pub fn new(country: Country, dmd_name: Option<DmdName>) -> Self {
+            Self { country, dmd_name }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProviderName(pub ProviderId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SearchControlOptionsList(pub SearchOptions);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SearchOption {
+        performExactly = 0,
+        includeAllAreas = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SearchOptions(pub SequenceOf<SearchOption>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SearchRequestBase {
+        #[rasn(identifier = "entryIdentifier")]
+        pub entry_identifier: Option<OctetString>,
+    }
+    impl SearchRequestBase {
+        pub fn new(entry_identifier: Option<OctetString>) -> Self {
+            Self { entry_identifier }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SearchRequestInfoSelect {
+        #[rasn(identifier = "attrTypes")]
+        pub attr_types: Option<AttributeTypes>,
+        pub family: SequenceOf<Family>,
+    }
+    impl SearchRequestInfoSelect {
+        pub fn new(attr_types: Option<AttributeTypes>, family: SequenceOf<Family>) -> Self {
+            Self { attr_types, family }
+        }
+    }
+    #[doc = " Unified Directory Search Request"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SearchRequest {
+        #[rasn(value("1.."), identifier = "entryLimit")]
+        pub entry_limit: Option<Integer>,
+        #[rasn(
+            value("0.."),
+            default = "search_request_extended_area_default",
+            identifier = "extendedArea"
+        )]
+        pub extended_area: Integer,
+        #[rasn(identifier = "searchOptions")]
+        pub search_options: Option<SearchOptions>,
+        #[rasn(
+            default = "search_request_hier_select_default",
+            identifier = "hierSelect"
+        )]
+        pub hier_select: HierarchySelections,
+        pub base: Option<SearchRequestBase>,
+        pub filter: Option<Filter>,
+        #[rasn(identifier = "infoSelect")]
+        pub info_select: Option<SearchRequestInfoSelect>,
+        #[rasn(identifier = "pagedResults")]
+        pub paged_results: Option<PagedResults>,
+    }
+    impl SearchRequest {
+        pub fn new(
+            entry_limit: Option<Integer>,
+            extended_area: Integer,
+            search_options: Option<SearchOptions>,
+            hier_select: HierarchySelections,
+            base: Option<SearchRequestBase>,
+            filter: Option<Filter>,
+            info_select: Option<SearchRequestInfoSelect>,
+            paged_results: Option<PagedResults>,
+        ) -> Self {
+            Self {
+                entry_limit,
+                extended_area,
+                search_options,
+                hier_select,
+                base,
+                filter,
+                info_select,
+                paged_results,
+            }
+        }
+    }
+    fn search_request_extended_area_default() -> Integer {
+        Integer::from(0)
+    }
+    fn search_request_hier_select_default() -> HierarchySelections {
+        HierarchySelections(Oid::new(&[&***R_SELF].concat()).unwrap().to_owned())
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SearchType {
+        searchForStateOrProvince = 0,
+        searchForLocality = 1,
+        subscriberWithinLocality = 2,
+        subscriberByEntryIdentifier = 3,
+        subscriberWithinStateOrProvince = 4,
+        subscriberWithinCountry = 5,
+        searchForStreetAddress = 6,
+        subscriberByStreetAddress = 7,
+        subscriberByCommunicationsAddress = 8,
+        subscriberByBusinessCategory = 9,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecondFamilyName(pub Ub128);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ServiceProblem {
+        hierSelectForbidden = 0,
+        hierSelectNotAvailableForService = 1,
+        hierSelectNotSupported = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StateOrProvince(pub Ub128);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StreetAddress(pub Ub128);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum StringMatchType {
+        exact = 0,
+        deletion = 1,
+        restrictedDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StringMatchTypes(pub SequenceOf<StringMatchType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubscrType {
+        residential = 0,
+        organization = 1,
+        government = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubscrTypes(pub SequenceOf<SubscrType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SubscriberName {
+        pub lang: Option<Lang>,
+        pub base: Ub64,
+    }
+    impl SubscriberName {
+        pub fn new(lang: Option<Lang>, base: Ub64) -> Self {
+            Self { lang, base }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubscriberType(pub SubscrTypes);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Substrings {
+        localitySub(LocalitySub),
+        stateOrProvinceSub(StateOrProvinceSub),
+        streetAddressSub(StreetAddressSub),
+        houseIdSub(HouseIdSub),
+        givenNameSub(GivenNameSub),
+        titleSub(TitleSub),
+        businessCategorySub(BusinessCategorySub),
+        postalCodeSub(PostalCodeSub),
+        postOfficeBoxSub(PostOfficeBoxSub),
+        dmdNameSub(DmdNameSub),
+        subscriberNameSub(SubscriberNameSub),
+        secondFamilyNameSub(SecondFamilyNameSub),
+        professionSub(ProfessionSub),
+        telephoneSub(TelephoneSub),
+        orAddressSub(OrAddressSub),
+        mailSub(MailSub),
+        urlSub(UrlSub),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Telephone(pub Ub32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Title {
+        pub lang: Option<Lang>,
+        pub base: Ub64,
+    }
+    impl Title {
+        pub fn new(lang: Option<Lang>, base: Ub64) -> Self {
+            Self { lang, base }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=1024"))]
+    pub struct Ub1024(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=128"))]
+    pub struct Ub128(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=16"), from("\u{30}..=\u{39}"))]
+    pub struct Ub16NumericString(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=256"))]
+    pub struct Ub256(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=32"))]
+    pub struct Ub32(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=40"))]
+    pub struct Ub40(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=512"))]
+    pub struct Ub512(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=64"))]
+    pub struct Ub64(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Url(pub Ub1024);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum WordMatchType {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WordMatchTypes(pub SequenceOf<WordMatchType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct WordRestriction {
+        #[rasn(identifier = "attributeType")]
+        pub attribute_type: Option<AttributeType>,
+        #[rasn(value("1.."), identifier = "initialMinimum")]
+        pub initial_minimum: Option<Integer>,
+        #[rasn(value("1.."), identifier = "otherMinimum")]
+        pub other_minimum: Option<Integer>,
+        #[rasn(identifier = "stringMatchTypes")]
+        pub string_match_types: Option<StringMatchTypes>,
+        #[rasn(identifier = "wordMatchTypes")]
+        pub word_match_types: Option<WordMatchTypes>,
+        #[rasn(identifier = "characterMatchTypes")]
+        pub character_match_types: Option<CharacterMatchTypes>,
+    }
+    impl WordRestriction {
+        pub fn new(
+            attribute_type: Option<AttributeType>,
+            initial_minimum: Option<Integer>,
+            other_minimum: Option<Integer>,
+            string_match_types: Option<StringMatchTypes>,
+            word_match_types: Option<WordMatchTypes>,
+            character_match_types: Option<CharacterMatchTypes>,
+        ) -> Self {
+            Self {
+                attribute_type,
+                initial_minimum,
+                other_minimum,
+                string_match_types,
+                word_match_types,
+                character_match_types,
+            }
+        }
+    }
+}

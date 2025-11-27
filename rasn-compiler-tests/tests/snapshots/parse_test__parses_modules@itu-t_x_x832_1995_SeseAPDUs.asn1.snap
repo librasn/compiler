@@ -1,0 +1,25 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x832_1995_SeseAPDUs.asn1
+---
+Error matching ASN syntax at while parsing:
+    ╭─[line 63, column 2]
+    │
+    │ 
+ 63 │  SEUAbort{SECURITY-EXCHANGE:ValidSEs, InvocationId:InvocationIdSet} ::= ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 64 │    SEQUENCE {
+ 65 │    invocationId
+ 66 │      InvocationId(InvocationIdSet)
+ 67 │        (CONSTRAINED BY {-- Must be the same as the----  invocationId on an active or just-completed--
+ 69 │           --  security exchange -- }) DEFAULT noInvocationId,
+ 70 │    itemIdentifier
+ 71 │      SECURITY-EXCHANGE.&SE-Items.&itemId({ValidSEs.&SE-Items})
+ 72 │        OPTIONAL,
+ 73 │    --  This component will only be present
+ 74 │    --  when the Abort is generated subsequent
+ 75 │    --  to receipt of a SETransfer APDU.
+ 76 │    errors          SEQUENCE OF SEerror{{ValidSEs}} OPTIONAL
+ 77 │    --  needed to handle multiple error codes
+ 78 │  }
+    │
+────╯

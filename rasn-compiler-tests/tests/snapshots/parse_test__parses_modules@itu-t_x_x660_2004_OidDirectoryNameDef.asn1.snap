@@ -1,0 +1,33 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x660_2004_OidDirectoryNameDef.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod oid_directory_name_def {
+    extern crate alloc;
+    use super::information_framework::*;
+    use super::selected_attribute_types::INTEGER_MATCH;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Object identifier assignments"]
+    pub static ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 17u32, 1u32, 2u32]).to_owned());
+    pub static ID_OID_C: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_C1: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[0u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_C2: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_ROOT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_OID_ROOT_NF: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID, &[4u32]].concat()).unwrap().to_owned());
+}

@@ -1,0 +1,1190 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t418_1993_Geo-Gr-Presentation-Attributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod geo_gr_presentation_attributes {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "ASF-Type")]
+    pub enum ASFType {
+        bundled = 0,
+        individual = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Colour {
+        #[rasn(tag(context, 0))]
+        indexed(Integer),
+        #[rasn(tag(context, 1))]
+        direct(RGB),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousColourRepresentationsColourTableSpecification {
+        #[rasn(identifier = "starting-index")]
+        pub starting_index: Integer,
+        #[rasn(identifier = "colour-list")]
+        pub colour_list: SequenceOf<RGB>,
+    }
+    impl AnonymousColourRepresentationsColourTableSpecification {
+        pub fn new(starting_index: Integer, colour_list: SequenceOf<RGB>) -> Self {
+            Self {
+                starting_index,
+                colour_list,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ColourRepresentationsColourTableSpecification(
+        pub SequenceOf<AnonymousColourRepresentationsColourTableSpecification>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Colour-Representations")]
+    pub struct ColourRepresentations {
+        #[rasn(tag(context, 0), identifier = "background-colour")]
+        pub background_colour: Option<RGB>,
+        #[rasn(tag(context, 1), identifier = "colour-table-specification")]
+        pub colour_table_specification: Option<ColourRepresentationsColourTableSpecification>,
+    }
+    impl ColourRepresentations {
+        pub fn new(
+            background_colour: Option<RGB>,
+            colour_table_specification: Option<ColourRepresentationsColourTableSpecification>,
+        ) -> Self {
+            Self {
+                background_colour,
+                colour_table_specification,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EdgeRenditionEdgeAspectSourceFlags {
+        #[rasn(identifier = "edge-type-asf")]
+        pub edge_type_asf: ASFType,
+        #[rasn(identifier = "edge-width-asf")]
+        pub edge_width_asf: ASFType,
+        #[rasn(identifier = "edge-colour-asf")]
+        pub edge_colour_asf: ASFType,
+    }
+    impl EdgeRenditionEdgeAspectSourceFlags {
+        pub fn new(
+            edge_type_asf: ASFType,
+            edge_width_asf: ASFType,
+            edge_colour_asf: ASFType,
+        ) -> Self {
+            Self {
+                edge_type_asf,
+                edge_width_asf,
+                edge_colour_asf,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousEdgeRenditionEdgeBundleSpecificationsEdgeBundleRepresentation {
+        #[rasn(identifier = "edge-type")]
+        pub edge_type: Integer,
+        #[rasn(identifier = "edge-width")]
+        pub edge_width: ScaledOrAbsolute,
+        #[rasn(identifier = "edge-colour")]
+        pub edge_colour: Colour,
+    }
+    impl AnonymousEdgeRenditionEdgeBundleSpecificationsEdgeBundleRepresentation {
+        pub fn new(edge_type: Integer, edge_width: ScaledOrAbsolute, edge_colour: Colour) -> Self {
+            Self {
+                edge_type,
+                edge_width,
+                edge_colour,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousEdgeRenditionEdgeBundleSpecifications {
+        #[rasn(identifier = "edge-bundle-index")]
+        pub edge_bundle_index: Integer,
+        #[rasn(identifier = "edge-bundle-representation")]
+        pub edge_bundle_representation:
+            AnonymousEdgeRenditionEdgeBundleSpecificationsEdgeBundleRepresentation,
+    }
+    impl AnonymousEdgeRenditionEdgeBundleSpecifications {
+        pub fn new(
+            edge_bundle_index: Integer,
+            edge_bundle_representation : AnonymousEdgeRenditionEdgeBundleSpecificationsEdgeBundleRepresentation,
+        ) -> Self {
+            Self {
+                edge_bundle_index,
+                edge_bundle_representation,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EdgeRenditionEdgeBundleSpecifications(
+        pub SequenceOf<AnonymousEdgeRenditionEdgeBundleSpecifications>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Edge-Rendition")]
+    pub struct EdgeRendition {
+        #[rasn(tag(context, 0), identifier = "edge-width-spec-mode")]
+        pub edge_width_spec_mode: Option<SpecificationMode>,
+        #[rasn(tag(context, 1), identifier = "edge-visibility")]
+        pub edge_visibility: Option<OnOrOff>,
+        #[rasn(tag(context, 2), identifier = "edge-bundle-index")]
+        pub edge_bundle_index: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "edge-type")]
+        pub edge_type: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "edge-width")]
+        pub edge_width: Option<ScaledOrAbsolute>,
+        #[rasn(tag(context, 5), identifier = "edge-colour")]
+        pub edge_colour: Option<Colour>,
+        #[rasn(tag(context, 6), identifier = "edge-aspect-source-flags")]
+        pub edge_aspect_source_flags: Option<EdgeRenditionEdgeAspectSourceFlags>,
+        #[rasn(tag(context, 7), identifier = "edge-bundle-specifications")]
+        pub edge_bundle_specifications: Option<EdgeRenditionEdgeBundleSpecifications>,
+    }
+    impl EdgeRendition {
+        pub fn new(
+            edge_width_spec_mode: Option<SpecificationMode>,
+            edge_visibility: Option<OnOrOff>,
+            edge_bundle_index: Option<Integer>,
+            edge_type: Option<Integer>,
+            edge_width: Option<ScaledOrAbsolute>,
+            edge_colour: Option<Colour>,
+            edge_aspect_source_flags: Option<EdgeRenditionEdgeAspectSourceFlags>,
+            edge_bundle_specifications: Option<EdgeRenditionEdgeBundleSpecifications>,
+        ) -> Self {
+            Self {
+                edge_width_spec_mode,
+                edge_visibility,
+                edge_bundle_index,
+                edge_type,
+                edge_width,
+                edge_colour,
+                edge_aspect_source_flags,
+                edge_bundle_specifications,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FilledAreaRenditionInteriorStyle {
+        hollow = 0,
+        solid = 1,
+        pattern = 2,
+        hatch = 3,
+        empty = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FilledAreaRenditionPatternSize {
+        #[rasn(identifier = "height-x-component")]
+        pub height_x_component: VDCValue,
+        #[rasn(identifier = "height-y-component")]
+        pub height_y_component: VDCValue,
+        #[rasn(identifier = "width-x-component")]
+        pub width_x_component: VDCValue,
+        #[rasn(identifier = "width-y-component")]
+        pub width_y_component: VDCValue,
+    }
+    impl FilledAreaRenditionPatternSize {
+        pub fn new(
+            height_x_component: VDCValue,
+            height_y_component: VDCValue,
+            width_x_component: VDCValue,
+            width_y_component: VDCValue,
+        ) -> Self {
+            Self {
+                height_x_component,
+                height_y_component,
+                width_x_component,
+                width_y_component,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FilledAreaRenditionFillAspectSourceFlags {
+        #[rasn(identifier = "interior-style-asf")]
+        pub interior_style_asf: ASFType,
+        #[rasn(identifier = "fill-colour-asf")]
+        pub fill_colour_asf: ASFType,
+        #[rasn(identifier = "hatch-index-asf")]
+        pub hatch_index_asf: ASFType,
+        #[rasn(identifier = "pattern-index-asf")]
+        pub pattern_index_asf: ASFType,
+    }
+    impl FilledAreaRenditionFillAspectSourceFlags {
+        pub fn new(
+            interior_style_asf: ASFType,
+            fill_colour_asf: ASFType,
+            hatch_index_asf: ASFType,
+            pattern_index_asf: ASFType,
+        ) -> Self {
+            Self {
+                interior_style_asf,
+                fill_colour_asf,
+                hatch_index_asf,
+                pattern_index_asf,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentationInteriorStyle {
+        hollow = 0,
+        solid = 1,
+        pattern = 2,
+        hatch = 3,
+        empty = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentation {
+        #[rasn(identifier = "interior-style")]
+        pub interior_style:
+            FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentationInteriorStyle,
+        #[rasn(identifier = "fill-colour")]
+        pub fill_colour: Colour,
+        #[rasn(identifier = "hatch-index")]
+        pub hatch_index: Integer,
+        #[rasn(identifier = "patttern-index")]
+        pub patttern_index: Integer,
+    }
+    impl FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentation {
+        pub fn new(
+            interior_style : FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentationInteriorStyle,
+            fill_colour: Colour,
+            hatch_index: Integer,
+            patttern_index: Integer,
+        ) -> Self {
+            Self {
+                interior_style,
+                fill_colour,
+                hatch_index,
+                patttern_index,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FilledAreaRenditionFillBundleSpecifications {
+        #[rasn(identifier = "fill-bundle-index")]
+        pub fill_bundle_index: Integer,
+        #[rasn(identifier = "fill-bundle-representation")]
+        pub fill_bundle_representation:
+            FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentation,
+    }
+    impl FilledAreaRenditionFillBundleSpecifications {
+        pub fn new(
+            fill_bundle_index: Integer,
+            fill_bundle_representation : FilledAreaRenditionFillBundleSpecificationsFillBundleRepresentation,
+        ) -> Self {
+            Self {
+                fill_bundle_index,
+                fill_bundle_representation,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Filled-Area-Rendition")]
+    pub struct FilledAreaRendition {
+        #[rasn(tag(context, 1), identifier = "fill-bundle-index")]
+        pub fill_bundle_index: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "interior-style")]
+        pub interior_style: Option<FilledAreaRenditionInteriorStyle>,
+        #[rasn(tag(context, 3), identifier = "fill-colour")]
+        pub fill_colour: Option<Colour>,
+        #[rasn(tag(context, 4), identifier = "hatch-index")]
+        pub hatch_index: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "pattern-index")]
+        pub pattern_index: Option<Integer>,
+        #[rasn(tag(context, 6), identifier = "fill-reference-point")]
+        pub fill_reference_point: Option<VDCPair>,
+        #[rasn(tag(context, 7), identifier = "pattern-size")]
+        pub pattern_size: Option<FilledAreaRenditionPatternSize>,
+        #[rasn(tag(context, 8), identifier = "pattern-table-specifications")]
+        pub pattern_table_specifications: Option<SequenceOf<PatternTableElement>>,
+        #[rasn(tag(context, 9), identifier = "fill-aspect-source-flags")]
+        pub fill_aspect_source_flags: Option<FilledAreaRenditionFillAspectSourceFlags>,
+        #[rasn(tag(context, 10), identifier = "fill-bundle-specifications")]
+        pub fill_bundle_specifications: Option<FilledAreaRenditionFillBundleSpecifications>,
+    }
+    impl FilledAreaRendition {
+        pub fn new(
+            fill_bundle_index: Option<Integer>,
+            interior_style: Option<FilledAreaRenditionInteriorStyle>,
+            fill_colour: Option<Colour>,
+            hatch_index: Option<Integer>,
+            pattern_index: Option<Integer>,
+            fill_reference_point: Option<VDCPair>,
+            pattern_size: Option<FilledAreaRenditionPatternSize>,
+            pattern_table_specifications: Option<SequenceOf<PatternTableElement>>,
+            fill_aspect_source_flags: Option<FilledAreaRenditionFillAspectSourceFlags>,
+            fill_bundle_specifications: Option<FilledAreaRenditionFillBundleSpecifications>,
+        ) -> Self {
+            Self {
+                fill_bundle_index,
+                interior_style,
+                fill_colour,
+                hatch_index,
+                pattern_index,
+                fill_reference_point,
+                pattern_size,
+                pattern_table_specifications,
+                fill_aspect_source_flags,
+                fill_bundle_specifications,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "Geometric-Graphics-Attributes")]
+    pub struct GeometricGraphicsAttributes {
+        #[rasn(tag(context, 1), identifier = "line-rendition")]
+        pub line_rendition: Option<LineRendition>,
+        #[rasn(tag(context, 2), identifier = "marker-rendition")]
+        pub marker_rendition: Option<MarkerRendition>,
+        #[rasn(tag(context, 3), identifier = "text-rendition")]
+        pub text_rendition: Option<TextRendition>,
+        #[rasn(tag(context, 4), identifier = "filled-area-rendition")]
+        pub filled_area_rendition: Option<FilledAreaRendition>,
+        #[rasn(tag(context, 5), identifier = "edge-rendition")]
+        pub edge_rendition: Option<EdgeRendition>,
+        #[rasn(tag(context, 6), identifier = "colour-representations")]
+        pub colour_representations: Option<ColourRepresentations>,
+        #[rasn(tag(context, 7), identifier = "transparency-specification")]
+        pub transparency_specification: Option<TransparencySpecification>,
+        #[rasn(tag(context, 8), identifier = "transformation-specification")]
+        pub transformation_specification: Option<TransformationSpecification>,
+        #[rasn(tag(context, 9), identifier = "region-of-interest-specification")]
+        pub region_of_interest_specification: Option<RegionOfInterestSpecification>,
+        #[rasn(tag(context, 10), identifier = "picture-orientation")]
+        pub picture_orientation: Option<PictureOrientation>,
+        #[rasn(tag(context, 11), identifier = "picture-dimensions")]
+        pub picture_dimensions: Option<PictureDimensions>,
+    }
+    impl GeometricGraphicsAttributes {
+        pub fn new(
+            line_rendition: Option<LineRendition>,
+            marker_rendition: Option<MarkerRendition>,
+            text_rendition: Option<TextRendition>,
+            filled_area_rendition: Option<FilledAreaRendition>,
+            edge_rendition: Option<EdgeRendition>,
+            colour_representations: Option<ColourRepresentations>,
+            transparency_specification: Option<TransparencySpecification>,
+            transformation_specification: Option<TransformationSpecification>,
+            region_of_interest_specification: Option<RegionOfInterestSpecification>,
+            picture_orientation: Option<PictureOrientation>,
+            picture_dimensions: Option<PictureDimensions>,
+        ) -> Self {
+            Self {
+                line_rendition,
+                marker_rendition,
+                text_rendition,
+                filled_area_rendition,
+                edge_rendition,
+                colour_representations,
+                transparency_specification,
+                transformation_specification,
+                region_of_interest_specification,
+                picture_orientation,
+                picture_dimensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LineRenditionLineAspectSourceFlags {
+        #[rasn(identifier = "line-type-asf")]
+        pub line_type_asf: ASFType,
+        #[rasn(identifier = "line-width-asf")]
+        pub line_width_asf: ASFType,
+        #[rasn(identifier = "line-colour-asf")]
+        pub line_colour_asf: ASFType,
+    }
+    impl LineRenditionLineAspectSourceFlags {
+        pub fn new(
+            line_type_asf: ASFType,
+            line_width_asf: ASFType,
+            line_colour_asf: ASFType,
+        ) -> Self {
+            Self {
+                line_type_asf,
+                line_width_asf,
+                line_colour_asf,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousLineRenditionLineBundleSpecificationsLineBundleRepresentation {
+        #[rasn(identifier = "line-type")]
+        pub line_type: Integer,
+        #[rasn(identifier = "line-width")]
+        pub line_width: ScaledOrAbsolute,
+        #[rasn(identifier = "line-colour")]
+        pub line_colour: Colour,
+    }
+    impl AnonymousLineRenditionLineBundleSpecificationsLineBundleRepresentation {
+        pub fn new(line_type: Integer, line_width: ScaledOrAbsolute, line_colour: Colour) -> Self {
+            Self {
+                line_type,
+                line_width,
+                line_colour,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousLineRenditionLineBundleSpecifications {
+        #[rasn(identifier = "line-bundle-index")]
+        pub line_bundle_index: Integer,
+        #[rasn(identifier = "line-bundle-representation")]
+        pub line_bundle_representation:
+            AnonymousLineRenditionLineBundleSpecificationsLineBundleRepresentation,
+    }
+    impl AnonymousLineRenditionLineBundleSpecifications {
+        pub fn new(
+            line_bundle_index: Integer,
+            line_bundle_representation : AnonymousLineRenditionLineBundleSpecificationsLineBundleRepresentation,
+        ) -> Self {
+            Self {
+                line_bundle_index,
+                line_bundle_representation,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LineRenditionLineBundleSpecifications(
+        pub SequenceOf<AnonymousLineRenditionLineBundleSpecifications>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Line-Rendition")]
+    pub struct LineRendition {
+        #[rasn(tag(context, 0), identifier = "line-width-specification-mode")]
+        pub line_width_specification_mode: Option<SpecificationMode>,
+        #[rasn(tag(context, 1), identifier = "line-bundle-index")]
+        pub line_bundle_index: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "line-type")]
+        pub line_type: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "line-width")]
+        pub line_width: Option<ScaledOrAbsolute>,
+        #[rasn(tag(context, 4), identifier = "line-colour")]
+        pub line_colour: Option<Colour>,
+        #[rasn(tag(context, 5), identifier = "line-aspect-source-flags")]
+        pub line_aspect_source_flags: Option<LineRenditionLineAspectSourceFlags>,
+        #[rasn(tag(context, 6), identifier = "line-bundle-specifications")]
+        pub line_bundle_specifications: Option<LineRenditionLineBundleSpecifications>,
+    }
+    impl LineRendition {
+        pub fn new(
+            line_width_specification_mode: Option<SpecificationMode>,
+            line_bundle_index: Option<Integer>,
+            line_type: Option<Integer>,
+            line_width: Option<ScaledOrAbsolute>,
+            line_colour: Option<Colour>,
+            line_aspect_source_flags: Option<LineRenditionLineAspectSourceFlags>,
+            line_bundle_specifications: Option<LineRenditionLineBundleSpecifications>,
+        ) -> Self {
+            Self {
+                line_width_specification_mode,
+                line_bundle_index,
+                line_type,
+                line_width,
+                line_colour,
+                line_aspect_source_flags,
+                line_bundle_specifications,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MarkerRenditionMarkerAspectSourceFlags {
+        #[rasn(identifier = "marker-type-asf")]
+        pub marker_type_asf: ASFType,
+        #[rasn(identifier = "marker-size-asf")]
+        pub marker_size_asf: ASFType,
+        #[rasn(identifier = "marker-colour-asf")]
+        pub marker_colour_asf: ASFType,
+    }
+    impl MarkerRenditionMarkerAspectSourceFlags {
+        pub fn new(
+            marker_type_asf: ASFType,
+            marker_size_asf: ASFType,
+            marker_colour_asf: ASFType,
+        ) -> Self {
+            Self {
+                marker_type_asf,
+                marker_size_asf,
+                marker_colour_asf,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousMarkerRenditionMarkerBundleSpecificationsMarkerBundleRepresentation {
+        #[rasn(identifier = "marker-type")]
+        pub marker_type: Integer,
+        #[rasn(identifier = "marker-size")]
+        pub marker_size: ScaledOrAbsolute,
+        #[rasn(identifier = "marker-colour")]
+        pub marker_colour: Colour,
+    }
+    impl AnonymousMarkerRenditionMarkerBundleSpecificationsMarkerBundleRepresentation {
+        pub fn new(
+            marker_type: Integer,
+            marker_size: ScaledOrAbsolute,
+            marker_colour: Colour,
+        ) -> Self {
+            Self {
+                marker_type,
+                marker_size,
+                marker_colour,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousMarkerRenditionMarkerBundleSpecifications {
+        #[rasn(identifier = "marker-bundle-index")]
+        pub marker_bundle_index: Integer,
+        #[rasn(identifier = "marker-bundle-representation")]
+        pub marker_bundle_representation:
+            AnonymousMarkerRenditionMarkerBundleSpecificationsMarkerBundleRepresentation,
+    }
+    impl AnonymousMarkerRenditionMarkerBundleSpecifications {
+        pub fn new(
+            marker_bundle_index: Integer,
+            marker_bundle_representation : AnonymousMarkerRenditionMarkerBundleSpecificationsMarkerBundleRepresentation,
+        ) -> Self {
+            Self {
+                marker_bundle_index,
+                marker_bundle_representation,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MarkerRenditionMarkerBundleSpecifications(
+        pub SequenceOf<AnonymousMarkerRenditionMarkerBundleSpecifications>,
+    );
+    #[doc = " scaled"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Marker-Rendition")]
+    pub struct MarkerRendition {
+        #[rasn(tag(context, 0), identifier = "marker-size-specification-mode")]
+        pub marker_size_specification_mode: Option<SpecificationMode>,
+        #[rasn(tag(context, 1), identifier = "marker-bundle-index")]
+        pub marker_bundle_index: Option<Integer>,
+        #[rasn(tag(context, 2), identifier = "marker-type")]
+        pub marker_type: Option<Integer>,
+        #[rasn(tag(context, 3), identifier = "marker-size")]
+        pub marker_size: Option<ScaledOrAbsolute>,
+        #[rasn(tag(context, 4), identifier = "marker-colour")]
+        pub marker_colour: Option<Colour>,
+        #[rasn(tag(context, 5), identifier = "marker-aspect-source-flags")]
+        pub marker_aspect_source_flags: Option<MarkerRenditionMarkerAspectSourceFlags>,
+        #[rasn(tag(context, 6), identifier = "marker-bundle-specifications")]
+        pub marker_bundle_specifications: Option<MarkerRenditionMarkerBundleSpecifications>,
+    }
+    impl MarkerRendition {
+        pub fn new(
+            marker_size_specification_mode: Option<SpecificationMode>,
+            marker_bundle_index: Option<Integer>,
+            marker_type: Option<Integer>,
+            marker_size: Option<ScaledOrAbsolute>,
+            marker_colour: Option<Colour>,
+            marker_aspect_source_flags: Option<MarkerRenditionMarkerAspectSourceFlags>,
+            marker_bundle_specifications: Option<MarkerRenditionMarkerBundleSpecifications>,
+        ) -> Self {
+            Self {
+                marker_size_specification_mode,
+                marker_bundle_index,
+                marker_type,
+                marker_size,
+                marker_colour,
+                marker_aspect_source_flags,
+                marker_bundle_specifications,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "On-or-Off")]
+    pub enum OnOrOff {
+        off = 0,
+        on = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated, identifier = "One-Of-Four-Angles")]
+    pub enum OneOfFourAngles {
+        d0 = 0,
+        d90 = 1,
+        d180 = 2,
+        d270 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PatternTableElement {
+        #[rasn(identifier = "pattern-table-index")]
+        pub pattern_table_index: Integer,
+        pub nx: Integer,
+        pub ny: Integer,
+        #[rasn(identifier = "local-colour-precision")]
+        pub local_colour_precision: Integer,
+        pub colour: SequenceOf<Colour>,
+    }
+    impl PatternTableElement {
+        pub fn new(
+            pattern_table_index: Integer,
+            nx: Integer,
+            ny: Integer,
+            local_colour_precision: Integer,
+            colour: SequenceOf<Colour>,
+        ) -> Self {
+            Self {
+                pattern_table_index,
+                nx,
+                ny,
+                local_colour_precision,
+                colour,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PictureDimensionsWidthControlled {
+        #[rasn(identifier = "minimum-width")]
+        pub minimum_width: Integer,
+        #[rasn(identifier = "preferred-width")]
+        pub preferred_width: Integer,
+    }
+    impl PictureDimensionsWidthControlled {
+        pub fn new(minimum_width: Integer, preferred_width: Integer) -> Self {
+            Self {
+                minimum_width,
+                preferred_width,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PictureDimensionsHeightControlled {
+        #[rasn(identifier = "minimum-height")]
+        pub minimum_height: Integer,
+        #[rasn(identifier = "preferred-height")]
+        pub preferred_height: Integer,
+    }
+    impl PictureDimensionsHeightControlled {
+        pub fn new(minimum_height: Integer, preferred_height: Integer) -> Self {
+            Self {
+                minimum_height,
+                preferred_height,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PictureDimensionsAreaControlledAspectRatioFlag {
+        fixed = 0,
+        variable = 1,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PictureDimensionsAreaControlled {
+        #[rasn(identifier = "minimum-width")]
+        pub minimum_width: Integer,
+        #[rasn(identifier = "preferred-width")]
+        pub preferred_width: Integer,
+        #[rasn(identifier = "minimum-height")]
+        pub minimum_height: Integer,
+        #[rasn(identifier = "preferred-height")]
+        pub preferred_height: Integer,
+        #[rasn(identifier = "aspect-ratio-flag")]
+        pub aspect_ratio_flag: PictureDimensionsAreaControlledAspectRatioFlag,
+    }
+    impl PictureDimensionsAreaControlled {
+        pub fn new(
+            minimum_width: Integer,
+            preferred_width: Integer,
+            minimum_height: Integer,
+            preferred_height: Integer,
+            aspect_ratio_flag: PictureDimensionsAreaControlledAspectRatioFlag,
+        ) -> Self {
+            Self {
+                minimum_width,
+                preferred_width,
+                minimum_height,
+                preferred_height,
+                aspect_ratio_flag,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Picture-Dimensions")]
+    pub enum PictureDimensions {
+        #[rasn(tag(context, 0), identifier = "width-controlled")]
+        width_controlled(PictureDimensionsWidthControlled),
+        #[rasn(tag(context, 1), identifier = "height-controlled")]
+        height_controlled(PictureDimensionsHeightControlled),
+        #[rasn(tag(context, 2), identifier = "area-controlled")]
+        area_controlled(PictureDimensionsAreaControlled),
+        #[rasn(tag(context, 3))]
+        automatic(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Picture-Orientation")]
+    pub struct PictureOrientation(pub OneOfFourAngles);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RGB {
+        pub red: f64,
+        pub green: f64,
+        pub blue: f64,
+    }
+    impl RGB {
+        pub fn new(red: f64, green: f64, blue: f64) -> Self {
+            Self { red, green, blue }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Rectangle {
+        #[rasn(identifier = "first-corner")]
+        pub first_corner: VDCPair,
+        #[rasn(identifier = "second-corner")]
+        pub second_corner: VDCPair,
+    }
+    impl Rectangle {
+        pub fn new(first_corner: VDCPair, second_corner: VDCPair) -> Self {
+            Self {
+                first_corner,
+                second_corner,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RegionOfInterestSpecificationRectangle {
+        pub a: VDCPair,
+        pub b: VDCPair,
+    }
+    impl RegionOfInterestSpecificationRectangle {
+        pub fn new(a: VDCPair, b: VDCPair) -> Self {
+            Self { a, b }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Region-Of-Interest-Specification")]
+    pub enum RegionOfInterestSpecification {
+        #[rasn(tag(context, 0))]
+        automatic(()),
+        #[rasn(tag(context, 1))]
+        rectangle(RegionOfInterestSpecificationRectangle),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ScaledOrAbsoluteAbsolute {
+        #[rasn(tag(context, 0), identifier = "vdc-int")]
+        vdc_int(Integer),
+        #[rasn(tag(context, 1), identifier = "vdc-real")]
+        vdc_real(f64),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Scaled-or-Absolute")]
+    pub enum ScaledOrAbsolute {
+        #[rasn(tag(context, 0))]
+        absolute(ScaledOrAbsoluteAbsolute),
+        #[rasn(tag(context, 1))]
+        scaled(f64),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SpecificationMode {
+        absolute = 0,
+        scaled = 1,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TextRenditionCharacterSetListCharacterSetType {
+        #[rasn(identifier = "n94-char-sets")]
+        n94_char_sets = 0,
+        #[rasn(identifier = "n96-char-sets")]
+        n96_char_sets = 1,
+        #[rasn(identifier = "n94-char-multibyte-sets")]
+        n94_char_multibyte_sets = 2,
+        #[rasn(identifier = "n96-char-multibyte-sets")]
+        n96_char_multibyte_sets = 3,
+        #[rasn(identifier = "comp-code")]
+        comp_code = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TextRenditionCharacterSetList {
+        #[rasn(identifier = "character-set-type")]
+        pub character_set_type: TextRenditionCharacterSetListCharacterSetType,
+        #[rasn(identifier = "designation-sequence-tail")]
+        pub designation_sequence_tail: GeneralString,
+    }
+    impl TextRenditionCharacterSetList {
+        pub fn new(
+            character_set_type: TextRenditionCharacterSetListCharacterSetType,
+            designation_sequence_tail: GeneralString,
+        ) -> Self {
+            Self {
+                character_set_type,
+                designation_sequence_tail,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TextRenditionCharacterCodingAnnouncer {
+        #[rasn(identifier = "basic-7-bit")]
+        basic_7_bit = 0,
+        #[rasn(identifier = "basic-8-bit")]
+        basic_8_bit = 1,
+        #[rasn(identifier = "extended-7-bit")]
+        extended_7_bit = 2,
+        #[rasn(identifier = "extended-8-bit")]
+        extended_8_bit = 3,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TextRenditionTextPrecision {
+        string = 0,
+        character = 1,
+        stroke = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TextRenditionCharacterOrientation {
+        pub a: VDCPair,
+        pub b: VDCPair,
+    }
+    impl TextRenditionCharacterOrientation {
+        pub fn new(a: VDCPair, b: VDCPair) -> Self {
+            Self { a, b }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TextRenditionTextPath {
+        right = 0,
+        left = 1,
+        up = 2,
+        down = 3,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TextRenditionTextAlignmentHorizontalAlignment {
+        #[rasn(identifier = "normal-horizontal")]
+        normal_horizontal = 0,
+        left = 1,
+        centre = 2,
+        right = 3,
+        #[rasn(identifier = "continuous-horizontal")]
+        continuous_horizontal = 4,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TextRenditionTextAlignmentVerticalAlignment {
+        #[rasn(identifier = "normal-vertical")]
+        normal_vertical = 0,
+        top = 1,
+        cap = 2,
+        half = 3,
+        base = 4,
+        bottom = 5,
+        #[rasn(identifier = "continuous-vertical")]
+        continuous_vertical = 6,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TextRenditionTextAlignment {
+        #[rasn(identifier = "horizontal-alignment")]
+        pub horizontal_alignment: TextRenditionTextAlignmentHorizontalAlignment,
+        #[rasn(identifier = "vertical-alignment")]
+        pub vertical_alignment: TextRenditionTextAlignmentVerticalAlignment,
+        #[rasn(tag(context, 0), identifier = "continuous-horizontal-alignment")]
+        pub continuous_horizontal_alignment: Option<f64>,
+        #[rasn(tag(context, 1), identifier = "continuous-vertical-alignment")]
+        pub continuous_vertical_alignment: Option<f64>,
+    }
+    impl TextRenditionTextAlignment {
+        pub fn new(
+            horizontal_alignment: TextRenditionTextAlignmentHorizontalAlignment,
+            vertical_alignment: TextRenditionTextAlignmentVerticalAlignment,
+            continuous_horizontal_alignment: Option<f64>,
+            continuous_vertical_alignment: Option<f64>,
+        ) -> Self {
+            Self {
+                horizontal_alignment,
+                vertical_alignment,
+                continuous_horizontal_alignment,
+                continuous_vertical_alignment,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TextRenditionTextAspectSourceFlags {
+        #[rasn(identifier = "text-font-asf")]
+        pub text_font_asf: ASFType,
+        #[rasn(identifier = "text-precision-asf")]
+        pub text_precision_asf: ASFType,
+        #[rasn(identifier = "character-expansion-factor-asf")]
+        pub character_expansion_factor_asf: ASFType,
+        #[rasn(identifier = "character-spacing-asf")]
+        pub character_spacing_asf: ASFType,
+        #[rasn(identifier = "text-colour-asf")]
+        pub text_colour_asf: ASFType,
+    }
+    impl TextRenditionTextAspectSourceFlags {
+        pub fn new(
+            text_font_asf: ASFType,
+            text_precision_asf: ASFType,
+            character_expansion_factor_asf: ASFType,
+            character_spacing_asf: ASFType,
+            text_colour_asf: ASFType,
+        ) -> Self {
+            Self {
+                text_font_asf,
+                text_precision_asf,
+                character_expansion_factor_asf,
+                character_spacing_asf,
+                text_colour_asf,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentationTextPrecision {
+        string = 0,
+        character = 1,
+        stroke = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentation {
+        #[rasn(identifier = "text-font-index")]
+        pub text_font_index: Integer,
+        #[rasn(identifier = "text-precision")]
+        pub text_precision:
+            AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentationTextPrecision,
+        #[rasn(identifier = "character-expansion-factor")]
+        pub character_expansion_factor: f64,
+        #[rasn(identifier = "character-spacing")]
+        pub character_spacing: f64,
+        #[rasn(identifier = "text-colour")]
+        pub text_colour: Colour,
+    }
+    impl AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentation {
+        pub fn new(
+            text_font_index: Integer,
+            text_precision : AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentationTextPrecision,
+            character_expansion_factor: f64,
+            character_spacing: f64,
+            text_colour: Colour,
+        ) -> Self {
+            Self {
+                text_font_index,
+                text_precision,
+                character_expansion_factor,
+                character_spacing,
+                text_colour,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTextRenditionTextBundleSpecifications {
+        #[rasn(identifier = "text-bundle-index")]
+        pub text_bundle_index: Integer,
+        #[rasn(identifier = "text-bundle-representation")]
+        pub text_bundle_representation:
+            AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentation,
+    }
+    impl AnonymousTextRenditionTextBundleSpecifications {
+        pub fn new(
+            text_bundle_index: Integer,
+            text_bundle_representation : AnonymousTextRenditionTextBundleSpecificationsTextBundleRepresentation,
+        ) -> Self {
+            Self {
+                text_bundle_index,
+                text_bundle_representation,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TextRenditionTextBundleSpecifications(
+        pub SequenceOf<AnonymousTextRenditionTextBundleSpecifications>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Text-Rendition")]
+    pub struct TextRendition {
+        #[rasn(tag(context, 0), identifier = "font-list")]
+        pub font_list: Option<SequenceOf<GeneralString>>,
+        #[rasn(tag(context, 1), identifier = "character-set-list")]
+        pub character_set_list: Option<TextRenditionCharacterSetList>,
+        #[rasn(tag(context, 2), identifier = "character-coding-announcer")]
+        pub character_coding_announcer: Option<TextRenditionCharacterCodingAnnouncer>,
+        #[rasn(tag(context, 3), identifier = "text-bundle-index")]
+        pub text_bundle_index: Option<Integer>,
+        #[rasn(tag(context, 4), identifier = "text-font-index")]
+        pub text_font_index: Option<Integer>,
+        #[rasn(tag(context, 5), identifier = "text-precision")]
+        pub text_precision: Option<TextRenditionTextPrecision>,
+        #[rasn(tag(context, 6), identifier = "character-expansion-factor")]
+        pub character_expansion_factor: Option<f64>,
+        #[rasn(tag(context, 7), identifier = "character-spacing")]
+        pub character_spacing: Option<f64>,
+        #[rasn(tag(context, 8), identifier = "text-colour")]
+        pub text_colour: Option<Colour>,
+        #[rasn(tag(context, 9), identifier = "character-height")]
+        pub character_height: Option<VDCValue>,
+        #[rasn(tag(context, 10), identifier = "character-orientation")]
+        pub character_orientation: Option<TextRenditionCharacterOrientation>,
+        #[rasn(tag(context, 11), identifier = "text-path")]
+        pub text_path: Option<TextRenditionTextPath>,
+        #[rasn(tag(context, 12), identifier = "text-alignment")]
+        pub text_alignment: Option<TextRenditionTextAlignment>,
+        #[rasn(tag(context, 13), identifier = "character-set-index")]
+        pub character_set_index: Option<Integer>,
+        #[rasn(tag(context, 14), identifier = "alternate-character-set-index")]
+        pub alternate_character_set_index: Option<Integer>,
+        #[rasn(tag(context, 15), identifier = "text-aspect-source-flags")]
+        pub text_aspect_source_flags: Option<TextRenditionTextAspectSourceFlags>,
+        #[rasn(tag(context, 16), identifier = "text-bundle-specifications")]
+        pub text_bundle_specifications: Option<TextRenditionTextBundleSpecifications>,
+    }
+    impl TextRendition {
+        pub fn new(
+            font_list: Option<SequenceOf<GeneralString>>,
+            character_set_list: Option<TextRenditionCharacterSetList>,
+            character_coding_announcer: Option<TextRenditionCharacterCodingAnnouncer>,
+            text_bundle_index: Option<Integer>,
+            text_font_index: Option<Integer>,
+            text_precision: Option<TextRenditionTextPrecision>,
+            character_expansion_factor: Option<f64>,
+            character_spacing: Option<f64>,
+            text_colour: Option<Colour>,
+            character_height: Option<VDCValue>,
+            character_orientation: Option<TextRenditionCharacterOrientation>,
+            text_path: Option<TextRenditionTextPath>,
+            text_alignment: Option<TextRenditionTextAlignment>,
+            character_set_index: Option<Integer>,
+            alternate_character_set_index: Option<Integer>,
+            text_aspect_source_flags: Option<TextRenditionTextAspectSourceFlags>,
+            text_bundle_specifications: Option<TextRenditionTextBundleSpecifications>,
+        ) -> Self {
+            Self {
+                font_list,
+                character_set_list,
+                character_coding_announcer,
+                text_bundle_index,
+                text_font_index,
+                text_precision,
+                character_expansion_factor,
+                character_spacing,
+                text_colour,
+                character_height,
+                character_orientation,
+                text_path,
+                text_alignment,
+                character_set_index,
+                alternate_character_set_index,
+                text_aspect_source_flags,
+                text_bundle_specifications,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Transformation-Specification")]
+    pub struct TransformationSpecification {
+        #[rasn(tag(context, 0), identifier = "vdc-extent")]
+        pub vdc_extent: Option<Rectangle>,
+        #[rasn(tag(context, 1), identifier = "clip-rectangle")]
+        pub clip_rectangle: Option<Rectangle>,
+        #[rasn(tag(context, 2), identifier = "clip-indicator")]
+        pub clip_indicator: Option<OnOrOff>,
+    }
+    impl TransformationSpecification {
+        pub fn new(
+            vdc_extent: Option<Rectangle>,
+            clip_rectangle: Option<Rectangle>,
+            clip_indicator: Option<OnOrOff>,
+        ) -> Self {
+            Self {
+                vdc_extent,
+                clip_rectangle,
+                clip_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "Transparency-Specification")]
+    pub struct TransparencySpecification {
+        #[rasn(tag(context, 0))]
+        pub transparency: Option<OnOrOff>,
+        #[rasn(tag(context, 1), identifier = "auxiliary-colour")]
+        pub auxiliary_colour: Option<Colour>,
+    }
+    impl TransparencySpecification {
+        pub fn new(transparency: Option<OnOrOff>, auxiliary_colour: Option<Colour>) -> Self {
+            Self {
+                transparency,
+                auxiliary_colour,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "VDC-Pair")]
+    pub struct VDCPair {
+        pub x: VDCValue,
+        pub y: VDCValue,
+    }
+    impl VDCPair {
+        pub fn new(x: VDCValue, y: VDCValue) -> Self {
+            Self { x, y }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "VDC-Value")]
+    pub enum VDCValue {
+        a(Integer),
+        b(f64),
+    }
+}

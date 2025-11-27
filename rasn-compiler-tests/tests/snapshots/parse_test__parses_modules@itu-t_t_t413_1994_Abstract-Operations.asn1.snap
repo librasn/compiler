@@ -1,0 +1,431 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_t_t413_1994_Abstract-Operations.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod abstract_operations {
+    extern crate alloc;
+    use super::document_profile_descriptor::{DocumentProfileDescriptor, DocumentReference};
+    use super::identifiers_and_expressions::{
+        ContentPortionIdentifier, ObjectOrClassIdentifier, StyleIdentifier,
+    };
+    use super::interchange_data_elements::InterchangeDataElement;
+    use super::location_expressions::{
+        BasicLocationExpression, ConstituentLocator, LocationExpression,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeValuesType(pub InterchangeDataElement);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BasicLocationInDocumentType {
+        #[rasn(tag(context, 0))]
+        pub document: Option<DocumentId>,
+        #[rasn(tag(context, 1), identifier = "basic-location")]
+        pub basic_location: BasicLocationExpression,
+    }
+    impl BasicLocationInDocumentType {
+        pub fn new(document: Option<DocumentId>, basic_location: BasicLocationExpression) -> Self {
+            Self {
+                document,
+                basic_location,
+            }
+        }
+    }
+    #[doc = " BeginGroup"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BeginGroupArgument {
+        #[rasn(tag(context, 0), identifier = "group-identifier")]
+        pub group_identifier: Integer,
+        #[rasn(tag(context, 1), identifier = "invocation-identifier")]
+        pub invocation_identifier: Integer,
+    }
+    impl BeginGroupArgument {
+        pub fn new(group_identifier: Integer, invocation_identifier: Integer) -> Self {
+            Self {
+                group_identifier,
+                invocation_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BeginGroupResult(pub SuccessType);
+    #[doc = " Non-permanent identifier"]
+    #[doc = " Close"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CloseArgument(pub DocumentId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CloseResult(pub DocumentId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConstituentIdentifier {
+        #[rasn(tag(context, 0), identifier = "object-or-class")]
+        object_or_class(ObjectOrClassIdentifier),
+        #[rasn(tag(context, 1), identifier = "content-portion")]
+        content_portion(ContentPortionIdentifier),
+        #[rasn(tag(context, 2))]
+        style(StyleIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConstituentLocationInDocumentType {
+        #[rasn(tag(context, 0))]
+        pub document: Option<DocumentId>,
+        #[rasn(tag(context, 1), identifier = "constituent-location")]
+        pub constituent_location: Option<ConstituentLocator>,
+    }
+    impl ConstituentLocationInDocumentType {
+        pub fn new(
+            document: Option<DocumentId>,
+            constituent_location: Option<ConstituentLocator>,
+        ) -> Self {
+            Self {
+                document,
+                constituent_location,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConstituentType(pub ManipulationDataElement);
+    #[doc = " Copy"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CopyArgument {
+        #[rasn(tag(context, 0))]
+        pub source: BasicLocationInDocumentType,
+        #[rasn(tag(context, 1))]
+        pub target: ConstituentLocationInDocumentType,
+        #[rasn(tag(context, 2))]
+        pub position: Option<PositionType>,
+    }
+    impl CopyArgument {
+        pub fn new(
+            source: BasicLocationInDocumentType,
+            target: ConstituentLocationInDocumentType,
+            position: Option<PositionType>,
+        ) -> Self {
+            Self {
+                source,
+                target,
+                position,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CopyResult(pub ConstituentIdentifier);
+    #[doc = " ALTERING OPERATIONS"]
+    #[doc = " Create"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CreateArgument {
+        #[rasn(tag(context, 0), identifier = "constituent-or-subtree")]
+        pub constituent_or_subtree: SequenceOf<ConstituentType>,
+        #[rasn(tag(context, 1), identifier = "location-in-document")]
+        pub location_in_document: Option<ConstituentLocationInDocumentType>,
+        #[rasn(tag(context, 2))]
+        pub position: Option<PositionType>,
+    }
+    impl CreateArgument {
+        pub fn new(
+            constituent_or_subtree: SequenceOf<ConstituentType>,
+            location_in_document: Option<ConstituentLocationInDocumentType>,
+            position: Option<PositionType>,
+        ) -> Self {
+            Self {
+                constituent_or_subtree,
+                location_in_document,
+                position,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CreateResult(pub ConstituentIdentifier);
+    #[doc = " Delete"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeleteArgument(pub LocationInDocumentType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeleteResult(pub SuccessType);
+    #[doc = " It is optional for styles and"]
+    #[doc = " root"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "Document-Id")]
+    pub enum DocumentId {
+        #[rasn(tag(context, 0))]
+        permanent(DocumentReference),
+        #[rasn(tag(context, 1), identifier = "non-permanent")]
+        non_permanent(Integer),
+    }
+    #[doc = " EndGroup"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EndGroupArgument {
+        #[rasn(tag(context, 0), identifier = "group-identifier")]
+        pub group_identifier: Integer,
+        #[rasn(tag(context, 1), identifier = "invocation-identifier")]
+        pub invocation_identifier: Integer,
+    }
+    impl EndGroupArgument {
+        pub fn new(group_identifier: Integer, invocation_identifier: Integer) -> Self {
+            Self {
+                group_identifier,
+                invocation_identifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EndGroupResult(pub SuccessType);
+    #[doc = " Permanent identifier"]
+    #[doc = " READ ONLY OPERATIONS"]
+    #[doc = " Get"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GetArgument {
+        #[rasn(tag(context, 0), identifier = "location-in-document")]
+        pub location_in_document: LocationInDocumentType,
+        #[rasn(
+            tag(context, 1),
+            default = "get_argument_no_defaults_default",
+            identifier = "no-defaults"
+        )]
+        pub no_defaults: bool,
+    }
+    impl GetArgument {
+        pub fn new(location_in_document: LocationInDocumentType, no_defaults: bool) -> Self {
+            Self {
+                location_in_document,
+                no_defaults,
+            }
+        }
+    }
+    fn get_argument_no_defaults_default() -> bool {
+        false
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SEQUENCE_OF")]
+    pub struct AnonymousGetResult(pub SequenceOf<ConstituentType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GetResult(pub SequenceOf<AnonymousGetResult>);
+    #[doc = " ABSTRACT OPERATIONS ARGUMENTS AND RESULTS"]
+    #[doc = " DOCUMENT LEVEL OPERATIONS"]
+    #[doc = " List"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListArgument(pub QueryType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListResult(pub SequenceOf<DocumentId>);
+    #[doc = " see ITU-T Rec. T.415 | ISO/IEC 8613-5"]
+    #[doc = " COMMON DATA TYPES"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LocationInDocumentType {
+        #[rasn(tag(context, 0))]
+        pub document: Option<DocumentId>,
+        #[rasn(tag(context, 1))]
+        pub location: LocationExpression,
+    }
+    impl LocationInDocumentType {
+        pub fn new(document: Option<DocumentId>, location: LocationExpression) -> Self {
+            Self { document, location }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ManipulationDataElement(pub InterchangeDataElement);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ModeType {
+        read = 0,
+        modify = 1,
+        create = 2,
+    }
+    #[doc = " Modify"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ModifyArgument {
+        #[rasn(tag(context, 0), identifier = "location-in-document")]
+        pub location_in_document: LocationInDocumentType,
+        #[rasn(tag(context, 1), identifier = "attributeValue")]
+        pub attribute_value: AttributeValuesType,
+        #[rasn(tag(context, 2), default = "modify_argument_deleting_default")]
+        pub deleting: bool,
+    }
+    impl ModifyArgument {
+        pub fn new(
+            location_in_document: LocationInDocumentType,
+            attribute_value: AttributeValuesType,
+            deleting: bool,
+        ) -> Self {
+            Self {
+                location_in_document,
+                attribute_value,
+                deleting,
+            }
+        }
+    }
+    fn modify_argument_deleting_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModifyResult(pub SuccessType);
+    #[doc = " Move"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MoveArgument {
+        #[rasn(tag(context, 0))]
+        pub source: BasicLocationInDocumentType,
+        #[rasn(tag(context, 1))]
+        pub target: ConstituentLocationInDocumentType,
+        #[rasn(tag(context, 2))]
+        pub position: Option<PositionType>,
+    }
+    impl MoveArgument {
+        pub fn new(
+            source: BasicLocationInDocumentType,
+            target: ConstituentLocationInDocumentType,
+            position: Option<PositionType>,
+        ) -> Self {
+            Self {
+                source,
+                target,
+                position,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MoveResult(pub ConstituentIdentifier);
+    #[doc = " Permanent identifiers"]
+    #[doc = " Open"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct OpenArgument {
+        #[rasn(tag(context, 0))]
+        pub identifier: DocumentId,
+        #[rasn(tag(context, 1))]
+        pub mode: Option<ModeType>,
+    }
+    impl OpenArgument {
+        pub fn new(identifier: DocumentId, mode: Option<ModeType>) -> Self {
+            Self { identifier, mode }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OpenResult(pub DocumentId);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PositionType {
+        before = 0,
+        afterLastChild = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum QueryType {
+        #[rasn(tag(context, 0))]
+        basic(DocumentProfileDescriptor),
+        #[rasn(tag(context, 1))]
+        not(Box<QueryType>),
+        #[rasn(tag(context, 2))]
+        and(SetOf<QueryType>),
+        #[rasn(tag(context, 3))]
+        or(SetOf<QueryType>),
+    }
+    #[doc = " Replace"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ReplaceArgument {
+        #[rasn(tag(context, 0), identifier = "constituent-or-subtree")]
+        pub constituent_or_subtree: SequenceOf<ConstituentType>,
+        #[rasn(tag(context, 1), identifier = "location-in-document")]
+        pub location_in_document: ConstituentLocationInDocumentType,
+    }
+    impl ReplaceArgument {
+        pub fn new(
+            constituent_or_subtree: SequenceOf<ConstituentType>,
+            location_in_document: ConstituentLocationInDocumentType,
+        ) -> Self {
+            Self {
+                constituent_or_subtree,
+                location_in_document,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReplaceResult(pub SuccessType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Reservation-Id")]
+    pub struct ReservationId(pub Integer);
+    #[doc = " OTHER OPERATIONS"]
+    #[doc = " Reserve"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReserveArgument(pub LocationInDocumentType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReserveResult(pub ReservationId);
+    #[doc = " Search"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SearchArgument {
+        #[rasn(tag(context, 0), identifier = "location-in-document")]
+        pub location_in_document: LocationInDocumentType,
+        #[rasn(tag(context, 1), identifier = "maxOccurrences")]
+        pub max_occurrences: Option<Integer>,
+    }
+    impl SearchArgument {
+        pub fn new(
+            location_in_document: LocationInDocumentType,
+            max_occurrences: Option<Integer>,
+        ) -> Self {
+            Self {
+                location_in_document,
+                max_occurrences,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SearchResult {
+        #[rasn(tag(context, 0), identifier = "constituentList")]
+        pub constituent_list: SequenceOf<ConstituentIdentifier>,
+        #[rasn(tag(context, 1), identifier = "numberOfOccurrences")]
+        pub number_of_occurrences: Integer,
+    }
+    impl SearchResult {
+        pub fn new(
+            constituent_list: SequenceOf<ConstituentIdentifier>,
+            number_of_occurrences: Integer,
+        ) -> Self {
+            Self {
+                constituent_list,
+                number_of_occurrences,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct SuccessType(pub bool);
+    #[doc = " Unreserve"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UnreserveArgument {
+        #[rasn(tag(context, 0), identifier = "location-in-document")]
+        location_in_document(LocationInDocumentType),
+        #[rasn(tag(context, 1))]
+        reservation(ReservationId),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UnreserveResult(pub SuccessType);
+}

@@ -1,0 +1,500 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x750_1996_DefinitionASN1Module.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod definition_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::ManagementExtension;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ASN1ModuleContents(pub TextualRepresentation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ASN1Version(pub BitString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousActions {
+        #[rasn(tag(context, 0))]
+        pub action: TemplateLabel,
+        #[rasn(tag(context, 1))]
+        pub parameter: Option<TemplateList>,
+    }
+    impl AnonymousActions {
+        pub fn new(action: TemplateLabel, parameter: Option<TemplateList>) -> Self {
+            Self { action, parameter }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Actions(pub SetOf<AnonymousActions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalProperties(pub SetOf<ManagementExtension>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAndAttributeIds {
+        #[rasn(identifier = "fieldName")]
+        pub field_name: Identifier,
+        pub attribute: TemplateLabel,
+    }
+    impl AnonymousAndAttributeIds {
+        pub fn new(field_name: Identifier, attribute: TemplateLabel) -> Self {
+            Self {
+                field_name,
+                attribute,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AndAttributeIds(pub SetOf<AnonymousAndAttributeIds>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAttributeGroups {
+        pub group: TemplateLabel,
+        pub attributes: Option<TemplateList>,
+    }
+    impl AnonymousAttributeGroups {
+        pub fn new(group: TemplateLabel, attributes: Option<TemplateList>) -> Self {
+            Self { group, attributes }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeGroups(pub SetOf<AnonymousAttributeGroups>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeId(pub ObjectIdentifier);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAttributes {
+        #[rasn(identifier = "attributeLabel")]
+        pub attribute_label: TemplateLabel,
+        pub property: PropertyList,
+        #[rasn(identifier = "parameterLabel")]
+        pub parameter_label: Option<TemplateList>,
+    }
+    impl AnonymousAttributes {
+        pub fn new(
+            attribute_label: TemplateLabel,
+            property: PropertyList,
+            parameter_label: Option<TemplateList>,
+        ) -> Self {
+            Self {
+                attribute_label,
+                property,
+                parameter_label,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Attributes(pub SetOf<AnonymousAttributes>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Behaviour(pub TemplateList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CharacterizedBy(pub TemplateList);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousConditionalPackages {
+        pub label: TemplateLabel,
+        pub condition: GraphicString,
+    }
+    impl AnonymousConditionalPackages {
+        pub fn new(label: TemplateLabel, condition: GraphicString) -> Self {
+            Self { label, condition }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConditionalPackages(pub SetOf<AnonymousConditionalPackages>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ContextKeyword {
+        #[rasn(identifier = "type-reference")]
+        pub type_reference: DefinedType,
+        pub field: Identifier,
+    }
+    impl ContextKeyword {
+        pub fn new(type_reference: DefinedType, field: Identifier) -> Self {
+            Self {
+                type_reference,
+                field,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ContextRepresentation {
+        #[rasn(identifier = "aCTION-INFO")]
+        aCTION_INFO = 0,
+        #[rasn(identifier = "aCTION-REPLY")]
+        aCTION_REPLY = 1,
+        #[rasn(identifier = "eVENT-INFO")]
+        eVENT_INFO = 2,
+        #[rasn(identifier = "eVENT-REPLY")]
+        eVENT_REPLY = 3,
+        #[rasn(identifier = "sPECIFIC-ERROR")]
+        sPECIFIC_ERROR = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Context {
+        keyword(ContextKeyword),
+        representation(ContextRepresentation),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Create {
+        present(CreateSpecification),
+        absent(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CreateSpecification {
+        #[rasn(identifier = "createModifier")]
+        pub create_modifier: Option<BitString>,
+        pub parameter: Option<TemplateList>,
+    }
+    impl CreateSpecification {
+        pub fn new(create_modifier: Option<BitString>, parameter: Option<TemplateList>) -> Self {
+            Self {
+                create_modifier,
+                parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DefinedAs(pub TextualRepresentation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DefinedType {
+        #[rasn(tag(context, 0))]
+        pub module: Option<Identifier>,
+        #[rasn(tag(context, 1))]
+        pub reference: Identifier,
+    }
+    impl DefinedType {
+        pub fn new(module: Option<Identifier>, reference: Identifier) -> Self {
+            Self { module, reference }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DefinedValue {
+        #[rasn(tag(context, 0))]
+        pub module: Option<Identifier>,
+        #[rasn(tag(context, 1))]
+        pub reference: Identifier,
+    }
+    impl DefinedValue {
+        pub fn new(module: Option<Identifier>, reference: Identifier) -> Self {
+            Self { module, reference }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Delete {
+        present(DeleteSpecification),
+        absent(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DeleteSpecificationDeleteModifier {
+        onlyIfNoContainedObjects = 0,
+        deletesContainedObjects = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DeleteSpecification {
+        #[rasn(identifier = "deleteModifier")]
+        pub delete_modifier: Option<DeleteSpecificationDeleteModifier>,
+        pub parameter: Option<TemplateList>,
+    }
+    impl DeleteSpecification {
+        pub fn new(
+            delete_modifier: Option<DeleteSpecificationDeleteModifier>,
+            parameter: Option<TemplateList>,
+        ) -> Self {
+            Self {
+                delete_modifier,
+                parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DerivedFrom(pub TemplateList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DerivedOrWithSyntaxChoice {
+        #[rasn(tag(context, 0))]
+        derivedFrom(TemplateLabel),
+        #[rasn(tag(context, 1))]
+        withSyntaxChoice(DefinedType),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Description(pub TextualRepresentation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DocumentName(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DocumentObjectIdentifier(pub OptionallyRegisteredAs);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Fixed(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GroupElements(pub TemplateList);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{2d}", "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}",
+            "\u{37}", "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}", "\u{45}",
+            "\u{46}", "\u{47}", "\u{48}", "\u{49}", "\u{4a}", "\u{4b}", "\u{4c}", "\u{4d}",
+            "\u{4e}", "\u{4f}", "\u{50}", "\u{51}", "\u{52}", "\u{53}", "\u{54}", "\u{55}",
+            "\u{56}", "\u{57}", "\u{58}", "\u{59}", "\u{5a}", "\u{61}", "\u{62}", "\u{63}",
+            "\u{64}", "\u{65}", "\u{66}", "\u{67}", "\u{68}", "\u{69}", "\u{6a}", "\u{6b}",
+            "\u{6c}", "\u{6d}", "\u{6e}", "\u{6f}", "\u{70}", "\u{71}", "\u{72}", "\u{73}",
+            "\u{74}", "\u{75}", "\u{76}", "\u{77}", "\u{78}", "\u{79}", "\u{7a}"
+        )
+    )]
+    pub struct Identifier(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LineImage(pub GraphicString);
+    #[doc = " each value of this type represents one complete line of text"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MatchesFor(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ModeConfirmed(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NamingObjectClass {
+        pub class: TemplateLabel,
+        #[rasn(
+            default = "naming_object_class_and_subclasses_default",
+            identifier = "andSubclasses"
+        )]
+        pub and_subclasses: bool,
+    }
+    impl NamingObjectClass {
+        pub fn new(class: TemplateLabel, and_subclasses: bool) -> Self {
+            Self {
+                class,
+                and_subclasses,
+            }
+        }
+    }
+    fn naming_object_class_and_subclasses_default() -> bool {
+        false
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousNotifications {
+        #[rasn(tag(context, 0))]
+        pub notification: TemplateLabel,
+        #[rasn(tag(context, 1))]
+        pub parameter: Option<TemplateList>,
+    }
+    impl AnonymousNotifications {
+        pub fn new(notification: TemplateLabel, parameter: Option<TemplateList>) -> Self {
+            Self {
+                notification,
+                parameter,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Notifications(pub SetOf<AnonymousNotifications>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Null(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OptionallyRegisteredAs {
+        present(ObjectIdentifier),
+        absent(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Parameters(pub TemplateList);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PropertyListGetReplace {
+        gET = 0,
+        rEPLACE = 1,
+        #[rasn(identifier = "gET-REPLACE")]
+        gET_REPLACE = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PropertyListAddRemove {
+        aDD = 0,
+        rEMOVE = 1,
+        #[rasn(identifier = "aDD-REMOVE")]
+        aDD_REMOVE = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PropertyList {
+        #[rasn(
+            tag(context, 0),
+            default = "property_list_replace_with_default_default",
+            identifier = "replaceWithDefault"
+        )]
+        pub replace_with_default: bool,
+        #[rasn(tag(explicit(context, 1)), identifier = "defaultValue")]
+        pub default_value: Option<ValueSpecifier>,
+        #[rasn(tag(explicit(context, 2)), identifier = "initialValue")]
+        pub initial_value: Option<ValueSpecifier>,
+        #[rasn(tag(context, 3), identifier = "permittedValues")]
+        pub permitted_values: Option<DefinedType>,
+        #[rasn(tag(context, 4), identifier = "requiredValues")]
+        pub required_values: Option<DefinedType>,
+        #[rasn(tag(context, 5), identifier = "getReplace")]
+        pub get_replace: Option<PropertyListGetReplace>,
+        #[rasn(tag(context, 6), identifier = "addRemove")]
+        pub add_remove: Option<PropertyListAddRemove>,
+        #[rasn(
+            tag(context, 7),
+            default = "property_list_set_by_create_default",
+            identifier = "setByCreate"
+        )]
+        pub set_by_create: bool,
+        #[rasn(tag(context, 8), identifier = "additionalProperties")]
+        pub additional_properties: Option<AdditionalProperties>,
+    }
+    impl PropertyList {
+        pub fn new(
+            replace_with_default: bool,
+            default_value: Option<ValueSpecifier>,
+            initial_value: Option<ValueSpecifier>,
+            permitted_values: Option<DefinedType>,
+            required_values: Option<DefinedType>,
+            get_replace: Option<PropertyListGetReplace>,
+            add_remove: Option<PropertyListAddRemove>,
+            set_by_create: bool,
+            additional_properties: Option<AdditionalProperties>,
+        ) -> Self {
+            Self {
+                replace_with_default,
+                default_value,
+                initial_value,
+                permitted_values,
+                required_values,
+                get_replace,
+                add_remove,
+                set_by_create,
+                additional_properties,
+            }
+        }
+    }
+    fn property_list_replace_with_default_default() -> bool {
+        false
+    }
+    fn property_list_set_by_create_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RegisteredAs(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Specification(pub TextualRepresentation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SyntaxOrAttribute {
+        #[rasn(tag(context, 0))]
+        withSyntax(DefinedType),
+        #[rasn(tag(context, 1))]
+        attribute(TemplateLabel),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TemplateDefinition(pub TextualRepresentation);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TemplateLabelDocumentId {
+        documentName(DocumentName),
+        documentObjectIdentifier(DocumentObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TemplateLabel {
+        #[rasn(identifier = "localName")]
+        pub local_name: TemplateName,
+        #[rasn(identifier = "documentId")]
+        pub document_id: Option<TemplateLabelDocumentId>,
+    }
+    impl TemplateLabel {
+        pub fn new(local_name: TemplateName, document_id: Option<TemplateLabelDocumentId>) -> Self {
+            Self {
+                local_name,
+                document_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TemplateList(pub SetOf<TemplateLabel>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{2d}", "\u{2f}", "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}",
+            "\u{36}", "\u{37}", "\u{38}", "\u{39}", "\u{41}", "\u{42}", "\u{43}", "\u{44}",
+            "\u{45}", "\u{46}", "\u{47}", "\u{48}", "\u{49}", "\u{4a}", "\u{4b}", "\u{4c}",
+            "\u{4d}", "\u{4e}", "\u{4f}", "\u{50}", "\u{51}", "\u{52}", "\u{53}", "\u{54}",
+            "\u{55}", "\u{56}", "\u{57}", "\u{58}", "\u{59}", "\u{5a}", "\u{61}", "\u{62}",
+            "\u{63}", "\u{64}", "\u{65}", "\u{66}", "\u{67}", "\u{68}", "\u{69}", "\u{6a}",
+            "\u{6b}", "\u{6c}", "\u{6d}", "\u{6e}", "\u{6f}", "\u{70}", "\u{71}", "\u{72}",
+            "\u{73}", "\u{74}", "\u{75}", "\u{76}", "\u{77}", "\u{78}", "\u{79}", "\u{7a}"
+        )
+    )]
+    pub struct TemplateName(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TextualRepresentation(pub SequenceOf<LineImage>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ValueSpecifier {
+        #[rasn(tag(context, 0))]
+        valueReference(DefinedValue),
+        #[rasn(tag(context, 1))]
+        derivationRule(TemplateLabel),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct WithAttribute(pub TemplateLabel);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum WithSyntax {
+        present(DefinedType),
+        absent(()),
+    }
+}

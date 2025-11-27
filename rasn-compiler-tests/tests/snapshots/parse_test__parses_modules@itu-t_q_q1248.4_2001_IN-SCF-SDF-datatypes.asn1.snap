@@ -1,0 +1,35 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1248.4_2001_IN-SCF-SDF-datatypes.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 240, column 2]
+     │
+     │ 
+ 229 │  -- identifierList is an attribute that could contain four identifiers:
+ 230 │  -- conformMethodIdentifier identifies the method used to verify that some parts of the input message
+ 231 │  --  are conformed to some criteria as size, value matching with an attribute, greater than a counter,
+ 232 │  -- included in a time window,
+ 233 │  -- fillMethodIdentifier identifies the method used to fill the input message (first part of a
+ 234 │  -- twoPartMessage or ThreePartMessage or FivePartMessage).
+ 235 │  -- oneToOneAlgorithm (resp. oneToTwoAlgorithm) identifies the cryptographic algorithm with one
+ 236 │  -- output (resp. two output). if KS is the secret key, IN is the input and OUT the output, it would be
+ 237 │  -- OUT=output1of (A12(RS_size_in_bits first bits of IN,A11(RAND_size_in_bits last bits of IN,KS)))
+ 238 │  -- (resp. (OUT1,OUT2)= (A12(RS_size_in_bits first bits of IN,A11(RAND_size_in_bits last bits of
+ 239 │  -- IN,KS)) )
+ 240 │  MethodIdentifier ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 241 │    methodid         METHOD.&id({SupportedMethods}),
+ 242 │    inputAttributes
+ 243 │      SEQUENCE {type
+ 244 │                  METHOD.&InputAttributes.&id
+ 245 │                    ({SupportedMethods}{@methodid}),
+ 246 │                values
+ 247 │                  SET OF
+ 248 │                    METHOD.&InputAttributes.&Type
+ 249 │                      ({SupportedMethods}{@methodid, @inputAttributes.type})
+ 250 │    } OPTIONAL,
+ 251 │    specific-Input
+ 252 │      [0]  METHOD.&SpecificInput({SupportedMethods}{@methodid}) OPTIONAL
+ 253 │  }
+     │
+─────╯

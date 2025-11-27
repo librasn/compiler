@@ -1,0 +1,48 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x413_1999_MSMatchingRules.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod msmatching_rules {
+    extern crate alloc;
+    use super::information_framework::*;
+    use super::msobject_identifiers::{
+        ID_MR_CONTENT_CORRELATOR_MATCH, ID_MR_CONTENT_IDENTIFIER_MATCH,
+        ID_MR_MSSTRING_CASE_SENSITIVE_MATCH, ID_MR_MSSTRING_LIST_ELEMENTS_MATCH,
+        ID_MR_MSSTRING_LIST_MATCH, ID_MR_MSSTRING_MATCH, ID_MR_MSSTRING_ORDERING_MATCH,
+        ID_MR_MS_SINGLE_SUBSTRING_LIST_ELEMENTS_MATCH, ID_MR_MS_SINGLE_SUBSTRING_LIST_MATCH,
+        ID_MR_MS_SINGLE_SUBSTRING_MATCH, ID_MR_MS_SUBSTRINGS_MATCH, ID_MR_MTS_IDENTIFIER_MATCH,
+        ID_MR_ORADDRESS_ELEMENTS_MATCH, ID_MR_ORADDRESS_MATCH,
+        ID_MR_ORADDRESS_SUBSTRING_ELEMENTS_MATCH, ID_MR_ORNAME_ELEMENTS_MATCH, ID_MR_ORNAME_MATCH,
+        ID_MR_ORNAME_SINGLE_ELEMENT_MATCH, ID_MR_ORNAME_SUBSTRING_ELEMENTS_MATCH,
+        ID_MR_REDIRECTION_OR_DL_EXPANSION_ELEMENTS_MATCH, ID_MR_REDIRECTION_OR_DL_EXPANSION_MATCH,
+        ID_MR_REDIRECTION_OR_DL_EXPANSION_SINGLE_ELEMENT_MATCH,
+        ID_MR_REDIRECTION_OR_DL_EXPANSION_SUBSTRING_ELEMENTS_MATCH, ID_MR_REDIRECTION_REASON_MATCH,
+        ID_MR_VALUE_COUNT_MATCH,
+    };
+    use super::msupper_bounds::{UB_ATTRIBUTE_VALUES, UB_MSSTRING_MATCH};
+    use super::mtsabstract_service::{
+        ContentCorrelator, ContentIdentifier, MTSIdentifier, ORAddress,
+        ORAddressAndOptionalDirectoryName, ORName, RedirectionReason,
+    };
+    use super::selected_attribute_types::{
+        BIT_STRING_MATCH, BOOLEAN_MATCH, GENERALIZED_TIME_MATCH, GENERALIZED_TIME_ORDERING_MATCH,
+        INTEGER_MATCH, INTEGER_ORDERING_MATCH, U_TCTIME_MATCH, U_TCTIME_ORDERING_MATCH,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+}

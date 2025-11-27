@@ -1,0 +1,111 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x894_2018-cor1_CMSProfileAttributes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cmsprofile_attributes {
+    extern crate alloc;
+    use super::cryptographic_message_syntax_2010::{DigestedData, SignerInfo, SignerInfos};
+    use super::pkic_common_types_2009::*;
+    use super::trusted_time_stamp::TimeStampToken;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Address(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DBRecord(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GPS(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct HashPointer {
+        pub hash: Option<DigestedData>,
+        pub pointers: Option<Pointers>,
+    }
+    impl HashPointer {
+        pub fn new(hash: Option<DigestedData>, pointers: Option<Pointers>) -> Self {
+            Self { hash, pointers }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ParentBlock(pub HashPointer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum Pointer {
+        uri(URI),
+        rfid(RFID),
+        gps(GPS),
+        address(Address),
+        dbRecord(DBRecord),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct Pointers(pub SequenceOf<Pointer>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RFID(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sidechain(pub HashPointer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Sidechains(pub SequenceOf<Sidechain>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum TimeStamp {
+        timeStampToken(TimeStampToken),
+        localTimeStamp(GeneralizedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TimeStamped {
+        #[rasn(identifier = "timeStampValue")]
+        pub time_stamp_value: TimeStamp,
+        #[rasn(identifier = "timeStampService")]
+        pub time_stamp_service: Option<URI>,
+    }
+    impl TimeStamped {
+        pub fn new(time_stamp_value: TimeStamp, time_stamp_service: Option<URI>) -> Self {
+            Self {
+                time_stamp_value,
+                time_stamp_service,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct URI(pub Utf8String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct URIs(pub SequenceOf<URI>);
+    pub static ID_CONTENT_LOCATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 2u32]).to_owned());
+    pub static ID_CONTENT_LOCATIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 3u32]).to_owned());
+    pub static ID_PARENT_BLOCK: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 7u32]).to_owned());
+    pub static ID_PRECEDING_BLOCK: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 4u32]).to_owned());
+    pub static ID_SIDECHAINS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 6u32]).to_owned());
+    pub static ID_SIGNER_INFO: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 0u32]).to_owned());
+    pub static ID_SIGNER_INFOS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 1u32]).to_owned());
+    pub static ID_TIME_STAMPED: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 894u32, 2u32, 5u32]).to_owned());
+}

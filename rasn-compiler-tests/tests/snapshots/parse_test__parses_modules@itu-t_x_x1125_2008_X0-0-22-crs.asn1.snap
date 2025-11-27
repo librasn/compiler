@@ -1,0 +1,338 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1125_2008_X0-0-22-crs.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod x0_0_22_crs {
+    extern crate alloc;
+    use super::xsd::String;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AcknowledgementType {
+        #[rasn(identifier = "msgID-Ack")]
+        pub msg_id_ack: super::xsd::String,
+    }
+    impl AcknowledgementType {
+        pub fn new(msg_id_ack: super::xsd::String) -> Self {
+            Self { msg_id_ack }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BodyUnitChoice {
+        sCIReport(SCIReportType),
+        sCIResponse(SCIResponseType),
+        sCAProbeRequest(SCAProbeRequestType),
+        sCAProbeResponse(SCAProbeResponseType),
+        sCIReportRequest(SCIReportRequestType),
+        acknowledgement(AcknowledgementType),
+    }
+    #[doc = " ====================================================================== "]
+    #[doc = " ===========================  Body-Unit  ============================== "]
+    #[doc = " ====================================================================== "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Body-Unit")]
+    pub struct BodyUnit {
+        pub choice: BodyUnitChoice,
+    }
+    impl BodyUnit {
+        pub fn new(choice: BodyUnitChoice) -> Self {
+            Self { choice }
+        }
+    }
+    #[doc = " ====================================================================== "]
+    #[doc = " ==========================  CRSAP-Message  =========================== "]
+    #[doc = " ====================================================================== "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "CRSAP-Message")]
+    pub struct CRSAPMessage {
+        #[rasn(identifier = "header-Unit")]
+        pub header_unit: HeaderUnit,
+        #[rasn(identifier = "body-Unit")]
+        pub body_unit: BodyUnit,
+        #[rasn(identifier = "tail-Unit")]
+        pub tail_unit: TailUnit,
+    }
+    impl CRSAPMessage {
+        pub fn new(header_unit: HeaderUnit, body_unit: BodyUnit, tail_unit: TailUnit) -> Self {
+            Self {
+                header_unit,
+                body_unit,
+                tail_unit,
+            }
+        }
+    }
+    #[doc = " Multicast message without message tail. "]
+    #[doc = " Multicast message with message tail. "]
+    #[doc = " Unicast message without message tail. "]
+    #[doc = " Unicast message with message tail. "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FlagEnumeration {
+        m = 0,
+        mT = 1,
+        u = 2,
+        uT = 3,
+    }
+    #[doc = " ====================================================================== "]
+    #[doc = " =============================  Header-Unit =========================== "]
+    #[doc = " ====================================================================== "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Header-Unit")]
+    pub struct HeaderUnit {
+        pub flag: FlagEnumeration,
+        #[rasn(value("0.."))]
+        pub length: Integer,
+        #[rasn(value("0.."))]
+        pub precedence: Integer,
+        #[rasn(identifier = "sCA-ID")]
+        pub s_ca_id: ID,
+        #[rasn(identifier = "sCS-ID")]
+        pub s_cs_id: ID,
+        #[rasn(identifier = "type")]
+        pub r_type: TypeEnumeration,
+        pub version: super::xsd::String,
+    }
+    impl HeaderUnit {
+        pub fn new(
+            flag: FlagEnumeration,
+            length: Integer,
+            precedence: Integer,
+            s_ca_id: ID,
+            s_cs_id: ID,
+            r_type: TypeEnumeration,
+            version: super::xsd::String,
+        ) -> Self {
+            Self {
+                flag,
+                length,
+                precedence,
+                s_ca_id,
+                s_cs_id,
+                r_type,
+                version,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=32"))]
+    pub struct ID(pub super::xsd::String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("8..=32"))]
+    pub struct MsgDigest(pub super::xsd::String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SCAProbeRequestType {
+        #[rasn(identifier = "sCS-Domain")]
+        pub s_cs_domain: Option<super::xsd::String>,
+        #[rasn(identifier = "sCS-Address")]
+        pub s_cs_address: Option<super::xsd::String>,
+        #[rasn(identifier = "sCS-Port")]
+        pub s_cs_port: Option<super::xsd::String>,
+    }
+    impl SCAProbeRequestType {
+        pub fn new(
+            s_cs_domain: Option<super::xsd::String>,
+            s_cs_address: Option<super::xsd::String>,
+            s_cs_port: Option<super::xsd::String>,
+        ) -> Self {
+            Self {
+                s_cs_domain,
+                s_cs_address,
+                s_cs_port,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SCAProbeResponseType {
+        #[rasn(identifier = "lst-SCS-Domain")]
+        pub lst_scs_domain: Option<super::xsd::String>,
+        #[rasn(identifier = "lst-SCS-Address")]
+        pub lst_scs_address: Option<super::xsd::String>,
+        #[rasn(identifier = "lst-SCS-ID")]
+        pub lst_scs_id: Option<super::xsd::String>,
+        #[rasn(identifier = "lst-SCA-ID")]
+        pub lst_sca_id: Option<super::xsd::String>,
+    }
+    impl SCAProbeResponseType {
+        pub fn new(
+            lst_scs_domain: Option<super::xsd::String>,
+            lst_scs_address: Option<super::xsd::String>,
+            lst_scs_id: Option<super::xsd::String>,
+            lst_sca_id: Option<super::xsd::String>,
+        ) -> Self {
+            Self {
+                lst_scs_domain,
+                lst_scs_address,
+                lst_scs_id,
+                lst_sca_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SCIReportRequestType {
+        #[rasn(identifier = "lst-SCS-Domain")]
+        pub lst_scs_domain: super::xsd::String,
+        #[rasn(identifier = "tim-Rpt")]
+        pub tim_rpt: Option<super::xsd::String>,
+    }
+    impl SCIReportRequestType {
+        pub fn new(
+            lst_scs_domain: super::xsd::String,
+            tim_rpt: Option<super::xsd::String>,
+        ) -> Self {
+            Self {
+                lst_scs_domain,
+                tim_rpt,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SCIReportType {
+        #[rasn(identifier = "rpt-ID")]
+        pub rpt_id: super::xsd::String,
+        #[rasn(identifier = "mS-Usr-ID")]
+        pub m_s_usr_id: super::xsd::String,
+        #[rasn(identifier = "mS-ISDN")]
+        pub m_s_isdn: Option<super::xsd::String>,
+        #[rasn(identifier = "mT-ID")]
+        pub m_t_id: super::xsd::String,
+        #[rasn(identifier = "mS-OSPlt-TypVer")]
+        pub m_s_osplt_typ_ver: Option<super::xsd::String>,
+        #[rasn(identifier = "mS-OSPlt-PatLst")]
+        pub m_s_osplt_pat_lst: Option<super::xsd::String>,
+        #[rasn(identifier = "mS-SAS-Inf")]
+        pub m_s_sas_inf: Option<super::xsd::String>,
+        #[rasn(identifier = "mS-Sec-Evt")]
+        pub m_s_sec_evt: Option<super::xsd::String>,
+        #[rasn(identifier = "mS-Hrd-Inf")]
+        pub m_s_hrd_inf: Option<super::xsd::String>,
+        #[rasn(identifier = "sCI-Cur-RptPol")]
+        pub s_ci_cur_rpt_pol: Option<super::xsd::String>,
+        #[rasn(identifier = "sCS-LstCom-Inf")]
+        pub s_cs_lst_com_inf: Option<super::xsd::String>,
+    }
+    impl SCIReportType {
+        pub fn new(
+            rpt_id: super::xsd::String,
+            m_s_usr_id: super::xsd::String,
+            m_s_isdn: Option<super::xsd::String>,
+            m_t_id: super::xsd::String,
+            m_s_osplt_typ_ver: Option<super::xsd::String>,
+            m_s_osplt_pat_lst: Option<super::xsd::String>,
+            m_s_sas_inf: Option<super::xsd::String>,
+            m_s_sec_evt: Option<super::xsd::String>,
+            m_s_hrd_inf: Option<super::xsd::String>,
+            s_ci_cur_rpt_pol: Option<super::xsd::String>,
+            s_cs_lst_com_inf: Option<super::xsd::String>,
+        ) -> Self {
+            Self {
+                rpt_id,
+                m_s_usr_id,
+                m_s_isdn,
+                m_t_id,
+                m_s_osplt_typ_ver,
+                m_s_osplt_pat_lst,
+                m_s_sas_inf,
+                m_s_sec_evt,
+                m_s_hrd_inf,
+                s_ci_cur_rpt_pol,
+                s_cs_lst_com_inf,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SCIResponseType {
+        #[rasn(identifier = "mS-Sec-Lev")]
+        pub m_s_sec_lev: Option<super::xsd::String>,
+        #[rasn(identifier = "sCI-New-RptPol")]
+        pub s_ci_new_rpt_pol: Option<super::xsd::String>,
+        #[rasn(identifier = "sCS-Lmt-Ntf")]
+        pub s_cs_lmt_ntf: Option<super::xsd::String>,
+        #[rasn(identifier = "ack-SCI-Rpt")]
+        pub ack_sci_rpt: Option<super::xsd::String>,
+    }
+    impl SCIResponseType {
+        pub fn new(
+            m_s_sec_lev: Option<super::xsd::String>,
+            s_ci_new_rpt_pol: Option<super::xsd::String>,
+            s_cs_lmt_ntf: Option<super::xsd::String>,
+            ack_sci_rpt: Option<super::xsd::String>,
+        ) -> Self {
+            Self {
+                m_s_sec_lev,
+                s_ci_new_rpt_pol,
+                s_cs_lmt_ntf,
+                ack_sci_rpt,
+            }
+        }
+    }
+    #[doc = " ====================================================================== "]
+    #[doc = " ===========================  Tail-Unit =============================== "]
+    #[doc = " ====================================================================== "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "Tail-Unit")]
+    pub struct TailUnit {
+        #[rasn(identifier = "algorithmID")]
+        pub algorithm_id: ID,
+        #[rasn(identifier = "msgID")]
+        pub msg_id: ID,
+        #[rasn(identifier = "msgDigest")]
+        pub msg_digest: MsgDigest,
+    }
+    impl TailUnit {
+        pub fn new(algorithm_id: ID, msg_id: ID, msg_digest: MsgDigest) -> Self {
+            Self {
+                algorithm_id,
+                msg_id,
+                msg_digest,
+            }
+        }
+    }
+    #[doc = " Multicast message without message tail. "]
+    #[doc = " Multicast message with message tail. "]
+    #[doc = " Unicast message without message tail. "]
+    #[doc = " Unicast message with message tail. "]
+    #[doc = " Multicast message without message tail. "]
+    #[doc = " Multicast message with message tail. "]
+    #[doc = " Unicast message without message tail. "]
+    #[doc = " Unicast message with message tail. "]
+    #[doc = " Unicast message with message tail. "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TypeEnumeration {
+        #[rasn(identifier = "d-Ack")]
+        d_Ack = 0,
+        #[rasn(identifier = "d-Err-Ntf")]
+        d_Err_Ntf = 1,
+        #[rasn(identifier = "d-Prb-Req")]
+        d_Prb_Req = 2,
+        #[rasn(identifier = "d-Rep-Req")]
+        d_Rep_Req = 3,
+        #[rasn(identifier = "d-SCI-Rsp")]
+        d_SCI_Rsp = 4,
+        #[rasn(identifier = "u-Ack")]
+        u_Ack = 5,
+        #[rasn(identifier = "u-Err-Ntf")]
+        u_Err_Ntf = 6,
+        #[rasn(identifier = "u-SCA-Prb-Rsp")]
+        u_SCA_Prb_Rsp = 7,
+        #[rasn(identifier = "u-SCI-Rpt")]
+        u_SCI_Rpt = 8,
+    }
+}

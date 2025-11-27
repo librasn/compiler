@@ -1,0 +1,701 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_i_i751_1996_AtmMIBMod.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to link value with 'CharacteristicInformation'
+LinkerError in ASN grammar: Failed to link value with 'CharacteristicInformation'
+LinkerError in ASN grammar: Failed to link value with 'ProbableCause'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+LinkerError in ASN grammar: Failed to link value with 'Boolean'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod atm_mibmod {
+    extern crate alloc;
+    use super::asn1_defined_types_module::{
+        Boolean, CharacteristicInformation, DisconnectInformation, DisconnectResult, Failed,
+        NameType, PointerOrNull, ProblemCause,
+    };
+    use super::attribute_asn1_module::{AdministrativeState, AttributeList, ProbableCause};
+    use super::cmip_1::{
+        DistinguishedName, EventTypeId, ObjectInstance, RelativeDistinguishedName,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " supporting productions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AverageMonitoringBlockSize {
+        unknown(()),
+        blockSize(BlockSize),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BlockSize {
+        decimal128 = 0,
+        decimal256 = 1,
+        decimal512 = 2,
+        decimal1024 = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CCProblem {
+        noSourceUserFlow = 0,
+        noSinkUserFlow = 1,
+        sourceAlreadyActive = 2,
+        sinkAlreadyActive = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CDVTolerance {
+        #[rasn(tag(context, 0), identifier = "cellDelayVariationToleranceCLP0plus1")]
+        pub cell_delay_variation_tolerance_clp0plus1: Option<CDVToleranceCoding>,
+        #[rasn(tag(context, 1), identifier = "cellDelayVariationToleranceCLP0")]
+        pub cell_delay_variation_tolerance_clp0: Option<CDVToleranceCoding>,
+    }
+    impl CDVTolerance {
+        pub fn new(
+            cell_delay_variation_tolerance_clp0plus1: Option<CDVToleranceCoding>,
+            cell_delay_variation_tolerance_clp0: Option<CDVToleranceCoding>,
+        ) -> Self {
+            Self {
+                cell_delay_variation_tolerance_clp0plus1,
+                cell_delay_variation_tolerance_clp0,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CDVToleranceCoding {
+        integerCoding(Integer),
+        floatingPointCoding(FloatingPointCoding),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=1"))]
+    pub struct Cardinality01(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct Cardinality0N(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1"))]
+    pub struct Cardinality1(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CellHeaderAbnormalityType {
+        unassignedVpiVciValue = 0,
+        outOfRangeVpiVciValue = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectCtpStatus {
+        #[rasn(tag(context, 0))]
+        ctpConnected(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        ctpFailed(ProblemCause),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousConnectInformation {
+        #[rasn(tag(context, 0), identifier = "fromTermination")]
+        pub from_termination: CtpOrDescriptor,
+        #[rasn(tag(context, 1), identifier = "toTermination")]
+        pub to_termination: CtpOrDescriptor,
+        #[rasn(tag(context, 2), identifier = "administrativeState")]
+        pub administrative_state: Option<AdministrativeState>,
+    }
+    impl AnonymousConnectInformation {
+        pub fn new(
+            from_termination: CtpOrDescriptor,
+            to_termination: CtpOrDescriptor,
+            administrative_state: Option<AdministrativeState>,
+        ) -> Self {
+            Self {
+                from_termination,
+                to_termination,
+                administrative_state,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectInformation(pub SequenceOf<AnonymousConnectInformation>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousConnectReply {
+        #[rasn(tag(context, 0))]
+        connected(Connected),
+        #[rasn(tag(context, 1))]
+        failed(Failed),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectReply(pub SequenceOf<AnonymousConnectReply>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Connected {
+        #[rasn(identifier = "fromTp")]
+        pub from_tp: ObjectInstance,
+        #[rasn(identifier = "toTp")]
+        pub to_tp: ObjectInstance,
+        #[rasn(identifier = "xCon")]
+        pub x_con: ObjectInstance,
+    }
+    impl Connected {
+        pub fn new(from_tp: ObjectInstance, to_tp: ObjectInstance, x_con: ObjectInstance) -> Self {
+            Self {
+                from_tp,
+                to_tp,
+                x_con,
+            }
+        }
+    }
+    #[doc = " import from M.3100"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ControlCCInformation {
+        #[rasn(tag(context, 0), identifier = "activateSourceCCMechanism")]
+        pub activate_source_ccmechanism: Option<bool>,
+        #[rasn(tag(context, 1), identifier = "activateSinkCCMechanism")]
+        pub activate_sink_ccmechanism: Option<bool>,
+    }
+    impl ControlCCInformation {
+        pub fn new(
+            activate_source_ccmechanism: Option<bool>,
+            activate_sink_ccmechanism: Option<bool>,
+        ) -> Self {
+            Self {
+                activate_source_ccmechanism,
+                activate_sink_ccmechanism,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ControlCCResult {
+        #[rasn(tag(context, 0), identifier = "sourceCCMechanismActive")]
+        pub source_ccmechanism_active: Option<bool>,
+        #[rasn(tag(context, 1), identifier = "sinkCCMechanismActive")]
+        pub sink_ccmechanism_active: Option<bool>,
+        #[rasn(identifier = "additionalInformation")]
+        pub additional_information: Option<SetOf<CCProblem>>,
+    }
+    impl ControlCCResult {
+        pub fn new(
+            source_ccmechanism_active: Option<bool>,
+            sink_ccmechanism_active: Option<bool>,
+            additional_information: Option<SetOf<CCProblem>>,
+        ) -> Self {
+            Self {
+                source_ccmechanism_active,
+                sink_ccmechanism_active,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ControlPMInformation {
+        #[rasn(tag(context, 0), identifier = "controlSourcePMMechanism")]
+        pub control_source_pmmechanism: Option<SourcePMMechanism>,
+        #[rasn(tag(context, 1), identifier = "controlSinkPMMechanism")]
+        pub control_sink_pmmechanism: Option<SinkPMMechanism>,
+    }
+    impl ControlPMInformation {
+        pub fn new(
+            control_source_pmmechanism: Option<SourcePMMechanism>,
+            control_sink_pmmechanism: Option<SinkPMMechanism>,
+        ) -> Self {
+            Self {
+                control_source_pmmechanism,
+                control_sink_pmmechanism,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ControlPMResult {
+        #[rasn(tag(context, 0), identifier = "sourcePMMechanismResult")]
+        pub source_pmmechanism_result: Option<SourcePMMechanism>,
+        #[rasn(tag(context, 1), identifier = "sinkPMMechanismResult")]
+        pub sink_pmmechanism_result: Option<SinkPMMechanism>,
+        #[rasn(identifier = "additionalInformation")]
+        pub additional_information: Option<SetOf<PMProblem>>,
+    }
+    impl ControlPMResult {
+        pub fn new(
+            source_pmmechanism_result: Option<SourcePMMechanism>,
+            sink_pmmechanism_result: Option<SinkPMMechanism>,
+            additional_information: Option<SetOf<PMProblem>>,
+        ) -> Self {
+            Self {
+                source_pmmechanism_result,
+                sink_pmmechanism_result,
+                additional_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CtpOrDescriptor {
+        #[rasn(tag(context, 0))]
+        ctp(ObjectInstance),
+        #[rasn(tag(context, 1))]
+        ctpDescriptor(Descriptor),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CtpStatus {
+        #[rasn(tag(context, 0))]
+        disconnected(()),
+        #[rasn(tag(context, 1))]
+        failed(ProblemCause),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Descriptor {
+        #[rasn(tag(context, 0), identifier = "interfaceId")]
+        pub interface_id: ObjectInstance,
+        #[rasn(tag(context, 1))]
+        pub vpi: Option<VpiValue>,
+        #[rasn(tag(context, 2))]
+        pub vci: Option<VciValue>,
+        #[rasn(tag(context, 3), identifier = "egressCDVTolerancePCR")]
+        pub egress_cdvtolerance_pcr: Option<CDVTolerance>,
+        #[rasn(tag(context, 4), identifier = "ingressCDVTolerancePCR")]
+        pub ingress_cdvtolerance_pcr: Option<CDVTolerance>,
+        #[rasn(tag(context, 5), identifier = "egressCDVToleranceSCR")]
+        pub egress_cdvtolerance_scr: Option<CDVTolerance>,
+        #[rasn(tag(context, 6), identifier = "ingressCDVToleranceSCR")]
+        pub ingress_cdvtolerance_scr: Option<CDVTolerance>,
+        #[rasn(tag(context, 7), identifier = "egressMaxBurstSize")]
+        pub egress_max_burst_size: Option<MaxBurstSize>,
+        #[rasn(tag(context, 8), identifier = "ingressMaxBurstSize")]
+        pub ingress_max_burst_size: Option<MaxBurstSize>,
+        #[rasn(tag(context, 9), identifier = "egressPeakCellRate")]
+        pub egress_peak_cell_rate: Option<PeakCellRate>,
+        #[rasn(tag(context, 10), identifier = "ingressPeakCellRate")]
+        pub ingress_peak_cell_rate: Option<PeakCellRate>,
+        #[rasn(tag(context, 11), identifier = "egressSustainableCellRate")]
+        pub egress_sustainable_cell_rate: Option<SustainableCellRate>,
+        #[rasn(tag(context, 12), identifier = "ingressSustainableCellRate")]
+        pub ingress_sustainable_cell_rate: Option<SustainableCellRate>,
+        #[rasn(tag(context, 13), identifier = "egressQosClass")]
+        pub egress_qos_class: Option<QosClass>,
+        #[rasn(tag(context, 14), identifier = "ingressQosClass")]
+        pub ingress_qos_class: Option<QosClass>,
+        #[rasn(tag(context, 15), identifier = "oamIngressPeakCellRate")]
+        pub oam_ingress_peak_cell_rate: Option<PeakCellRate>,
+        #[rasn(tag(context, 16), identifier = "oamEgressPeakCellRate")]
+        pub oam_egress_peak_cell_rate: Option<PeakCellRate>,
+        #[rasn(tag(context, 17), identifier = "oamIngressCDVTolerance")]
+        pub oam_ingress_cdvtolerance: Option<CDVTolerance>,
+        #[rasn(tag(context, 18), identifier = "oamEgressCDVTolerance")]
+        pub oam_egress_cdvtolerance: Option<CDVTolerance>,
+        #[rasn(tag(context, 19), identifier = "segmentEndPoint")]
+        pub segment_end_point: Boolean,
+    }
+    impl Descriptor {
+        pub fn new(
+            interface_id: ObjectInstance,
+            vpi: Option<VpiValue>,
+            vci: Option<VciValue>,
+            egress_cdvtolerance_pcr: Option<CDVTolerance>,
+            ingress_cdvtolerance_pcr: Option<CDVTolerance>,
+            egress_cdvtolerance_scr: Option<CDVTolerance>,
+            ingress_cdvtolerance_scr: Option<CDVTolerance>,
+            egress_max_burst_size: Option<MaxBurstSize>,
+            ingress_max_burst_size: Option<MaxBurstSize>,
+            egress_peak_cell_rate: Option<PeakCellRate>,
+            ingress_peak_cell_rate: Option<PeakCellRate>,
+            egress_sustainable_cell_rate: Option<SustainableCellRate>,
+            ingress_sustainable_cell_rate: Option<SustainableCellRate>,
+            egress_qos_class: Option<QosClass>,
+            ingress_qos_class: Option<QosClass>,
+            oam_ingress_peak_cell_rate: Option<PeakCellRate>,
+            oam_egress_peak_cell_rate: Option<PeakCellRate>,
+            oam_ingress_cdvtolerance: Option<CDVTolerance>,
+            oam_egress_cdvtolerance: Option<CDVTolerance>,
+            segment_end_point: Boolean,
+        ) -> Self {
+            Self {
+                interface_id,
+                vpi,
+                vci,
+                egress_cdvtolerance_pcr,
+                ingress_cdvtolerance_pcr,
+                egress_cdvtolerance_scr,
+                ingress_cdvtolerance_scr,
+                egress_max_burst_size,
+                ingress_max_burst_size,
+                egress_peak_cell_rate,
+                ingress_peak_cell_rate,
+                egress_sustainable_cell_rate,
+                ingress_sustainable_cell_rate,
+                egress_qos_class,
+                ingress_qos_class,
+                oam_ingress_peak_cell_rate,
+                oam_egress_peak_cell_rate,
+                oam_ingress_cdvtolerance,
+                oam_egress_cdvtolerance,
+                segment_end_point,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDisconnectCtpStatus {
+        #[rasn(identifier = "ctpInstance")]
+        pub ctp_instance: ObjectInstance,
+        #[rasn(identifier = "ctpStatus")]
+        pub ctp_status: CtpStatus,
+    }
+    impl AnonymousDisconnectCtpStatus {
+        pub fn new(ctp_instance: ObjectInstance, ctp_status: CtpStatus) -> Self {
+            Self {
+                ctp_instance,
+                ctp_status,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DisconnectCtpStatus(pub SequenceOf<AnonymousDisconnectCtpStatus>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExistingCTPs(pub SequenceOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct FloatingPointCoding {
+        #[rasn(value("0..=31"))]
+        pub e: u8,
+        #[rasn(value("0..=31"))]
+        pub w: u8,
+    }
+    impl FloatingPointCoding {
+        pub fn new(e: u8, w: u8) -> Self {
+            Self { e, w }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum FlowDirection {
+        outOfSwitch = 0,
+        inToSwitch = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterfacePointer(pub ObjectInstance);
+    #[doc = " uni, interNNI, or intraNNI"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackLocation {
+        #[rasn(identifier = "endPoint")]
+        pub end_point: bool,
+        #[rasn(identifier = "loopbackLocationCode")]
+        pub loopback_location_code: OctetStringOrNull,
+    }
+    impl LoopbackLocation {
+        pub fn new(end_point: bool, loopback_location_code: OctetStringOrNull) -> Self {
+            Self {
+                end_point,
+                loopback_location_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackOAMCellInfo {
+        #[rasn(identifier = "loopbackLocation")]
+        pub loopback_location: LoopbackLocation,
+        #[rasn(identifier = "oamCellType")]
+        pub oam_cell_type: OamCellType,
+    }
+    impl LoopbackOAMCellInfo {
+        pub fn new(loopback_location: LoopbackLocation, oam_cell_type: OamCellType) -> Self {
+            Self {
+                loopback_location,
+                oam_cell_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct LoopbackOAMCellReply {
+        #[rasn(identifier = "loopbackSuccessful")]
+        pub loopback_successful: bool,
+        #[rasn(identifier = "problemCause")]
+        pub problem_cause: Option<ProblemCause>,
+    }
+    impl LoopbackOAMCellReply {
+        pub fn new(loopback_successful: bool, problem_cause: Option<ProblemCause>) -> Self {
+            Self {
+                loopback_successful,
+                problem_cause,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct MaxBurstSize {
+        #[rasn(tag(context, 0), identifier = "maxBurstSizeCLP0plus1")]
+        pub max_burst_size_clp0plus1: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "maxBurstSizeCLP0")]
+        pub max_burst_size_clp0: Option<Integer>,
+    }
+    impl MaxBurstSize {
+        pub fn new(
+            max_burst_size_clp0plus1: Option<Integer>,
+            max_burst_size_clp0: Option<Integer>,
+        ) -> Self {
+            Self {
+                max_burst_size_clp0plus1,
+                max_burst_size_clp0,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Null(pub ());
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OamCellType {
+        segment = 0,
+        endToEnd = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OctetString(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OctetStringOrNull {
+        octetString(OctetString),
+        null(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PMProblem {
+        noSourceUserFlow = 0,
+        noSinkUserFlow = 1,
+        sourceAlreadyActive = 2,
+        sinkAlreadyActive = 3,
+        fePMdataNotAvailable = 4,
+        fePMDataProcessingNotSupported = 5,
+        backwardReportingAlreadyActive = 6,
+        fePMDataProcessingAlreadyActive = 7,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PeakCellRate {
+        #[rasn(tag(context, 0), identifier = "peakCellRateCLP0plus1")]
+        pub peak_cell_rate_clp0plus1: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "peakCellRateCLP0")]
+        pub peak_cell_rate_clp0: Option<Integer>,
+    }
+    impl PeakCellRate {
+        pub fn new(
+            peak_cell_rate_clp0plus1: Option<Integer>,
+            peak_cell_rate_clp0: Option<Integer>,
+        ) -> Self {
+            Self {
+                peak_cell_rate_clp0plus1,
+                peak_cell_rate_clp0,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum QosClass {
+        class0 = 0,
+        class1 = 1,
+        class2 = 2,
+        class3 = 3,
+        class4 = 4,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SinkPMMechanism {
+        #[rasn(identifier = "sinkPMMechanismStatus")]
+        pub sink_pmmechanism_status: SinkPMMechanismStatus,
+        #[rasn(identifier = "sinkAverageMonitoringBlockSize")]
+        pub sink_average_monitoring_block_size: Option<AverageMonitoringBlockSize>,
+    }
+    impl SinkPMMechanism {
+        pub fn new(
+            sink_pmmechanism_status: SinkPMMechanismStatus,
+            sink_average_monitoring_block_size: Option<AverageMonitoringBlockSize>,
+        ) -> Self {
+            Self {
+                sink_pmmechanism_status,
+                sink_average_monitoring_block_size,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SinkPMMechanismStatus {
+        deactivate = 0,
+        process = 1,
+        processAndReportBackward = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SourcePMMechanism {
+        #[rasn(identifier = "sourcePMMechanismStatus")]
+        pub source_pmmechanism_status: SourcePMMechanismStatus,
+        #[rasn(identifier = "sourceAverageMonitoringBlockSize")]
+        pub source_average_monitoring_block_size: Option<AverageMonitoringBlockSize>,
+    }
+    impl SourcePMMechanism {
+        pub fn new(
+            source_pmmechanism_status: SourcePMMechanismStatus,
+            source_average_monitoring_block_size: Option<AverageMonitoringBlockSize>,
+        ) -> Self {
+            Self {
+                source_pmmechanism_status,
+                source_average_monitoring_block_size,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SourcePMMechanismStatus {
+        deactivate = 0,
+        generate = 1,
+        generateAndProcessFePMData = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SustainableCellRate {
+        #[rasn(tag(context, 0), identifier = "sustainableCellRateCLP0plus1")]
+        pub sustainable_cell_rate_clp0plus1: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "sustainableCellRateCLP0")]
+        pub sustainable_cell_rate_clp0: Option<Integer>,
+    }
+    impl SustainableCellRate {
+        pub fn new(
+            sustainable_cell_rate_clp0plus1: Option<Integer>,
+            sustainable_cell_rate_clp0: Option<Integer>,
+        ) -> Self {
+            Self {
+                sustainable_cell_rate_clp0plus1,
+                sustainable_cell_rate_clp0,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct VciValue(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4095"))]
+    pub struct VpiValue(pub u16);
+    #[doc = " additional characteristicInfo"]
+    pub static ATM_CHARACTERISTIC_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751STANDARD_SPECIFIC_EXTENSION, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " additional eventTypes"]
+    pub static ATM_EVENT_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751STANDARD_SPECIFIC_EXTENSION, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " additional probableCause"]
+    pub static ATM_PROBABLE_CAUSE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751STANDARD_SPECIFIC_EXTENSION, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " initial value definitions"]
+    pub const BOOLEAN_FALSE: Boolean = Boolean(Boolean(false));
+    #[doc = " default value definitions"]
+    pub const BOOLEAN_FALSE_DEFAULT: Boolean = Boolean(Boolean(false));
+    pub const BOOLEAN_TRUE_DEFAULT: Boolean = Boolean(Boolean(true));
+    pub static CELL_HEADER_ABNORMALITY_EVENT: LazyLock<EventTypeId> = LazyLock::new(|| {
+        EventTypeId(EventTypeId(EventTypeId::globalForm(
+            Oid::new(&[&***ATM_EVENT_TYPE, &[0u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub const DEFAULT_MONITORING_BLOCK_SIZE: AverageMonitoringBlockSize =
+        AverageMonitoringBlockSize::blockSize(BlockSize::decimal128);
+    pub static I751_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_ATTRIBUTE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_INFORMATION_MODEL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***I, &[751u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_NAME_BINDING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_OBJECT_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_PACKAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_PARAMETER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_RELATIONSHIP_CLASS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751_RELATIONSHIP_MAPPING: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static I751STANDARD_SPECIFIC_EXTENSION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***I751_INFORMATION_MODEL, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static INTEGER_ZERO: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    pub static LOSS_OF_CELL_DELINEATION: LazyLock<ProbableCause> = LazyLock::new(|| {
+        ProbableCause(ProbableCause(ProbableCause::globalValue(
+            Oid::new(&[&***ATM_PROBABLE_CAUSE, &[0u32]].concat())
+                .unwrap()
+                .to_owned(),
+        )))
+    });
+    pub static VC_CI: LazyLock<CharacteristicInformation> = LazyLock::new(|| {
+        CharacteristicInformation(CharacteristicInformation(
+            Oid::new(&[&***ATM_CHARACTERISTIC_INFO, &[0u32]].concat())
+                .unwrap()
+                .to_owned(),
+        ))
+    });
+    pub static VP_CI: LazyLock<CharacteristicInformation> = LazyLock::new(|| {
+        CharacteristicInformation(CharacteristicInformation(
+            Oid::new(&[&***ATM_CHARACTERISTIC_INFO, &[1u32]].concat())
+                .unwrap()
+                .to_owned(),
+        ))
+    });
+}

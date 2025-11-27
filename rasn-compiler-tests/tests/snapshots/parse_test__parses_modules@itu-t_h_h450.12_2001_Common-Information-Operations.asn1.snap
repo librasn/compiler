@@ -1,0 +1,184 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h450.12_2001_Common-Information-Operations.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod common_information_operations {
+    extern crate alloc;
+    use super::call_hold_operations::{MixedExtension, UNDEFINED};
+    use super::manufacturer_specific_service_extension_definition::*;
+    use super::remote_operations_information_objects::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CmnArg {
+        #[rasn(identifier = "featureList")]
+        pub feature_list: Option<FeatureList>,
+        #[rasn(identifier = "featureValues")]
+        pub feature_values: Option<FeatureValues>,
+        #[rasn(identifier = "featureControl")]
+        pub feature_control: Option<FeatureControl>,
+        #[rasn(size("0..=255"))]
+        pub extension: Option<SequenceOf<MixedExtension>>,
+    }
+    impl CmnArg {
+        pub fn new(
+            feature_list: Option<FeatureList>,
+            feature_values: Option<FeatureValues>,
+            feature_control: Option<FeatureControl>,
+            extension: Option<SequenceOf<MixedExtension>>,
+        ) -> Self {
+            Self {
+                feature_list,
+                feature_values,
+                feature_control,
+                extension,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DummyArg {
+        #[rasn(size("0..=255"), identifier = "extensionArg")]
+        pub extension_arg: Option<SequenceOf<MixedExtension>>,
+    }
+    impl DummyArg {
+        pub fn new(extension_arg: Option<SequenceOf<MixedExtension>>) -> Self {
+            Self { extension_arg }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FeatureControl {
+        #[rasn(identifier = "ssCHDoNotHold")]
+        pub ss_chdo_not_hold: Option<()>,
+        #[rasn(identifier = "ssCTDoNotTransfer")]
+        pub ss_ctdo_not_transfer: Option<()>,
+        #[rasn(identifier = "ssMWICallbackCall")]
+        pub ss_mwicallback_call: Option<()>,
+        #[rasn(identifier = "ssCISilentMonitorPermitted")]
+        pub ss_cisilent_monitor_permitted: Option<()>,
+    }
+    impl FeatureControl {
+        pub fn new(
+            ss_chdo_not_hold: Option<()>,
+            ss_ctdo_not_transfer: Option<()>,
+            ss_mwicallback_call: Option<()>,
+            ss_cisilent_monitor_permitted: Option<()>,
+        ) -> Self {
+            Self {
+                ss_chdo_not_hold,
+                ss_ctdo_not_transfer,
+                ss_mwicallback_call,
+                ss_cisilent_monitor_permitted,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FeatureList {
+        #[rasn(identifier = "ssCFreRoutingSupported")]
+        pub ss_cfre_routing_supported: Option<()>,
+        #[rasn(identifier = "ssCTreRoutingSupported")]
+        pub ss_ctre_routing_supported: Option<()>,
+        #[rasn(identifier = "ssCCBSPossible")]
+        pub ss_ccbspossible: Option<()>,
+        #[rasn(identifier = "ssCCNRPossible")]
+        pub ss_ccnrpossible: Option<()>,
+        #[rasn(identifier = "ssCOSupported")]
+        pub ss_cosupported: Option<()>,
+        #[rasn(identifier = "ssCIForcedReleaseSupported")]
+        pub ss_ciforced_release_supported: Option<()>,
+        #[rasn(identifier = "ssCIIsolationSupported")]
+        pub ss_ciisolation_supported: Option<()>,
+        #[rasn(identifier = "ssCIWaitOnBusySupported")]
+        pub ss_ciwait_on_busy_supported: Option<()>,
+        #[rasn(identifier = "ssCISilentMonitoringSupported")]
+        pub ss_cisilent_monitoring_supported: Option<()>,
+        #[rasn(identifier = "ssCIConferenceSupported")]
+        pub ss_ciconference_supported: Option<()>,
+        #[rasn(identifier = "ssCHFarHoldSupported")]
+        pub ss_chfar_hold_supported: Option<()>,
+        #[rasn(identifier = "ssMWICallbackSupported")]
+        pub ss_mwicallback_supported: Option<()>,
+        #[rasn(identifier = "ssCPCallParkSupported")]
+        pub ss_cpcall_park_supported: Option<()>,
+    }
+    impl FeatureList {
+        pub fn new(
+            ss_cfre_routing_supported: Option<()>,
+            ss_ctre_routing_supported: Option<()>,
+            ss_ccbspossible: Option<()>,
+            ss_ccnrpossible: Option<()>,
+            ss_cosupported: Option<()>,
+            ss_ciforced_release_supported: Option<()>,
+            ss_ciisolation_supported: Option<()>,
+            ss_ciwait_on_busy_supported: Option<()>,
+            ss_cisilent_monitoring_supported: Option<()>,
+            ss_ciconference_supported: Option<()>,
+            ss_chfar_hold_supported: Option<()>,
+            ss_mwicallback_supported: Option<()>,
+            ss_cpcall_park_supported: Option<()>,
+        ) -> Self {
+            Self {
+                ss_cfre_routing_supported,
+                ss_ctre_routing_supported,
+                ss_ccbspossible,
+                ss_ccnrpossible,
+                ss_cosupported,
+                ss_ciforced_release_supported,
+                ss_ciisolation_supported,
+                ss_ciwait_on_busy_supported,
+                ss_cisilent_monitoring_supported,
+                ss_ciconference_supported,
+                ss_chfar_hold_supported,
+                ss_mwicallback_supported,
+                ss_cpcall_park_supported,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct FeatureValues {
+        #[rasn(identifier = "partyCategory")]
+        pub party_category: Option<PartyCategory>,
+        #[rasn(identifier = "ssCIprotectionLevel")]
+        pub ss_ciprotection_level: Option<SSCIProtectionLevel>,
+    }
+    impl FeatureValues {
+        pub fn new(
+            party_category: Option<PartyCategory>,
+            ss_ciprotection_level: Option<SSCIProtectionLevel>,
+        ) -> Self {
+            Self {
+                party_category,
+                ss_ciprotection_level,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum PartyCategory {
+        unknown = 0,
+        extension = 1,
+        attendant = 2,
+        emergExt = 3,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=3"))]
+    pub struct SSCIProtectionLevel(pub u8);
+}

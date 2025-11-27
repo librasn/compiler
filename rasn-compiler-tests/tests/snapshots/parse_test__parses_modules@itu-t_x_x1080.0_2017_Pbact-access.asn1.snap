@@ -1,0 +1,737 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1080.0_2017_Pbact-access.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pbact_access {
+    extern crate alloc;
+    use super::attribute_certificate_definitions::AttributeCertificate;
+    use super::cms_telebiometric::*;
+    use super::information_framework::*;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AccessService {
+        #[rasn(identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(size("1.."), identifier = "objectDef")]
+        pub object_def: SequenceOf<ObjectSel>,
+    }
+    impl AccessService {
+        pub fn new(service_id: ObjectIdentifier, object_def: SequenceOf<ObjectSel>) -> Self {
+            Self {
+                service_id,
+                object_def,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AccessdErr {
+        #[rasn(tag(context, 0))]
+        cmsErr(CmsErrorCode),
+        #[rasn(tag(context, 1))]
+        pbactErr(PbactErr),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AddRequestAttr(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AddRequest {
+        #[rasn(tag(context, 1))]
+        pub object: DistinguishedName,
+        #[rasn(tag(context, 2))]
+        pub attr: Option<AddRequestAttr>,
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl AddRequest {
+        pub fn new(
+            object: DistinguishedName,
+            attr: Option<AddRequestAttr>,
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                object,
+                attr,
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AddResult {
+        #[rasn(tag(context, 0))]
+        success(()),
+        #[rasn(tag(context, 1))]
+        failure(AccessdErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum AssignErr {
+        invalidAttributeCertificate = 0,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeCertificates(pub SequenceOf<AttributeCertificate>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttributeOperations(pub BitString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeSelAttSelectAllAttr {
+        #[rasn(tag(context, 0), identifier = "attrOper1")]
+        pub attr_oper1: Option<AttributeOperations>,
+    }
+    impl AttributeSelAttSelectAllAttr {
+        pub fn new(attr_oper1: Option<AttributeOperations>) -> Self {
+            Self { attr_oper1 }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousAttributeSelAttSelectAttributes {
+        #[rasn(size("1.."))]
+        pub select: SequenceOf<Any>,
+        #[rasn(tag(context, 0), identifier = "attrOper2")]
+        pub attr_oper2: Option<AttributeOperations>,
+    }
+    impl AnonymousAttributeSelAttSelectAttributes {
+        pub fn new(select: SequenceOf<Any>, attr_oper2: Option<AttributeOperations>) -> Self {
+            Self { select, attr_oper2 }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeSelAttSelectAttributes(
+        pub SequenceOf<AnonymousAttributeSelAttSelectAttributes>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AttributeSelAttSelect {
+        #[rasn(tag(context, 0))]
+        allAttr(AttributeSelAttSelectAllAttr),
+        #[rasn(tag(context, 1))]
+        attributes(AttributeSelAttSelectAttributes),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AttributeSel {
+        #[rasn(identifier = "attSelect")]
+        pub att_select: AttributeSelAttSelect,
+    }
+    impl AttributeSel {
+        pub fn new(att_select: AttributeSelAttSelect) -> Self {
+            Self { att_select }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CommonReqComp {
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl CommonReqComp {
+        pub fn new(
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CompareOK {
+        #[rasn(tag(context, 0))]
+        pub matched: bool,
+        #[rasn(
+            tag(context, 1),
+            default = "compare_ok_matched_subtype_default",
+            identifier = "matchedSubtype"
+        )]
+        pub matched_subtype: bool,
+    }
+    impl CompareOK {
+        pub fn new(matched: bool, matched_subtype: bool) -> Self {
+            Self {
+                matched,
+                matched_subtype,
+            }
+        }
+    }
+    fn compare_ok_matched_subtype_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CompareRequest {
+        #[rasn(tag(context, 1))]
+        pub object: DistinguishedName,
+        #[rasn(tag(context, 2))]
+        pub purported: AttributeValueAssertion,
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl CompareRequest {
+        pub fn new(
+            object: DistinguishedName,
+            purported: AttributeValueAssertion,
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                object,
+                purported,
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum CompareResultResult {
+        #[rasn(tag(context, 0))]
+        success(CompareOK),
+        #[rasn(tag(context, 1))]
+        failure(AccessdErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CompareResult {
+        pub object: DistinguishedName,
+        pub result: CompareResultResult,
+    }
+    impl CompareResult {
+        pub fn new(object: DistinguishedName, result: CompareResultResult) -> Self {
+            Self { object, result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DeleteRequest {
+        pub object: DistinguishedName,
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl DeleteRequest {
+        pub fn new(
+            object: DistinguishedName,
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                object,
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum DeleteResult {
+        #[rasn(tag(context, 0))]
+        success(()),
+        #[rasn(tag(context, 1))]
+        failure(AccessdErr),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum InformationSelectionAttributes {
+        #[rasn(tag(context, 0))]
+        allAttributes(()),
+        #[rasn(size("1.."), tag(context, 1))]
+        select(SequenceOf<Any>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum InformationSelectionInfoTypes {
+        attributeTypesOnly = 0,
+        attributeTypeAndValue = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct InformationSelection {
+        pub attributes: InformationSelectionAttributes,
+        #[rasn(identifier = "infoTypes")]
+        pub info_types: InformationSelectionInfoTypes,
+    }
+    impl InformationSelection {
+        pub fn new(
+            attributes: InformationSelectionAttributes,
+            info_types: InformationSelectionInfoTypes,
+        ) -> Self {
+            Self {
+                attributes,
+                info_types,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ModifyRequest {
+        pub object: DistinguishedName,
+        #[rasn(size("1.."))]
+        pub changes: SequenceOf<ObjectModification>,
+        pub select: InformationSelection,
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl ModifyRequest {
+        pub fn new(
+            object: DistinguishedName,
+            changes: SequenceOf<ObjectModification>,
+            select: InformationSelection,
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                object,
+                changes,
+                select,
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ModifyResultResult {
+        #[rasn(tag(context, 0))]
+        success(ObjectInformation),
+        #[rasn(tag(context, 1))]
+        failure(AccessdErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ModifyResult {
+        pub result: ModifyResultResult,
+    }
+    impl ModifyResult {
+        pub fn new(result: ModifyResultResult) -> Self {
+            Self { result }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ObjectInformationInfo(pub SetOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ObjectInformation {
+        pub name: DistinguishedName,
+        pub info: ObjectInformationInfo,
+    }
+    impl ObjectInformation {
+        pub fn new(name: DistinguishedName, info: ObjectInformationInfo) -> Self {
+            Self { name, info }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ObjectModification {
+        #[rasn(value("0.."), tag(context, 0))]
+        addAttribute(Attribute),
+        #[rasn(tag(context, 1))]
+        deleteAttribute(AttributeType),
+        #[rasn(value("0.."), tag(context, 2))]
+        addValues(Attribute),
+        #[rasn(value("0.."), tag(context, 3))]
+        deleteValues(Attribute),
+        #[rasn(value("0.."), tag(context, 4))]
+        replaceAttribute(Attribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ObjectOperations(pub BitString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum AnonymousObjectSelObjSelectObjectNamesObject {
+        #[rasn(size("1.."), tag(context, 1))]
+        names(SequenceOf<DistinguishedName>),
+        #[rasn(tag(context, 2))]
+        subtree(DistinguishedName),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousObjectSelObjSelectObjectNames {
+        pub object: AnonymousObjectSelObjSelectObjectNamesObject,
+        pub select: TargetSelect,
+    }
+    impl AnonymousObjectSelObjSelectObjectNames {
+        pub fn new(
+            object: AnonymousObjectSelObjSelectObjectNamesObject,
+            select: TargetSelect,
+        ) -> Self {
+            Self { object, select }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ObjectSelObjSelectObjectNames(
+        pub SequenceOf<AnonymousObjectSelObjSelectObjectNames>,
+    );
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ObjectSelObjSelect {
+        #[rasn(tag(context, 0))]
+        allObj(TargetSelect),
+        #[rasn(tag(context, 1))]
+        objectNames(ObjectSelObjSelectObjectNames),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ObjectSel {
+        #[rasn(identifier = "objecClass")]
+        pub objec_class: Any,
+        #[rasn(identifier = "objSelect")]
+        pub obj_select: ObjectSelObjSelect,
+    }
+    impl ObjectSel {
+        pub fn new(objec_class: Any, obj_select: ObjectSelObjSelect) -> Self {
+            Self {
+                objec_class,
+                obj_select,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum PbactErr {
+        noSuchService = 0,
+        invalidOperationForService = 1,
+        insufficientAccessRigth = 2,
+        noSuchObject = 3,
+        noSuchAttribute = 4,
+        noSuchAttributeValue = 5,
+        objectAlreadyExists = 6,
+        attributeAlreadyExists = 7,
+        attributeValueAlreadyExists = 8,
+        noInformation = 9,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum PrivAssignErr {
+        #[rasn(tag(context, 0))]
+        cmsErr(CmsErrorCode),
+        #[rasn(tag(context, 1))]
+        assignErr(AssignErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PrivAssignRequest {
+        #[rasn(tag(context, 1), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+    }
+    impl PrivAssignRequest {
+        pub fn new(attr_certs: Option<AttributeCertificates>) -> Self {
+            Self { attr_certs }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum PrivAssignResultResult {
+        success(()),
+        failure(PrivAssignErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PrivAssignResult {
+        pub result: PrivAssignResultResult,
+    }
+    impl PrivAssignResult {
+        pub fn new(result: PrivAssignResultResult) -> Self {
+            Self { result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReadRequest {
+        #[rasn(tag(context, 1))]
+        pub object: DistinguishedName,
+        #[rasn(tag(context, 2))]
+        pub selection: InformationSelection,
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl ReadRequest {
+        pub fn new(
+            object: DistinguishedName,
+            selection: InformationSelection,
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                object,
+                selection,
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum ReadResultResult {
+        #[rasn(tag(context, 0))]
+        success(ObjectInformation),
+        #[rasn(tag(context, 1))]
+        failure(AccessdErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ReadResult {
+        pub object: DistinguishedName,
+        pub result: ReadResultResult,
+    }
+    impl ReadResult {
+        pub fn new(object: DistinguishedName, result: ReadResultResult) -> Self {
+            Self { object, result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RenameRequest {
+        pub object: DistinguishedName,
+        pub new: DistinguishedName,
+        #[rasn(tag(context, 31), identifier = "attrCerts")]
+        pub attr_certs: Option<AttributeCertificates>,
+        #[rasn(tag(context, 30), identifier = "serviceId")]
+        pub service_id: ObjectIdentifier,
+        #[rasn(tag(context, 29), identifier = "invokId")]
+        pub invok_id: Integer,
+    }
+    impl RenameRequest {
+        pub fn new(
+            object: DistinguishedName,
+            new: DistinguishedName,
+            attr_certs: Option<AttributeCertificates>,
+            service_id: ObjectIdentifier,
+            invok_id: Integer,
+        ) -> Self {
+            Self {
+                object,
+                new,
+                attr_certs,
+                service_id,
+                invok_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum RenameResultResult {
+        #[rasn(tag(context, 0))]
+        success(()),
+        #[rasn(tag(context, 1))]
+        failure(AccessdErr),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RenameResult {
+        pub result: RenameResultResult,
+    }
+    impl RenameResult {
+        pub fn new(result: RenameResultResult) -> Self {
+            Self { result }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TargetSelect {
+        #[rasn(identifier = "objOper")]
+        pub obj_oper: Option<ObjectOperations>,
+        #[rasn(identifier = "attrSel")]
+        pub attr_sel: Option<AttributeSel>,
+    }
+    impl TargetSelect {
+        pub fn new(obj_oper: Option<ObjectOperations>, attr_sel: Option<AttributeSel>) -> Self {
+            Self { obj_oper, attr_sel }
+        }
+    }
+    pub static ID_ADD_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ADD_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Artribute types for carring privilege definitions"]
+    pub static ID_AT_ACCESS_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_PRIV_ATTR, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_COMPARE_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_COMPARE_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DELETE_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[9u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DELETE_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MODIFY_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_MODIFY_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " object identifier allocations"]
+    #[doc = " top tree"]
+    pub static ID_PBACT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 42u32, 3u32, 20u32]).to_owned());
+    pub static ID_PBACT_CONT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PBACT_PRIV_ATTR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PBACTMODULE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " Content types"]
+    pub static ID_PRIV_ASSIGN_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PRIV_ASSIGN_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_READ_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_READ_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_RENAME_REQUEST: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_RENAME_RESULT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PBACT_CONT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

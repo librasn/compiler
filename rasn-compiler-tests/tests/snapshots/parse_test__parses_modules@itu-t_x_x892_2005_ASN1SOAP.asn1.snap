@@ -1,0 +1,192 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x892_2005_ASN1SOAP.asn1
+---
+Warnings:
+Unidentified generating bindings for : Unexpectedly encountered unlinked struct-like ASN1 value!
+LinkerError in ASN grammar: Failed to resolve reference of ElsewhereDefined: AnyURI
+LinkerError in ASN grammar: Failed to link value with 'AnyURI'
+LinkerError in ASN grammar: Failed to link value with 'QName'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_soap {
+    extern crate alloc;
+    use super::fast_infoset::{Document, FINF_DOC_NO_DECL};
+    use super::xsd::{AnyURI, Int, Language, QName};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Body {
+        pub content: Option<Content>,
+    }
+    impl Body {
+        pub fn new(content: Option<Content>) -> Self {
+            Self { content }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Code {
+        pub value: Value,
+        pub subcodes: SequenceOf<super::xsd::QName>,
+    }
+    impl Code {
+        pub fn new(value: Value, subcodes: SequenceOf<super::xsd::QName>) -> Self {
+            Self { value, subcodes }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ContentEncodedValue {
+        #[rasn(size("16"), identifier = "schema-identifier")]
+        pub schema_identifier: Option<OctetString>,
+        pub id: Identifier,
+        pub encoding: OctetString,
+    }
+    impl ContentEncodedValue {
+        pub fn new(
+            schema_identifier: Option<OctetString>,
+            id: Identifier,
+            encoding: OctetString,
+        ) -> Self {
+            Self {
+                schema_identifier,
+                id,
+                encoding,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Content {
+        #[rasn(identifier = "encoded-value")]
+        encoded_value(ContentEncodedValue),
+        #[rasn(value("0.."), identifier = "fast-infoset-document")]
+        fast_infoset_document(OctetString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum EnvelopeBodyOrFault {
+        body(Body),
+        fault(Fault),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Envelope {
+        pub header: Header,
+        #[rasn(identifier = "body-or-fault")]
+        pub body_or_fault: EnvelopeBodyOrFault,
+    }
+    impl Envelope {
+        pub fn new(header: Header, body_or_fault: EnvelopeBodyOrFault) -> Self {
+            Self {
+                header,
+                body_or_fault,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Fault {
+        pub code: Code,
+        #[rasn(size("1.."))]
+        pub reason: SequenceOf<Text>,
+        pub node: Option<super::xsd::AnyURI>,
+        pub role: Option<super::xsd::AnyURI>,
+        pub detail: Option<Content>,
+    }
+    impl Fault {
+        pub fn new(
+            code: Code,
+            reason: SequenceOf<Text>,
+            node: Option<super::xsd::AnyURI>,
+            role: Option<super::xsd::AnyURI>,
+            detail: Option<Content>,
+        ) -> Self {
+            Self {
+                code,
+                reason,
+                node,
+                role,
+                detail,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Header(pub SequenceOf<HeaderBlock>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct HeaderBlock {
+        #[rasn(identifier = "mustUnderstand")]
+        pub must_understand: Option<bool>,
+        pub relay: Option<bool>,
+        #[rasn(default = "header_block_role_default")]
+        pub role: super::xsd::AnyURI,
+        pub content: Content,
+    }
+    impl HeaderBlock {
+        pub fn new(
+            must_understand: Option<bool>,
+            relay: Option<bool>,
+            role: super::xsd::AnyURI,
+            content: Content,
+        ) -> Self {
+            Self {
+                must_understand,
+                relay,
+                role,
+                content,
+            }
+        }
+    }
+    fn header_block_role_default() -> super::xsd::AnyURI {
+        ULTIMATE_RECEIVER
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Identifier {
+        roid(ObjectIdentifier),
+        qName(super::xsd::QName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NotUnderstood(pub super::xsd::QName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Text {
+        pub lang: super::xsd::Language,
+        pub text: Utf8String,
+    }
+    impl Text {
+        pub fn new(lang: super::xsd::Language, text: Utf8String) -> Self {
+            Self { lang, text }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Value {
+        versionMismatch = 0,
+        mustUnderstand = 1,
+        dataEncodingUnknown = 2,
+        sender = 3,
+        receiver = 4,
+    }
+    pub static ULTIMATE_RECEIVER: LazyLock<AnyURI> = LazyLock::new(|| {
+        AnyURI(AnyURI(
+            "http://www.w3.org/2003/05/soap-envelope/role/UltimateReceiver",
+        ))
+    });
+}

@@ -1,0 +1,143 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h460.4_2007_CALL-PRIORITY.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod call_priority {
+    extern crate alloc;
+    use super::h235_security_messages::{ClearToken, CryptoToken};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CallPriorityInfoPriorityValue {
+        emergencyAuthorized(()),
+        emergencyPublic(()),
+        high(()),
+        normal(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CallPriorityInfoRejectReason {
+        priorityUnavailable(()),
+        priorityUnauthorized(()),
+        priorityValueUnknown(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CallPriorityInfo {
+        #[rasn(identifier = "priorityValue")]
+        pub priority_value: CallPriorityInfoPriorityValue,
+        #[rasn(value("0..=255"), identifier = "priorityExtension")]
+        pub priority_extension: Option<u8>,
+        pub tokens: Option<SequenceOf<ClearToken>>,
+        #[rasn(identifier = "cryptoTokens")]
+        pub crypto_tokens: Option<SequenceOf<CryptoToken>>,
+        #[rasn(identifier = "rejectReason")]
+        pub reject_reason: Option<CallPriorityInfoRejectReason>,
+    }
+    impl CallPriorityInfo {
+        pub fn new(
+            priority_value: CallPriorityInfoPriorityValue,
+            priority_extension: Option<u8>,
+            tokens: Option<SequenceOf<ClearToken>>,
+            crypto_tokens: Option<SequenceOf<CryptoToken>>,
+            reject_reason: Option<CallPriorityInfoRejectReason>,
+        ) -> Self {
+            Self {
+                priority_value,
+                priority_extension,
+                tokens,
+                crypto_tokens,
+                reject_reason,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CountryInternationalNetworkCallOriginationIdentificationNumberingPlanX121 {
+        #[rasn(
+            size("3"),
+            from(
+                "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+                "\u{38}", "\u{39}"
+            ),
+            identifier = "countryCode"
+        )]
+        pub country_code: Ia5String,
+    }
+    impl CountryInternationalNetworkCallOriginationIdentificationNumberingPlanX121 {
+        pub fn new(country_code: Ia5String) -> Self {
+            Self { country_code }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CountryInternationalNetworkCallOriginationIdentificationNumberingPlanE164 {
+        #[rasn(
+            size("3"),
+            from(
+                "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+                "\u{38}", "\u{39}"
+            ),
+            identifier = "countryCode"
+        )]
+        pub country_code: Ia5String,
+        #[rasn(
+            size("1..=4"),
+            from(
+                "\u{30}", "\u{31}", "\u{32}", "\u{33}", "\u{34}", "\u{35}", "\u{36}", "\u{37}",
+                "\u{38}", "\u{39}"
+            ),
+            identifier = "identificationCode"
+        )]
+        pub identification_code: Ia5String,
+    }
+    impl CountryInternationalNetworkCallOriginationIdentificationNumberingPlanE164 {
+        pub fn new(country_code: Ia5String, identification_code: Ia5String) -> Self {
+            Self {
+                country_code,
+                identification_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum CountryInternationalNetworkCallOriginationIdentificationNumberingPlan {
+        x121(CountryInternationalNetworkCallOriginationIdentificationNumberingPlanX121),
+        e164(CountryInternationalNetworkCallOriginationIdentificationNumberingPlanE164),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct CountryInternationalNetworkCallOriginationIdentification {
+        #[rasn(identifier = "numberingPlan")]
+        pub numbering_plan: CountryInternationalNetworkCallOriginationIdentificationNumberingPlan,
+    }
+    impl CountryInternationalNetworkCallOriginationIdentification {
+        pub fn new(
+            numbering_plan: CountryInternationalNetworkCallOriginationIdentificationNumberingPlan,
+        ) -> Self {
+            Self { numbering_plan }
+        }
+    }
+}

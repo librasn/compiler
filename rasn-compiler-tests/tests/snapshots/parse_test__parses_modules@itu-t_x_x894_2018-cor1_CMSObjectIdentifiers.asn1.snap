@@ -1,0 +1,223 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x894_2018-cor1_CMSObjectIdentifiers.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cmsobject_identifiers {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " EXPORTS All "]
+    #[doc = " IMPORTS All "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OID(pub ObjectIdentifier);
+    pub static CKM_CMS: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[2u32, 23u32, 42u32, 9u32, 10u32, 3u32, 0u32, 2u32, 2u32]).to_owned())
+    });
+    pub static CMS: LazyLock<OID> = LazyLock::new(|| {
+        OID(
+            Oid::const_new(&[1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 73u32, 2u32, 0u32])
+                .to_owned(),
+        )
+    });
+    #[doc = " Database Bncryption Key Management "]
+    pub static DB_EKM: LazyLock<OID> = LazyLock::new(|| {
+        OID(
+            Oid::const_new(&[2u32, 16u32, 840u32, 1u32, 114171u32, 4u32, 1u32, 2u32, 0u32])
+                .to_owned(),
+        )
+    });
+    pub static ID_SIMPLE_STRING: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***DB_EKM, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_UNIQUE_IDENTIFIER: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***DB_EKM, &[2u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_XPATH_SIGNCRYPTION_SET: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MANIFEST, &[2u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_XPATH_TOKENS_SET: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_TOKENIZATION_MANIFEST, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " RFC 3211 password-based encryption "]
+    pub static ID_ALG_PWRI_KEK: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32, 16u32, 3u32, 9u32]).to_owned()
+    });
+    pub static ID_CKM_ALGORITHMS: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 3u32]).to_owned()));
+    pub static ID_CKM_HEADER: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 4u32]).to_owned()));
+    pub static ID_CKM_KEY_AGREE_HASH: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_CKM_ALGORITHMS, &[4u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_CKM_KEY_AGREE_MULTIPLE_ENCRYPT: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_CKM_ALGORITHMS, &[3u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_CKM_KEY_TRANSPORT: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_CKM_ALGORITHMS, &[2u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " Authenticated attribute, from IETF S/MIME "]
+    #[doc = " CKM key management object identifiers "]
+    pub static ID_CKM_RECIP_INFO: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 2u32, 1u32]).to_owned())
+    });
+    pub static ID_CKM_RECIP_INFO2: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 2u32, 2u32]).to_owned())
+    });
+    pub static ID_CKM_SYMMETRIC: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_CKM_ALGORITHMS, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_CMS_SAML: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***XML_MARKUP, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_CMS_XKMS: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***XML_MARKUP, &[2u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " X9.73 attribute object identifiers "]
+    pub static ID_CMS_ATTRIBUTES: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 73u32, 1u32]).to_owned())
+    });
+    #[doc = " X9.73 XML namespace prefix values "]
+    pub static ID_CMS_NAMESPACES: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 73u32, 2u32]).to_owned())
+    });
+    #[doc = " Signed attributes, from RSA PKCS #9, IETF S/MIME, and X9.73 "]
+    pub static ID_CONTENT_TYPE: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS9, &[3u32]].concat()).unwrap().to_owned()));
+    pub static ID_CT_AUTH_DATA: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SMIME, &[1u32, 2u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS7, &[1u32]].concat()).unwrap().to_owned()));
+    pub static ID_DBEKM_RECIP_INFO: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 2u32, 3u32]).to_owned())
+    });
+    pub static ID_DIGESTED_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS7, &[5u32]].concat()).unwrap().to_owned()));
+    pub static ID_ENCRYPTED_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS7, &[6u32]].concat()).unwrap().to_owned()));
+    pub static ID_ENVELOPED_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS7, &[3u32]].concat()).unwrap().to_owned()));
+    pub static ID_MESSAGE_COMPONENTS: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***XML_MARKUP, &[3u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_MESSAGE_DIGEST: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS9, &[4u32]].concat()).unwrap().to_owned()));
+    pub static ID_NAMEDKEYENCRYPTED_DATA: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 1u32, 2u32]).to_owned())
+    });
+    #[doc = " Signcryption object identifiers "]
+    pub static ID_SIGNCRYPTED_DATA: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 10060u32, 1u32, 3u32]).to_owned())
+    });
+    #[doc = " Signcryption object identifiers "]
+    pub static ID_SIGNCRYPTED_PARTS: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MANIFEST, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static ID_SIGNED_DATA: LazyLock<OID> =
+        LazyLock::new(|| OID(Oid::new(&[&***PKCS7, &[2u32]].concat()).unwrap().to_owned()));
+    #[doc = " Tokenization object identifiers "]
+    pub static ID_TOKENIZATION_MANIFEST: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 73u32, 3u32]).to_owned())
+    });
+    pub static ID_TOKENIZED_PARTS: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_TOKENIZATION_MANIFEST, &[0u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " Alias"]
+    #[doc = " Content types, from RSA PKCS #7 and IETF S/MIME"]
+    pub static PKCS7: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 7u32]).to_owned())
+    });
+    pub static PKCS9: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32]).to_owned())
+    });
+    pub static SIGNCRYPTED_ATTRIBUTES: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MODE, &[2u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static SIGNCRYPTED_COMPONENTS: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MODE, &[3u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static SIGNCRYPTED_CONTENT: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MODE, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static SIGNCRYPTED_ENVELOPE: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MODE, &[4u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " Signcryption processing mode object identifiers "]
+    pub static SIGNCRYPTION: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::const_new(&[1u32, 3u32, 133u32, 16u32, 840u32, 9u32, 73u32, 4u32]).to_owned())
+    });
+    #[doc = " The signcryption-manifest arc is the root identifier for all "]
+    #[doc = " SigncryptedData manifest types definied in this standard. "]
+    pub static SIGNCRYPTION_MANIFEST: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_SIGNCRYPTED_DATA, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static SIGNCRYPTION_MODE: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION, &[1u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static SMIME: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***PKCS9, &[16u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    #[doc = " A value of xPath identifies the XPathSet manifest type. "]
+    pub static X_PATH: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***SIGNCRYPTION_MANIFEST, &[0u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+    pub static XML_MARKUP: LazyLock<OID> = LazyLock::new(|| {
+        OID(Oid::new(&[&***ID_CMS_ATTRIBUTES, &[0u32]].concat())
+            .unwrap()
+            .to_owned())
+    });
+}

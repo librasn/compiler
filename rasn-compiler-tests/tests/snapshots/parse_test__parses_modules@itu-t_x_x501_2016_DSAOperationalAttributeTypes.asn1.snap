@@ -1,0 +1,152 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2016_DSAOperationalAttributeTypes.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod dsaoperational_attribute_types {
+    extern crate alloc;
+    use super::distributed_operations::{
+        AccessPoint, DitBridgeKnowledge, MasterAndShadowAccessPoints,
+    };
+    use super::information_framework::*;
+    use super::operational_binding_management::OperationalBindingID;
+    use super::selected_attribute_types::{
+        BIT_STRING_MATCH, DIRECTORY_STRING_FIRST_COMPONENT_MATCH,
+    };
+    use super::useful_definitions::{
+        DISTRIBUTED_OPERATIONS, ID_DOA, ID_KMR, INFORMATION_FRAMEWORK, OP_BINDING_MANAGEMENT,
+        SELECTED_ATTRIBUTE_TYPES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConsumerInformation(pub SupplierOrConsumer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DSEType(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct SupplierAndConsumers {
+        #[rasn(tag(context, 3))]
+        pub consumers: SetOf<AccessPoint>,
+    }
+    impl SupplierAndConsumers {
+        pub fn new(consumers: SetOf<AccessPoint>) -> Self {
+            Self { consumers }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct SupplierInformation {
+        #[rasn(
+            tag(context, 4),
+            default = "supplier_information_supplier_is_master_default",
+            identifier = "supplier-is-master"
+        )]
+        pub supplier_is_master: bool,
+        #[rasn(tag(context, 5), identifier = "non-supplying-master")]
+        pub non_supplying_master: Option<AccessPoint>,
+    }
+    impl SupplierInformation {
+        pub fn new(supplier_is_master: bool, non_supplying_master: Option<AccessPoint>) -> Self {
+            Self {
+                supplier_is_master,
+                non_supplying_master,
+            }
+        }
+    }
+    fn supplier_information_supplier_is_master_default() -> bool {
+        true
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct SupplierOrConsumer {
+        #[rasn(tag(context, 3), identifier = "agreementID")]
+        pub agreement_id: OperationalBindingID,
+    }
+    impl SupplierOrConsumer {
+        pub fn new(agreement_id: OperationalBindingID) -> Self {
+            Self { agreement_id }
+        }
+    }
+    pub static ID_DOA_CONSUMER_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_DIT_BRIDGE_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[8u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " object identifier assignments"]
+    #[doc = " dsa operational attributes"]
+    pub static ID_DOA_DSE_TYPE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_MY_ACCESS_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_NON_SPECIFIC_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_SECONDARY_SHADOWS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[7u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_SPECIFIC_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_SUPERIOR_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_DOA_SUPPLIER_KNOWLEDGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_DOA, &[5u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " knowledge matching rules"]
+    pub static ID_KMR_ACCESS_POINT_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_KMR, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_KMR_MASTER_SHADOW_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_KMR, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_KMR_SUPPLIER_CONSUMER_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_KMR, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_KMR_SUPPLIER_CONSUMERS_MATCH: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_KMR, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

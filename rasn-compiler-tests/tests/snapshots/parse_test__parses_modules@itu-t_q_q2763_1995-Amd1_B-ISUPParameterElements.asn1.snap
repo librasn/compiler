@@ -1,0 +1,155 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_q_q2763_1995-Amd1_B-ISUPParameterElements.asn1
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod b_isupparameter_elements {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=13"))]
+    pub struct AALParametersField(pub OctetString);
+    #[doc = "\tcoding as AAL parameters info element Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddressSignal {
+        digit0 = 0,
+        digit1 = 1,
+        digit2 = 2,
+        digit3 = 3,
+        digit4 = 4,
+        digit5 = 5,
+        digit6 = 6,
+        digit7 = 7,
+        digit8 = 8,
+        digit9 = 9,
+        sTsignal = 15,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct BinaryCode(pub u16);
+    #[doc = "\tmaximum value 216 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=11"))]
+    pub struct BroadbandBearerCapabilityField(pub OctetString);
+    #[doc = "\tcoding as Broadband BC info element in Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=3"))]
+    pub struct BroadbandHighLayerInformationField(pub OctetString);
+    #[doc = "\tcoding as Broadband HLC info element in Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=14"))]
+    pub struct BroadbandLowLayerInformationField(pub OctetString);
+    #[doc = "\tcoding as Broadband LLC info element in Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CalledAddressSignal {
+        digit0 = 0,
+        digit1 = 1,
+        digit2 = 2,
+        digit3 = 3,
+        digit4 = 4,
+        digit5 = 5,
+        digit6 = 6,
+        digit7 = 7,
+        digit8 = 8,
+        digit9 = 9,
+        code11 = 11,
+        code12 = 12,
+        sTsignal = 15,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=20"))]
+    pub struct CalledPartySubaddressField(pub OctetString);
+    #[doc = "\tcoding as SUB info element in Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CallingAddressSignal {
+        digit0 = 0,
+        digit1 = 1,
+        digit2 = 2,
+        digit3 = 3,
+        digit4 = 4,
+        digit5 = 5,
+        digit6 = 6,
+        digit7 = 7,
+        digit8 = 8,
+        digit9 = 9,
+        code11 = 11,
+        code12 = 12,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=20"))]
+    pub struct CallingPartySubaddressField(pub OctetString);
+    #[doc = "\tcoding as SUB info element in Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct CellRateID(pub u32);
+    #[doc = "\tmaximum value 224 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=20"))]
+    pub struct ConnectedSubaddressField(pub OctetString);
+    #[doc = "\tcoding as SUB info element in Q.2951 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4294967295"))]
+    pub struct ControlID(pub u32);
+    #[doc = "\tcoding as PROGRESS info element in Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct DelayValue(pub u16);
+    #[doc = "\tmaximum value 232 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=16777215"))]
+    pub struct MLPPServiceDomain(pub u32);
+    #[doc = "\tcoding as Narrowband LLC info element in Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=9"))]
+    pub struct NIdigit(pub u8);
+    #[doc = "\tmaximum value 224 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=11"))]
+    pub struct NarrowbandBearerCapabilityField(pub OctetString);
+    #[doc = "\tcoding as Narrowband BC info element in Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=3"))]
+    pub struct NarrowbandHighLayerCompaField(pub OctetString);
+    #[doc = "\tcoding as Narrowband HLC info element in Q.2931 including the header"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=14"))]
+    pub struct NarrowbandLowLayerCompaField(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=10"))]
+    pub struct OAMTrafficDescriptorField(pub OctetString);
+    #[doc = "\tcoding as OAM traffic descriptor IE in Q.2931 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProgressIndicatorField(pub FixedOctetString<2usize>);
+    #[doc = "\tmaximum value 216 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=5"))]
+    pub struct RedirectionCounter(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=4095"))]
+    pub struct SignallingPointCode(pub u16);
+    #[doc = "\tmaximum value 212 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=128"))]
+    pub struct UserToUserInformationField(pub OctetString);
+    #[doc = "\tcoding as UUI info element in clause 1/Q.2957 starting with octet 5"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct VirtualChannelID(pub u16);
+    #[doc = "\tmaximum value 216 - 1"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=65535"))]
+    pub struct VirtualPathConnectionID(pub u16);
+}

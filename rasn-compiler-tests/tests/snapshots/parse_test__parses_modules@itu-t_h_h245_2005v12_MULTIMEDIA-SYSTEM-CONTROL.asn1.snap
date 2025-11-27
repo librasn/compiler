@@ -1,0 +1,19 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_h_h245_2005v12_MULTIMEDIA-SYSTEM-CONTROL.asn1
+---
+Error matching ASN syntax at while parsing:
+     ╭─[line 680, column 2]
+     │
+     │ 
+ 680 │  EnhancementLayerInfo ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 681 │    baseBitRateConstrained  BOOLEAN,
+ 682 │    snrEnhancement          SET SIZE (1..14) OF EnhancementOptions OPTIONAL,
+ 683 │    spatialEnhancement      SET SIZE (1..14) OF EnhancementOptions OPTIONAL,
+ 684 │    bPictureEnhancement     BEnhancementParameters ::= SEQUENCE {
+ 685 │    enhancementOptions  EnhancementOptions,
+ 686 │    numberOfBPictures   INTEGER(1..64),
+ 687 │    ...
+ 688 │  }
+     │
+─────╯

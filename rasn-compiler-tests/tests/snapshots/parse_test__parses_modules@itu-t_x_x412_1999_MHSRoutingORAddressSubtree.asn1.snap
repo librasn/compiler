@@ -1,0 +1,282 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x412_1999_MHSRoutingORAddressSubtree.asn1
+---
+Warnings:
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+LinkerError in ASN grammar: Failed to resolve supertype UniversalOrBMPString of parameterized implementation.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mhsrouting_oraddress_subtree {
+    extern crate alloc;
+    use super::authentication_framework::AlgorithmIdentifier;
+    use super::certificate_extensions::CertificateAssertion;
+    use super::information_framework::*;
+    use super::mhsrouting_directory_objects::RoutingCollectiveName;
+    use super::mhsrouting_object_identifiers::{
+        ID_AT_MHS_ADMD_NAME, ID_AT_MHS_COMMON_NAME, ID_AT_MHS_COUNTRY_NAME,
+        ID_AT_MHS_EXPRESSION_MATCHES, ID_AT_MHS_EXTENDED_NETWORK_ADDRESS,
+        ID_AT_MHS_GENERATION_QUALIFIER, ID_AT_MHS_GIVEN_NAME, ID_AT_MHS_INITIALS,
+        ID_AT_MHS_NETWORK_ADDRESS, ID_AT_MHS_NEXT_LEVEL_COMPLETE,
+        ID_AT_MHS_NUMERIC_USER_IDENTIFIER, ID_AT_MHS_ORGANIZATIONAL_UNIT_NAME,
+        ID_AT_MHS_ORGANIZATION_NAME, ID_AT_MHS_PDS_NAME_ATTRIBUTE, ID_AT_MHS_POSTAL_CODE,
+        ID_AT_MHS_PRMD_NAME, ID_AT_MHS_ROUTING_ADVICE, ID_AT_MHS_SURNAME,
+        ID_AT_MHS_TERMINAL_IDENTIFIER, ID_AT_MHS_TERMINAL_TYPE, ID_AT_ORADDRESS_ELEMENT_NAME,
+        ID_AT_RECIPIENT_MD_ASSIGNED_ALTERNATE_RECIPIENT, ID_NF_MHS_ADMD, ID_NF_MHS_COMMON_NAME,
+        ID_NF_MHS_COUNTRY, ID_NF_MHS_EXTENDED_NETWORK_ADDRESS, ID_NF_MHS_GENERATION_QUALIFIER,
+        ID_NF_MHS_GIVEN_NAME, ID_NF_MHS_INITIALS, ID_NF_MHS_NETWORK_ADDRESS,
+        ID_NF_MHS_NUMERIC_USER_IDENTIFIER, ID_NF_MHS_ORGANIZATION, ID_NF_MHS_ORGANIZATIONAL_UNIT,
+        ID_NF_MHS_PDS_NAME, ID_NF_MHS_PHYSICAL_DELIVERY_COUNTRY, ID_NF_MHS_POSTAL_CODE,
+        ID_NF_MHS_PRMD, ID_NF_MHS_SURNAME, ID_NF_MHS_TERMINAL_IDENTIFIER, ID_NF_MHS_TERMINAL_TYPE,
+        ID_OC_MHS_ADMD, ID_OC_MHS_COMMON_NAME, ID_OC_MHS_COUNTRY,
+        ID_OC_MHS_EXTENDED_NETWORK_ADDRESS, ID_OC_MHS_GENERATION_QUALIFIER, ID_OC_MHS_GIVEN_NAME,
+        ID_OC_MHS_INITIALS, ID_OC_MHS_NETWORK_ADDRESS, ID_OC_MHS_NUMERIC_USER_IDENTIFIER,
+        ID_OC_MHS_ORGANIZATION, ID_OC_MHS_ORGANIZATIONAL_UNIT, ID_OC_MHS_OR_ADDRESS_ELEMENT,
+        ID_OC_MHS_PDS_NAME, ID_OC_MHS_PHYSICAL_DELIVERY_COUNTRY_NAME, ID_OC_MHS_POSTAL_CODE,
+        ID_OC_MHS_PRMD, ID_OC_MHS_SURNAME, ID_OC_MHS_TERMINAL_IDENTIFIER, ID_OC_MHS_TERMINAL_TYPE,
+        ID_OC_ORADDRESS_SUBTREE_BASE,
+    };
+    use super::mtsabstract_service::{
+        NonDeliveryDiagnosticCode, NonDeliveryReasonCode, ORAddress, ORName, RecipientName,
+        SupplementaryInformation, UniversalOrBMPString,
+    };
+    use super::mtsupper_bounds::{
+        UB_COMMON_NAME_LENGTH, UB_COUNTRY_NAME_NUMERIC_LENGTH,
+        UB_DOMAIN_DEFINED_ATTRIBUTE_TYPE_LENGTH, UB_DOMAIN_DEFINED_ATTRIBUTE_VALUE_LENGTH,
+        UB_DOMAIN_NAME_LENGTH, UB_GENERATION_QUALIFIER_LENGTH, UB_GIVEN_NAME_LENGTH,
+        UB_INITIALS_LENGTH, UB_NUMERIC_USER_ID_LENGTH, UB_ORGANIZATIONAL_UNIT_NAME_LENGTH,
+        UB_ORGANIZATION_NAME_LENGTH, UB_PDS_NAME_LENGTH, UB_POSTAL_CODE_LENGTH, UB_SURNAME_LENGTH,
+        UB_TERMINAL_ID_LENGTH, UB_X121_ADDRESS_LENGTH,
+    };
+    use super::selected_attribute_types::{DirectoryString, COMMON_NAME, NAME};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " with both Directory name and OR-address present"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AlgorithmInformation {
+        #[rasn(tag(context, 0), identifier = "algorithm-identifier")]
+        pub algorithm_identifier: AlgorithmIdentifier,
+        #[rasn(tag(context, 1), identifier = "originator-certificate-selector")]
+        pub originator_certificate_selector: Option<CertificateAssertion>,
+        #[rasn(tag(context, 2), identifier = "recipient-certificate-selector")]
+        pub recipient_certificate_selector: Option<CertificateAssertion>,
+    }
+    impl AlgorithmInformation {
+        pub fn new(
+            algorithm_identifier: AlgorithmIdentifier,
+            originator_certificate_selector: Option<CertificateAssertion>,
+            recipient_certificate_selector: Option<CertificateAssertion>,
+        ) -> Self {
+            Self {
+                algorithm_identifier,
+                originator_certificate_selector,
+                recipient_certificate_selector,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AliasRedirection {
+        #[rasn(tag(context, 0), identifier = "redirection-address")]
+        pub redirection_address: ORAddress,
+        #[rasn(tag(context, 1), default = "alias_redirection_edit_default")]
+        pub edit: bool,
+    }
+    impl AliasRedirection {
+        pub fn new(redirection_address: ORAddress, edit: bool) -> Self {
+            Self {
+                redirection_address,
+                edit,
+            }
+        }
+    }
+    fn alias_redirection_edit_default() -> bool {
+        true
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DLExpansionInformation {
+        #[rasn(tag(context, 0), identifier = "dl-expansion-routing-collectives")]
+        pub dl_expansion_routing_collectives: SetOf<TargetRoutingCollective>,
+        #[rasn(tag(context, 1), identifier = "dl-name")]
+        pub dl_name: Option<MHSDistributionListName>,
+        #[rasn(
+            tag(context, 2),
+            default = "dlexpansion_information_any_mta_may_expand_default",
+            identifier = "any-mta-may-expand"
+        )]
+        pub any_mta_may_expand: bool,
+    }
+    impl DLExpansionInformation {
+        pub fn new(
+            dl_expansion_routing_collectives: SetOf<TargetRoutingCollective>,
+            dl_name: Option<MHSDistributionListName>,
+            any_mta_may_expand: bool,
+        ) -> Self {
+            Self {
+                dl_expansion_routing_collectives,
+                dl_name,
+                any_mta_may_expand,
+            }
+        }
+    }
+    fn dlexpansion_information_any_mta_may_expand_default() -> bool {
+        false
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DoubleEnvelopeInformation {
+        #[rasn(tag(context, 0), identifier = "envelope-opener")]
+        pub envelope_opener: ORAddressAndDirectoryName,
+        #[rasn(
+            tag(context, 1),
+            identifier = "content-confidentiality-algorithm-preference"
+        )]
+        pub content_confidentiality_algorithm_preference: SequenceOf<AlgorithmInformation>,
+        #[rasn(tag(context, 2), identifier = "key-encryption-algorithm-preference")]
+        pub key_encryption_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+        #[rasn(tag(context, 3), identifier = "message-origin-algorithm-preference")]
+        pub message_origin_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+        #[rasn(tag(context, 4), identifier = "token-signature-algorithm-preference")]
+        pub token_signature_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+    }
+    impl DoubleEnvelopeInformation {
+        pub fn new(
+            envelope_opener: ORAddressAndDirectoryName,
+            content_confidentiality_algorithm_preference: SequenceOf<AlgorithmInformation>,
+            key_encryption_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+            message_origin_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+            token_signature_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+        ) -> Self {
+            Self {
+                envelope_opener,
+                content_confidentiality_algorithm_preference,
+                key_encryption_algorithm_preference,
+                message_origin_algorithm_preference,
+                token_signature_algorithm_preference,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ExpressionMatch {
+        #[rasn(identifier = "filter-set")]
+        pub filter_set: SetOf<ORAddressFilter>,
+        #[rasn(identifier = "routing-advice")]
+        pub routing_advice: RoutingAdvice,
+    }
+    impl ExpressionMatch {
+        pub fn new(filter_set: SetOf<ORAddressFilter>, routing_advice: RoutingAdvice) -> Self {
+            Self {
+                filter_set,
+                routing_advice,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExpressionMatches(pub SequenceOf<ExpressionMatch>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ExtendedRegularExpression(pub UniversalOrBMPString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MHSDistributionListName(pub DistinguishedName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NonDeliveryInformation {
+        #[rasn(tag(context, 0))]
+        pub reason: NonDeliveryReasonCode,
+        #[rasn(tag(context, 1))]
+        pub diagnostic: Option<NonDeliveryDiagnosticCode>,
+        #[rasn(tag(context, 2), identifier = "supplementary-information")]
+        pub supplementary_information: Option<SupplementaryInformation>,
+    }
+    impl NonDeliveryInformation {
+        pub fn new(
+            reason: NonDeliveryReasonCode,
+            diagnostic: Option<NonDeliveryDiagnosticCode>,
+            supplementary_information: Option<SupplementaryInformation>,
+        ) -> Self {
+            Self {
+                reason,
+                diagnostic,
+                supplementary_information,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ORAddressAndDirectoryName(pub ORName);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ORAddressFilterAttributeType {
+        #[rasn(identifier = "standard-attribute")]
+        standard_attribute(Integer),
+        #[rasn(value("0.."), identifier = "domain-defined-attribute")]
+        domain_defined_attribute(UniversalOrBMPString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ORAddressFilter {
+        #[rasn(identifier = "attribute-type")]
+        pub attribute_type: ORAddressFilterAttributeType,
+        pub pattern: ExtendedRegularExpression,
+    }
+    impl ORAddressFilter {
+        pub fn new(
+            attribute_type: ORAddressFilterAttributeType,
+            pattern: ExtendedRegularExpression,
+        ) -> Self {
+            Self {
+                attribute_type,
+                pattern,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    #[non_exhaustive]
+    pub enum RoutingAdvice {
+        #[rasn(tag(context, 0), identifier = "target-routing-collective")]
+        target_routing_collective(TargetRoutingCollective),
+        #[rasn(tag(context, 1), identifier = "non-delivery-information")]
+        non_delivery_information(NonDeliveryInformation),
+        #[rasn(tag(context, 2), identifier = "alias-redirection")]
+        alias_redirection(AliasRedirection),
+        #[rasn(tag(context, 3), identifier = "dl-expansion-information")]
+        dl_expansion_information(DLExpansionInformation),
+        #[rasn(tag(context, 4), identifier = "double-envelope-information")]
+        double_envelope_information(DoubleEnvelopeInformation),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TargetRoutingCollective {
+        #[rasn(tag(context, 0), identifier = "target-routing-collective")]
+        pub target_routing_collective: RoutingCollectiveName,
+        #[rasn(value("0.."), tag(context, 1), identifier = "local-user-identifier")]
+        pub local_user_identifier: Option<UniversalOrBMPString>,
+    }
+    impl TargetRoutingCollective {
+        pub fn new(
+            target_routing_collective: RoutingCollectiveName,
+            local_user_identifier: Option<UniversalOrBMPString>,
+        ) -> Self {
+            Self {
+                target_routing_collective,
+                local_user_identifier,
+            }
+        }
+    }
+    pub static UB_EXTENDED_NETWORK_ADDRESS_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(256));
+    pub static UB_EXTENDED_REGULAR_EXPRESSION: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(1024));
+    pub static UB_LOCAL_USER_IDENTIFIER: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    pub static UB_TERMINAL_TYPE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(5));
+}

@@ -1,0 +1,841 @@
+---
+source: rasn-compiler-tests/tests/parse_test.rs
+input_file: rasn-compiler-tests/tests/modules/itu-t_x_x462_1996_MhsAcctAsn1Module.asn1
+---
+Warnings:
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(4) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(26) }
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(18) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(19) }
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(9) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(28) }
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(20) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(21) }
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : Real types are currently unsupported!
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(27) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(32) }
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(3) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(31) }
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+NotYetInplemented generating bindings for : UniversalString is currently unsupported!
+Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(29) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(30) }
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod mhs_acct_asn1_module {
+    extern crate alloc;
+    use super::attribute_asn1_module::SimpleNameType;
+    use super::cmip_1::{EventTypeId, ObjectInstance};
+    use super::msabstract_service::{
+        AlertArgument, AlertResult, AttributeProblem, AttributeType, AutoActionRequestProblem,
+        AutoActionType, DeleteArgument, DeleteProblem, DeleteResult, FetchArgument,
+        FetchRestrictionProblem, FetchResult, ListArgument, ListResult, MSEITs, RangeProblem,
+        RegisterMSArgument, RegisterMSResult, Restrictions, SequenceNumber, SequenceNumberProblem,
+        ServiceProblem, SummarizeArgument, SummarizeResult,
+    };
+    use super::msupper_bounds::{
+        UB_ATTRIBUTES_SUPPORTED, UB_AUTO_ACTIONS, UB_AUTO_REGISTRATIONS, UB_DEFAULT_REGISTRATIONS,
+        UB_MESSAGES, UB_PER_ENTRY,
+    };
+    use super::mtaabstract_service::{
+        InternalTraceInformation, MessageTransferEnvelope, ProbeTransferEnvelope, ReportIdentifier,
+        ReportTransferEnvelope, SubjectIdentifier, TraceInformation,
+    };
+    use super::mtsabstract_service::{
+        ActualRecipientName, AdministrationDomainName, BindTokenEncryptedData, BindTokenSignedData,
+        ContentConfidentialityAlgorithmIdentifier, ContentIdentifier, ContentIntegrityCheck,
+        ContentLength, ContentType, Credentials, DefaultDeliveryControls, DeferredDeliveryTime,
+        DeliveryControls, EncodedInformationTypes, ExplicitConversion, GlobalDomainIdentifier,
+        InitiatorCredentials, MTAName, MTSIdentifier, MessageDeliveryEnvelope,
+        MessageOriginAuthenticationCheck, MessageSecurityLabel, MessageSubmissionEnvelope,
+        MessageToken, NonDeliveryDiagnosticCode, NonDeliveryReasonCode,
+        ORAddressAndOptionalDirectoryName, ORName, ObjectName, OriginatingMTACertificate,
+        OriginatorCertificate, OriginatorName, Priority, ProbeOriginAuthenticationCheck,
+        ProbeSubmissionEnvelope, ProofOfDelivery, ProofOfDeliveryRequest, ProofOfSubmission,
+        ProofOfSubmissionRequest, RecipientCertificate, RedirectionReason, ReportDeliveryEnvelope,
+        ReportOriginAuthenticationCheck, ReportingMTACertificate, ResponderCredentials,
+        SecurityContext, SecurityProblem, SubjectSubmissionIdentifier, SubmissionControls,
+        ThisRecipientName, Time, UserAddress, UserName,
+    };
+    use super::mtsabstract_service88::LabelAndRedirection;
+    use super::mtsupper_bounds::{UB_CONTENT_TYPES, UB_LABELS_AND_REDIRECTIONS, UB_RECIPIENTS};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Actions(pub BitString);
+    #[doc = "  Administration Port Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdministrationError(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("7"))]
+    pub struct AlertErrors(pub RetrievalError);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousAttributeErrorProblems {
+        #[rasn(tag(context, 0))]
+        pub problem: AttributeProblem,
+        #[rasn(tag(context, 1), identifier = "type")]
+        pub r_type: AttributeType,
+    }
+    impl AnonymousAttributeErrorProblems {
+        pub fn new(problem: AttributeProblem, r_type: AttributeType) -> Self {
+            Self { problem, r_type }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AttributeErrorProblems(pub SetOf<AnonymousAttributeErrorProblems>);
+    #[doc = "  definitions copied from [ITU-T Rec. X.413 | ISO/IEC 10021-5] Annex B"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AttributeError {
+        #[rasn(tag(context, 0))]
+        pub problems: AttributeErrorProblems,
+    }
+    impl AttributeError {
+        pub fn new(problems: AttributeErrorProblems) -> Self {
+            Self { problems }
+        }
+    }
+    #[doc = "  Security-related types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AuthenticationCheck(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AuthenticationGeneration(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousAutoActionRequestErrorProblems {
+        #[rasn(tag(context, 0))]
+        pub problem: AutoActionRequestProblem,
+        #[rasn(tag(context, 1), identifier = "type")]
+        pub r_type: AutoActionType,
+    }
+    impl AnonymousAutoActionRequestErrorProblems {
+        pub fn new(problem: AutoActionRequestProblem, r_type: AutoActionType) -> Self {
+            Self { problem, r_type }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AutoActionRequestErrorProblems(pub SetOf<AnonymousAutoActionRequestErrorProblems>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct AutoActionRequestError {
+        #[rasn(tag(context, 0))]
+        pub problems: AutoActionRequestErrorProblems,
+    }
+    impl AutoActionRequestError {
+        pub fn new(problems: AutoActionRequestErrorProblems) -> Self {
+            Self { problems }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BindAuthenticationCheck(pub AuthenticationCheck);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BindToken {
+        #[rasn(tag(context, 0))]
+        signed(BindTokenSignedData),
+        #[rasn(tag(context, 1))]
+        encrypted(BindTokenEncryptedData),
+    }
+    #[doc = "  In the following descriptions, a number of redefinition of material defined in other"]
+    #[doc = "  modules occurs. This was made inevitable for either one of two reasons:"]
+    #[doc = "  Reason 1: There is no specific type to be imported for the concerned attribute."]
+    #[doc = "  This often occurs when parameters are of the format \"SET SIZE (...) OF ...\"."]
+    #[doc = "  In those cases, the corresponding description has been copied textually in"]
+    #[doc = "  module, with a specific mention of its origin. Though this introduces maintenance"]
+    #[doc = "  difficulties, no better solution has been found."]
+    #[doc = " Reason 2: The corresponding type is unavailable. For instance, the various"]
+    #[doc = " operation errors already have assigned numbers, but the module in which this"]
+    #[doc = " is done (MTSAccessProtocol { joint-iso-ccitt mhs-motis (6) protocols (0) modules (0)"]
+    #[doc = " mts-access-protocol (1) } in ITU-T Rec. X.419 | ISO/IEC 10021-6) does not export"]
+    #[doc = " them, so they are not available for use in this module. Correspondingly, there"]
+    #[doc = " are no single \"error\" type to import from ITU-T Rec. X.411 | ISO/IEC 10021-4 not"]
+    #[doc = " ITU-T Rec. X.413 | ISO/IEC 10021-5, this is why they were reproduced here."]
+    #[doc = " Though this introduces maintenance difficulties, no better solution has been found."]
+    #[doc = "  Binding Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum BindingError {
+        #[rasn(tag(context, 0))]
+        integer(Integer),
+        #[rasn(tag(context, 1))]
+        msbinderror(MSBindError),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("3..=10"))]
+    pub struct CancelDeferredDeliverySubmissionErrors(pub SubmissionError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("2..=10"))]
+    pub struct ChangeCredentialsErrors(pub AdministrationError);
+    #[doc = "  Information contained in the notifications"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CommonCreationAndDeletionInfo(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContactId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConversionProcessingInfo(pub SetOf<EMailFromToEIT>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConversionStatistics {
+        #[rasn(identifier = "oldEit")]
+        pub old_eit: EncodedInformationTypes,
+        #[rasn(identifier = "newEit")]
+        pub new_eit: EncodedInformationTypes,
+    }
+    impl ConversionStatistics {
+        pub fn new(old_eit: EncodedInformationTypes, new_eit: EncodedInformationTypes) -> Self {
+            Self { old_eit, new_eit }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Currency(pub PrintableString);
+    #[doc = "  Accounting policies"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CustomerAcctPolicy {
+        globalForm(ObjectIdentifier),
+        localForm(Integer),
+    }
+    #[doc = "  Customer attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CustomerId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DLExpansionProcessingInfo {
+        #[rasn(identifier = "dlORName")]
+        pub dl_orname: ORAddressAndOptionalDirectoryName,
+        pub actions: Actions,
+    }
+    impl DLExpansionProcessingInfo {
+        pub fn new(dl_orname: ORAddressAndOptionalDirectoryName, actions: Actions) -> Self {
+            Self { dl_orname, actions }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Decipherment(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeferralOfDeliveryProcessingInfo(pub DeferredDeliveryTime);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousDeleteErrorProblems {
+        #[rasn(tag(context, 0))]
+        pub problem: DeleteProblem,
+        #[rasn(tag(context, 1), identifier = "sequence-number")]
+        pub sequence_number: SequenceNumber,
+    }
+    impl AnonymousDeleteErrorProblems {
+        pub fn new(problem: DeleteProblem, sequence_number: SequenceNumber) -> Self {
+            Self {
+                problem,
+                sequence_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DeleteErrorProblems(pub SetOf<AnonymousDeleteErrorProblems>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct DeleteError {
+        #[rasn(tag(context, 0))]
+        pub problems: DeleteErrorProblems,
+    }
+    impl DeleteError {
+        pub fn new(problems: DeleteErrorProblems) -> Self {
+            Self { problems }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("3..=9"))]
+    pub struct DeleteErrors(pub RetrievalError);
+    #[doc = "  two definitions copied from [ITU-T Rec. X.411 | ISO/IEC 10021-4] Figure 2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DeliverableContentTypes(pub SetOf<ContentType>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct DeliveredRecipientField {
+        #[rasn(identifier = "recipient-name")]
+        pub recipient_name: ORAddressAndOptionalDirectoryName,
+        #[rasn(identifier = "message-delivery-time")]
+        pub message_delivery_time: Time,
+        #[rasn(tag(context, 1), identifier = "delivery-service")]
+        pub delivery_service: Option<DeliveryService>,
+        #[rasn(tag(context, 2), identifier = "conversion-statistics")]
+        pub conversion_statistics: Option<ConversionStatistics>,
+        #[rasn(tag(context, 5), identifier = "edirector-name")]
+        pub edirector_name: Option<ORAddressAndOptionalDirectoryName>,
+    }
+    impl DeliveredRecipientField {
+        pub fn new(
+            recipient_name: ORAddressAndOptionalDirectoryName,
+            message_delivery_time: Time,
+            delivery_service: Option<DeliveryService>,
+            conversion_statistics: Option<ConversionStatistics>,
+            edirector_name: Option<ORAddressAndOptionalDirectoryName>,
+        ) -> Self {
+            Self {
+                recipient_name,
+                message_delivery_time,
+                delivery_service,
+                conversion_statistics,
+                edirector_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("2..=3"))]
+    pub struct DeliveryControlErrors(pub DeliveryError);
+    #[doc = "  Delivery Port Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeliveryError(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct DeliveryService {
+        #[rasn(identifier = "delivery-service-type")]
+        pub delivery_service_type: DeliveryServiceType,
+        #[rasn(tag(context, 1), identifier = "per-message-component-rate")]
+        pub per_message_component_rate: Option<PerMessageComponentRate>,
+        #[rasn(tag(context, 2), identifier = "per-octet-component-rate")]
+        pub per_octet_component_rate: Option<PerOctetComponentRate>,
+    }
+    impl DeliveryService {
+        pub fn new(
+            delivery_service_type: DeliveryServiceType,
+            per_message_component_rate: Option<PerMessageComponentRate>,
+            per_octet_component_rate: Option<PerOctetComponentRate>,
+        ) -> Self {
+            Self {
+                delivery_service_type,
+                per_message_component_rate,
+                per_octet_component_rate,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DeliveryServiceType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DestinationADMD(pub AdministrationDomainName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DestinationDomainDeliveryList(pub SetOf<DeliveredRecipientField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DirectoryNameAndOptionalORAddress(pub ORName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum EMailFromToEIT {
+        #[rasn(tag(context, 0))]
+        explicitConversion(ExplicitConversion),
+        #[rasn(tag(context, 1))]
+        genericConversion(GenericConversion),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ElectronicMailAddress(pub ORAddressAndOptionalDirectoryName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Encipherment(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EntryExitMTANames(pub SequenceOf<MTAName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EnvelopeType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("4"))]
+    pub struct FetchErrors(pub RetrievalError);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousFetchRestrictionErrorProblemsRestriction {
+        #[rasn(tag(context, 0), identifier = "content-type")]
+        content_type(ContentType),
+        #[rasn(tag(context, 1))]
+        eit(MSEITs),
+        #[rasn(tag(context, 2), identifier = "content-length")]
+        content_length(ContentLength),
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousFetchRestrictionErrorProblems {
+        #[rasn(tag(context, 3))]
+        pub problem: FetchRestrictionProblem,
+        pub restriction: AnonymousFetchRestrictionErrorProblemsRestriction,
+    }
+    impl AnonymousFetchRestrictionErrorProblems {
+        pub fn new(
+            problem: FetchRestrictionProblem,
+            restriction: AnonymousFetchRestrictionErrorProblemsRestriction,
+        ) -> Self {
+            Self {
+                problem,
+                restriction,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct FetchRestrictionErrorProblems(pub SetOf<AnonymousFetchRestrictionErrorProblems>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct FetchRestrictionError {
+        #[rasn(tag(context, 0))]
+        pub problems: FetchRestrictionErrorProblems,
+    }
+    impl FetchRestrictionError {
+        pub fn new(problems: FetchRestrictionErrorProblems) -> Self {
+            Self { problems }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GenericConversion(pub ObjectIdentifier);
+    #[doc = "  definition copied from [ITU-T Rec. X.411 | ISO/IEC 10021-4] Figure 2"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ImproperlySpecifiedRecipients(pub SequenceOf<ORAddressAndOptionalDirectoryName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InternalTrace(pub InternalTraceInformation);
+    #[doc = "  InterworkingMD attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterworkingMDId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct LabelsAndRedirections(pub SetOf<LabelAndRedirection>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LimitValidityDate(pub Time);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ListErrors(pub SummarizeErrors);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MSBindError(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageContentSize(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=4"))]
+    pub struct MessageDeliveryErrors(pub DeliveryError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MessageSize(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct MessageSubmissionErrors(pub SubmissionError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MsBindAuthenticationCheck(pub AuthenticationCheck);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NameResolutionProcessingInfo(pub DirectoryNameAndOptionalORAddress);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfAddressedPRMDs(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfAddressedUas(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER")]
+    pub struct AnonymousNumberOfMessagesPerDeliveryServiceType(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOfMessagesPerDeliveryServiceType(
+        pub SetOf<AnonymousNumberOfMessagesPerDeliveryServiceType>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OperationStatus(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OperationTime(pub Time);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatingADMD(pub AdministrationDomainName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OriginatingDomainTransferOutList(pub SetOf<TransferRecipientField>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerMessageComponentRate(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PerOctetComponentRate(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PermissibleSecurityContext(pub SetOf<SecurityContext>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct ProbeSubmissionErrors(pub SubmissionError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProcessingDetail {
+        #[rasn(tag(context, 3), identifier = "name-resolution")]
+        name_resolution(NameResolutionProcessingInfo),
+        #[rasn(tag(context, 4), identifier = "dl-expansion")]
+        dl_expansion(DLExpansionProcessingInfo),
+        #[rasn(tag(context, 5))]
+        redirection(RedirectionProcessingInfo),
+        #[rasn(tag(context, 6), identifier = "deferred-delivery")]
+        deferred_delivery(DeferralOfDeliveryProcessingInfo),
+        #[rasn(tag(context, 7))]
+        conversion(ConversionProcessingInfo),
+        #[rasn(tag(context, 8))]
+        securityContextCheck(SecurityProcessingInfo),
+    }
+    #[doc = "\tat most one of idle, processed, and rejected bits shall be 'one':"]
+    #[doc = "\tidle bit 'one' means the MPR is waiting to be processed;"]
+    #[doc = "\tprocessed bit 'one' means the MPR was successfully processed;"]
+    #[doc = "\trejected bit 'one' means that the MTS was not able to deliver the message"]
+    #[doc = "\tor the report or affirm the probe."]
+    #[doc = "\tidle, processed, and rejected bits 'zero' means the MPR is"]
+    #[doc = "\tcurrently under process."]
+    #[doc = "\tA 'name-resolution', 'redirection', 'deferred-delivery',"]
+    #[doc = "\t'conversion' or 'securityContextCheck' bit one means the corresponding"]
+    #[doc = "\tfunction was performed on the MPR."]
+    #[doc = "\tif idle bit is set to 'one' (MPR idle), dl-expansion, redirection,"]
+    #[doc = "\tdeferred-delivery and conversion bits shall be set to 'zero'."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProcessingDetails(pub SequenceOf<ProcessingDetail>);
+    #[doc = "  These come from X.411: MTS Abstract Service"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ProcessingError {
+        #[rasn(tag(context, 0), identifier = "non-delivery-reason")]
+        pub non_delivery_reason: Option<NonDeliveryReasonCode>,
+        #[rasn(tag(context, 1), identifier = "non-delivery-diagnostics")]
+        pub non_delivery_diagnostics: Option<NonDeliveryDiagnosticCode>,
+        #[rasn(tag(context, 2), identifier = "supplementary-info")]
+        pub supplementary_info: SupplementaryError,
+    }
+    impl ProcessingError {
+        pub fn new(
+            non_delivery_reason: Option<NonDeliveryReasonCode>,
+            non_delivery_diagnostics: Option<NonDeliveryDiagnosticCode>,
+            supplementary_info: SupplementaryError,
+        ) -> Self {
+            Self {
+                non_delivery_reason,
+                non_delivery_diagnostics,
+                supplementary_info,
+            }
+        }
+    }
+    #[doc = "  These are types for the processing history-related attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ProcessingErrorFlag(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProcessingSummary(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RangeError {
+        #[rasn(tag(context, 0))]
+        pub problem: RangeProblem,
+    }
+    impl RangeError {
+        pub fn new(problem: RangeProblem) -> Self {
+            Self { problem }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecipientName(pub SetOf<ORAddressAndOptionalDirectoryName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecipientsOnResponsibilityList(pub RecipientName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct RedirectionProcessingInfo {
+        #[rasn(tag(context, 0), identifier = "redirection-reason")]
+        pub redirection_reason: RedirectionReason,
+        #[rasn(tag(context, 1))]
+        pub original: Option<ORName>,
+        #[rasn(tag(context, 2), identifier = "redirected-to")]
+        pub redirected_to: Option<ORName>,
+    }
+    impl RedirectionProcessingInfo {
+        pub fn new(
+            redirection_reason: RedirectionReason,
+            original: Option<ORName>,
+            redirected_to: Option<ORName>,
+        ) -> Self {
+            Self {
+                redirection_reason,
+                original,
+                redirected_to,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=10"))]
+    pub struct RegisterErrors(pub AdministrationError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=9"))]
+    pub struct RegisterMSErrors(pub RetrievalError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReportDeliveryErrors(pub MessageDeliveryErrors);
+    #[doc = "  Retrieval Port Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RetrievalError(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SecurityAction(pub BitString);
+    #[doc = "  Imported from X.411"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct SecurityProcessingInfo {
+        #[rasn(tag(context, 0))]
+        pub action: SecurityAction,
+        #[rasn(tag(context, 1), identifier = "security-policy")]
+        pub security_policy: Option<ObjectIdentifier>,
+    }
+    impl SecurityProcessingInfo {
+        pub fn new(action: SecurityAction, security_policy: Option<ObjectIdentifier>) -> Self {
+            Self {
+                action,
+                security_policy,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set, identifier = "SET")]
+    pub struct AnonymousSequenceNumberErrorProblems {
+        #[rasn(tag(context, 0))]
+        pub problem: SequenceNumberProblem,
+        #[rasn(tag(context, 1), identifier = "sequence-number")]
+        pub sequence_number: SequenceNumber,
+    }
+    impl AnonymousSequenceNumberErrorProblems {
+        pub fn new(problem: SequenceNumberProblem, sequence_number: SequenceNumber) -> Self {
+            Self {
+                problem,
+                sequence_number,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SequenceNumberErrorProblems(pub SetOf<AnonymousSequenceNumberErrorProblems>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct SequenceNumberError {
+        #[rasn(tag(context, 1))]
+        pub problems: SequenceNumberErrorProblems,
+    }
+    impl SequenceNumberError {
+        pub fn new(problems: SequenceNumberErrorProblems) -> Self {
+            Self { problems }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceAccessCharge(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct ServiceError {
+        #[rasn(tag(context, 0))]
+        pub problem: ServiceProblem,
+    }
+    impl ServiceError {
+        pub fn new(problem: ServiceProblem) -> Self {
+            Self { problem }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct ServiceFlag(pub bool);
+    #[doc = "  Service request attributes"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceRequestId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SettlementPolicy {
+        globalForm(ObjectIdentifier),
+        localForm(Integer),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignatureCheck(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SignatureGeneration(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StartUpDate(pub Time);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Status(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("8..=10"))]
+    pub struct SubmissionControlErrors(pub SubmissionError);
+    #[doc = "  Submission Port Types"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubmissionError(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=9"))]
+    pub struct SummarizeErrors(pub RetrievalError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TelephoneNumberList(pub SetOf<TelephoneNumber>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TotalNumberOfORAddresses(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Trace(pub TraceInformation);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransferRecipientField(pub MTAName);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TransitDomainTransferOutList(pub SetOf<TransferRecipientField>);
+    #[doc = "  In the context of MHS management, the following values are defined for the EventTypeId data type."]
+    pub static AFFIRMATION: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(1))));
+    pub static ALERT: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(2))));
+    pub static CANCEL_DEFERRED_DELIVERY: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(3))));
+    pub static CHANGE_CREDENTIALS: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(4))));
+    #[doc = "  In the context of MHS management, the following values are defined for the"]
+    #[doc = "  SettlementPolicy data type."]
+    pub static D36: LazyLock<SettlementPolicy> =
+        LazyLock::new(|| SettlementPolicy::localForm(Integer::from(0)));
+    pub static DELETE: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(5))));
+    pub static DELIVERY_CONTROL: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(6))));
+    pub static FETCH: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(7))));
+    pub static LIST: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(8))));
+    pub static MESSAGE_DELIVERY: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(9))));
+    pub static MESSAGE_INDIRECT_SUBMISSION: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(10))));
+    pub static MESSAGE_SUBMISSION: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(11))));
+    pub static MESSAGE_TRANSFER_IN: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(12))));
+    pub static MESSAGE_TRANSFER_OUT: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(13))));
+    pub static MS_BIND: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(14))));
+    pub static MS_UNBIND: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(15))));
+    pub static MTA_BIND: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(16))));
+    pub static MTA_UNBIND: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(17))));
+    pub static MTS_BIND: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(18))));
+    pub static MTS_UNBIND: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(19))));
+    pub static NON_AFFIRMATION: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(20))));
+    pub static NON_DELIVERY: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(21))));
+    pub static PROBE_INDIRECT_SUBMISSION: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(22))));
+    pub static PROBE_SUBMISSION: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(23))));
+    pub static PROBE_TRANSFER_IN: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(24))));
+    pub static PROBE_TRANSFER_OUT: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(25))));
+    pub static REGISTER: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(26))));
+    pub static REGISTER_MS: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(27))));
+    pub static REPORT_DELIVERY: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(28))));
+    pub static REPORT_TRANSFER_IN: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(29))));
+    pub static REPORT_TRANSFER_OUT: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(30))));
+    pub static SUBMISSION_CONTROL: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(31))));
+    pub static SUMMARIZE: LazyLock<EventTypeId> =
+        LazyLock::new(|| EventTypeId(EventTypeId(EventTypeId::localForm(32))));
+}
