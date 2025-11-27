@@ -95,8 +95,11 @@ fn enumerals<'a>(
 fn enumerated_body(input: Input<'_>) -> ParserResult<'_, EnumeralBody> {
     in_braces(|input| {
         let (input, root_enumerals) = enumerals(0).parse(input)?;
-        let (input, ext_marker) =
-            opt(terminated(extension_marker, opt(char(COMMA)))).parse(input)?;
+        let (input, ext_marker) = opt(terminated(
+            extension_marker,
+            skip_ws_and_comments(opt(char(COMMA))),
+        ))
+        .parse(input)?;
         let (input, ext_enumerals) = opt(enumerals(root_enumerals.len())).parse(input)?;
         Ok((input, (root_enumerals, ext_marker, ext_enumerals)))
     })
@@ -358,5 +361,38 @@ mod tests {
                 module_header: None
             }
         )
+    }
+
+    #[test]
+    fn parses_comment_after_extension_mark() {
+        let input = Input::from(
+            "ENUMERATED {
+                enumeral1(0), ... -- extension addition --,
+                enumeral2(1)
+            }",
+        );
+
+        let (rest, result) = enumerated(input).unwrap();
+
+        assert!(rest.is_empty());
+        assert_eq!(
+            result,
+            ASN1Type::Enumerated(Enumerated {
+                members: vec![
+                    Enumeral {
+                        name: "enumeral1".to_owned(),
+                        description: None,
+                        index: 0
+                    },
+                    Enumeral {
+                        name: "enumeral2".to_owned(),
+                        description: None,
+                        index: 1
+                    }
+                ],
+                extensible: Some(1),
+                constraints: vec![],
+            })
+        );
     }
 }
