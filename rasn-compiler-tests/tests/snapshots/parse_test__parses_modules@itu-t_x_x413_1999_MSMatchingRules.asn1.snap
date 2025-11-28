@@ -3,7 +3,6 @@ source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x413_1999_MSMatchingRules.asn1
 ---
 Warnings:
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 LinkerError in ASN grammar: Failed to resolve reference in object set.
 LinkerError in ASN grammar: Failed to resolve reference in object set.
 
@@ -45,4 +44,57 @@ pub mod msmatching_rules {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousSubstringAssertionInitial {
+        #[rasn(size("1.."))]
+        printable(PrintableString),
+        teletex(TeletexString),
+        general(GeneralString),
+        #[rasn(size("1.."))]
+        universal(UniversalString),
+        #[rasn(size("1.."))]
+        bmp(BmpString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousSubstringAssertionAny {
+        #[rasn(size("1.."))]
+        printable(PrintableString),
+        teletex(TeletexString),
+        general(GeneralString),
+        #[rasn(size("1.."))]
+        universal(UniversalString),
+        #[rasn(size("1.."))]
+        bmp(BmpString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousSubstringAssertionFinal {
+        #[rasn(size("1.."))]
+        printable(PrintableString),
+        teletex(TeletexString),
+        general(GeneralString),
+        #[rasn(size("1.."))]
+        universal(UniversalString),
+        #[rasn(size("1.."))]
+        bmp(BmpString),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousSubstringAssertion {
+        #[rasn(tag(context, 0))]
+        initial(AnonymousSubstringAssertionInitial),
+        #[rasn(tag(context, 1))]
+        any(AnonymousSubstringAssertionAny),
+        #[rasn(tag(context, 2), identifier = "final")]
+        R_final(AnonymousSubstringAssertionFinal),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubstringAssertion(pub SequenceOf<AnonymousSubstringAssertion>);
 }

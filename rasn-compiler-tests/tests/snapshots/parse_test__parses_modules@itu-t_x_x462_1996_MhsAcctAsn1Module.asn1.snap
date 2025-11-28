@@ -7,21 +7,13 @@ NotYetInplemented generating bindings for : Real types are currently unsupported
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(4) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(26) }
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(18) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(19) }
 NotYetInplemented generating bindings for : Real types are currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 NotYetInplemented generating bindings for : Real types are currently unsupported!
 NotYetInplemented generating bindings for : Real types are currently unsupported!
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(9) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(28) }
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(20) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(21) }
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 NotYetInplemented generating bindings for : Real types are currently unsupported!
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(27) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(32) }
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(3) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(31) }
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 Unidentified generating bindings for : Unsupported operation for ASN1Values Choice { type_name: None, variant_name: "localForm", inner_value: Integer(29) } and Choice { type_name: None, variant_name: "localForm", inner_value: Integer(30) }
 LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
 LinkerError in ASN grammar: Failed to link value with 'EventTypeId'
@@ -228,7 +220,19 @@ pub mod mhs_acct_asn1_module {
     pub struct CommonCreationAndDeletionInfo(pub Integer);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
+    pub struct ContactCompany(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContactDetails(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContactFunction(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
     pub struct ContactId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ContactName(pub UniversalString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct ConversionProcessingInfo(pub SetOf<EMailFromToEIT>);
@@ -258,6 +262,9 @@ pub mod mhs_acct_asn1_module {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct CustomerId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CustomerName(pub UniversalString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     pub struct DLExpansionProcessingInfo {
         #[rasn(identifier = "dlORName")]
@@ -469,6 +476,9 @@ pub mod mhs_acct_asn1_module {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct InterworkingMDId(pub SimpleNameType);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterworkingMDName(pub UniversalString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1.."))]
     pub struct LabelsAndRedirections(pub SetOf<LabelAndRedirection>);
@@ -754,6 +764,12 @@ pub mod mhs_acct_asn1_module {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("1..=9"))]
     pub struct SummarizeErrors(pub RetrievalError);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupplementaryError(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TelephoneNumber(pub UniversalString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct TelephoneNumberList(pub SetOf<TelephoneNumber>);

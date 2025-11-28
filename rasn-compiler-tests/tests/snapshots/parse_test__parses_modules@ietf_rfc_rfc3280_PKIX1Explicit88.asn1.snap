@@ -2,18 +2,6 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc3280_PKIX1Explicit88.asn1
 ---
-Warnings:
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-
-
 Generated:
 #[allow(
     non_camel_case_types,
@@ -206,6 +194,19 @@ pub mod pkix1_explicit88 {
         x121_dcc_code(NumericString),
         #[rasn(size("2"), identifier = "iso-3166-alpha2-code")]
         iso_3166_alpha2_code(PrintableString),
+    }
+    #[doc = " Directory string type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DirectoryString {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
@@ -735,14 +736,110 @@ pub mod pkix1_explicit88 {
     #[rasn(delegate, size("1..=16"))]
     pub struct X121Address(pub NumericString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520CommonName {
+        teletexString(TeletexString),
+        #[rasn(size("1..=64"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=64"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=64"))]
+        bmpString(BmpString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520LocalityName {
+        teletexString(TeletexString),
+        #[rasn(size("1..=128"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=128"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=128"))]
+        bmpString(BmpString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520OrganizationName {
+        teletexString(TeletexString),
+        #[rasn(size("1..=64"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=64"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=64"))]
+        bmpString(BmpString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520OrganizationalUnitName {
+        teletexString(TeletexString),
+        #[rasn(size("1..=64"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=64"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=64"))]
+        bmpString(BmpString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520Pseudonym {
+        teletexString(TeletexString),
+        #[rasn(size("1..=128"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=128"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=128"))]
+        bmpString(BmpString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=64"))]
     pub struct X520SerialNumber(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520StateOrProvinceName {
+        teletexString(TeletexString),
+        #[rasn(size("1..=128"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=128"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=128"))]
+        bmpString(BmpString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520Title {
+        teletexString(TeletexString),
+        #[rasn(size("1..=64"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=64"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=64"))]
+        bmpString(BmpString),
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("2"))]
     pub struct X520countryName(pub PrintableString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct X520dnQualifier(pub PrintableString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum X520name {
+        teletexString(TeletexString),
+        #[rasn(size("1..=32768"))]
+        printableString(PrintableString),
+        #[rasn(size("1..=32768"))]
+        universalString(UniversalString),
+        utf8String(Utf8String),
+        #[rasn(size("1..=32768"))]
+        bmpString(BmpString),
+    }
     #[doc = " Extension types and attribute values"]
     pub static COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
     pub static EXTENDED_NETWORK_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(22));
