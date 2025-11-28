@@ -209,6 +209,7 @@ impl SyntaxApplication {
         match self {
             SyntaxApplication::ObjectSetDeclaration(_) => None,
             SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                module: None,
                 parent: None,
                 identifier,
             })

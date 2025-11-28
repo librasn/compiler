@@ -202,14 +202,19 @@ pub fn asn1_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
 
 pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
-        pair(
+        (
+            opt(terminated(
+                skip_ws_and_comments(module_reference),
+                skip_ws_and_comments(char(DOT)),
+            )),
             opt(skip_ws_and_comments(recognize(many1(pair(
                 identifier,
                 tag(".&"),
             ))))),
-            value_reference,
+            skip_ws_and_comments(value_reference),
         ),
-        |(p, id)| ASN1Value::ElsewhereDeclaredValue {
+        |(m, p, id)| ASN1Value::ElsewhereDeclaredValue {
+            module: m.map(str::to_owned),
             parent: p.map(|par| par.inner().to_string()),
             identifier: id.into(),
         },
@@ -317,5 +322,22 @@ END -- LdapSystemSchema"#
         )
         .unwrap()
         .0
+    );
+}
+
+#[test]
+fn test_elsewhere_declared_value_in_module() {
+    let input = Input::from("NLM.sNPADTEAddress");
+
+    let (rest, result) = elsewhere_declared_value(input).unwrap();
+
+    assert!(rest.is_empty());
+    assert_eq!(
+        result,
+        ASN1Value::ElsewhereDeclaredValue {
+            module: Some("NLM".to_owned()),
+            parent: None,
+            identifier: "sNPADTEAddress".to_owned()
+        }
     );
 }
