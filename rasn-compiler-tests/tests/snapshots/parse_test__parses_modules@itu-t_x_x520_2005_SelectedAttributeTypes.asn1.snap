@@ -3,10 +3,6 @@ source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x520_2005_SelectedAttributeTypes.asn1
 ---
 Warnings:
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 LinkerError in ASN grammar: Failed to resolve supertype MAPPING-BASED-MATCHING of parameterized implementation.
 
 
@@ -50,6 +46,22 @@ pub mod selected_attribute_types {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AttributeOptionList(pub SequenceOf<AnonymousAttributeOptionList>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousCaseIgnoreList {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CaseIgnoreList(pub SequenceOf<AnonymousCaseIgnoreList>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum CharacterMatchTypes {
@@ -210,6 +222,25 @@ pub mod selected_attribute_types {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("2..=3"))]
     pub struct LanguageContextSyntax(pub PrintableString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LocaleContextSyntaxLocaleID2 {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LocaleContextSyntax {
+        localeID1(ObjectIdentifier),
+        localeID2(LocaleContextSyntaxLocaleID2),
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     pub struct MultipleMatchingLocalities {
         #[rasn(identifier = "matchingRuleUsed")]
@@ -334,6 +365,22 @@ pub mod selected_attribute_types {
     }
     #[doc = " Anonymous SEQUENCE OF member "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousPostalAddress {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PostalAddress(pub SequenceOf<AnonymousPostalAddress>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "INTEGER")]
     pub struct AnonymousPreferredDeliveryMethod(pub Integer);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -390,6 +437,60 @@ pub mod selected_attribute_types {
         sequencePermutationAndDeletion = 4,
         sequenceProviderDefined = 5,
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousSubstringAssertionInitial {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousSubstringAssertionAny {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousSubstringAssertionFinal {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousSubstringAssertion {
+        #[rasn(tag(context, 0))]
+        initial(AnonymousSubstringAssertionInitial),
+        #[rasn(tag(context, 1))]
+        any(AnonymousSubstringAssertionAny),
+        #[rasn(tag(context, 2), identifier = "final")]
+        R_final(AnonymousSubstringAssertionFinal),
+        control(Attribute),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubstringAssertion(pub SequenceOf<AnonymousSubstringAssertion>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1.."))]
     pub struct TelephoneNumber(pub PrintableString);

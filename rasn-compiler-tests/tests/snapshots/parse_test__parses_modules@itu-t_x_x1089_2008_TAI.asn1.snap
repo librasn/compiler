@@ -3,7 +3,6 @@ source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x1089_2008_TAI.asn1
 ---
 Warnings:
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 LinkerError in ASN grammar: No syntax definition for information object class found!
 LinkerError in ASN grammar: No syntax definition for information object class found!
 LinkerError in ASN grammar: Failed to resolve supertype SIGNED of parameterized implementation.
@@ -280,6 +279,9 @@ pub mod tai {
             }
         }
     }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ModalityPolicy(pub UniversalString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct PublicKeyCert {

@@ -2,20 +2,452 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc3281_PKIXAttributeCertificate.asn1
 ---
-Error matching ASN syntax at while parsing:
-    ╭─[line 50, column 2]
-    │
-    │ 
- 50 │  AttributeCertificateInfo ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 51 │      version  AttCertVersion  -- version is v2,
- 52 │      holder   Holder,
- 53 │      issuer   AttCertIssuer,
- 54 │      signatureAlgorithmIdentifier,
- 55 │      serialNumber   CertificateSerialNumber,
- 56 │      attrCertValidityPeriod   AttCertValidityPeriod,
- 57 │      attributes     SEQUENCE OF Attribute,
- 58 │      issuerUniqueID UniqueIdentifier OPTIONAL,
- 59 │      extensions     Extensions     OPTIONAL
- 60 │  }
-    │
-────╯
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pkixattribute_certificate {
+    extern crate alloc;
+    use super::pkix1_explicit88::{
+        AlgorithmIdentifier, Attribute, CertificateSerialNumber, Extensions, UniqueIdentifier,
+        ID_AD, ID_AT, ID_KP, ID_PE, ID_PKIX,
+    };
+    use super::pkix1_implicit88::{GeneralName, GeneralNames, ID_CE};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AAControls {
+        #[rasn(value("0.."), identifier = "pathLenConstraint")]
+        pub path_len_constraint: Option<Integer>,
+        #[rasn(tag(context, 0), identifier = "permittedAttrs")]
+        pub permitted_attrs: Option<AttrSpec>,
+        #[rasn(tag(context, 1), identifier = "excludedAttrs")]
+        pub excluded_attrs: Option<AttrSpec>,
+        #[rasn(
+            default = "aacontrols_permit_un_specified_default",
+            identifier = "permitUnSpecified"
+        )]
+        pub permit_un_specified: bool,
+    }
+    impl AAControls {
+        pub fn new(
+            path_len_constraint: Option<Integer>,
+            permitted_attrs: Option<AttrSpec>,
+            excluded_attrs: Option<AttrSpec>,
+            permit_un_specified: bool,
+        ) -> Self {
+            Self {
+                path_len_constraint,
+                permitted_attrs,
+                excluded_attrs,
+                permit_un_specified,
+            }
+        }
+    }
+    fn aacontrols_permit_un_specified_default() -> bool {
+        true
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ACClearAttrs {
+        #[rasn(identifier = "acIssuer")]
+        pub ac_issuer: GeneralName,
+        #[rasn(identifier = "acSerial")]
+        pub ac_serial: Integer,
+        pub attrs: SequenceOf<Attribute>,
+    }
+    impl ACClearAttrs {
+        pub fn new(
+            ac_issuer: GeneralName,
+            ac_serial: Integer,
+            attrs: SequenceOf<Attribute>,
+        ) -> Self {
+            Self {
+                ac_issuer,
+                ac_serial,
+                attrs,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AttCertIssuer {
+        v1Form(GeneralNames),
+        #[rasn(tag(context, 0))]
+        v2Form(V2Form),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttCertValidityPeriod {
+        #[rasn(identifier = "notBeforeTime")]
+        pub not_before_time: GeneralizedTime,
+        #[rasn(identifier = "notAfterTime")]
+        pub not_after_time: GeneralizedTime,
+    }
+    impl AttCertValidityPeriod {
+        pub fn new(not_before_time: GeneralizedTime, not_after_time: GeneralizedTime) -> Self {
+            Self {
+                not_before_time,
+                not_after_time,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttCertVersion(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OBJECT_IDENTIFIER")]
+    pub struct AnonymousAttrSpec(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AttrSpec(pub SequenceOf<AnonymousAttrSpec>);
+    #[doc = " Uncomment this if using a 1988 level ASN.1 compiler"]
+    #[doc = " UTF8String ::= [UNIVERSAL 12] IMPLICIT OCTET STRING"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeCertificate {
+        pub acinfo: AttributeCertificateInfo,
+        #[rasn(identifier = "signatureAlgorithm")]
+        pub signature_algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "signatureValue")]
+        pub signature_value: BitString,
+    }
+    impl AttributeCertificate {
+        pub fn new(
+            acinfo: AttributeCertificateInfo,
+            signature_algorithm: AlgorithmIdentifier,
+            signature_value: BitString,
+        ) -> Self {
+            Self {
+                acinfo,
+                signature_algorithm,
+                signature_value,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AttributeCertificateInfo {
+        pub version: AttCertVersion,
+        pub holder: Holder,
+        pub issuer: AttCertIssuer,
+        pub signature: AlgorithmIdentifier,
+        #[rasn(identifier = "serialNumber")]
+        pub serial_number: CertificateSerialNumber,
+        #[rasn(identifier = "attrCertValidityPeriod")]
+        pub attr_cert_validity_period: AttCertValidityPeriod,
+        pub attributes: SequenceOf<Attribute>,
+        #[rasn(identifier = "issuerUniqueID")]
+        pub issuer_unique_id: Option<UniqueIdentifier>,
+        pub extensions: Option<Extensions>,
+    }
+    impl AttributeCertificateInfo {
+        pub fn new(
+            version: AttCertVersion,
+            holder: Holder,
+            issuer: AttCertIssuer,
+            signature: AlgorithmIdentifier,
+            serial_number: CertificateSerialNumber,
+            attr_cert_validity_period: AttCertValidityPeriod,
+            attributes: SequenceOf<Attribute>,
+            issuer_unique_id: Option<UniqueIdentifier>,
+            extensions: Option<Extensions>,
+        ) -> Self {
+            Self {
+                version,
+                holder,
+                issuer,
+                signature,
+                serial_number,
+                attr_cert_validity_period,
+                attributes,
+                issuer_unique_id,
+                extensions,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ClassList(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Clearance {
+        #[rasn(tag(context, 0), identifier = "policyId")]
+        pub policy_id: ObjectIdentifier,
+        #[rasn(
+            tag(context, 1),
+            default = "clearance_class_list_default",
+            identifier = "classList"
+        )]
+        pub class_list: ClassList,
+        #[rasn(tag(context, 2), identifier = "securityCategories")]
+        pub security_categories: Option<SetOf<SecurityCategory>>,
+    }
+    impl Clearance {
+        pub fn new(
+            policy_id: ObjectIdentifier,
+            class_list: ClassList,
+            security_categories: Option<SetOf<SecurityCategory>>,
+        ) -> Self {
+            Self {
+                policy_id,
+                class_list,
+                security_categories,
+            }
+        }
+    }
+    fn clearance_class_list_default() -> ClassList {
+        ClassList(
+            [false, true, false, false, false, false]
+                .into_iter()
+                .collect(),
+        )
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Holder {
+        #[rasn(tag(context, 0), identifier = "baseCertificateID")]
+        pub base_certificate_id: Option<IssuerSerial>,
+        #[rasn(tag(context, 1), identifier = "entityName")]
+        pub entity_name: Option<GeneralNames>,
+        #[rasn(tag(context, 2), identifier = "objectDigestInfo")]
+        pub object_digest_info: Option<ObjectDigestInfo>,
+    }
+    impl Holder {
+        pub fn new(
+            base_certificate_id: Option<IssuerSerial>,
+            entity_name: Option<GeneralNames>,
+            object_digest_info: Option<ObjectDigestInfo>,
+        ) -> Self {
+            Self {
+                base_certificate_id,
+                entity_name,
+                object_digest_info,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousIetfAttrSyntaxValues {
+        octets(OctetString),
+        oid(ObjectIdentifier),
+        string(Utf8String),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IetfAttrSyntaxValues(pub SequenceOf<AnonymousIetfAttrSyntaxValues>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IetfAttrSyntax {
+        #[rasn(tag(context, 0), identifier = "policyAuthority")]
+        pub policy_authority: Option<GeneralNames>,
+        pub values: IetfAttrSyntaxValues,
+    }
+    impl IetfAttrSyntax {
+        pub fn new(policy_authority: Option<GeneralNames>, values: IetfAttrSyntaxValues) -> Self {
+            Self {
+                policy_authority,
+                values,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IssuerSerial {
+        pub issuer: GeneralNames,
+        pub serial: CertificateSerialNumber,
+        #[rasn(identifier = "issuerUID")]
+        pub issuer_uid: Option<UniqueIdentifier>,
+    }
+    impl IssuerSerial {
+        pub fn new(
+            issuer: GeneralNames,
+            serial: CertificateSerialNumber,
+            issuer_uid: Option<UniqueIdentifier>,
+        ) -> Self {
+            Self {
+                issuer,
+                serial,
+                issuer_uid,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ObjectDigestInfoDigestedObjectType {
+        publicKey = 0,
+        publicKeyCert = 1,
+        otherObjectTypes = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ObjectDigestInfo {
+        #[rasn(identifier = "digestedObjectType")]
+        pub digested_object_type: ObjectDigestInfoDigestedObjectType,
+        #[rasn(identifier = "otherObjectTypeID")]
+        pub other_object_type_id: Option<ObjectIdentifier>,
+        #[rasn(identifier = "digestAlgorithm")]
+        pub digest_algorithm: AlgorithmIdentifier,
+        #[rasn(identifier = "objectDigest")]
+        pub object_digest: BitString,
+    }
+    impl ObjectDigestInfo {
+        pub fn new(
+            digested_object_type: ObjectDigestInfoDigestedObjectType,
+            other_object_type_id: Option<ObjectIdentifier>,
+            digest_algorithm: AlgorithmIdentifier,
+            object_digest: BitString,
+        ) -> Self {
+            Self {
+                digested_object_type,
+                other_object_type_id,
+                digest_algorithm,
+                object_digest,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProxyInfo(pub SequenceOf<Targets>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct RoleSyntax {
+        #[rasn(tag(context, 0), identifier = "roleAuthority")]
+        pub role_authority: Option<GeneralNames>,
+        #[rasn(tag(context, 1), identifier = "roleName")]
+        pub role_name: GeneralName,
+    }
+    impl RoleSyntax {
+        pub fn new(role_authority: Option<GeneralNames>, role_name: GeneralName) -> Self {
+            Self {
+                role_authority,
+                role_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SecurityCategory {
+        #[rasn(tag(context, 0), identifier = "type")]
+        pub r_type: ObjectIdentifier,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl SecurityCategory {
+        pub fn new(r_type: ObjectIdentifier, value: Any) -> Self {
+            Self { r_type, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct SvceAuthInfo {
+        pub service: GeneralName,
+        pub ident: GeneralName,
+        #[rasn(identifier = "authInfoOCTET")]
+        pub auth_info_octet: Option<STRING>,
+    }
+    impl SvceAuthInfo {
+        pub fn new(
+            service: GeneralName,
+            ident: GeneralName,
+            auth_info_octet: Option<STRING>,
+        ) -> Self {
+            Self {
+                service,
+                ident,
+                auth_info_octet,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Target {
+        #[rasn(tag(context, 0))]
+        targetName(GeneralName),
+        #[rasn(tag(context, 1))]
+        targetGroup(GeneralName),
+        #[rasn(tag(context, 2))]
+        targetCert(TargetCert),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct TargetCert {
+        #[rasn(identifier = "targetCertificate")]
+        pub target_certificate: IssuerSerial,
+        #[rasn(identifier = "targetName")]
+        pub target_name: Option<GeneralName>,
+        #[rasn(identifier = "certDigestInfo")]
+        pub cert_digest_info: Option<ObjectDigestInfo>,
+    }
+    impl TargetCert {
+        pub fn new(
+            target_certificate: IssuerSerial,
+            target_name: Option<GeneralName>,
+            cert_digest_info: Option<ObjectDigestInfo>,
+        ) -> Self {
+            Self {
+                target_certificate,
+                target_name,
+                cert_digest_info,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Targets(pub SequenceOf<Target>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct V2Form {
+        #[rasn(identifier = "issuerName")]
+        pub issuer_name: Option<GeneralNames>,
+        #[rasn(tag(context, 0), identifier = "baseCertificateID")]
+        pub base_certificate_id: Option<IssuerSerial>,
+        #[rasn(tag(context, 1), identifier = "objectDigestInfo")]
+        pub object_digest_info: Option<ObjectDigestInfo>,
+    }
+    impl V2Form {
+        pub fn new(
+            issuer_name: Option<GeneralNames>,
+            base_certificate_id: Option<IssuerSerial>,
+            object_digest_info: Option<ObjectDigestInfo>,
+        ) -> Self {
+            Self {
+                issuer_name,
+                base_certificate_id,
+                object_digest_info,
+            }
+        }
+    }
+    pub static ID_ACA: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PKIX, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACA_ACCESS_IDENTITY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACA_AUTHENTICATION_INFO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " { id-aca 5 } is reserved"]
+    pub static ID_ACA_ENC_ATTRS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[6u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_ACA_GROUP: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_ACA, &[4u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_CLEARANCE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 5u32, 1u32, 5u32, 55u32]).to_owned());
+    pub static ID_AT_ROLE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[72u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_PE_AA_CONTROLS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PE, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_PE_AC_AUDIT_IDENTITY: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PE, &[4u32]].concat()).unwrap().to_owned());
+}

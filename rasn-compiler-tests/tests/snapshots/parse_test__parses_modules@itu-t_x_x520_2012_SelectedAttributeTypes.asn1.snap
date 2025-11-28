@@ -5,7 +5,6 @@ input_file: rasn-compiler-tests/tests/modules/itu-t_x_x520_2012_SelectedAttribut
 Warnings:
 NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
 NotYetInplemented generating bindings for : Enumerated values are currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
 LinkerError in ASN grammar: Failed to resolve supertype MAPPING-BASED-MATCHING of parameterized implementation.
 LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
 
@@ -635,6 +634,30 @@ pub mod selected_attribute_types {
         pub fn new(r_type: Any, length: Option<Integer>) -> Self {
             Self { r_type, length }
         }
+    }
+    #[doc = "from IETF RFC 3727"]
+    #[doc = ""]
+    #[doc = "The following import is provided for information only (see 7.2.16), it is not"]
+    #[doc = "referenced by any ASN.1 construct within these Directory Specifications. Note that"]
+    #[doc = "the ASN.1 module in RFC 3727 imports from the InformationFramework module of edition"]
+    #[doc = "4 of Rec. ITU-T X.501 | ISO/IEC 9594-2. A specification importing from both these"]
+    #[doc = "Directory Specifications and from RFC 3727 should take corrective actions, e.g.,"]
+    #[doc = "by making a copy of the ASN.1 module of RFC 3727 and then update the IMPORT statement."]
+    #[doc = ""]
+    #[doc = "  allComponentsMatch, componentFilterMatch, directoryComponentsMatch, presentMatch, rdnMatch"]
+    #[doc = "    FROM ComponentMatching {iso(1) 2 36 79672281 xed(3) module (0) component-matching(4)} "]
+    #[doc = " Directory string type"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UnboundedDirectoryString {
+        teletexString(TeletexString),
+        #[rasn(size("1.."))]
+        printableString(PrintableString),
+        #[rasn(size("1.."))]
+        bmpString(BmpString),
+        #[rasn(size("1.."))]
+        universalString(UniversalString),
+        uTF8String(Utf8String),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
