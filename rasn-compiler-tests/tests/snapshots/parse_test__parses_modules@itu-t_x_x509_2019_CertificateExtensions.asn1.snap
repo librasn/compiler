@@ -652,8 +652,7 @@ pub mod certificate_extensions {
     #[non_exhaustive]
     pub enum GeneralName {
         #[rasn(tag(context, 0))]
-        otherName(INSTANCE),
-        OF(OTHERNAME),
+        otherName(OTHERNAME),
         #[rasn(tag(context, 1))]
         rfc822Name(Ia5String),
         #[rasn(tag(context, 2))]
@@ -1048,8 +1047,7 @@ pub mod certificate_extensions {
         #[rasn(tag(context, 0))]
         cRLReferral(CRLReferral),
         #[rasn(tag(context, 1))]
-        otherReferral(INSTANCE),
-        OF(OTHERREFERRAL),
+        otherReferral(OTHERREFERRAL),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1.."))]

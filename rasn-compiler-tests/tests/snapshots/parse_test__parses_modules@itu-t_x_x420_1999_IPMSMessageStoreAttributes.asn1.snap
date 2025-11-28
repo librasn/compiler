@@ -3,15 +3,17 @@ source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x420_1999_IPMSMessageStoreAttributes.asn1
 ---
 Error matching ASN syntax at while parsing:
-     ╭─[line 210, column 2]
+     ╭─[line 578, column 2]
      │
      │ 
- 210 │  NonMessageBodyPartSynopsis ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 211 │    type        [0]  OBJECT IDENTIFIER,
- 212 │    parameters  [1]  INSTANCE OF TYPE-IDENTIFIER OPTIONAL,
- 213 │    size        [2]  INTEGER,
- 214 │    processed   [3]  BOOLEAN DEFAULT FALSE
- 215 │  }
- 217 │  -- Body part summary
+ 575 │  -- Extended body parts
+ 576 │  -- (These attributes cannot be enumerated. See 19.6.3.3.)
+ 577 │  -- (They may be derived using the following parameterized object assignments:)
+ 578 │  extended-body-part-data-attribute{EXTENDED-BODY-PART-TYPE:ebpt} X413ATTRIBUTE ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
+ 579 │    ::= {
+ 580 │    WITH ATTRIBUTE-SYNTAX  [0] EXPLICIT ebpt.&data.&Type,
+ 581 │    NUMERATION             multi-valued,
+ 582 │    ID                     ebpt.&data.&id
+ 583 │  }
      │
 ─────╯

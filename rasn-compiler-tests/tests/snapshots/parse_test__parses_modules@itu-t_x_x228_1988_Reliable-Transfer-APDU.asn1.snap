@@ -21,11 +21,11 @@ pub mod reliable_transfer_apdu {
     pub struct AbortReason(pub Integer);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
-    pub struct AdditionalReferenceInformation(pub T61String);
+    pub struct AdditionalReferenceInformation(pub TeletexString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice)]
     pub enum CallingSSuserReference {
-        t61String(T61String),
+        t61String(TeletexString),
         octetString(OctetString),
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
