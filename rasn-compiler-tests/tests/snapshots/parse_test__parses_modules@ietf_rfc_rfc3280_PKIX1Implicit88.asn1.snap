@@ -2,14 +2,686 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/ietf_rfc_rfc3280_PKIX1Implicit88.asn1
 ---
-Error matching ASN syntax at while parsing:
-    ╭─[line 89, column 2]
-    │
-    │ 
- 89 │  PolicyQualifierInfo ::= SEQUENCE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 90 │         policyQualifierId  PolicyQualifierId,
- 91 │         qualifier        ANY DEFINED BY policyQualifierId }
- 93 │  -- Implementations that recognize additional policy qualifiers MUST
- 94 │  -- augment the following definition for PolicyQualifierId
-    │
-────╯
+Warnings:
+Unidentified generating bindings for : Unsupported operation for ASN1Values ElsewhereDeclaredValue { parent: None, identifier: "id-qt-cps" } and ElsewhereDeclaredValue { parent: None, identifier: "id-qt-unotice" }
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pkix1_implicit88 {
+    extern crate alloc;
+    use super::pkix1_explicit88::{
+        Attribute, BMPString, CertificateSerialNumber, DirectoryString, Name, ORAddress,
+        RelativeDistinguishedName, UTF8String, ID_KP, ID_PE, ID_QT_CPS, ID_QT_UNOTICE,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AccessDescription {
+        #[rasn(identifier = "accessMethod")]
+        pub access_method: ObjectIdentifier,
+        #[rasn(identifier = "accessLocation")]
+        pub access_location: GeneralName,
+    }
+    impl AccessDescription {
+        pub fn new(access_method: ObjectIdentifier, access_location: GeneralName) -> Self {
+            Self {
+                access_method,
+                access_location,
+            }
+        }
+    }
+    #[doc = " AnotherName replaces OTHER-NAME ::= TYPE-IDENTIFIER, as"]
+    #[doc = " TYPE-IDENTIFIER is not supported in the '88 ASN.1 syntax"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AnotherName {
+        #[rasn(identifier = "type-id")]
+        pub type_id: ObjectIdentifier,
+        #[rasn(tag(explicit(context, 0)))]
+        pub value: Any,
+    }
+    impl AnotherName {
+        pub fn new(type_id: ObjectIdentifier, value: Any) -> Self {
+            Self { type_id, value }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct AuthorityInfoAccessSyntax(pub SequenceOf<AccessDescription>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct AuthorityKeyIdentifier {
+        #[rasn(tag(context, 0), identifier = "keyIdentifier")]
+        pub key_identifier: Option<KeyIdentifier>,
+        #[rasn(tag(context, 1), identifier = "authorityCertIssuer")]
+        pub authority_cert_issuer: Option<GeneralNames>,
+        #[rasn(tag(context, 2), identifier = "authorityCertSerialNumber")]
+        pub authority_cert_serial_number: Option<CertificateSerialNumber>,
+    }
+    impl AuthorityKeyIdentifier {
+        pub fn new(
+            key_identifier: Option<KeyIdentifier>,
+            authority_cert_issuer: Option<GeneralNames>,
+            authority_cert_serial_number: Option<CertificateSerialNumber>,
+        ) -> Self {
+            Self {
+                key_identifier,
+                authority_cert_issuer,
+                authority_cert_serial_number,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BaseCRLNumber(pub CRLNumber);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct BaseDistance(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct BasicConstraints {
+        #[rasn(default = "basic_constraints_c_a_default", identifier = "cA")]
+        pub c_a: bool,
+        #[rasn(value("0.."), identifier = "pathLenConstraint")]
+        pub path_len_constraint: Option<Integer>,
+    }
+    impl BasicConstraints {
+        pub fn new(c_a: bool, path_len_constraint: Option<Integer>) -> Self {
+            Self {
+                c_a,
+                path_len_constraint,
+            }
+        }
+    }
+    fn basic_constraints_c_a_default() -> bool {
+        false
+    }
+    #[doc = " CPS pointer qualifier"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CPSuri(pub Ia5String);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CRLDistributionPoints(pub SequenceOf<DistributionPoint>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct CRLNumber(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CRLReason {
+        unspecified = 0,
+        keyCompromise = 1,
+        cACompromise = 2,
+        affiliationChanged = 3,
+        superseded = 4,
+        cessationOfOperation = 5,
+        certificateHold = 6,
+        removeFromCRL = 8,
+        privilegeWithdrawn = 9,
+        aACompromise = 10,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertPolicyId(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CertificateIssuer(pub GeneralNames);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct CertificatePolicies(pub SequenceOf<PolicyInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DisplayText {
+        #[rasn(size("1..=200"))]
+        ia5String(Ia5String),
+        #[rasn(size("1..=200"))]
+        visibleString(VisibleString),
+        #[rasn(size("1..=200"))]
+        bmpString(BmpString),
+        utf8String(Utf8String),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct DistributionPoint {
+        #[rasn(tag(context, 0), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(tag(context, 1))]
+        pub reasons: Option<ReasonFlags>,
+        #[rasn(tag(context, 2), identifier = "cRLIssuer")]
+        pub c_rlissuer: Option<GeneralNames>,
+    }
+    impl DistributionPoint {
+        pub fn new(
+            distribution_point: Option<DistributionPointName>,
+            reasons: Option<ReasonFlags>,
+            c_rlissuer: Option<GeneralNames>,
+        ) -> Self {
+            Self {
+                distribution_point,
+                reasons,
+                c_rlissuer,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DistributionPointName {
+        #[rasn(tag(context, 0))]
+        fullName(GeneralNames),
+        #[rasn(tag(context, 1))]
+        nameRelativeToCRLIssuer(RelativeDistinguishedName),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EDIPartyName {
+        #[rasn(tag(context, 0), identifier = "nameAssigner")]
+        pub name_assigner: Option<DirectoryString>,
+        #[rasn(tag(context, 1), identifier = "partyName")]
+        pub party_name: DirectoryString,
+    }
+    impl EDIPartyName {
+        pub fn new(name_assigner: Option<DirectoryString>, party_name: DirectoryString) -> Self {
+            Self {
+                name_assigner,
+                party_name,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ExtKeyUsageSyntax(pub SequenceOf<KeyPurposeId>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct FreshestCRL(pub CRLDistributionPoints);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum GeneralName {
+        #[rasn(tag(context, 0))]
+        otherName(AnotherName),
+        #[rasn(tag(context, 1))]
+        rfc822Name(Ia5String),
+        #[rasn(tag(context, 2))]
+        dNSName(Ia5String),
+        #[rasn(tag(context, 3))]
+        x400Address(ORAddress),
+        #[rasn(tag(context, 4))]
+        directoryName(Name),
+        #[rasn(tag(context, 5))]
+        ediPartyName(EDIPartyName),
+        #[rasn(tag(context, 6))]
+        uniformResourceIdentifier(Ia5String),
+        #[rasn(tag(context, 7))]
+        iPAddress(OctetString),
+        #[rasn(tag(context, 8))]
+        registeredID(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct GeneralNames(pub SequenceOf<GeneralName>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct GeneralSubtree {
+        pub base: GeneralName,
+        #[rasn(tag(context, 0), default = "general_subtree_minimum_default")]
+        pub minimum: BaseDistance,
+        #[rasn(tag(context, 1))]
+        pub maximum: Option<BaseDistance>,
+    }
+    impl GeneralSubtree {
+        pub fn new(
+            base: GeneralName,
+            minimum: BaseDistance,
+            maximum: Option<BaseDistance>,
+        ) -> Self {
+            Self {
+                base,
+                minimum,
+                maximum,
+            }
+        }
+    }
+    fn general_subtree_minimum_default() -> BaseDistance {
+        BaseDistance(Integer::from(0))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct GeneralSubtrees(pub SequenceOf<GeneralSubtree>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct HoldInstructionCode(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InhibitAnyPolicy(pub SkipCerts);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvalidityDate(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct IssuerAltName(pub GeneralNames);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct IssuingDistributionPoint {
+        #[rasn(tag(context, 0), identifier = "distributionPoint")]
+        pub distribution_point: Option<DistributionPointName>,
+        #[rasn(
+            tag(context, 1),
+            default = "issuing_distribution_point_only_contains_user_certs_default",
+            identifier = "onlyContainsUserCerts"
+        )]
+        pub only_contains_user_certs: bool,
+        #[rasn(
+            tag(context, 2),
+            default = "issuing_distribution_point_only_contains_cacerts_default",
+            identifier = "onlyContainsCACerts"
+        )]
+        pub only_contains_cacerts: bool,
+        #[rasn(tag(context, 3), identifier = "onlySomeReasons")]
+        pub only_some_reasons: Option<ReasonFlags>,
+        #[rasn(
+            tag(context, 4),
+            default = "issuing_distribution_point_indirect_crl_default",
+            identifier = "indirectCRL"
+        )]
+        pub indirect_crl: bool,
+        #[rasn(
+            tag(context, 5),
+            default = "issuing_distribution_point_only_contains_attribute_certs_default",
+            identifier = "onlyContainsAttributeCerts"
+        )]
+        pub only_contains_attribute_certs: bool,
+    }
+    impl IssuingDistributionPoint {
+        pub fn new(
+            distribution_point: Option<DistributionPointName>,
+            only_contains_user_certs: bool,
+            only_contains_cacerts: bool,
+            only_some_reasons: Option<ReasonFlags>,
+            indirect_crl: bool,
+            only_contains_attribute_certs: bool,
+        ) -> Self {
+            Self {
+                distribution_point,
+                only_contains_user_certs,
+                only_contains_cacerts,
+                only_some_reasons,
+                indirect_crl,
+                only_contains_attribute_certs,
+            }
+        }
+    }
+    fn issuing_distribution_point_only_contains_user_certs_default() -> bool {
+        false
+    }
+    fn issuing_distribution_point_only_contains_cacerts_default() -> bool {
+        false
+    }
+    fn issuing_distribution_point_indirect_crl_default() -> bool {
+        false
+    }
+    fn issuing_distribution_point_only_contains_attribute_certs_default() -> bool {
+        false
+    }
+    #[doc = " authorityCertIssuer and authorityCertSerialNumber MUST both"]
+    #[doc = " be present or both be absent"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyPurposeId(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct KeyUsage(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NameConstraints {
+        #[rasn(tag(context, 0), identifier = "permittedSubtrees")]
+        pub permitted_subtrees: Option<GeneralSubtrees>,
+        #[rasn(tag(context, 1), identifier = "excludedSubtrees")]
+        pub excluded_subtrees: Option<GeneralSubtrees>,
+    }
+    impl NameConstraints {
+        pub fn new(
+            permitted_subtrees: Option<GeneralSubtrees>,
+            excluded_subtrees: Option<GeneralSubtrees>,
+        ) -> Self {
+            Self {
+                permitted_subtrees,
+                excluded_subtrees,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct NoticeReference {
+        pub organization: DisplayText,
+        #[rasn(identifier = "noticeNumbers")]
+        pub notice_numbers: SequenceOf<Integer>,
+    }
+    impl NoticeReference {
+        pub fn new(organization: DisplayText, notice_numbers: SequenceOf<Integer>) -> Self {
+            Self {
+                organization,
+                notice_numbers,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PolicyConstraints {
+        #[rasn(tag(context, 0), identifier = "requireExplicitPolicy")]
+        pub require_explicit_policy: Option<SkipCerts>,
+        #[rasn(tag(context, 1), identifier = "inhibitPolicyMapping")]
+        pub inhibit_policy_mapping: Option<SkipCerts>,
+    }
+    impl PolicyConstraints {
+        pub fn new(
+            require_explicit_policy: Option<SkipCerts>,
+            inhibit_policy_mapping: Option<SkipCerts>,
+        ) -> Self {
+            Self {
+                require_explicit_policy,
+                inhibit_policy_mapping,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PolicyInformation {
+        #[rasn(identifier = "policyIdentifier")]
+        pub policy_identifier: CertPolicyId,
+        #[rasn(size("1.."), identifier = "policyQualifiers")]
+        pub policy_qualifiers: Option<SequenceOf<PolicyQualifierInfo>>,
+    }
+    impl PolicyInformation {
+        pub fn new(
+            policy_identifier: CertPolicyId,
+            policy_qualifiers: Option<SequenceOf<PolicyQualifierInfo>>,
+        ) -> Self {
+            Self {
+                policy_identifier,
+                policy_qualifiers,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPolicyMappings {
+        #[rasn(identifier = "issuerDomainPolicy")]
+        pub issuer_domain_policy: CertPolicyId,
+        #[rasn(identifier = "subjectDomainPolicy")]
+        pub subject_domain_policy: CertPolicyId,
+    }
+    impl AnonymousPolicyMappings {
+        pub fn new(
+            issuer_domain_policy: CertPolicyId,
+            subject_domain_policy: CertPolicyId,
+        ) -> Self {
+            Self {
+                issuer_domain_policy,
+                subject_domain_policy,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PolicyMappings(pub SequenceOf<AnonymousPolicyMappings>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PolicyQualifierInfo {
+        #[rasn(identifier = "policyQualifierId")]
+        pub policy_qualifier_id: PolicyQualifierId,
+        pub qualifier: Any,
+    }
+    impl PolicyQualifierInfo {
+        pub fn new(policy_qualifier_id: PolicyQualifierId, qualifier: Any) -> Self {
+            Self {
+                policy_qualifier_id,
+                qualifier,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PrivateKeyUsagePeriod {
+        #[rasn(tag(context, 0), identifier = "notBefore")]
+        pub not_before: Option<GeneralizedTime>,
+        #[rasn(tag(context, 1), identifier = "notAfter")]
+        pub not_after: Option<GeneralizedTime>,
+    }
+    impl PrivateKeyUsagePeriod {
+        pub fn new(
+            not_before: Option<GeneralizedTime>,
+            not_after: Option<GeneralizedTime>,
+        ) -> Self {
+            Self {
+                not_before,
+                not_after,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ReasonFlags(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct SkipCerts(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubjectAltName(pub GeneralNames);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SubjectDirectoryAttributes(pub SequenceOf<Attribute>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SubjectInfoAccessSyntax(pub SequenceOf<AccessDescription>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SubjectKeyIdentifier(pub KeyIdentifier);
+    #[doc = " user notice qualifier"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UserNotice {
+        #[rasn(identifier = "noticeRef")]
+        pub notice_ref: Option<NoticeReference>,
+        #[rasn(identifier = "explicitText")]
+        pub explicit_text: Option<DisplayText>,
+    }
+    impl UserNotice {
+        pub fn new(
+            notice_ref: Option<NoticeReference>,
+            explicit_text: Option<DisplayText>,
+        ) -> Self {
+            Self {
+                notice_ref,
+                explicit_text,
+            }
+        }
+    }
+    #[doc = " permit unspecified key uses"]
+    pub static ANY_EXTENDED_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE_EXT_KEY_USAGE, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ANY_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE_CERTIFICATE_POLICIES, &[0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " ANSI x9 holdinstructions"]
+    #[doc = " ANSI x9 arc holdinstruction arc"]
+    pub static HOLD_INSTRUCTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 2u32, 840u32, 10040u32, 2u32]).to_owned());
+    #[doc = " ISO arc for standard certificate and CRL extensions"]
+    pub static ID_CE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[2u32, 5u32, 29u32]).to_owned());
+    #[doc = " authority key identifier OID and syntax"]
+    pub static ID_CE_AUTHORITY_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[35u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " basic constraints extension OID and syntax"]
+    pub static ID_CE_BASIC_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CRL distribution points extension OID and syntax"]
+    pub static ID_CE_C_RLDISTRIBUTION_POINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[31u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CRL number extension OID and syntax"]
+    pub static ID_CE_C_RLNUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " CRL reasons extension OID and syntax"]
+    pub static ID_CE_C_RLREASONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " certificate issuer CRL entry extension OID and syntax"]
+    pub static ID_CE_CERTIFICATE_ISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[29u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " either notBefore or notAfter MUST be present"]
+    #[doc = " certificate policies extension OID and syntax"]
+    pub static ID_CE_CERTIFICATE_POLICIES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[32u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_DELTA_CRLINDICATOR: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[27u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " extended key usage extension OID and syntax"]
+    pub static ID_CE_EXT_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[37u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " freshest (delta)CRL extension OID and syntax"]
+    pub static ID_CE_FRESHEST_CRL: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[46u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " hold instruction extension OID and syntax"]
+    pub static ID_CE_HOLD_INSTRUCTION_CODE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[23u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " inhibit any policy OID and syntax"]
+    pub static ID_CE_INHIBIT_ANY_POLICY: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[54u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " invalidity date CRL entry extension OID and syntax"]
+    pub static ID_CE_INVALIDITY_DATE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[24u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " issuer alternative name extension OID and syntax"]
+    pub static ID_CE_ISSUER_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " issuing distribution point extension OID and syntax"]
+    pub static ID_CE_ISSUING_DISTRIBUTION_POINT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[28u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " key usage extension OID and syntax"]
+    pub static ID_CE_KEY_USAGE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[15u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " name constraints extension OID and syntax"]
+    pub static ID_CE_NAME_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[30u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " policy constraints extension OID and syntax"]
+    pub static ID_CE_POLICY_CONSTRAINTS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[36u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " policy mapping extension OID and syntax"]
+    pub static ID_CE_POLICY_MAPPINGS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[33u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " private key usage period extension OID and syntax"]
+    pub static ID_CE_PRIVATE_KEY_USAGE_PERIOD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " subject alternative name extension OID and syntax"]
+    pub static ID_CE_SUBJECT_ALT_NAME: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_CE_SUBJECT_DIRECTORY_ATTRIBUTES: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_CE, &[9u32]].concat()).unwrap().to_owned());
+    #[doc = " subject key identifier OID and syntax"]
+    pub static ID_CE_SUBJECT_KEY_IDENTIFIER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_CE, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " deprecated"]
+    pub static ID_HOLDINSTRUCTION_CALLISSUER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***HOLD_INSTRUCTION, &[2u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    #[doc = " ANSI X9 holdinstructions referenced by this standard"]
+    pub static ID_HOLDINSTRUCTION_NONE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***HOLD_INSTRUCTION, &[1u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_HOLDINSTRUCTION_REJECT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***HOLD_INSTRUCTION, &[3u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_KP_OCSPSIGNING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_KP_CLIENT_AUTH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_KP_CODE_SIGNING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_KP_EMAIL_PROTECTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[4u32]].concat()).unwrap().to_owned());
+    #[doc = " extended key purpose OIDs"]
+    pub static ID_KP_SERVER_AUTH: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_KP_TIME_STAMPING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_KP, &[8u32]].concat()).unwrap().to_owned());
+    #[doc = " authority info access"]
+    pub static ID_PE_AUTHORITY_INFO_ACCESS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_PE, &[1u32]].concat()).unwrap().to_owned());
+    #[doc = " subject info access"]
+    pub static ID_PE_SUBJECT_INFO_ACCESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_PE, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+}

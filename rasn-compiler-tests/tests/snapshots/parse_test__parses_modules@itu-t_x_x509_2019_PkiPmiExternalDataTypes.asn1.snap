@@ -2,16 +2,6 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x509_2019_PkiPmiExternalDataTypes.asn1
 ---
-Warnings:
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-NotYetInplemented generating bindings for : UniversalString is currently unsupported!
-
-
 Generated:
 #[allow(
     non_camel_case_types,
@@ -443,6 +433,106 @@ pub mod pki_pmi_external_data_types {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct UniquePostalName(pub PDSParameter);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalCommonNameCharacterEncoding {
+        #[rasn(size("1..=64"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=64"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalCommonName {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalCommonNameCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalCommonName {
+        pub fn new(
+            character_encoding: UniversalCommonNameCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalDomainDefinedAttributeTypeCharacterEncoding {
+        #[rasn(size("1..=8"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=8"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalDomainDefinedAttributeType {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalDomainDefinedAttributeTypeCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalDomainDefinedAttributeType {
+        pub fn new(
+            character_encoding: UniversalDomainDefinedAttributeTypeCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalDomainDefinedAttributeValueCharacterEncoding {
+        #[rasn(size("1..=128"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=128"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalDomainDefinedAttributeValue {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalDomainDefinedAttributeValueCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalDomainDefinedAttributeValue {
+        pub fn new(
+            character_encoding: UniversalDomainDefinedAttributeValueCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UniversalDomainDefinedAttribute {
+        #[rasn(identifier = "type")]
+        pub r_type: UniversalDomainDefinedAttributeType,
+        pub value: UniversalDomainDefinedAttributeValue,
+    }
+    impl UniversalDomainDefinedAttribute {
+        pub fn new(
+            r_type: UniversalDomainDefinedAttributeType,
+            value: UniversalDomainDefinedAttributeValue,
+        ) -> Self {
+            Self { r_type, value }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=4"))]
     pub struct UniversalDomainDefinedAttributes(pub SequenceOf<UniversalDomainDefinedAttribute>);
@@ -455,9 +545,238 @@ pub mod pki_pmi_external_data_types {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct UniversalLocalPostalAttributes(pub UniversalPDSParameter);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalOrganizationNameCharacterEncoding {
+        #[rasn(size("1..=64"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=64"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalOrganizationName {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalOrganizationNameCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalOrganizationName {
+        pub fn new(
+            character_encoding: UniversalOrganizationNameCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalOrganizationalUnitNameCharacterEncoding {
+        #[rasn(size("1..=32"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=32"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " If a unit name specifies a language, then that language applies to subordinate unit"]
+    #[doc = " names unless the subordinate specifies another language."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalOrganizationalUnitName {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalOrganizationalUnitNameCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalOrganizationalUnitName {
+        pub fn new(
+            character_encoding: UniversalOrganizationalUnitNameCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=4"))]
     pub struct UniversalOrganizationalUnitNames(pub SequenceOf<UniversalOrganizationalUnitName>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalPDSParameterCharacterEncoding {
+        #[rasn(size("1..=30"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=30"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalPDSParameter {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalPDSParameterCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalPDSParameter {
+        pub fn new(
+            character_encoding: UniversalPDSParameterCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalPersonalNameSurnameCharacterEncoding {
+        #[rasn(size("1..=64"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=64"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalPersonalNameSurname {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalPersonalNameSurnameCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalPersonalNameSurname {
+        pub fn new(
+            character_encoding: UniversalPersonalNameSurnameCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalPersonalNameGivenNameCharacterEncoding {
+        #[rasn(size("1..=40"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=40"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalPersonalNameGivenName {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalPersonalNameGivenNameCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalPersonalNameGivenName {
+        pub fn new(
+            character_encoding: UniversalPersonalNameGivenNameCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalPersonalNameInitialsCharacterEncoding {
+        #[rasn(size("1..=16"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=16"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalPersonalNameInitials {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalPersonalNameInitialsCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalPersonalNameInitials {
+        pub fn new(
+            character_encoding: UniversalPersonalNameInitialsCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalPersonalNameGenerationQualifierCharacterEncoding {
+        #[rasn(size("1..=16"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=16"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalPersonalNameGenerationQualifier {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalPersonalNameGenerationQualifierCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalPersonalNameGenerationQualifier {
+        pub fn new(
+            character_encoding: UniversalPersonalNameGenerationQualifierCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalPersonalName {
+        #[rasn(tag(context, 0))]
+        pub surname: UniversalPersonalNameSurname,
+        #[rasn(tag(context, 1), identifier = "given-name")]
+        pub given_name: Option<UniversalPersonalNameGivenName>,
+        #[rasn(tag(context, 2))]
+        pub initials: Option<UniversalPersonalNameInitials>,
+        #[rasn(tag(context, 3), identifier = "generation-qualifier")]
+        pub generation_qualifier: Option<UniversalPersonalNameGenerationQualifier>,
+    }
+    impl UniversalPersonalName {
+        pub fn new(
+            surname: UniversalPersonalNameSurname,
+            given_name: Option<UniversalPersonalNameGivenName>,
+            initials: Option<UniversalPersonalNameInitials>,
+            generation_qualifier: Option<UniversalPersonalNameGenerationQualifier>,
+        ) -> Self {
+            Self {
+                surname,
+                given_name,
+                initials,
+                generation_qualifier,
+            }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct UniversalPhysicalDeliveryOfficeName(pub UniversalPDSParameter);
@@ -479,6 +798,34 @@ pub mod pki_pmi_external_data_types {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct UniversalStreetAddress(pub UniversalPDSParameter);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UniversalUnformattedPostalAddressCharacterEncoding {
+        #[rasn(size("1..=180"), identifier = "two-octets")]
+        two_octets(BmpString),
+        #[rasn(size("1..=180"), identifier = "four-octets")]
+        four_octets(UniversalString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    pub struct UniversalUnformattedPostalAddress {
+        #[rasn(identifier = "character-encoding")]
+        pub character_encoding: UniversalUnformattedPostalAddressCharacterEncoding,
+        #[rasn(size("2..=5"), identifier = "iso-639-language-code")]
+        pub iso_639_language_code: Option<PrintableString>,
+    }
+    impl UniversalUnformattedPostalAddress {
+        pub fn new(
+            character_encoding: UniversalUnformattedPostalAddressCharacterEncoding,
+            iso_639_language_code: Option<PrintableString>,
+        ) -> Self {
+            Self {
+                character_encoding,
+                iso_639_language_code,
+            }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct UniversalUniquePostalName(pub UniversalPDSParameter);
