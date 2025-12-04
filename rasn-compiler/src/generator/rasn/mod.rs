@@ -1,4 +1,6 @@
 use std::{
+    cell::RefCell,
+    collections::HashSet,
     env,
     error::Error,
     io::{self, Write},
@@ -30,6 +32,7 @@ pub struct Rasn {
     config: Config,
     tagging_environment: TaggingEnvironment,
     extensibility_environment: ExtensibilityEnvironment,
+    used_names: RefCell<HashSet<String>>,
 }
 
 #[cfg_attr(target_family = "wasm", wasm_bindgen(getter_with_clone))]
@@ -124,6 +127,7 @@ impl Backend for Rasn {
             config,
             extensibility_environment,
             tagging_environment,
+            used_names: RefCell::new(HashSet::new()),
         }
     }
 
@@ -142,6 +146,8 @@ impl Backend for Rasn {
         &mut self,
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
+        self.used_names.borrow_mut().clear();
+
         if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
             self.tagging_environment = module.tagging_environment;

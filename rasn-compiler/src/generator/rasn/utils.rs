@@ -514,11 +514,14 @@ impl Rasn {
             // ITU-T X.691 clause 30.1, 30.6: Known-multiplier character strings types
             match c_string.ty {
                 // 30.1: Known-multiplier character string types
-                CharacterStringType::NumericString | CharacterStringType::PrintableString |
-                CharacterStringType::VisibleString | CharacterStringType::IA5String |
-                CharacterStringType::BMPString | CharacterStringType::UniversalString => {
+                CharacterStringType::NumericString
+                | CharacterStringType::PrintableString
+                | CharacterStringType::VisibleString
+                | CharacterStringType::IA5String
+                | CharacterStringType::BMPString
+                | CharacterStringType::UniversalString => {
                     self.format_range_annotations(false, &all_constraints)?
-                },
+                }
                 // 30.6: Non-known-multiplier character string types
                 _ => TokenStream::new(),
             }
@@ -1271,6 +1274,12 @@ impl Rasn {
         )
     }
 
+    pub(crate) fn to_rust_const_case_unique(&self, input: &str) -> Ident {
+        let base_name = self.to_rust_const_case(input).to_string();
+        let unique_name = self.get_unique_name(&base_name);
+        Ident::new(&unique_name, Span::call_site())
+    }
+
     pub(crate) fn to_rust_enum_identifier(&self, input: &str) -> Ident {
         let mut formatted = format_ident!("{}", input.replace('-', "_"));
         if Self::RUST_KEYWORDS.contains(&input) {
@@ -1300,6 +1309,30 @@ impl Rasn {
         TokenStream::from_str(&name).unwrap()
     }
 
+    pub(crate) fn to_rust_title_case_unique(&self, input: &str) -> TokenStream {
+        let base_name = self.to_rust_title_case(input).to_string();
+        let unique_name = self.get_unique_name(&base_name);
+        TokenStream::from_str(&unique_name).unwrap()
+    }
+
+    fn get_unique_name(&self, base_name: &str) -> String {
+        let mut used_names = self.used_names.borrow_mut();
+        if !used_names.contains(base_name) {
+            used_names.insert(base_name.to_string());
+            return base_name.to_string();
+        }
+
+        let mut counter = 2;
+        loop {
+            let candidate = format!("{base_name}{counter}");
+            if !used_names.contains(&candidate) {
+                used_names.insert(candidate.clone());
+                return candidate;
+            }
+            counter += 1;
+        }
+    }
+
     /// Generate a `TokenStream` containing a type identifier, optionally qualified by module.
     ///
     /// Module name is converted to snake case, and type name converted to title case.
@@ -1319,10 +1352,12 @@ impl Rasn {
         &self,
         tld: &ToplevelTypeDefinition,
     ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
-        let name = self.to_rust_title_case(&tld.name);
+        let base_name = self.to_rust_title_case(&tld.name).to_string();
+        let name = self.to_rust_title_case_unique(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
 
-        if name.to_string() != tld.name {
+        let name_str = name.to_string();
+        if name_str != tld.name || name_str != base_name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
 

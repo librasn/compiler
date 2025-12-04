@@ -25,7 +25,7 @@ macro_rules! call_template {
     ($this:ident, $fn:ident, $tld:ident, $($args:expr),*) => {
         Ok($fn(
             $this.format_comments(&$tld.comments)?,
-            $this.to_rust_const_case(&$tld.name),
+            $this.to_rust_const_case_unique(&$tld.name),
             $($args),*
         ))
     };
@@ -132,7 +132,7 @@ impl Rasn {
             if integer_type.is_unbounded() {
                 Ok(lazy_static_value_template(
                     self.format_comments(&tld.comments)?,
-                    self.to_rust_const_case(&tld.name),
+                    self.to_rust_const_case_unique(&tld.name),
                     ty,
                     val,
                     self.config.no_std_compliant_bindings,
@@ -140,7 +140,7 @@ impl Rasn {
             } else {
                 Ok(integer_value_template(
                     self.format_comments(&tld.comments)?,
-                    self.to_rust_const_case(&tld.name),
+                    self.to_rust_const_case_unique(&tld.name),
                     ty,
                     val,
                 ))
@@ -502,9 +502,11 @@ impl Rasn {
         &self,
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
-        let name = self.to_rust_title_case(&tld.name);
+        let base_name = self.to_rust_title_case(&tld.name).to_string();
+        let name = self.to_rust_title_case_unique(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
-        if name.to_string() != tld.name {
+        let name_str = name.to_string();
+        if name_str != tld.name || name_str != base_name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
         Ok(any_template(
@@ -595,10 +597,11 @@ impl Rasn {
                     #[non_exhaustive]}
                 })
                 .unwrap_or_default();
-            let name = self.to_rust_title_case(&tld.name);
+            let name = self.to_rust_title_case_unique(&tld.name);
             let mut annotations =
                 vec![quote!(enumerated), self.format_tag(tld.tag.as_ref(), false)];
-            if name.to_string() != tld.name {
+            let name_str = name.to_string();
+            if name_str != tld.name || name_str != self.to_rust_title_case(&tld.name).to_string() {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
                     &tld.comments,
@@ -622,7 +625,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Choice(ref choice) = tld.ty {
-            let name = self.to_rust_title_case(&tld.name);
+            let name = self.to_rust_title_case_unique(&tld.name);
             let extensible = choice
                 .extensible
                 .or(
@@ -642,7 +645,8 @@ impl Rasn {
                         && !choice.options.iter().any(|o| o.tag.is_some()),
                 ),
             ];
-            if name.to_string() != tld.name {
+            let name_str = name.to_string();
+            if name_str != tld.name || name_str != self.to_rust_title_case(&tld.name).to_string() {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
                     &tld.comments,
@@ -701,7 +705,7 @@ impl Rasn {
     ) -> Result<TokenStream, GeneratorError> {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
-                let name = self.to_rust_title_case(&tld.name);
+                let name = self.to_rust_title_case_unique(&tld.name);
                 let extensible = seq
                     .extensible
                     .or(
@@ -775,7 +779,10 @@ impl Rasn {
                             && !seq.members.iter().any(|m| m.tag.is_some()),
                     ),
                 ];
-                if name.to_string() != tld.name {
+                let name_str = name.to_string();
+                if name_str != tld.name
+                    || name_str != self.to_rust_title_case(&tld.name).to_string()
+                {
                     annotations.push(self.format_identifier_annotation(
                         &tld.name,
                         &tld.comments,
@@ -814,7 +821,7 @@ impl Rasn {
                 ))
             }
         };
-        let name = self.to_rust_title_case(&tld.name);
+        let name = self.to_rust_title_case_unique(&tld.name);
         let anonymous_item = match seq_or_set_of.element_type.as_ref() {
             ASN1Type::ElsewhereDeclaredType(_) => None,
             n => Some(
@@ -843,7 +850,8 @@ impl Rasn {
             self.format_range_annotations(true, &seq_or_set_of.constraints)?,
             self.format_tag(tld.tag.as_ref(), false),
         ];
-        if name.to_string() != tld.name {
+        let name_str = name.to_string();
+        if name_str != tld.name || name_str != self.to_rust_title_case(&tld.name).to_string() {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
         Ok(sequence_or_set_of_template(
@@ -924,7 +932,7 @@ impl Rasn {
                 }
             }
 
-            let name = self.to_rust_title_case(&tld.name);
+            let name = self.to_rust_title_case_unique(&tld.name);
             let class_unique_id_type = class
                 .fields
                 .iter()
