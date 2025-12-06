@@ -834,14 +834,16 @@ pub mod mtpdefined_types_module {
                 .to_owned(),
         )))
     });
-    pub static MAX_LINKS_IN_LS: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static MAX_NO_OF_SCREENED_DPCS: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    pub static MAX_LINKS_IN_LS: LazyLock<Integer> = LazyLock::new(|| Integer::from(16i128));
+    pub static MAX_NO_OF_SCREENED_DPCS: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(128i128));
     #[doc = " This value is suggested by clause 8/Q.705. It is likely that this value is too low for international networks"]
-    pub static MAX_NO_OF_SCREENED_OPCS: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    pub static MAX_NO_OF_SCREENED_OPCS: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(128i128));
     pub static MAX_OCTETS_PER_SECOND_LS: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(128000));
+        LazyLock::new(|| Integer::from(128000i128));
     pub static MAX_OCTETS_PER_SECOND_LINK: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(8000));
+        LazyLock::new(|| Integer::from(8000i128));
     pub static MTP_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
         Oid::new(&[&***MTP_INFORMATION_MODEL, &[9u32]].concat())
             .unwrap()

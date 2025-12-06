@@ -897,10 +897,14 @@ impl Rasn {
                 integer_type,
                 value,
             } => {
-                let val = Literal::i128_unsuffixed(*value);
                 match integer_type {
-                    IntegerType::Unbounded => Ok(quote!(Integer::from(#val))),
-                    _ => Ok(val.to_token_stream()),
+                    IntegerType::Unbounded => {
+                        // Needs suffixed literal in case it is too large for an i32, which is what
+                        // Rust infers by default.
+                        let val = Literal::i128_suffixed(*value);
+                        Ok(quote!(Integer::from(#val)))
+                    }
+                    _ => Ok(Literal::i128_unsuffixed(*value).into_token_stream()),
                 }
             }
             ASN1Value::LinkedCharStringValue(string_type, value) => {

@@ -9,6 +9,8 @@ e2e_pdu!(integer, "Test-Int ::= INTEGER");
 
 e2e_pdu!(integer_value, "test-int INTEGER ::= 4");
 
+e2e_pdu!(integer_u32_max, "test-int INTEGER ::= 4294967295");
+
 e2e_pdu!(integer_value_constrained, "test-int INTEGER(0..255) ::= 4");
 
 e2e_pdu!(

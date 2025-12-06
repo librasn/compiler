@@ -676,7 +676,7 @@ pub mod atm_mibmod {
             .unwrap()
             .to_owned()
     });
-    pub static INTEGER_ZERO: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    pub static INTEGER_ZERO: LazyLock<Integer> = LazyLock::new(|| Integer::from(0i128));
     pub static LOSS_OF_CELL_DELINEATION: LazyLock<ProbableCause> = LazyLock::new(|| {
         ProbableCause(ProbableCause(ProbableCause::globalValue(
             Oid::new(&[&***ATM_PROBABLE_CAUSE, &[0u32]].concat())

@@ -407,7 +407,7 @@ pub mod q823_tm_asn1_module {
     pub static INITIAL_COUNT: LazyLock<Count> = LazyLock::new(|| Count(Count(0)));
     pub static INITIAL_GAUGE: LazyLock<ObservedValue> =
         LazyLock::new(|| ObservedValue(ObservedValue(ObservedValue::integer(0))));
-    pub static INITIAL_INTEGER: LazyLock<Integer> = LazyLock::new(|| Integer::from(0));
+    pub static INITIAL_INTEGER: LazyLock<Integer> = LazyLock::new(|| Integer::from(0i128));
     pub static NON_HARD_TO_REACH: LazyLock<DestinationAspect> = LazyLock::new(|| {
         DestinationAspect::destinationExtension(
             Oid::new(&[&***EXTEND_DESTINATION, &[2u32]].concat())

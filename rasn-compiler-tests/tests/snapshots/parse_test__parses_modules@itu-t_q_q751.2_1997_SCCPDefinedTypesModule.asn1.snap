@@ -291,7 +291,7 @@ pub mod sccpdefined_types_module {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct UpperLimitForSegmentation(pub Integer);
-    pub static C_LSDEFAULT: LazyLock<CLS> = LazyLock::new(|| CLS(Integer::from(8)));
+    pub static C_LSDEFAULT: LazyLock<CLS> = LazyLock::new(|| CLS(Integer::from(8i128)));
     #[doc = "milliseconds"]
     #[doc = ""]
     #[doc = " Probable Causes used in combination with communicationsAlarm"]
@@ -346,11 +346,11 @@ pub mod sccpdefined_types_module {
         )))
     });
     pub static NR_OF_RESTRICTION_LEVELS_DEFAULT: LazyLock<NrOfRestrictionLevels> =
-        LazyLock::new(|| NrOfRestrictionLevels(Integer::from(8)));
+        LazyLock::new(|| NrOfRestrictionLevels(Integer::from(8i128)));
     pub static NR_OF_SUB_LEVELS_DEFAULT: LazyLock<NrOfSubLevels> =
-        LazyLock::new(|| NrOfSubLevels(Integer::from(4)));
+        LazyLock::new(|| NrOfSubLevels(Integer::from(4i128)));
     #[doc = " See congestion handling 5.2.7/Q.714."]
-    pub static P_DEFAULT: LazyLock<P> = LazyLock::new(|| P(Integer::from(8)));
+    pub static P_DEFAULT: LazyLock<P> = LazyLock::new(|| P(Integer::from(8i128)));
     pub static POINT_CODE_CONGESTED: LazyLock<ProbableCause> = LazyLock::new(|| {
         ProbableCause(ProbableCause(ProbableCause::globalValue(
             Oid::new(&[&***SCCP_SPECIFIC_EXTENSIONS, &[8u32]].concat())
