@@ -18,5 +18,5 @@ pub mod test_module {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "Test-Int", value("4", extensible))]
     pub struct TestInt(pub Integer);
-    pub static TEST_INT_VAL: LazyLock<TestInt> = LazyLock::new(|| TestInt(Integer::from(4)));
+    pub static TEST_INT_VAL: LazyLock<TestInt> = LazyLock::new(|| TestInt(Integer::from(4i128)));
 }

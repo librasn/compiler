@@ -1307,7 +1307,7 @@ pub mod asn1_llcttype_module {
     pub const DEFAULT_ISDN_QUICK_TEST_TO_BE_PERFORMED: IsdnQuickTestToBePerformed =
         IsdnQuickTestToBePerformed::functionTest;
     pub static DEFAULT_ITERATIONS: LazyLock<Iterations> =
-        LazyLock::new(|| Iterations(Integer::from(1)));
+        LazyLock::new(|| Iterations(Integer::from(1i128)));
     pub const DEFAULT_LOOPBACK_CHANNEL: LoopbackChannel = LoopbackChannel::b1b2d;
     pub static DEFAULT_LOOPBACK_DURATION: LazyLock<LoopbackDuration> =
         LazyLock::new(|| LoopbackDuration(Timespec(Timespec::seconds(500))));
@@ -1316,7 +1316,7 @@ pub mod asn1_llcttype_module {
     pub static DEFAULT_MTA_TIMEOUT_PERIOD: LazyLock<MtaTimeoutPeriod> =
         LazyLock::new(|| MtaTimeoutPeriod(Timespec(Timespec::minutes(5))));
     pub static DEFAULT_NUMBER_OF_DIGITS: LazyLock<NumberOfDigits> =
-        LazyLock::new(|| NumberOfDigits(Integer::from(1)));
+        LazyLock::new(|| NumberOfDigits(Integer::from(1i128)));
     pub static DEFAULT_PULSE_NO_PULSE_RATIO: LazyLock<PulseNoPulseRatio> =
         LazyLock::new(|| PulseNoPulseRatio::new(Ratio(100), Ratio(0)));
     pub static DEFAULT_REQUESTED_RESULT_TYPE: LazyLock<RequestedResultType> =
@@ -1331,7 +1331,8 @@ pub mod asn1_llcttype_module {
             Resistance::milliOhm(0),
         )
     });
-    pub static DEFAULT_RING: LazyLock<Ring> = LazyLock::new(|| Ring::timedRing(Integer::from(3)));
+    pub static DEFAULT_RING: LazyLock<Ring> =
+        LazyLock::new(|| Ring::timedRing(Integer::from(3i128)));
     pub const DEFAULT_SPM_PULSES: SpmPulses = SpmPulses(1);
     pub static Q835_ACTION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
         Oid::new(&[&***Q835_INFORMATION_MODEL, &[9u32]].concat())

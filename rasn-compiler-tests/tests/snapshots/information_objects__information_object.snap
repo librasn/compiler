@@ -94,7 +94,7 @@ pub mod test_module {
                             .as_bytes(),
                     )
                     .map(Self::AsnValUnknownBranch)?),
-                i if i == &ErrorCode::local(Integer::from(4)) => Ok(decoder
+                i if i == &ErrorCode::local(Integer::from(4i128)) => Ok(decoder
                     .codec()
                     .decode_from_binary(
                         open_type_payload
@@ -135,7 +135,7 @@ pub mod test_module {
                     inner.encode(encoder)
                 }
                 (Self::Errors_ParameterType_2(inner), i)
-                    if i == &ErrorCode::local(Integer::from(4)) =>
+                    if i == &ErrorCode::local(Integer::from(4i128)) =>
                 {
                     inner.encode(encoder)
                 }
@@ -152,9 +152,9 @@ pub mod test_module {
         }
     }
     pub static ASN_VAL_SECURITY_FAILURE: LazyLock<ErrorCode> =
-        LazyLock::new(|| ErrorCode::local(Integer::from(1)));
+        LazyLock::new(|| ErrorCode::local(Integer::from(1i128)));
     pub static ASN_VAL_UNKNOWN_BRANCH: LazyLock<ErrorCode> =
-        LazyLock::new(|| ErrorCode::local(Integer::from(2)));
+        LazyLock::new(|| ErrorCode::local(Integer::from(2i128)));
     pub static ASN_VAL_UNKNOWN_ORDER: LazyLock<ErrorCode> =
-        LazyLock::new(|| ErrorCode::local(Integer::from(3)));
+        LazyLock::new(|| ErrorCode::local(Integer::from(3i128)));
 }

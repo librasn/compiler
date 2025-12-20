@@ -114,8 +114,8 @@ pub mod tc_tmp {
         #[rasn(tag(context, 0))]
         complex(Any),
     }
-    pub static MAX_NB_OF_COMMANDS: LazyLock<Integer> = LazyLock::new(|| Integer::from(30));
-    pub static MAX_USER_DATA_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2048));
+    pub static MAX_NB_OF_COMMANDS: LazyLock<Integer> = LazyLock::new(|| Integer::from(30i128));
+    pub static MAX_USER_DATA_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2048i128));
     #[doc = " abstract syntax name for TMP-PDUs"]
     pub static TMP_PDUS_AS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
         Oid::new(&[&[0u32, 0u32], &***Q, &[755u32, 4u32, 1u32, 1u32]].concat())

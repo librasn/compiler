@@ -4111,9 +4111,10 @@ pub mod bip {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct VisibleEndpoints(pub SetOf<VisibleEndpoint>);
-    pub static MAX_SIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(2147483647));
-    pub static MAX_UNSIGNED_BYTE: LazyLock<Integer> = LazyLock::new(|| Integer::from(255));
-    pub static MAX_UNSIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(4294967295));
-    pub static MAX_UNSIGNED_SHORT: LazyLock<Integer> = LazyLock::new(|| Integer::from(65535));
-    pub static MIN_SIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(-2147483648));
+    pub static MAX_SIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(2147483647i128));
+    pub static MAX_UNSIGNED_BYTE: LazyLock<Integer> = LazyLock::new(|| Integer::from(255i128));
+    pub static MAX_UNSIGNED_INT: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(4294967295i128));
+    pub static MAX_UNSIGNED_SHORT: LazyLock<Integer> = LazyLock::new(|| Integer::from(65535i128));
+    pub static MIN_SIGNED_INT: LazyLock<Integer> = LazyLock::new(|| Integer::from(-2147483648i128));
 }

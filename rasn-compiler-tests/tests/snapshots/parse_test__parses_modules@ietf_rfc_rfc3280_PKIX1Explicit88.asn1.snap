@@ -599,7 +599,7 @@ pub mod pkix1_explicit88 {
         }
     }
     fn tbscertificate_version_default() -> Version {
-        Version(Integer::from(0))
+        Version(Integer::from(0i128))
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=64"))]
@@ -841,12 +841,13 @@ pub mod pkix1_explicit88 {
         bmpString(BmpString),
     }
     #[doc = " Extension types and attribute values"]
-    pub static COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(1));
-    pub static EXTENDED_NETWORK_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(22));
+    pub static COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(1i128));
+    pub static EXTENDED_NETWORK_ADDRESS: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(22i128));
     pub static EXTENSION_OR_ADDRESS_COMPONENTS: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(12));
+        LazyLock::new(|| Integer::from(12i128));
     pub static EXTENSION_PHYSICAL_DELIVERY_ADDRESS_COMPONENTS: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(15));
+        LazyLock::new(|| Integer::from(15i128));
     #[doc = " arc for extended key purpose OIDS"]
     pub static ID_AD: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
         Oid::new(&[&***ID_PKIX, &[48u32]].concat())
@@ -1006,83 +1007,91 @@ pub mod pkix1_explicit88 {
     #[doc = " OID for CPS qualifier"]
     pub static ID_QT_UNOTICE: LazyLock<ObjectIdentifier> =
         LazyLock::new(|| Oid::new(&[&***ID_QT, &[2u32]].concat()).unwrap().to_owned());
-    pub static LOCAL_POSTAL_ATTRIBUTES: LazyLock<Integer> = LazyLock::new(|| Integer::from(21));
-    pub static PDS_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(7));
+    pub static LOCAL_POSTAL_ATTRIBUTES: LazyLock<Integer> = LazyLock::new(|| Integer::from(21i128));
+    pub static PDS_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(7i128));
     pub static PHYSICAL_DELIVERY_COUNTRY_NAME: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(8));
+        LazyLock::new(|| Integer::from(8i128));
     pub static PHYSICAL_DELIVERY_OFFICE_NAME: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(10));
+        LazyLock::new(|| Integer::from(10i128));
     pub static PHYSICAL_DELIVERY_OFFICE_NUMBER: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(11));
+        LazyLock::new(|| Integer::from(11i128));
     pub static PHYSICAL_DELIVERY_ORGANIZATION_NAME: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(14));
+        LazyLock::new(|| Integer::from(14i128));
     pub static PHYSICAL_DELIVERY_PERSONAL_NAME: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(13));
+        LazyLock::new(|| Integer::from(13i128));
     #[doc = " Legacy attributes"]
     pub static PKCS_9: LazyLock<ObjectIdentifier> =
         LazyLock::new(|| Oid::const_new(&[1u32, 2u32, 840u32, 113549u32, 1u32, 9u32]).to_owned());
-    pub static POST_OFFICE_BOX_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(18));
-    pub static POSTAL_CODE: LazyLock<Integer> = LazyLock::new(|| Integer::from(9));
-    pub static POSTE_RESTANTE_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(19));
-    pub static STREET_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(17));
-    pub static TELETEX_COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+    pub static POST_OFFICE_BOX_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(18i128));
+    pub static POSTAL_CODE: LazyLock<Integer> = LazyLock::new(|| Integer::from(9i128));
+    pub static POSTE_RESTANTE_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(19i128));
+    pub static STREET_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(17i128));
+    pub static TELETEX_COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(2i128));
     #[doc = " Extension Domain-defined Attributes"]
     pub static TELETEX_DOMAIN_DEFINED_ATTRIBUTES: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(6));
-    pub static TELETEX_ORGANIZATION_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(3));
+        LazyLock::new(|| Integer::from(6i128));
+    pub static TELETEX_ORGANIZATION_NAME: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(3i128));
     pub static TELETEX_ORGANIZATIONAL_UNIT_NAMES: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(5));
-    pub static TELETEX_PERSONAL_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));
-    pub static TERMINAL_TYPE: LazyLock<Integer> = LazyLock::new(|| Integer::from(23));
-    pub static UB_COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
-    pub static UB_COMMON_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
-    pub static UB_COUNTRY_NAME_ALPHA_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2));
+        LazyLock::new(|| Integer::from(5i128));
+    pub static TELETEX_PERSONAL_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(4i128));
+    pub static TERMINAL_TYPE: LazyLock<Integer> = LazyLock::new(|| Integer::from(23i128));
+    pub static UB_COMMON_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64i128));
+    pub static UB_COMMON_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(64i128));
+    pub static UB_COUNTRY_NAME_ALPHA_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(2i128));
     pub static UB_COUNTRY_NAME_NUMERIC_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(3));
+        LazyLock::new(|| Integer::from(3i128));
     pub static UB_DOMAIN_DEFINED_ATTRIBUTE_TYPE_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(8));
+        LazyLock::new(|| Integer::from(8i128));
     pub static UB_DOMAIN_DEFINED_ATTRIBUTE_VALUE_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(128));
-    pub static UB_DOMAIN_DEFINED_ATTRIBUTES: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));
-    pub static UB_DOMAIN_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static UB_E163_4_NUMBER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(15));
+        LazyLock::new(|| Integer::from(128i128));
+    pub static UB_DOMAIN_DEFINED_ATTRIBUTES: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(4i128));
+    pub static UB_DOMAIN_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16i128));
+    pub static UB_E163_4_NUMBER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(15i128));
     pub static UB_E163_4_SUB_ADDRESS_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(40));
-    pub static UB_EMAILADDRESS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
-    pub static UB_EXTENSION_ATTRIBUTES: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+        LazyLock::new(|| Integer::from(40i128));
+    pub static UB_EMAILADDRESS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128i128));
+    pub static UB_EXTENSION_ATTRIBUTES: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(256i128));
     pub static UB_GENERATION_QUALIFIER_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(3));
-    pub static UB_GIVEN_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static UB_INITIALS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(5));
-    pub static UB_INTEGER_OPTIONS: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
-    pub static UB_LOCALITY_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
-    pub static UB_MATCH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+        LazyLock::new(|| Integer::from(3i128));
+    pub static UB_GIVEN_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16i128));
+    pub static UB_INITIALS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(5i128));
+    pub static UB_INTEGER_OPTIONS: LazyLock<Integer> = LazyLock::new(|| Integer::from(256i128));
+    pub static UB_LOCALITY_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(128i128));
+    pub static UB_MATCH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128i128));
     #[doc = "  specifications of Upper Bounds MUST be regarded as mandatory"]
     #[doc = "  from Annex B of ITU-T X.411 Reference Definition of MTS Parameter"]
     #[doc = "  Upper Bounds"]
     #[doc = " Upper Bounds"]
-    pub static UB_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(32768));
-    pub static UB_NUMERIC_USER_ID_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(32));
-    pub static UB_ORGANIZATION_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
-    pub static UB_ORGANIZATION_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
-    pub static UB_ORGANIZATIONAL_UNIT_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+    pub static UB_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(32768i128));
+    pub static UB_NUMERIC_USER_ID_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(32i128));
+    pub static UB_ORGANIZATION_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(64i128));
+    pub static UB_ORGANIZATION_NAME_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(64i128));
+    pub static UB_ORGANIZATIONAL_UNIT_NAME: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(64i128));
     pub static UB_ORGANIZATIONAL_UNIT_NAME_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(32));
-    pub static UB_ORGANIZATIONAL_UNITS: LazyLock<Integer> = LazyLock::new(|| Integer::from(4));
-    pub static UB_PDS_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static UB_PDS_PARAMETER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(30));
+        LazyLock::new(|| Integer::from(32i128));
+    pub static UB_ORGANIZATIONAL_UNITS: LazyLock<Integer> = LazyLock::new(|| Integer::from(4i128));
+    pub static UB_PDS_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16i128));
+    pub static UB_PDS_PARAMETER_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(30i128));
     pub static UB_PDS_PHYSICAL_ADDRESS_LINES: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(6));
-    pub static UB_POSTAL_CODE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static UB_PSEUDONYM: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
-    pub static UB_SERIAL_NUMBER: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
-    pub static UB_STATE_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
-    pub static UB_SURNAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(40));
-    pub static UB_TERMINAL_ID_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(24));
-    pub static UB_TITLE: LazyLock<Integer> = LazyLock::new(|| Integer::from(64));
+        LazyLock::new(|| Integer::from(6i128));
+    pub static UB_POSTAL_CODE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16i128));
+    pub static UB_PSEUDONYM: LazyLock<Integer> = LazyLock::new(|| Integer::from(128i128));
+    pub static UB_SERIAL_NUMBER: LazyLock<Integer> = LazyLock::new(|| Integer::from(64i128));
+    pub static UB_STATE_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(128i128));
+    pub static UB_SURNAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(40i128));
+    pub static UB_TERMINAL_ID_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(24i128));
+    pub static UB_TITLE: LazyLock<Integer> = LazyLock::new(|| Integer::from(64i128));
     pub static UB_UNFORMATTED_ADDRESS_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(180));
-    pub static UB_X121_ADDRESS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static UNFORMATTED_POSTAL_ADDRESS: LazyLock<Integer> = LazyLock::new(|| Integer::from(16));
-    pub static UNIQUE_POSTAL_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(20));
+        LazyLock::new(|| Integer::from(180i128));
+    pub static UB_X121_ADDRESS_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(16i128));
+    pub static UNFORMATTED_POSTAL_ADDRESS: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(16i128));
+    pub static UNIQUE_POSTAL_NAME: LazyLock<Integer> = LazyLock::new(|| Integer::from(20i128));
 }

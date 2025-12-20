@@ -15,6 +15,11 @@ pub mod test_module {
     use core::borrow::Borrow;
     use rasn::prelude::*;
     use std::sync::LazyLock;
-    pub static VALUE: LazyLock<Vec<Integer>> =
-        LazyLock::new(|| alloc::vec![Integer::from(1), Integer::from(2), Integer::from(3)]);
+    pub static VALUE: LazyLock<Vec<Integer>> = LazyLock::new(|| {
+        alloc::vec![
+            Integer::from(1i128),
+            Integer::from(2i128),
+            Integer::from(3i128)
+        ]
+    });
 }

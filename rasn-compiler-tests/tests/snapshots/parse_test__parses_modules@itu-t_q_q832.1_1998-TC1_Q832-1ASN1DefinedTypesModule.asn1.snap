@@ -103,7 +103,7 @@ pub mod q832_1_asn1_defined_types_module {
     #[rasn(delegate)]
     pub struct StartupLspResult(pub Integer);
     pub static LSP_ACTIVATION_INITIAL: LazyLock<LspActivationState> =
-        LazyLock::new(|| LspActivationState(Integer::from(0)));
+        LazyLock::new(|| LspActivationState(Integer::from(0i128)));
     pub static NON_RECOVERABLE_SSCOPERROR: LazyLock<ProbableCause> = LazyLock::new(|| {
         ProbableCause(ProbableCause(ProbableCause::globalValue(
             Oid::new(&[&***VB51_PROBABLE_CAUSE, &[4u32]].concat())
@@ -155,12 +155,12 @@ pub mod q832_1_asn1_defined_types_module {
     pub static REMOTE_BLOCKING_REASON_VB5_INITIAL_VALUE: LazyLock<RemoteBlockingReasonVb5> =
         LazyLock::new(|| {
             RemoteBlockingReasonVb5::new(
-                ErrorReason(Integer::from(0)),
-                AdministrativeReason(Integer::from(2)),
+                ErrorReason(Integer::from(0i128)),
+                AdministrativeReason(Integer::from(2i128)),
             )
         });
     pub static REMOTE_BLOCKING_VB5_INITIAL_VALUE: LazyLock<RemoteBlockingVb5> =
-        LazyLock::new(|| RemoteBlockingVb5(Integer::from(0)));
+        LazyLock::new(|| RemoteBlockingVb5(Integer::from(0i128)));
     #[doc = " end of object identifier definitions"]
     #[doc = " The value assignments for the"]
     #[doc = " ProbableCause parameter of the"]

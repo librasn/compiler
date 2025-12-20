@@ -292,7 +292,7 @@ pub mod sios_access_control_module {
         }
     }
     fn spif_version_information_default() -> VersionInformationData {
-        VersionInformationData(Integer::from(0))
+        VersionInformationData(Integer::from(0i128))
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, identifier = "SPIF-SecurityCategories")]
@@ -432,10 +432,12 @@ pub mod sios_access_control_module {
     #[doc = " ITU-T Rec. X.520 | ISO/IEC 9594-6"]
     pub static ID_CONFIDENTIALITY_LABEL: LazyLock<ObjectIdentifier> =
         LazyLock::new(|| Oid::const_new(&[2u32, 24u32, 0u32, 1u32, 0u32]).to_owned());
-    pub static UB_PRIVACY_MARK_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128));
+    pub static UB_PRIVACY_MARK_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(128i128));
     pub static UB_CLASSIFICATION_NAME_LENGTH: LazyLock<Integer> =
-        LazyLock::new(|| Integer::from(256));
-    pub static UB_MARKING_PHRASE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+        LazyLock::new(|| Integer::from(256i128));
+    pub static UB_MARKING_PHRASE_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(256i128));
     #[doc = " upper bound values"]
-    pub static UB_OBJECT_ID_NAME_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(256));
+    pub static UB_OBJECT_ID_NAME_LENGTH: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(256i128));
 }
