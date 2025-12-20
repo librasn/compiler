@@ -48,6 +48,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.3...rasn-compiler-v0.15.0) - 2025-12-20
+
+### Added
+
+- Support `T61String`
+
+### Fixed
+
+- Add i128 suffix to generated unbounded Integer
+
+### Other
+
+- Add `BY` and `DEFINED` to reserved words
+- Parse `ANY [DEFINED BY identifier]`
+
 ## [0.14.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.13.0...rasn-compiler-v0.14.0) - 2025-07-17
 
 ### Added
