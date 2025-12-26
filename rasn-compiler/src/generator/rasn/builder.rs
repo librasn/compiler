@@ -503,7 +503,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         let name = self.to_rust_title_case(&tld.name);
-        let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
+        let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref())];
         if name.to_string() != tld.name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
@@ -596,8 +596,7 @@ impl Rasn {
                 })
                 .unwrap_or_default();
             let name = self.to_rust_title_case(&tld.name);
-            let mut annotations =
-                vec![quote!(enumerated), self.format_tag(tld.tag.as_ref(), false)];
+            let mut annotations = vec![quote!(enumerated), self.format_tag(tld.tag.as_ref())];
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -634,14 +633,15 @@ impl Rasn {
                     #[non_exhaustive]}
                 })
                 .unwrap_or_default();
-            let mut annotations = vec![
-                quote!(choice),
-                self.format_tag(
-                    tld.tag.as_ref(),
-                    self.tagging_environment == TaggingEnvironment::Automatic
-                        && !choice.options.iter().any(|o| o.tag.is_some()),
-                ),
-            ];
+            let mut annotations = vec![quote!(choice), self.format_tag(tld.tag.as_ref())];
+
+            // ITU-T X.680 clause 29.2: enable automatic tagging if none of the members are tagged type
+            if self.tagging_environment == TaggingEnvironment::Automatic
+                && !choice.options.iter().any(|o| o.tag.is_some())
+            {
+                annotations.push(quote!(automatic_tags));
+            }
+
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -767,14 +767,15 @@ impl Rasn {
                 };
                 let formatted_members =
                     self.format_sequence_or_set_members(seq, &name.to_string())?;
-                let mut annotations = vec![
-                    set_annotation,
-                    self.format_tag(
-                        tld.tag.as_ref(),
-                        self.tagging_environment == TaggingEnvironment::Automatic
-                            && !seq.members.iter().any(|m| m.tag.is_some()),
-                    ),
-                ];
+                let mut annotations = vec![set_annotation, self.format_tag(tld.tag.as_ref())];
+
+                // ITU-T X.680 clause 25.3: enable automatic tagging if none of the members are tagged type
+                if self.tagging_environment == TaggingEnvironment::Automatic
+                    && !seq.members.iter().any(|m| m.tag.is_some())
+                {
+                    annotations.push(quote!(automatic_tags));
+                }
+
                 if name.to_string() != tld.name {
                     annotations.push(self.format_identifier_annotation(
                         &tld.name,
@@ -841,7 +842,7 @@ impl Rasn {
         let mut annotations = vec![
             quote!(delegate),
             self.format_range_annotations(true, &seq_or_set_of.constraints)?,
-            self.format_tag(tld.tag.as_ref(), false),
+            self.format_tag(tld.tag.as_ref()),
         ];
         if name.to_string() != tld.name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
