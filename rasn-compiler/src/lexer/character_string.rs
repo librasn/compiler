@@ -2,12 +2,15 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{char, u8},
-    combinator::{map, map_res, opt},
+    combinator::{map, map_res, opt, value},
     sequence::{delimited, pair, terminated},
     Parser,
 };
 
-use crate::{input::Input, intermediate::*};
+use crate::{
+    input::Input,
+    intermediate::{types::CharacterString, *},
+};
 
 use super::{
     common::*,
@@ -113,23 +116,28 @@ fn quadruple(input: Input<'_>) -> ParserResult<'_, char> {
 pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         pair(
-            into_inner(skip_ws_and_comments(alt((
-                tag(IA5_STRING),
-                tag(UTF8_STRING),
-                tag(NUMERIC_STRING),
-                tag(VISIBLE_STRING),
-                tag(TELETEX_STRING),
-                tag(T61_STRING),
-                tag(VIDEOTEX_STRING),
-                tag(GRAPHIC_STRING),
-                tag(GENERAL_STRING),
-                tag(UNIVERSAL_STRING),
-                tag(BMP_STRING),
-                tag(PRINTABLE_STRING),
-            )))),
+            skip_ws_and_comments(alt((
+                value(CharacterStringType::IA5String, tag(IA5_STRING)),
+                value(CharacterStringType::UTF8String, tag(UTF8_STRING)),
+                value(CharacterStringType::NumericString, tag(NUMERIC_STRING)),
+                value(CharacterStringType::VisibleString, tag(VISIBLE_STRING)),
+                value(CharacterStringType::TeletexString, tag(TELETEX_STRING)),
+                value(CharacterStringType::TeletexString, tag(T61_STRING)),
+                value(CharacterStringType::VideotexString, tag(VIDEOTEX_STRING)),
+                value(CharacterStringType::GraphicString, tag(GRAPHIC_STRING)),
+                value(CharacterStringType::GeneralString, tag(GENERAL_STRING)),
+                value(CharacterStringType::UniversalString, tag(UNIVERSAL_STRING)),
+                value(CharacterStringType::BMPString, tag(BMP_STRING)),
+                value(CharacterStringType::PrintableString, tag(PRINTABLE_STRING)),
+            ))),
             opt(constraints),
         ),
-        |m| ASN1Type::CharacterString(m.into()),
+        |(ty, constraints)| {
+            ASN1Type::CharacterString(CharacterString {
+                constraints: constraints.unwrap_or_default(),
+                ty,
+            })
+        },
     )
     .parse(input)
 }
