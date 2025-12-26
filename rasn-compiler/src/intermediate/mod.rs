@@ -904,87 +904,6 @@ impl ASN1Type {
         }
     }
 
-    pub fn builtin_or_elsewhere(
-        parent: Option<&str>,
-        module: Option<&str>,
-        identifier: &str,
-        constraints: Vec<Constraint>,
-    ) -> ASN1Type {
-        match (parent, identifier) {
-            (None, NULL) => ASN1Type::Null,
-            (None, BOOLEAN) => ASN1Type::Boolean(Boolean { constraints }),
-            (None, REAL) => ASN1Type::Real(Real { constraints }),
-            (None, INTEGER) => ASN1Type::Integer(Integer {
-                constraints,
-                distinguished_values: None,
-            }),
-            (None, BIT_STRING) => ASN1Type::BitString(BitString {
-                constraints,
-                distinguished_values: None,
-            }),
-            (None, OCTET_STRING) => ASN1Type::OctetString(OctetString { constraints }),
-            (None, GENERALIZED_TIME) => ASN1Type::GeneralizedTime(GeneralizedTime { constraints }),
-            (None, UTC_TIME) => ASN1Type::UTCTime(UTCTime { constraints }),
-            (None, OBJECT_IDENTIFIER) => {
-                ASN1Type::ObjectIdentifier(ObjectIdentifier { constraints })
-            }
-            (None, BMP_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::BMPString,
-            }),
-            (None, UTF8_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::UTF8String,
-            }),
-            (None, PRINTABLE_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::PrintableString,
-            }),
-            (None, TELETEX_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::TeletexString,
-            }),
-            (None, T61_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::TeletexString,
-            }),
-            (None, IA5_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::IA5String,
-            }),
-            (None, UNIVERSAL_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::UniversalString,
-            }),
-            (None, VISIBLE_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::VisibleString,
-            }),
-            (None, GENERAL_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::GeneralString,
-            }),
-            (None, VIDEOTEX_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::VideotexString,
-            }),
-            (None, GRAPHIC_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::GraphicString,
-            }),
-            (None, NUMERIC_STRING) => ASN1Type::CharacterString(CharacterString {
-                constraints,
-                ty: CharacterStringType::NumericString,
-            }),
-            _ => ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
-                parent: parent.map(str::to_string),
-                module: module.map(str::to_string),
-                identifier: identifier.to_string(),
-                constraints,
-            }),
-        }
-    }
-
     pub fn is_builtin_type(&self) -> bool {
         !matches!(
             self,
@@ -1350,17 +1269,6 @@ pub struct DeclarationElsewhere {
     pub module: Option<String>,
     pub identifier: String,
     pub constraints: Vec<Constraint>,
-}
-
-impl From<(Option<&str>, &str, Option<Vec<Constraint>>)> for DeclarationElsewhere {
-    fn from(value: (Option<&str>, &str, Option<Vec<Constraint>>)) -> Self {
-        DeclarationElsewhere {
-            parent: value.0.map(ToString::to_string),
-            module: None,
-            identifier: value.1.into(),
-            constraints: value.2.unwrap_or_default(),
-        }
-    }
 }
 
 /// Tag classes

@@ -220,10 +220,10 @@ pub fn elsewhere_declared_value(input: Input<'_>) -> ParserResult<'_, ASN1Value>
 pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         (
-            opt(skip_ws_and_comments(recognize(many1(pair(
+            opt(skip_ws_and_comments(into_inner(recognize(many1(pair(
                 identifier,
                 tag(".&"),
-            ))))),
+            )))))),
             opt(skip_ws_and_comments(terminated(
                 module_reference,
                 skip_ws_and_comments(char(DOT)),
@@ -232,12 +232,12 @@ pub fn elsewhere_declared_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             opt(skip_ws_and_comments(constraints)),
         ),
         |(parent, module, id, constraints)| {
-            ASN1Type::builtin_or_elsewhere(
-                parent.map(|p| p.into_inner()),
-                module,
-                id,
-                constraints.unwrap_or_default(),
-            )
+            ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere {
+                parent: parent.map(str::to_owned),
+                module: module.map(str::to_owned),
+                identifier: id.to_owned(),
+                constraints: constraints.unwrap_or_default(),
+            })
         },
     )
     .parse(input)
