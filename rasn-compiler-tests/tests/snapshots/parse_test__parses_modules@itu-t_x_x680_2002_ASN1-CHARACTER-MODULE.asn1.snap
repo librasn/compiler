@@ -2,15 +2,1283 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x680_2002_ASN1-CHARACTER-MODULE.asn1
 ---
-Error matching ASN syntax at while parsing:
-    ╭─[line 9, column 15]
-    │
-    │ 
- 01 │  -- CAUSES STACK OVERFLOW
- 09 │  -- -- Module ASN1-CHARACTER-MODULE (X.680:07/2002) ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 10 │  -- -- See also ITU-T X.680 (07/2002)
- 11 │  -- -- See also the index of all ASN.1 assignments needed in this document
- 13 │  -- ASN1-CHARACTER-MODULE {joint-iso-itu-t asn1(1) specification(0) modules(0)
- 14 │  --   iso10646(0)} DEFINITIO
-    │
-────╯
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_character_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct AlphabeticPresentationForms(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct ArabicExtended(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "ArabicPresentationForms-a",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct ArabicPresentationFormsA(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "ArabicPresentationForms-b",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct ArabicPresentationFormsB(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Armenian(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Arrows(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BasicArabic(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BasicGeorgian(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BasicGreek(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BasicHebrew(pub BmpString);
+    #[doc = " In the following assignment statements a Quadruple value"]
+    #[doc = " is used whenever there is no name assigned to that value"]
+    #[doc = " in the code table.  If there is a name assigned to the value"]
+    #[doc = " in the code table then that name is used instead of the Quadruple."]
+    #[doc = " For instance, in"]
+    #[doc = ""]
+    #[doc = "   BasicArabic ::= BMPString (FROM({0, 0, 6, 0}..arabicSukun))"]
+    #[doc = ""]
+    #[doc = " the Quadruple {0, 0, 6, 0} is used because there is no name for it,"]
+    #[doc = " and arabicSukun is used because the upper bound of the BasicArabic"]
+    #[doc = " alphabet, {0, 0, 6, 82}, is given the name arabicSukun in the code"]
+    #[doc = " table."]
+    #[doc = " Collections of characters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BasicLatin(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Bengali(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "Bi-directionalFormatEmbeddings",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct BiDirectionalFormatEmbeddings(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "Bi-directionalFormatMarks",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct BiDirectionalFormatMarks(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BlockElements(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Bmp(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Bopomofo(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BopomofoExtended(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BoxDrawing(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct BraillePatterns(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct ByzantineMusicalSymbols(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Cc(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Cf(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CharacterShapingSelectors(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Cherokee(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkCompatibility(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkCompatibilityForms(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkCompatibilityIdeographs(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkCompatibilityIdeographsSupplements(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkMiscellaneous(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkRadicalsSupplement(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkSymbolsAndPunctation(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkUnifiedIdeographs(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CjkUnifiedIdeographsExtensionB(pub UniversalString);
+    #[doc = " Combining characters"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from("\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}")
+    )]
+    pub struct CombiningCharacters(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "CombiningCharactersType-2",
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct CombiningCharactersType2(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CombiningDiacriticalMarks(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CombiningDiacriticalMarksForSymbols(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CombiningHalfMarks(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct ControlPictures(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct CurrencySymbols(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Cyrillic(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Deseret(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Devanagari(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Dingbats(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct EnclosedAlphanumerics(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct EnclosedLettersAndMonths(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Ethiopic(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct FormatSeparators(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct GeneralPunctuation(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct GeometricShapes(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct GeorgianExtended(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Gothic(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct GreekExtended(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct GreekSymbolsAndCoptic(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Gujarati(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Gurmukhi(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HalfwidthAndFullwidthForms(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Hangul(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HangulCompatibilityJamo(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HangulFillCharacters(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HangulJamo(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "HangulSupplementary-a",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct HangulSupplementaryA(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "HangulSupplementary-b",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct HangulSupplementaryB(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HangulSyllables(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}"))]
+    pub struct HebrewExtended(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HighPrivateUseSurrogates(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct HighSurrogates(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Hiragana(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct IdeographicDescriptionCharacters(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct IpaExtensions(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Kanbun(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct KangxiRadicals(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Kannada(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Katakana(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Khmer(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Lao(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "Latin-1Supplement", from("\u{0}..=\u{fffe}"))]
+    pub struct Latin1Supplement(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "LatinExtended-a", from("\u{0}..=\u{fffe}"))]
+    pub struct LatinExtendedA(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "LatinExtended-b", from("\u{0}..=\u{fffe}"))]
+    pub struct LatinExtendedB(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct LatinExtendedAdditional(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LetterLowercase(pub Ll);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LetterModifier(pub Lm);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LetterOther(pub Lo);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LetterTitlecase(pub Lt);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct LetterUppercase(pub Lu);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct LetterlikeSymbols(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Level1(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Level2(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Level3(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Ll(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Lm(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Lo(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct LowSurrogates(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from("\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}")
+    )]
+    pub struct Lt(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Lu(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Malayalam(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MarkEnclosing(pub Me);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "MarkNon-spacing")]
+    pub struct MarkNonSpacing(pub Mn);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct MarkSpacingCombining(pub Mc);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct MathematicalAlphanumericSymbols(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct MathematicalOperators(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Mc(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from("\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}")
+    )]
+    pub struct Me(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct MiscellaneousSymbols(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct MiscellaneousTechnical(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Mn(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Mongolian(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct MusicalSymbols(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Myanmar(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Nd(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Nl(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct No(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberDecimalDigit(pub Nd);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct NumberForms(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberLetter(pub Nl);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct NumberOther(pub No);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct NumericShapeSelectors(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Ogham(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct OldItalic(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct OpticalCharacterRecognition(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Oriya(pub BmpString);
+    #[doc = " Unicode General Category definitions"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OtherControl(pub Cc);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OtherFormat(pub Cf);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from("\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}")
+    )]
+    pub struct Pc(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}", "\u{0}..=\u{fffe}"))]
+    pub struct Pd(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Pe(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Pf(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Pi(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Po(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct PrivateUseArea(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Ps(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationClose(pub Pe);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationConnector(pub Pc);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationDash(pub Pd);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationFinalquote(pub Pf);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationInitialquote(pub Pi);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationOpen(pub Ps);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PunctuationOther(pub Po);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Runic(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Sc(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SeparatorLine(pub Zl);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SeparatorParagraph(pub Zp);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SeparatorSpace(pub Zs);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Sinhala(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Sk(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct Sm(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct SmallFormVariants(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        from(
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}",
+            "\u{0}..=\u{fffe}"
+        )
+    )]
+    pub struct So(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct SpacingModifierLetters(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Specials(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct SuperscriptsAndSubscripts(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SymbolCurrency(pub Sc);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SymbolMath(pub Sm);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SymbolModifier(pub Sk);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SymbolOther(pub So);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Syriac(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Tags(pub UniversalString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Tamil(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Telugu(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Thaana(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Thai(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Tibetan(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct UnifiedCanadianAboriginalSyllabics(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct YiRadicals(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct YiSyllables(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(
+        delegate,
+        identifier = "Zero-widthBoundaryIndicators",
+        from("\u{0}..=\u{fffe}")
+    )]
+    pub struct ZeroWidthBoundaryIndicators(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Zl(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Zp(pub BmpString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, from("\u{0}..=\u{fffe}"))]
+    pub struct Zs(pub BmpString);
+}
