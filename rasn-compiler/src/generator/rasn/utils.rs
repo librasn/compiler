@@ -1,4 +1,4 @@
-use std::{ops::Not, str::FromStr};
+use std::str::FromStr;
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -224,7 +224,7 @@ impl Rasn {
     pub(crate) fn format_alphabet_annotations(
         &self,
         string_type: CharacterStringType,
-        constraints: &Vec<Constraint>,
+        constraints: &[Constraint],
     ) -> Result<TokenStream, GeneratorError> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
@@ -614,7 +614,7 @@ impl Rasn {
                     parent_name,
                     s.is_recursive,
                 )?;
-                (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
+                (s.constraints().to_owned(), quote!(SequenceOf<#inner_type>))
             }
             ASN1Type::SetOf(s) => {
                 let (_, inner_type) = self.constraints_and_type_name(
@@ -623,7 +623,7 @@ impl Rasn {
                     parent_name,
                     s.is_recursive,
                 )?;
-                (s.constraints().clone(), quote!(SetOf<#inner_type>))
+                (s.constraints().to_owned(), quote!(SetOf<#inner_type>))
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
                 let mut tokenized = self.to_rust_qualified_type(e.module.as_deref(), &e.identifier);
@@ -962,9 +962,7 @@ impl Rasn {
                 ..
             }) => {
                 Self::needs_unnesting(element_type)
-                    || element_type
-                        .constraints()
-                        .is_some_and(|c| c.is_empty().not())
+                    || !element_type.constraints().is_empty()
                     || element_tag.is_some()
             }
             _ => false,

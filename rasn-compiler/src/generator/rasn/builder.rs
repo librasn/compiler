@@ -724,13 +724,7 @@ impl Rasn {
                     seq.members.iter().fold(
                     TokenStream::new(),
                     |mut acc, m| {
-                        [
-                            m.constraints.clone(),
-                            m.ty.constraints().map_or(vec![], |c| c.to_vec())
-                        ]
-                        .concat()
-                        .iter()
-                        .for_each(|c| {
+                        m.constraints.iter().chain(m.ty.constraints()).for_each(|c| {
                             if let (Constraint::Table(t), ASN1Type::ObjectClassField(iofr)) = (c, &m.ty) {
                                 let decode_fn = format_ident!("decode_{}", self.to_rust_snake_case(&m.name));
                                 let open_field_name = self.to_rust_snake_case(&m.name);
@@ -984,7 +978,7 @@ impl Rasn {
                         } => self.to_rust_title_case(ref_id),
                         _ => format_ident!("{field_enum_name}_{index}").to_token_stream(),
                     };
-                    if ty.constraints().is_none_or(|c| c.is_empty()) {
+                    if ty.constraints().is_empty() {
                         ids.push((variant_name, type_id, identifier_value));
                         inner_types.push(TokenStream::new());
                     } else {
@@ -1000,18 +994,11 @@ impl Rasn {
                             .parse::<TokenStream>()
                             .unwrap();
                         let range_constraints = self
-                            .format_range_annotations(
-                                signed_range,
-                                ty.constraints().unwrap_or(&Vec::<_>::new()),
-                            )
+                            .format_range_annotations(signed_range, ty.constraints())
                             .unwrap();
                         let alphabet_constraints = character_string_type
                             .and_then(|c| {
-                                self.format_alphabet_annotations(
-                                    c,
-                                    ty.constraints().unwrap_or(&Vec::<_>::new()),
-                                )
-                                .ok()
+                                self.format_alphabet_annotations(c, ty.constraints()).ok()
                             })
                             .unwrap_or_default();
                         let annotations = self.join_annotations(
