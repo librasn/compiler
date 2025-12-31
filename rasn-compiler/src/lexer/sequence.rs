@@ -334,6 +334,7 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Default(ASN1Value::ElsewhereDeclaredValue {
+                            module: None,
                             identifier: "unavailable".into(),
                             parent: None
                         }),
@@ -350,6 +351,7 @@ is_recursive: false,
                             constraints: vec![]
                         }),
                         optionality: Optionality::Default(ASN1Value::ElsewhereDeclaredValue {
+                            module: None,
                             identifier: "unavailable".into(),
                             parent: None
                         }),
@@ -563,6 +565,7 @@ is_recursive: false,
                 (
                     Some("ctx".into()),
                     Box::new(ASN1Value::ElsewhereDeclaredValue {
+                        module: None,
                         identifier: "c-ctxRefNull".into(),
                         parent: None
                     })

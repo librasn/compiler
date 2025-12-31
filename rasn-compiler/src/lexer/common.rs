@@ -607,6 +607,7 @@ and one */"#
                 .unwrap()
                 .1,
             Optionality::Default(ASN1Value::ElsewhereDeclaredValue {
+                module: None,
                 identifier: "enumeral1".into(),
                 parent: None
             })
@@ -617,6 +618,7 @@ and one */"#
                 .unwrap()
                 .1,
             Optionality::Default(ASN1Value::ElsewhereDeclaredValue {
+                module: None,
                 identifier: "enumeral1".into(),
                 parent: None
             })

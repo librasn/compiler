@@ -903,7 +903,11 @@ impl ASN1Value {
             }
             (
                 ASN1Type::ElsewhereDeclaredType(e),
-                ASN1Value::ElsewhereDeclaredValue { identifier, parent },
+                ASN1Value::ElsewhereDeclaredValue {
+                    module: _,
+                    identifier,
+                    parent,
+                },
             ) => {
                 if let Some(value) = Self::link_enum_or_distinguished(
                     tlds,
@@ -1316,6 +1320,7 @@ impl ASN1Value {
             (
                 _,
                 ASN1Value::ElsewhereDeclaredValue {
+                    module: None,
                     parent: None,
                     identifier,
                 },
@@ -1492,6 +1497,7 @@ impl ASN1Value {
         tlds: &BTreeMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         if let Self::ElsewhereDeclaredValue {
+            module: None,
             parent: Some(object_name),
             identifier,
         } = self
@@ -1589,6 +1595,7 @@ impl ASN1Value {
                 return self.resolve_elsewhere_with_parent(tlds);
             }
             Self::ElsewhereDeclaredValue {
+                module: _,
                 identifier: e,
                 parent: _,
             }

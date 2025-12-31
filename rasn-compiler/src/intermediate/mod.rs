@@ -1163,6 +1163,7 @@ pub enum ASN1Value {
     },
     Time(String),
     ElsewhereDeclaredValue {
+        module: Option<String>,
         parent: Option<String>,
         identifier: String,
     },

@@ -263,6 +263,7 @@ mod tests {
         assert_eq!(value_to_tokens(&ASN1Value::Real(1.2)).unwrap(), r#"1.2"#);
         assert_eq!(
             value_to_tokens(&ASN1Value::ElsewhereDeclaredValue {
+                module: None,
                 parent: None,
                 identifier: "other-Value".into()
             })

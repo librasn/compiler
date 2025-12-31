@@ -454,6 +454,7 @@ mod tests {
                         InformationObjectField::FixedValueField(FixedValueField {
                             identifier: "&errorCode".to_string(),
                             value: ASN1Value::ElsewhereDeclaredValue {
+                                module: None,
                                 identifier: "asn-val-security-failure".into(),
                                 parent: None
                             }
@@ -469,6 +470,7 @@ mod tests {
                         InformationObjectField::FixedValueField(FixedValueField {
                             identifier: "&errorCode".into(),
                             value: ASN1Value::ElsewhereDeclaredValue {
+                                module: None,
                                 identifier: "asn-val-unknown-order".into(),
                                 parent: None
                             }

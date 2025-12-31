@@ -300,6 +300,7 @@ fn parses_object_set_value() {
                         // SyntaxApplication::Comma,
                         SyntaxApplication::Literal("BY".into()),
                         SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                            module: None,
                             identifier: "originatingVehicleContainer".into(),
                             parent: None
                         })
@@ -319,6 +320,7 @@ fn parses_object_set_value() {
                         }),
                         SyntaxApplication::Literal("BY".into()),
                         SyntaxApplication::ValueReference(ASN1Value::ElsewhereDeclaredValue {
+                            module: None,
                             identifier: "perceivedObjectContainer".into(),
                             parent: None
                         })
