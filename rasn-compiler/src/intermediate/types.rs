@@ -90,6 +90,9 @@ constrainable!(Enumerated);
 constrainable!(DeclarationElsewhere);
 constrainable!(ObjectClassFieldType);
 constrainable!(Time);
+constrainable!(UTCTime);
+constrainable!(GeneralizedTime);
+constrainable!(ObjectIdentifier);
 
 /// Representation of an ASN1 BOOLEAN data element
 /// with corresponding constraints.

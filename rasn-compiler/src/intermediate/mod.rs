@@ -928,7 +928,14 @@ impl ASN1Type {
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints()),
             ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints()),
             ASN1Type::ObjectClassField(f) => Some(f.constraints()),
-            _ => None,
+            ASN1Type::GeneralizedTime(g) => Some(g.constraints()),
+            ASN1Type::UTCTime(u) => Some(u.constraints()),
+            ASN1Type::ObjectIdentifier(o) => Some(o.constraints()),
+            ASN1Type::ChoiceSelectionType(_)
+            | ASN1Type::Null
+            | ASN1Type::Any
+            | ASN1Type::EmbeddedPdv
+            | ASN1Type::External => None,
         }
     }
 
@@ -947,7 +954,14 @@ impl ASN1Type {
             ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints_mut()),
             ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints_mut()),
             ASN1Type::ObjectClassField(f) => Some(f.constraints_mut()),
-            _ => None,
+            ASN1Type::GeneralizedTime(g) => Some(g.constraints_mut()),
+            ASN1Type::UTCTime(u) => Some(u.constraints_mut()),
+            ASN1Type::ObjectIdentifier(o) => Some(o.constraints_mut()),
+            ASN1Type::ChoiceSelectionType(_)
+            | ASN1Type::Null
+            | ASN1Type::Any
+            | ASN1Type::EmbeddedPdv
+            | ASN1Type::External => None,
         }
     }
 }
