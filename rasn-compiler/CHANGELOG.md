@@ -48,6 +48,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.15.0...rasn-compiler-v0.16.0) - 2025-12-31
+
+### Other
+
+- Merge pull request #181 from Rawk/choice-without-constraint
+- Merge pull request #182 from Rawk/fix-realnumber
+- Merge pull request #178 from Rawk/refactor-builtin_or_elsewhere
+- Merge pull request #172 from Rawk/elswhere-declared-value-in-module
+- Format and fix warnings
+
 ## [0.15.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.14.3...rasn-compiler-v0.15.0) - 2025-12-20
 
 ### Added
