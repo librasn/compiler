@@ -2,21 +2,21 @@ use crate::{input::Input, intermediate::*};
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{char, i32, i64, u64},
-    combinator::{map, opt, value},
-    sequence::{delimited, preceded, separated_pair},
+    character::complete::{char, digit0, digit1, i32, i64, one_of},
+    combinator::{map, not, opt, peek, recognize, value},
+    sequence::{delimited, preceded},
     Parser,
 };
 
 use super::{
-    common::{in_braces, skip_ws_and_comments},
+    common::{in_braces, into_inner, skip_ws_and_comments},
     constraint::constraints,
     error::ParserResult,
 };
 
 pub fn real_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
-        skip_ws_and_comments(alt((dot_notation, mbe_notation))),
+        skip_ws_and_comments(alt((realnumber, mbe_notation))),
         ASN1Value::Real,
     )
     .parse(input)
@@ -41,21 +41,38 @@ pub fn real(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     .parse(input)
 }
 
-fn dot_notation(input: Input<'_>) -> ParserResult<'_, f64> {
-    map(
-        skip_ws_and_comments(separated_pair(i64, char('.'), u64)),
-        |(wholes, decimals)| {
-            let mut decimals_f64 = decimals as f64;
-            while decimals_f64 > 1. {
-                decimals_f64 /= 10.
-            }
-            if wholes >= 0 {
-                wholes as f64 + decimals_f64
-            } else {
-                wholes as f64 - decimals_f64
-            }
-        },
-    )
+/// Parse a `realnumber` lexical item.
+///
+/// Note: Unlike the spec, this also parses negative numbers.
+///
+/// _X.680 12.9 Real numbers_
+/// A "realnumber" shall consist of an integer part that is a series of one or more digits, and
+/// optionally a decimal point (.). The decimal point can optionally be followed by a fractional
+/// part which is one or more digits. The integer part, decimal point or fractional part (whichever
+/// is last present) can optionally be followed by an e or E and an optionally-signed exponent
+/// which is one or more digits. The leading digit of the "realnumber" shall not be zero unless it
+/// is either the only digit or is immediately followed by a decimal point followed by a fractional
+/// part of which at least one digit is not zero.
+///
+/// A "number" is also a valid instance of "realnumber". In analyzing an instance of use of this
+/// notation, a "realnumber" is distinguished from a "number" by the context in which it appears.
+fn realnumber(input: Input<'_>) -> ParserResult<'_, f64> {
+    into_inner(recognize((
+        // Optional sign
+        opt(char('-')),
+        // Integer part
+        alt((
+            // Either a single zero,
+            recognize((char('0'), not(peek(digit1)))),
+            // or starts with a non-zero digit.
+            recognize((one_of("123456789"), digit0)),
+        )),
+        // Fractional part
+        opt((char('.'), digit0)),
+        // Exponent part
+        opt((alt((char('e'), char('E'))), opt(char('-')), digit1)),
+    )))
+    .map_res(str::parse::<f64>)
     .parse(input)
 }
 
@@ -95,7 +112,7 @@ mod tests {
 
     use crate::lexer::real::real_value;
 
-    use super::real;
+    use super::{real, realnumber};
 
     #[test]
     fn parses_simple_real_type() {
@@ -182,15 +199,28 @@ mod tests {
     }
 
     #[test]
-    fn parses_dot_notation_real_value() {
-        assert_eq!(
-            real_value("2.23412".into()).unwrap().1,
-            ASN1Value::Real(2.23412)
-        );
-        assert_eq!(
-            real_value("-12.23412".into()).unwrap().1,
-            ASN1Value::Real(-12.23412)
-        )
+    fn parses_realnumber() {
+        assert_eq!(realnumber("0".into()).unwrap().1, 0.0);
+        assert_eq!(realnumber("-0".into()).unwrap().1, -0.0);
+        assert_eq!(realnumber("0.".into()).unwrap().1, 0.0);
+        assert_eq!(realnumber("-0.".into()).unwrap().1, -0.0);
+        assert_eq!(realnumber("0.0".into()).unwrap().1, 0.0);
+        assert_eq!(realnumber("-0.0".into()).unwrap().1, -0.0);
+        assert_eq!(realnumber("0.0e0".into()).unwrap().1, 0.0);
+        assert_eq!(realnumber("-0.0E0".into()).unwrap().1, -0.0);
+        assert!(realnumber("0123".into()).is_err());
+        assert_eq!(realnumber("1234567890".into()).unwrap().1, 1234567890.0);
+        assert_eq!(realnumber("-1234567890".into()).unwrap().1, -1234567890.0);
+        assert_eq!(realnumber("0.0123456789".into()).unwrap().1, 0.0123456789);
+        assert_eq!(realnumber("-0.0123456789".into()).unwrap().1, -0.0123456789);
+        assert_eq!(realnumber("123E10".into()).unwrap().1, 123e10);
+        assert_eq!(realnumber("-123e10".into()).unwrap().1, -123e10);
+        assert_eq!(realnumber("123.e10".into()).unwrap().1, 123e10);
+        assert_eq!(realnumber("-123.E10".into()).unwrap().1, -123e10);
+        assert_eq!(realnumber("0.0123E10".into()).unwrap().1, 0.0123e10);
+        assert_eq!(realnumber("-0.0123e10".into()).unwrap().1, -0.0123e10);
+        assert_eq!(realnumber("0.0123e-10".into()).unwrap().1, 0.0123e-10);
+        assert_eq!(realnumber("-0.0123E-10".into()).unwrap().1, -0.0123e-10);
     }
 
     #[test]

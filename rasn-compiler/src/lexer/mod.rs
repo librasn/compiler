@@ -188,12 +188,12 @@ pub fn asn1_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
         null_value,
         map(object_identifier_value, ASN1Value::ObjectIdentifier),
         choice_value,
-        real_value,
         sequence_value,
         time_value,
         bit_string_value,
         boolean_value,
         integer_value,
+        real_value,
         character_string_value,
         elsewhere_declared_value,
     ))
