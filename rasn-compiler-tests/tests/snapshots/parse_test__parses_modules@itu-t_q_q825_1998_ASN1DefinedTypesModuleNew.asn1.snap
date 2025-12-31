@@ -2,12 +2,51 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_q_q825_1998_ASN1DefinedTypesModuleNew.asn1
 ---
-Error matching ASN syntax at while parsing:
-    ╭─[line 26, column 13]
-    │
-    │ 
- 26 │   OF MANAGEMENT-EXTENSION({AllowedAdditionalRecordTypes}) ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 28 │  -- The AllowedAdditionalRecordTypes is the constraint that allows only certain types to be set as
- 29 │  -- AdditionalRecordType.
-    │
-────╯
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod asn1_defined_types_module_new {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AdditionalRecordType(pub MANAGEMENTEXTENSION);
+    #[doc = " dynamically extensible information object set"]
+    #[doc = " The AdditionalRecordTypes type is to be used in the RecordContent type of"]
+    #[doc = " ASN1DefinedTypesModule module."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct BlockExtension(pub MANAGEMENTEXTENSION);
+    #[doc = " dynamically extensible information object set"]
+    #[doc = " The BlockExtensions type is to be used in the BlockHeaderRecord type of"]
+    #[doc = " ASN1DefinedTypesModule"]
+    #[doc = " module"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecordExtension(pub MANAGEMENTEXTENSION);
+    #[doc = " dynamically extensible information object set"]
+    #[doc = " The RecordExtensions type is to be used in the CallRecord type of"]
+    #[doc = " ASN1DefinedTypesModule module"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ServiceSpecificINInformation(pub MANAGEMENTEXTENSION);
+    #[doc = " dynamically extensible information object set"]
+    #[doc = " TheServiceSpecificINInformations type is to be used in the CallRecord type of"]
+    #[doc = " ASN1DefinedTypesModule module."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StandardAdditionalRecordType(pub MANAGEMENTEXTENSION);
+    #[doc = " dynamically extensible information object set"]
+    #[doc = " TheStandardAdditionalRecordTypes type is to be used in the RecordContent type of"]
+    #[doc = " ASN1DefinedTypesModule module."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct StandardExtension(pub MANAGEMENTEXTENSION);
+}
