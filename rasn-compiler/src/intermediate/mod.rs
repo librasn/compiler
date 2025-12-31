@@ -1081,25 +1081,6 @@ impl CharacterStringType {
     }
 }
 
-impl From<&str> for CharacterStringType {
-    fn from(value: &str) -> Self {
-        match value {
-            IA5_STRING => Self::IA5String,
-            NUMERIC_STRING => Self::NumericString,
-            VISIBLE_STRING => Self::VisibleString,
-            TELETEX_STRING => Self::TeletexString,
-            T61_STRING => Self::TeletexString,
-            VIDEOTEX_STRING => Self::VideotexString,
-            GRAPHIC_STRING => Self::GraphicString,
-            GENERAL_STRING => Self::GeneralString,
-            UNIVERSAL_STRING => Self::UniversalString,
-            BMP_STRING => Self::BMPString,
-            PRINTABLE_STRING => Self::PrintableString,
-            _ => Self::UTF8String,
-        }
-    }
-}
-
 /// Representation of common integer types
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum IntegerType {

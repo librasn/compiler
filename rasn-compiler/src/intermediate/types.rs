@@ -290,15 +290,6 @@ pub struct CharacterString {
     pub ty: CharacterStringType,
 }
 
-impl From<(&str, Option<Vec<Constraint>>)> for CharacterString {
-    fn from(value: (&str, Option<Vec<Constraint>>)) -> Self {
-        CharacterString {
-            constraints: value.1.unwrap_or_default(),
-            ty: value.0.into(),
-        }
-    }
-}
-
 /// Representation of an ASN1 SEQUENCE OF and SET OF data element
 /// with corresponding constraints and element type info
 /// Whether the struct describes a SEQUENCE OF or a SET OF
