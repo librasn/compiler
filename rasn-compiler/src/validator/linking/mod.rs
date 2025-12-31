@@ -425,7 +425,7 @@ impl ASN1Type {
                     b.link_cross_reference(name, tlds)?;
                 }
                 if let Some(replacement) = s.element_type.link_constraint_reference(name, tlds)? {
-                    s.element_type = Box::new(replacement);
+                    *s.element_type = replacement;
                 }
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
@@ -1052,7 +1052,7 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::SequenceOrSet(_)] =>
             {
                 if let ASN1Value::SequenceOrSet(val) = &mut **value {
-                    *value = Box::new(Self::link_struct_like(val, s, tlds, type_name)?);
+                    **value = Self::link_struct_like(val, s, tlds, type_name)?;
                 }
                 Ok(())
             }
@@ -1066,7 +1066,7 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::SequenceOrSet(_)] =>
             {
                 if let ASN1Value::SequenceOrSet(val) = &mut **value {
-                    *value = Box::new(Self::link_array_like(val, s, tlds)?);
+                    **value = Self::link_array_like(val, s, tlds)?;
                 }
                 Ok(())
             }
@@ -1085,7 +1085,7 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::String(_)] =>
             {
                 if let ASN1Value::String(s) = &**value {
-                    *value = Box::new(ASN1Value::LinkedCharStringValue(t.ty, s.clone()));
+                    **value = ASN1Value::LinkedCharStringValue(t.ty, s.clone());
                 }
                 Ok(())
             }
@@ -1123,7 +1123,7 @@ impl ASN1Value {
                 ASN1Value::LinkedNestedValue { value, .. },
             ) if matches![**value, ASN1Value::SequenceOrSet(_)] => {
                 if let ASN1Value::SequenceOrSet(o) = &**value {
-                    *value = Box::new(ASN1Value::BitStringNamedBits(
+                    **value = ASN1Value::BitStringNamedBits(
                         o.iter()
                             .filter_map(|(_, v)| match &**v {
                                 ASN1Value::ElsewhereDeclaredValue { identifier, .. } => {
@@ -1135,7 +1135,7 @@ impl ASN1Value {
                                 _ => None,
                             })
                             .collect(),
-                    ));
+                    );
                     self.link_with_type(tlds, ty, type_name)?;
                 }
                 Ok(())
@@ -1160,9 +1160,9 @@ impl ASN1Value {
                 ASN1Value::LinkedNestedValue { value, .. },
             ) if matches![**value, ASN1Value::ObjectIdentifier(_)] => {
                 if let ASN1Value::ObjectIdentifier(o) = &**value {
-                    *value = Box::new(ASN1Value::BitStringNamedBits(
+                    **value = ASN1Value::BitStringNamedBits(
                         o.0.iter().filter_map(|arc| arc.name.clone()).collect(),
-                    ));
+                    );
                     self.link_with_type(tlds, ty, type_name)?;
                 }
                 Ok(())
@@ -1200,11 +1200,11 @@ impl ASN1Value {
                 if let (ASN1Value::BitStringNamedBits(o), Some(highest_distinguished_bit)) =
                     (&**value, distinguished.iter().map(|d| d.value).max())
                 {
-                    *value = Box::new(ASN1Value::BitString(bit_string_value_from_named_bits(
+                    **value = ASN1Value::BitString(bit_string_value_from_named_bits(
                         highest_distinguished_bit,
                         o,
                         distinguished,
-                    )));
+                    ));
                     Ok(())
                 } else {
                     Err(GrammarError {
@@ -1218,7 +1218,7 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::OctetString(_)] =>
             {
                 if let ASN1Value::OctetString(o) = &**value {
-                    *value = Box::new(ASN1Value::BitString(octet_string_to_bit_string(o)));
+                    **value = ASN1Value::BitString(octet_string_to_bit_string(o));
                 }
                 Ok(())
             }
@@ -1230,7 +1230,7 @@ impl ASN1Value {
                 if matches![**value, ASN1Value::BitString(_)] =>
             {
                 if let ASN1Value::BitString(b) = &**value {
-                    *value = Box::new(ASN1Value::OctetString(bit_string_to_octet_string(b)?));
+                    **value = ASN1Value::OctetString(bit_string_to_octet_string(b)?);
                 }
                 Ok(())
             }
@@ -1250,10 +1250,10 @@ impl ASN1Value {
                                 .find_map(|d| (&d.name == identifier).then_some(d.value))
                         })
                     {
-                        *value = Box::new(ASN1Value::LinkedIntValue {
+                        **value = ASN1Value::LinkedIntValue {
                             integer_type: i.int_type(),
                             value: distinguished_value,
-                        });
+                        };
                     }
                 }
                 Ok(())
@@ -1265,10 +1265,10 @@ impl ASN1Value {
                     let int_type = i.constraints.iter().fold(IntegerType::Unbounded, |acc, c| {
                         c.integer_constraints().max_restrictive(acc)
                     });
-                    *value = Box::new(ASN1Value::LinkedIntValue {
+                    **value = ASN1Value::LinkedIntValue {
                         integer_type: int_type,
                         value: *v,
-                    });
+                    };
                 }
                 Ok(())
             }
@@ -1293,10 +1293,10 @@ impl ASN1Value {
                         .iter()
                         .find(|(_, tld)| tld.has_enum_value(None, identifier))
                     {
-                        *value = Box::new(ASN1Value::EnumeratedValue {
+                        **value = ASN1Value::EnumeratedValue {
                             enumerated: tld.name().clone(),
                             enumerable: identifier.clone(),
-                        });
+                        };
                     }
                 }
                 Ok(())
