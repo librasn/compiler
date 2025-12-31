@@ -913,29 +913,29 @@ impl ASN1Type {
         )
     }
 
-    pub fn constraints(&self) -> Option<&Vec<Constraint>> {
+    pub fn constraints(&self) -> &[Constraint] {
         match self {
-            ASN1Type::Boolean(b) => Some(b.constraints()),
-            ASN1Type::Real(r) => Some(r.constraints()),
-            ASN1Type::Integer(i) => Some(i.constraints()),
-            ASN1Type::BitString(b) => Some(b.constraints()),
-            ASN1Type::OctetString(o) => Some(o.constraints()),
-            ASN1Type::CharacterString(c) => Some(c.constraints()),
-            ASN1Type::Enumerated(e) => Some(e.constraints()),
-            ASN1Type::Time(t) => Some(t.constraints()),
-            ASN1Type::Choice(c) => Some(c.constraints()),
-            ASN1Type::Set(s) | ASN1Type::Sequence(s) => Some(s.constraints()),
-            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => Some(s.constraints()),
-            ASN1Type::ElsewhereDeclaredType(e) => Some(e.constraints()),
-            ASN1Type::ObjectClassField(f) => Some(f.constraints()),
-            ASN1Type::GeneralizedTime(g) => Some(g.constraints()),
-            ASN1Type::UTCTime(u) => Some(u.constraints()),
-            ASN1Type::ObjectIdentifier(o) => Some(o.constraints()),
+            ASN1Type::Boolean(b) => b.constraints(),
+            ASN1Type::Real(r) => r.constraints(),
+            ASN1Type::Integer(i) => i.constraints(),
+            ASN1Type::BitString(b) => b.constraints(),
+            ASN1Type::OctetString(o) => o.constraints(),
+            ASN1Type::CharacterString(c) => c.constraints(),
+            ASN1Type::Enumerated(e) => e.constraints(),
+            ASN1Type::Time(t) => t.constraints(),
+            ASN1Type::Choice(c) => c.constraints(),
+            ASN1Type::Set(s) | ASN1Type::Sequence(s) => s.constraints(),
+            ASN1Type::SetOf(s) | ASN1Type::SequenceOf(s) => s.constraints(),
+            ASN1Type::ElsewhereDeclaredType(e) => e.constraints(),
+            ASN1Type::ObjectClassField(f) => f.constraints(),
+            ASN1Type::GeneralizedTime(g) => g.constraints(),
+            ASN1Type::UTCTime(u) => u.constraints(),
+            ASN1Type::ObjectIdentifier(o) => o.constraints(),
             ASN1Type::ChoiceSelectionType(_)
             | ASN1Type::Null
             | ASN1Type::Any
             | ASN1Type::EmbeddedPdv
-            | ASN1Type::External => None,
+            | ASN1Type::External => &[],
         }
     }
 
