@@ -32,7 +32,7 @@ macro_rules! error {
     };
 }
 
-use self::types::{CharacterString, Constrainable};
+use self::types::Constrainable;
 
 use super::*;
 
@@ -596,7 +596,7 @@ impl Rasn {
                     kind: GeneratorErrorType::NotYetInplemented,
                 })
             }
-            ASN1Type::CharacterString(c) => (c.constraints.clone(), self.string_type(&c.ty)?),
+            ASN1Type::CharacterString(c) => (c.constraints.clone(), self.string_type(c.ty)?),
             ASN1Type::Enumerated(_)
             | ASN1Type::Choice(_)
             | ASN1Type::Sequence(_)
@@ -642,7 +642,7 @@ impl Rasn {
 
     pub(crate) fn string_type(
         &self,
-        c_type: &CharacterStringType,
+        c_type: CharacterStringType,
     ) -> Result<TokenStream, GeneratorError> {
         match c_type {
             CharacterStringType::NumericString => Ok(quote!(NumericString)),
@@ -728,7 +728,7 @@ impl Rasn {
             ASN1Type::Real(_) => Ok(quote!(f64)),
             ASN1Type::BitString(_) => Ok(quote!(BitString)),
             ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
-            ASN1Type::CharacterString(CharacterString { ty, .. }) => self.string_type(ty),
+            ASN1Type::CharacterString(c) => self.string_type(c.ty),
             ASN1Type::Enumerated(_) => Err(error!(
                 NotYetInplemented,
                 "Enumerated values are currently unsupported!"
@@ -1105,23 +1105,7 @@ impl Rasn {
                 ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
                 ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
                 ASN1Type::ObjectIdentifier(_) => Ok(quote!(ObjectIdentifier)),
-                ASN1Type::CharacterString(cs) => match cs.ty {
-                    CharacterStringType::NumericString => Ok(quote!(NumericString)),
-                    CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
-                    CharacterStringType::IA5String => Ok(quote!(IA5String)),
-                    CharacterStringType::UTF8String => Ok(quote!(UTF8String)),
-                    CharacterStringType::BMPString => Ok(quote!(BMPString)),
-                    CharacterStringType::PrintableString => Ok(quote!(PrintableString)),
-                    CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
-                    CharacterStringType::GraphicString => Ok(quote!(GraphicString)),
-                    CharacterStringType::VideotexString
-                    | CharacterStringType::UniversalString
-                    | CharacterStringType::TeletexString => Err(GeneratorError::new(
-                        None,
-                        &format!("{:?} values are currently unsupported!", cs.ty),
-                        GeneratorErrorType::NotYetInplemented,
-                    )),
-                },
+                ASN1Type::CharacterString(cs) => self.string_type(cs.ty),
                 _ => Ok(self.to_rust_title_case(&ty.as_str())),
             }
         } else {
