@@ -933,11 +933,15 @@ impl Rasn {
                     CharacterStringType::GraphicString => {
                         Ok(quote!(GraphicString::try_from(String::from(#val)).unwrap()))
                     }
-                    CharacterStringType::VideotexString
-                    | CharacterStringType::UniversalString
-                    | CharacterStringType::TeletexString => Err(GeneratorError::new(
+                    CharacterStringType::TeletexString => {
+                        Ok(quote!(TeletexString::try_from(#val).unwrap()))
+                    }
+                    CharacterStringType::UniversalString => {
+                        Ok(quote!(UniversalString::new(Utf8String::from(#val))))
+                    }
+                    CharacterStringType::VideotexString => Err(GeneratorError::new(
                         None,
-                        &format!("{string_type:?} values are currently unsupported!"),
+                        "VideotexString values are currently unsupported!",
                         GeneratorErrorType::NotYetInplemented,
                     )),
                 }
