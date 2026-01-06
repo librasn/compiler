@@ -9,7 +9,7 @@ use crate::intermediate::{
         ToplevelInformationDefinition,
     },
     types::Optionality,
-    ASN1Type, ASN1Value, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
+    ASN1Type, ASN1Value, AsnTag, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
     ToplevelValueDefinition,
 };
 
@@ -633,7 +633,21 @@ impl Rasn {
                     #[non_exhaustive]}
                 })
                 .unwrap_or_default();
-            let mut annotations = vec![quote!(choice), self.format_tag(tld.tag.as_ref())];
+            let mut annotations = vec![quote!(choice)];
+
+            // ITU-T X.680 section 31.2.7 clause c:
+            // use explicit tagging in IMPLICIT or AUTOMATIC tagging envirnonments when untagged choice is tagged
+            if let Some(tag) = &tld.tag {
+                if self.tagging_environment != TaggingEnvironment::Explicit {
+                    let explicit_tag = AsnTag {
+                        environment: TaggingEnvironment::Explicit,
+                        ..tag.clone()
+                    };
+                    annotations.push(self.format_tag(Some(&explicit_tag)));
+                } else {
+                    annotations.push(self.format_tag(tld.tag.as_ref()));
+                }
+            }
 
             // ITU-T X.680 clause 29.2: enable automatic tagging if none of the members are tagged type
             if self.tagging_environment == TaggingEnvironment::Automatic
