@@ -985,7 +985,14 @@ impl CharacterStringType {
             CharacterStringType::NumericString => {
                 NUMERIC_STRING_CHARSET.into_iter().enumerate().collect()
             }
-            CharacterStringType::VisibleString | CharacterStringType::PrintableString => {
+            // X.680 defines VisibleString using the ISO/IEC 646 encoding (cells 2/0–7/14),
+            // i.e. the 95 visible characters with indices computed as (ISO 646 ENCODING) - 32.
+            CharacterStringType::VisibleString => (0x20u32..=0x7Eu32)
+                .map(|i| char::from_u32(i).unwrap())
+                .enumerate()
+                .collect(),
+
+            CharacterStringType::PrintableString => {
                 PRINTABLE_STRING_CHARSET.into_iter().enumerate().collect()
             }
             CharacterStringType::IA5String => (0..128u32)
