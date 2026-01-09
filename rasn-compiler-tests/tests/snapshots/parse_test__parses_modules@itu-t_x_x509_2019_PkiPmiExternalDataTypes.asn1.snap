@@ -35,7 +35,7 @@ pub mod pki_pmi_external_data_types {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, tag(application, 2))]
+    #[rasn(choice, tag(explicit(application, 2)))]
     pub enum AdministrationDomainName {
         #[rasn(size("0..=16"))]
         numeric(NumericString),
@@ -114,7 +114,7 @@ pub mod pki_pmi_external_data_types {
     #[rasn(delegate, size("1..=64"))]
     pub struct CommonName(pub PrintableString);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, tag(application, 1))]
+    #[rasn(choice, tag(explicit(application, 1)))]
     pub enum CountryName {
         #[rasn(size("3"), identifier = "x121-dcc-code")]
         x121_dcc_code(NumericString),
