@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use clap::{arg, command, Parser};
+use clap::Parser;
 use colored::Colorize;
 use rasn_compiler::{OutputMode, RasnCompiler, TsCompiler};
 use walkdir::WalkDir;
