@@ -35,7 +35,7 @@ pub mod authentication_context_for_biometrics {
     use rasn::prelude::*;
     use std::sync::LazyLock;
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(tag(context, 14))]
+    #[rasn(tag(context, 14), automatic_tags)]
     pub struct ACBioContentInformation {
         #[rasn(default = "acbio_content_information_version_default")]
         pub version: Version,

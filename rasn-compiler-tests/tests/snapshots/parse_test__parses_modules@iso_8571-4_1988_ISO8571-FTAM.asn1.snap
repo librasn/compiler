@@ -3374,7 +3374,7 @@ pub mod iso8571_ftam {
         }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, tag(application, 15), identifier = "FADU-Identity")]
+    #[rasn(choice, tag(explicit(application, 15)), identifier = "FADU-Identity")]
     pub enum FADUIdentity {
         #[rasn(tag(context, 0), identifier = "first-last")]
         first_last(Integer),
@@ -3620,7 +3620,11 @@ pub mod iso8571_ftam {
     #[rasn(delegate, tag(application, 25), identifier = "Objects-Attributes-List")]
     pub struct ObjectsAttributesList(pub SequenceOf<ReadAttributes>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, tag(application, 30), identifier = "Operation-Result")]
+    #[rasn(
+        choice,
+        tag(explicit(application, 30)),
+        identifier = "Operation-Result"
+    )]
     pub enum OperationResult {
         #[rasn(tag(context, 0), identifier = "success-Object-count")]
         success_Object_count(Integer),
@@ -3649,7 +3653,7 @@ pub mod iso8571_ftam {
     #[rasn(delegate, identifier = "Pass-Passwords")]
     pub struct PassPasswords(pub SequenceOf<Password>);
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
-    #[rasn(choice, tag(application, 17))]
+    #[rasn(choice, tag(explicit(application, 17)))]
     pub enum Password {
         graphicString(GraphicString),
         octetString(OctetString),

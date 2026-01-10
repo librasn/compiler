@@ -187,3 +187,49 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    automatic_tags_on_sequence,
+    r#"
+        T ::= SEQUENCE { a INTEGER, b BOOLEAN, c OCTET STRING }
+    "#
+);
+
+// https://github.com/librasn/compiler/issues/193
+e2e_pdu!(
+    automatic_tags_on_tagged_sequence,
+    r#"
+        T ::= [7] SEQUENCE { a INTEGER, b BOOLEAN, c OCTET STRING }
+    "#
+);
+
+e2e_pdu!(
+    no_automatic_tags_on_sequence_with_tagged_member,
+    r#"
+        T ::= SEQUENCE { a INTEGER, b [1] BOOLEAN, c OCTET STRING }
+    "#
+);
+
+// X.680 section 31.2.7 clause c
+// https://github.com/librasn/compiler/issues/193
+e2e_pdu!(
+    automatic_tags_on_choice,
+    r#"
+        T ::= CHOICE { a INTEGER, b BOOLEAN, c OCTET STRING }
+    "#
+);
+
+// https://github.com/librasn/compiler/issues/193
+e2e_pdu!(
+    automatic_tags_on_tagged_choice,
+    r#"
+        T ::= [7] CHOICE { a INTEGER, b BOOLEAN, c OCTET STRING }
+    "#
+);
+
+e2e_pdu!(
+    no_automatic_tags_on_choice_with_tagged_member,
+    r#"
+        T ::= CHOICE { a INTEGER, b [1] BOOLEAN, c OCTET STRING }
+    "#
+);
