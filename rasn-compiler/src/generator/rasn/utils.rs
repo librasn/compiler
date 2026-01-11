@@ -130,12 +130,12 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_comments(&self, comments: &str) -> Result<TokenStream, GeneratorError> {
+    pub(crate) fn format_comments(&self, comments: &str) -> TokenStream {
         if comments.is_empty() {
-            Ok(TokenStream::new())
+            TokenStream::new()
         } else {
-            let joined = String::from("///") + &comments.replace('\n', "\n ///") + "\n";
-            Ok(TokenStream::from_str(&joined)?)
+            let comments = comments.lines().map(|c| c.trim_end_matches('\r'));
+            quote!(#(#[doc = #comments])*)
         }
     }
 

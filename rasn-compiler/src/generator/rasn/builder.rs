@@ -24,7 +24,7 @@ pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_";
 macro_rules! call_template {
     ($this:ident, $fn:ident, $tld:ident, $($args:expr),*) => {
         Ok($fn(
-            $this.format_comments(&$tld.comments)?,
+            $this.format_comments(&$tld.comments),
             $this.to_rust_const_case(&$tld.name),
             $($args),*
         ))
@@ -107,7 +107,7 @@ impl Rasn {
             annotations.push(self.format_range_annotations(true, &dec.constraints)?);
             let alias = self.to_rust_qualified_type(dec.module.as_deref(), &dec.identifier);
             Ok(typealias_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 alias,
                 self.join_annotations(annotations, false, true)?,
@@ -131,7 +131,7 @@ impl Rasn {
             };
             if integer_type.is_unbounded() {
                 Ok(lazy_static_value_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     self.to_rust_const_case(&tld.name),
                     ty,
                     val,
@@ -139,7 +139,7 @@ impl Rasn {
                 ))
             } else {
                 Ok(integer_value_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     self.to_rust_const_case(&tld.name),
                     ty,
                     val,
@@ -162,7 +162,7 @@ impl Rasn {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
             Ok(integer_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
                 int.int_type().to_token_stream(),
@@ -183,14 +183,14 @@ impl Rasn {
             }
             if let Some(size) = bitstr.fixed_size() {
                 Ok(fixed_bit_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                     size.to_token_stream(),
                 ))
             } else {
                 Ok(bit_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                 ))
@@ -211,14 +211,14 @@ impl Rasn {
             }
             if let Some(size) = oct_str.fixed_size() {
                 Ok(fixed_octet_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                     size.to_token_stream(),
                 ))
             } else {
                 Ok(octet_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                 ))
@@ -239,7 +239,7 @@ impl Rasn {
                 self.format_alphabet_annotations(char_str.ty, &char_str.constraints)?,
             ]);
             Ok(char_string_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.string_type(&char_str.ty)?,
                 self.join_annotations(annotations, false, true)?,
@@ -257,7 +257,7 @@ impl Rasn {
         let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
         if let ASN1Type::Boolean(_) = tld.ty {
             Ok(boolean_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, true, true)?,
             ))
@@ -508,7 +508,7 @@ impl Rasn {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
         Ok(any_template(
-            self.format_comments(&tld.comments)?,
+            self.format_comments(&tld.comments),
             name,
             self.join_annotations(annotations, false, true)?,
         ))
@@ -521,7 +521,7 @@ impl Rasn {
         if let ASN1Type::GeneralizedTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(generalized_time_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
             ))
@@ -537,7 +537,7 @@ impl Rasn {
         if let ASN1Type::UTCTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(utc_time_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
             ))
@@ -554,7 +554,7 @@ impl Rasn {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(false, &oid.constraints)?);
             Ok(oid_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
             ))
@@ -570,7 +570,7 @@ impl Rasn {
         if let ASN1Type::Null = tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(null_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, true, true)?,
             ))
@@ -606,7 +606,7 @@ impl Rasn {
                 ));
             }
             Ok(enumerated_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 extensible,
                 self.format_enum_members(enumerated)?,
@@ -651,7 +651,7 @@ impl Rasn {
             }
             let formatted_options = self.format_choice_options(choice, &name.to_string())?;
             let choice_str = choice_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 &name,
                 extensible,
                 formatted_options.enum_body,
@@ -783,7 +783,7 @@ impl Rasn {
                     ));
                 }
                 Ok(sequence_or_set_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name.clone(),
                     extensible,
                     formatted_members.struct_body,
@@ -848,7 +848,7 @@ impl Rasn {
         }
         Ok(sequence_or_set_of_template(
             is_set_of,
-            self.format_comments(&tld.comments)?,
+            self.format_comments(&tld.comments),
             name,
             anonymous_item,
             member_type,
