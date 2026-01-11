@@ -48,6 +48,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.1](https://github.com/librasn/compiler/compare/rasn-compiler-v0.16.0...rasn-compiler-v0.16.1) - 2026-01-11
+
+### Added
+
+- *(bin)* Output diagnostics to stderr
+
+### Other
+
+- Merge pull request #197 from Rawk/diagnostics-to-stderr
+
 ## [0.16.0](https://github.com/librasn/compiler/compare/rasn-compiler-v0.15.0...rasn-compiler-v0.16.0) - 2025-12-31
 
 ### Other
