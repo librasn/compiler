@@ -335,16 +335,14 @@ impl Rasn {
             FormattedMembers::default(),
             |mut acc, (i, m)| {
                 let nested = if Self::needs_unnesting(&m.ty) {
-                    Some(
-                        self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                            parameterization: None,
-                            comments: INNER_TYPE_COMMENT.into(),
-                            name: self.inner_name(&m.name, parent_name).to_string(),
-                            ty: m.ty.clone(),
-                            tag: None,
-                            module_header: None,
-                        })),
-                    )
+                    Some(self.generate_type(ToplevelTypeDefinition {
+                        parameterization: None,
+                        comments: INNER_TYPE_COMMENT.into(),
+                        name: self.inner_name(&m.name, parent_name).to_string(),
+                        ty: m.ty.clone(),
+                        tag: None,
+                        module_header: None,
+                    }))
                     .transpose()
                 } else {
                     Ok(None)
@@ -428,16 +426,14 @@ impl Rasn {
             FormattedOptions::default(),
             |mut acc, (i, o)| {
                 let nested = if Self::needs_unnesting(&o.ty) {
-                    Some(
-                        self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                            parameterization: None,
-                            comments: INNER_TYPE_COMMENT.into(),
-                            name: self.inner_name(&o.name, parent_name).to_string(),
-                            ty: o.ty.clone(),
-                            tag: None,
-                            module_header: None,
-                        })),
-                    )
+                    Some(self.generate_type(ToplevelTypeDefinition {
+                        parameterization: None,
+                        comments: INNER_TYPE_COMMENT.into(),
+                        name: self.inner_name(&o.name, parent_name).to_string(),
+                        ty: o.ty.clone(),
+                        tag: None,
+                        module_header: None,
+                    }))
                     .transpose()
                 } else {
                     Ok(None)
