@@ -71,18 +71,10 @@ impl From<LexError> for GeneratorError {
 
 impl Display for GeneratorError {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        let name = match self.top_level_declaration.as_deref() {
-            Some(ToplevelDefinition::Type(t)) => &t.name,
-            Some(ToplevelDefinition::Value(v)) => &v.name,
-            Some(ToplevelDefinition::Class(c)) => &c.name,
-            Some(ToplevelDefinition::Object(o)) => &o.name,
-            Some(ToplevelDefinition::Macro(m)) => &m.name,
-            None => "",
-        };
-        write!(
-            f,
-            "{:?} generating bindings for {name}: {}",
-            self.kind, self.details
-        )
+        write!(f, "{:?} while generating bindings", self.kind)?;
+        if let Some(tld) = &self.top_level_declaration {
+            write!(f, " for {}", tld.name())?;
+        }
+        write!(f, ": {}", self.details)
     }
 }
