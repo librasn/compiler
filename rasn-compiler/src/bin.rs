@@ -74,21 +74,21 @@ fn main() -> ExitCode {
             let entry = match entry {
                 Ok(entry) => entry,
                 Err(err) => {
-                    println!("{}: {err}", "warning".yellow());
+                    eprintln!("{}: {err}", "warning".yellow());
                     continue;
                 }
             };
             let file_name = entry.file_name().to_string_lossy();
 
             if file_name.ends_with(".asn") || file_name.ends_with(".asn1") {
-                println!("{}: Found ASN1 module {}", "info".blue(), file_name);
+                eprintln!("{}: Found ASN1 module {}", "info".blue(), file_name);
                 modules.push(entry.into_path());
                 module_found = true;
             }
         }
 
         if !module_found {
-            println!(
+            eprintln!(
                 "{}: No modules where found in '{}'",
                 "warning".yellow(),
                 dir.display(),
@@ -97,7 +97,7 @@ fn main() -> ExitCode {
     }
 
     if modules.is_empty() {
-        println!("{}: No modules", "error".red());
+        eprintln!("{}: No modules", "error".red());
         return ExitCode::FAILURE;
     }
 
@@ -116,12 +116,12 @@ fn main() -> ExitCode {
     match results {
         Ok(warnings) => {
             for warning in warnings {
-                println!("{}: {warning}", "warning".yellow())
+                eprintln!("{}: {warning}", "warning".yellow())
             }
             ExitCode::SUCCESS
         }
         Err(error) => {
-            println!("{}: {error}", "error".red());
+            eprintln!("{}: {error}", "error".red());
             ExitCode::FAILURE
         }
     }

@@ -422,7 +422,7 @@ impl TryFrom<Option<&SubtypeElements>> for PerVisibleRangeConstraints {
                 subtype.constraints().unwrap_or(&vec![]),
             ),
             x => {
-                println!("{x:?}");
+                eprintln!("{x:?}");
                 unreachable!()
             }
         }
