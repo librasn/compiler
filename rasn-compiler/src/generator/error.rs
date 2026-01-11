@@ -37,6 +37,24 @@ pub enum GeneratorErrorType {
     Unsupported,
 }
 
+impl Display for GeneratorErrorType {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        match self {
+            GeneratorErrorType::Asn1TypeMismatch => f.write_str("ASN1 type mismatch"),
+            GeneratorErrorType::EmptyChoiceType => f.write_str("Empty CHOICE type"),
+            GeneratorErrorType::MissingCustomSyntax => f.write_str("Missing custom syntax"),
+            GeneratorErrorType::SyntaxMismatch => f.write_str("Syntax mismatch"),
+            GeneratorErrorType::MissingClassKey => f.write_str("Missing CLASS key"),
+            GeneratorErrorType::Unidentified => f.write_str("Unidentified error"),
+            GeneratorErrorType::LexerError => f.write_str("Lexer error"),
+            GeneratorErrorType::FormattingError => f.write_str("Formatting error"),
+            GeneratorErrorType::IO => f.write_str("IO error"),
+            GeneratorErrorType::NotYetInplemented => f.write_str("Not yet implemented error"),
+            GeneratorErrorType::Unsupported => f.write_str("Unsupported error"),
+        }
+    }
+}
+
 impl Error for GeneratorError {}
 
 impl Default for GeneratorError {
@@ -71,7 +89,7 @@ impl From<LexError> for GeneratorError {
 
 impl Display for GeneratorError {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(f, "{:?} while generating bindings", self.kind)?;
+        write!(f, "{} while generating bindings", self.kind)?;
         if let Some(tld) = &self.top_level_declaration {
             write!(f, " for {}", tld.name())?;
         }
