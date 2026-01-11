@@ -103,7 +103,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
-            let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             annotations.push(self.format_range_annotations(true, &dec.constraints)?);
             let alias = self.to_rust_qualified_type(dec.module.as_deref(), &dec.identifier);
             Ok(typealias_template(
@@ -159,7 +159,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Integer(ref int) = tld.ty {
-            let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
             Ok(integer_template(
                 self.format_comments(&tld.comments),
@@ -177,7 +177,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::BitString(ref bitstr) = tld.ty {
-            let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             if bitstr.fixed_size().is_none() {
                 annotations.push(self.format_range_annotations(true, &bitstr.constraints)?);
             }
@@ -205,7 +205,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::OctetString(ref oct_str) = tld.ty {
-            let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             if oct_str.fixed_size().is_none() {
                 annotations.push(self.format_range_annotations(true, &oct_str.constraints)?);
             }
@@ -233,7 +233,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::CharacterString(ref char_str) = tld.ty {
-            let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             annotations.extend([
                 self.format_range_annotations(true, &char_str.constraints)?,
                 self.format_alphabet_annotations(char_str.ty, &char_str.constraints)?,
@@ -254,7 +254,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         // TODO: process boolean constraints
-        let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
+        let (name, annotations) = self.format_name_and_common_annotations(&tld);
         if let ASN1Type::Boolean(_) = tld.ty {
             Ok(boolean_template(
                 self.format_comments(&tld.comments),
@@ -519,7 +519,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::GeneralizedTime(_) = &tld.ty {
-            let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, annotations) = self.format_name_and_common_annotations(&tld);
             Ok(generalized_time_template(
                 self.format_comments(&tld.comments),
                 name,
@@ -535,7 +535,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::UTCTime(_) = &tld.ty {
-            let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, annotations) = self.format_name_and_common_annotations(&tld);
             Ok(utc_time_template(
                 self.format_comments(&tld.comments),
                 name,
@@ -551,7 +551,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::ObjectIdentifier(oid) = &tld.ty {
-            let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             annotations.push(self.format_range_annotations(false, &oid.constraints)?);
             Ok(oid_template(
                 self.format_comments(&tld.comments),
@@ -568,7 +568,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         if let ASN1Type::Null = tld.ty {
-            let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
+            let (name, annotations) = self.format_name_and_common_annotations(&tld);
             Ok(null_template(
                 self.format_comments(&tld.comments),
                 name,
