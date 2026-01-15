@@ -68,11 +68,11 @@ impl ToplevelDefinition {
             | ToplevelDefinition::Type(ToplevelTypeDefinition {
                 ty: ASN1Type::SetOf(s),
                 ..
-            }) => s.element_type.constraints().is_some_and(|constraints| {
-                constraints
-                    .iter()
-                    .any(|c| matches!(c, Constraint::Parameter(_)))
-            }),
+            }) => s
+                .element_type
+                .constraints()
+                .iter()
+                .any(|c| matches!(c, Constraint::Parameter(_))),
             _ => false,
         }
     }

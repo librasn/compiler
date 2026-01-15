@@ -419,7 +419,7 @@ impl TryFrom<Option<&SubtypeElements>> for PerVisibleRangeConstraints {
                 extensible: _,
             }) => per_visible_range_constraints(
                 matches!(subtype, ASN1Type::Integer(_)),
-                subtype.constraints().unwrap_or(&vec![]),
+                subtype.constraints(),
             ),
             x => {
                 eprintln!("{x:?}");
@@ -459,9 +459,7 @@ impl PerVisible for SubtypeElements {
             SubtypeElements::ContainedSubtype {
                 subtype: s,
                 extensible: _,
-            } => s
-                .constraints()
-                .is_some_and(|c| c.iter().any(|c| c.per_visible())),
+            } => s.constraints().iter().any(Constraint::per_visible),
             SubtypeElements::ValueRange {
                 min: _,
                 max: _,

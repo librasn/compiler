@@ -58,7 +58,7 @@ pub trait MemberOrOption {
 /// *See also Rec. ITU-T X.680 (02/2021) §49 - §51*
 pub trait Constrainable {
     /// returns a reference to the type's constraints
-    fn constraints(&self) -> &Vec<Constraint>;
+    fn constraints(&self) -> &[Constraint];
     /// returns a mutable reference to the type's constraints
     fn constraints_mut(&mut self) -> &mut Vec<Constraint>;
 }
@@ -66,7 +66,7 @@ pub trait Constrainable {
 macro_rules! constrainable {
     ($typ:ty) => {
         impl Constrainable for $typ {
-            fn constraints(&self) -> &Vec<Constraint> {
+            fn constraints(&self) -> &[Constraint] {
                 &self.constraints
             }
 
@@ -90,6 +90,9 @@ constrainable!(Enumerated);
 constrainable!(DeclarationElsewhere);
 constrainable!(ObjectClassFieldType);
 constrainable!(Time);
+constrainable!(UTCTime);
+constrainable!(GeneralizedTime);
+constrainable!(ObjectIdentifier);
 
 /// Representation of an ASN1 BOOLEAN data element
 /// with corresponding constraints.
