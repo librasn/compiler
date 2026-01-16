@@ -492,19 +492,14 @@ impl<B: Backend> Compiler<B, CompilerReady> {
         let mut modules: Vec<ToplevelDefinition> = vec![];
         for src in &self.state.sources {
             let src_unit = src.try_into()?;
-            modules.append(
-                &mut asn_spec(src_unit)?
-                    .into_iter()
-                    .flat_map(|(header, tlds)| {
-                        let header_ref = Rc::new(RefCell::new(header));
-                        tlds.into_iter().map(move |mut tld| {
-                            tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
-                            tld.set_module_header(header_ref.clone());
-                            tld
-                        })
-                    })
-                    .collect(),
-            );
+            modules.extend(asn_spec(src_unit)?.into_iter().flat_map(|(header, tlds)| {
+                let header_ref = Rc::new(RefCell::new(header));
+                tlds.into_iter().map(move |mut tld| {
+                    tld.apply_tagging_environment(&header_ref.borrow().tagging_environment);
+                    tld.set_module_header(header_ref.clone());
+                    tld
+                })
+            }));
         }
         let (valid_items, mut validator_errors) = Validator::new(modules).validate()?;
         let modules = valid_items.into_iter().fold(
