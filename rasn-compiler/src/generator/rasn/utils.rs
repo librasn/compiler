@@ -1173,8 +1173,6 @@ impl Rasn {
         }
     }
 
-    const REQUIRED_DERIVES: [&'static str; 6] =
-        ["Debug", "AsnType", "Encode", "Decode", "PartialEq", "Clone"];
     const COPY_DERIVE: &str = "Copy";
     const RUST_KEYWORDS: [&'static str; 53] = [
         "as",
@@ -1321,13 +1319,9 @@ impl Rasn {
     }
 
     fn required_annotations(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError> {
-        let mut required_derives = Vec::new();
-        for derive in Self::REQUIRED_DERIVES {
-            if !self.derive_is_present(derive)? {
-                required_derives.push(derive)
-            }
-        }
-        if needs_copy && !self.derive_is_present(Self::COPY_DERIVE)? {
+        let mut required_derives: Vec<_> =
+            self.required_derives.iter().map(String::as_str).collect();
+        if needs_copy && !required_derives.contains(&Self::COPY_DERIVE) {
             required_derives.push(Self::COPY_DERIVE);
         }
         let mut custom_annotations = self
@@ -1352,21 +1346,6 @@ impl Rasn {
             custom_annotations.push(quote!(#[derive(#(#derives),*)]));
         };
         Ok(custom_annotations)
-    }
-
-    fn derive_is_present(&self, annotation: &str) -> Result<bool, GeneratorError> {
-        let regex = regex::Regex::from_str(&format!(
-            r#"#\[derive\([0-z \t,]*{annotation}[0-z \t,]*\)\]"#
-        ))
-        .map_err(|e| GeneratorError {
-            details: e.to_string(),
-            ..Default::default()
-        })?;
-        Ok(self
-            .config
-            .type_annotations
-            .iter()
-            .any(|s| regex.is_match(s)))
     }
 
     pub(super) fn type_mismatch_error<T>(
@@ -1468,8 +1447,8 @@ mod tests {
             TaggingEnvironment::Automatic,
             ExtensibilityEnvironment::Explicit,
         );
-        assert!(!rasn.derive_is_present("NotPresent").unwrap());
-        assert!(rasn.derive_is_present("AsnType").unwrap());
+        assert!(!rasn.required_derives.contains(&String::from("NotPresent")));
+        assert!(rasn.required_derives.contains(&String::from("AsnType")));
     }
 
     #[test]
