@@ -377,7 +377,9 @@ impl Rasn {
             .optionality
             .default()
             .map(|_| {
-                let default_fn = self.default_method_name(parent_name, &member.name);
+                let default_fn = self
+                    .default_method_name(parent_name, &member.name)
+                    .to_string();
                 quote!(default = #default_fn)
             })
             .unwrap_or_default();
@@ -677,8 +679,8 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn default_method_name(&self, parent_name: &str, field_name: &str) -> String {
-        format!(
+    pub(crate) fn default_method_name(&self, parent_name: &str, field_name: &str) -> Ident {
+        format_ident!(
             "{}_{}_default",
             self.to_rust_snake_case(parent_name),
             self.to_rust_snake_case(field_name)
@@ -698,8 +700,7 @@ impl Rasn {
                     Some(&self.to_rust_title_case(&self.type_to_tokens(&member.ty)?.to_string())),
                 )?;
                 let ty = self.type_to_tokens(&member.ty)?;
-                let method_name =
-                    TokenStream::from_str(&self.default_method_name(parent_name, &member.name))?;
+                let method_name = self.default_method_name(parent_name, &member.name);
                 output.append_all(quote! {
                     fn #method_name() -> #ty {
                         #val
@@ -1061,8 +1062,7 @@ impl Rasn {
         let name_ident = self.to_rust_title_case(name);
         let field_inits = members.iter().map(|m| {
             let field_name = self.to_rust_snake_case(&m.name);
-            let def_method_name =
-                Ident::new(&self.default_method_name(name, &m.name), Span::call_site());
+            let def_method_name = self.default_method_name(name, &m.name);
             quote!( #field_name: #def_method_name() )
         });
 
