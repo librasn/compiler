@@ -1,4 +1,4 @@
-use std::{ops::Not, str::FromStr};
+use std::str::FromStr;
 
 use proc_macro2::{Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -32,7 +32,7 @@ macro_rules! error {
     };
 }
 
-use self::types::{CharacterString, Constrainable};
+use self::types::Constrainable;
 
 use super::*;
 
@@ -130,12 +130,12 @@ impl Rasn {
         }
     }
 
-    pub(crate) fn format_comments(&self, comments: &str) -> Result<TokenStream, GeneratorError> {
+    pub(crate) fn format_comments(&self, comments: &str) -> TokenStream {
         if comments.is_empty() {
-            Ok(TokenStream::new())
+            TokenStream::new()
         } else {
-            let joined = String::from("///") + &comments.replace('\n', "\n ///") + "\n";
-            Ok(TokenStream::from_str(&joined)?)
+            let comments = comments.lines().map(|c| c.trim_end_matches('\r'));
+            quote!(#(#[doc = #comments])*)
         }
     }
 
@@ -224,7 +224,7 @@ impl Rasn {
     pub(crate) fn format_alphabet_annotations(
         &self,
         string_type: CharacterStringType,
-        constraints: &Vec<Constraint>,
+        constraints: &[Constraint],
     ) -> Result<TokenStream, GeneratorError> {
         if constraints.is_empty() {
             return Ok(TokenStream::new());
@@ -596,7 +596,7 @@ impl Rasn {
                     kind: GeneratorErrorType::NotYetInplemented,
                 })
             }
-            ASN1Type::CharacterString(c) => (c.constraints.clone(), self.string_type(&c.ty)?),
+            ASN1Type::CharacterString(c) => (c.constraints.clone(), self.string_type(c.ty)?),
             ASN1Type::Enumerated(_)
             | ASN1Type::Choice(_)
             | ASN1Type::Sequence(_)
@@ -614,7 +614,7 @@ impl Rasn {
                     parent_name,
                     s.is_recursive,
                 )?;
-                (s.constraints().clone(), quote!(SequenceOf<#inner_type>))
+                (s.constraints().to_owned(), quote!(SequenceOf<#inner_type>))
             }
             ASN1Type::SetOf(s) => {
                 let (_, inner_type) = self.constraints_and_type_name(
@@ -623,7 +623,7 @@ impl Rasn {
                     parent_name,
                     s.is_recursive,
                 )?;
-                (s.constraints().clone(), quote!(SetOf<#inner_type>))
+                (s.constraints().to_owned(), quote!(SetOf<#inner_type>))
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
                 let mut tokenized = self.to_rust_qualified_type(e.module.as_deref(), &e.identifier);
@@ -642,7 +642,7 @@ impl Rasn {
 
     pub(crate) fn string_type(
         &self,
-        c_type: &CharacterStringType,
+        c_type: CharacterStringType,
     ) -> Result<TokenStream, GeneratorError> {
         match c_type {
             CharacterStringType::NumericString => Ok(quote!(NumericString)),
@@ -728,7 +728,7 @@ impl Rasn {
             ASN1Type::Real(_) => Ok(quote!(f64)),
             ASN1Type::BitString(_) => Ok(quote!(BitString)),
             ASN1Type::OctetString(_) => Ok(quote!(OctetString)),
-            ASN1Type::CharacterString(CharacterString { ty, .. }) => self.string_type(ty),
+            ASN1Type::CharacterString(c) => self.string_type(c.ty),
             ASN1Type::Enumerated(_) => Err(error!(
                 NotYetInplemented,
                 "Enumerated values are currently unsupported!"
@@ -933,11 +933,15 @@ impl Rasn {
                     CharacterStringType::GraphicString => {
                         Ok(quote!(GraphicString::try_from(String::from(#val)).unwrap()))
                     }
-                    CharacterStringType::VideotexString
-                    | CharacterStringType::UniversalString
-                    | CharacterStringType::TeletexString => Err(GeneratorError::new(
+                    CharacterStringType::TeletexString => {
+                        Ok(quote!(TeletexString::try_from(#val).unwrap()))
+                    }
+                    CharacterStringType::UniversalString => {
+                        Ok(quote!(UniversalString::new(Utf8String::from(#val))))
+                    }
+                    CharacterStringType::VideotexString => Err(GeneratorError::new(
                         None,
-                        &format!("{string_type:?} values are currently unsupported!"),
+                        "VideotexString values are currently unsupported!",
                         GeneratorErrorType::NotYetInplemented,
                     )),
                 }
@@ -962,9 +966,7 @@ impl Rasn {
                 ..
             }) => {
                 Self::needs_unnesting(element_type)
-                    || element_type
-                        .constraints()
-                        .is_some_and(|c| c.is_empty().not())
+                    || !element_type.constraints().is_empty()
                     || element_tag.is_some()
             }
             _ => false,
@@ -1105,23 +1107,7 @@ impl Rasn {
                 ASN1Type::GeneralizedTime(_) => Ok(quote!(GeneralizedTime)),
                 ASN1Type::UTCTime(_) => Ok(quote!(UtcTime)),
                 ASN1Type::ObjectIdentifier(_) => Ok(quote!(ObjectIdentifier)),
-                ASN1Type::CharacterString(cs) => match cs.ty {
-                    CharacterStringType::NumericString => Ok(quote!(NumericString)),
-                    CharacterStringType::VisibleString => Ok(quote!(VisibleString)),
-                    CharacterStringType::IA5String => Ok(quote!(IA5String)),
-                    CharacterStringType::UTF8String => Ok(quote!(UTF8String)),
-                    CharacterStringType::BMPString => Ok(quote!(BMPString)),
-                    CharacterStringType::PrintableString => Ok(quote!(PrintableString)),
-                    CharacterStringType::GeneralString => Ok(quote!(GeneralString)),
-                    CharacterStringType::GraphicString => Ok(quote!(GraphicString)),
-                    CharacterStringType::VideotexString
-                    | CharacterStringType::UniversalString
-                    | CharacterStringType::TeletexString => Err(GeneratorError::new(
-                        None,
-                        &format!("{:?} values are currently unsupported!", cs.ty),
-                        GeneratorErrorType::NotYetInplemented,
-                    )),
-                },
+                ASN1Type::CharacterString(cs) => self.string_type(cs.ty),
                 _ => Ok(self.to_rust_title_case(&ty.as_str())),
             }
         } else {
@@ -1187,8 +1173,6 @@ impl Rasn {
         }
     }
 
-    const REQUIRED_DERIVES: [&'static str; 6] =
-        ["Debug", "AsnType", "Encode", "Decode", "PartialEq", "Clone"];
     const COPY_DERIVE: &str = "Copy";
     const RUST_KEYWORDS: [&'static str; 53] = [
         "as",
@@ -1335,13 +1319,9 @@ impl Rasn {
     }
 
     fn required_annotations(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError> {
-        let mut required_derives = Vec::new();
-        for derive in Self::REQUIRED_DERIVES {
-            if !self.derive_is_present(derive)? {
-                required_derives.push(derive)
-            }
-        }
-        if needs_copy && !self.derive_is_present(Self::COPY_DERIVE)? {
+        let mut required_derives: Vec<_> =
+            self.required_derives.iter().map(String::as_str).collect();
+        if needs_copy && !required_derives.contains(&Self::COPY_DERIVE) {
             required_derives.push(Self::COPY_DERIVE);
         }
         let mut custom_annotations = self
@@ -1366,21 +1346,6 @@ impl Rasn {
             custom_annotations.push(quote!(#[derive(#(#derives),*)]));
         };
         Ok(custom_annotations)
-    }
-
-    fn derive_is_present(&self, annotation: &str) -> Result<bool, GeneratorError> {
-        let regex = regex::Regex::from_str(&format!(
-            r#"#\[derive\([0-z \t,]*{annotation}[0-z \t,]*\)\]"#
-        ))
-        .map_err(|e| GeneratorError {
-            details: e.to_string(),
-            ..Default::default()
-        })?;
-        Ok(self
-            .config
-            .type_annotations
-            .iter()
-            .any(|s| regex.is_match(s)))
     }
 
     pub(super) fn type_mismatch_error<T>(
@@ -1482,8 +1447,8 @@ mod tests {
             TaggingEnvironment::Automatic,
             ExtensibilityEnvironment::Explicit,
         );
-        assert!(!rasn.derive_is_present("NotPresent").unwrap());
-        assert!(rasn.derive_is_present("AsnType").unwrap());
+        assert!(!rasn.required_derives.contains(&String::from("NotPresent")));
+        assert!(rasn.required_derives.contains(&String::from("AsnType")));
     }
 
     #[test]

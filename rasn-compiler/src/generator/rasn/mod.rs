@@ -23,13 +23,16 @@ mod builder;
 mod template;
 mod utils;
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 /// A compiler backend that generates bindings to be used with
 /// the `rasn` framework for rust.
 pub struct Rasn {
     config: Config,
     tagging_environment: TaggingEnvironment,
     extensibility_environment: ExtensibilityEnvironment,
+    /// A combination of the builtin required derives (`Rasn::REQUIRED_DERIVES`) and those supplied
+    /// by the user in `Config::type_annotations`.
+    required_derives: Vec<String>,
 }
 
 #[cfg_attr(target_family = "wasm", wasm_bindgen(getter_with_clone))]
@@ -116,22 +119,44 @@ impl Backend for Rasn {
     const FILE_EXTENSION: &'static str = ".rs";
 
     fn new(
-        config: Self::Config,
+        mut config: Self::Config,
         tagging_environment: TaggingEnvironment,
         extensibility_environment: ExtensibilityEnvironment,
     ) -> Self {
+        // Remove derive's from config.type_annotations, so that they can be combined with required
+        // derives, and handled more optimally in later steps.
+        let mut required_derives: Vec<_> = Self::REQUIRED_DERIVES
+            .into_iter()
+            .map(str::to_owned)
+            .collect();
+        let mut non_derive_annotations = Vec::new();
+        for cfg_annotation in config.type_annotations {
+            if let Ok((_, derives)) = parse_rust_derive_annotation(&cfg_annotation) {
+                for derive in derives {
+                    if !required_derives.iter().any(|d| d == derive) {
+                        required_derives.push(derive.to_owned());
+                    }
+                }
+            } else {
+                non_derive_annotations.push(cfg_annotation);
+            }
+        }
+        config.type_annotations = non_derive_annotations;
+
         Self {
             config,
             extensibility_environment,
             tagging_environment,
+            required_derives,
         }
     }
 
     fn from_config(config: Self::Config) -> Self {
-        Self {
+        Self::new(
             config,
-            ..Default::default()
-        }
+            TaggingEnvironment::default(),
+            ExtensibilityEnvironment::default(),
+        )
     }
 
     fn config(&self) -> &Self::Config {
@@ -238,6 +263,9 @@ impl Backend for Rasn {
 }
 
 impl Rasn {
+    const REQUIRED_DERIVES: [&'static str; 6] =
+        ["AsnType", "Debug", "Clone", "Decode", "Encode", "PartialEq"];
+
     fn get_rustfmt_path() -> Result<PathBuf, Box<dyn Error>> {
         // Try ~/.cargo/bin/rustfmt style paths first
         if let Ok(path) = env::var("CARGO_HOME").map(PathBuf::from).map(|mut path| {
@@ -299,5 +327,42 @@ impl Rasn {
             },
             _ => Ok(bindings),
         }
+    }
+}
+
+fn parse_rust_derive_annotation(input: &str) -> nom::IResult<&str, Vec<&str>> {
+    use nom::{
+        bytes::complete::tag,
+        character::complete::{alphanumeric1, char, multispace0},
+        multi::{many0, separated_list1},
+        sequence::delimited,
+        Parser as _,
+    };
+
+    delimited(
+        (
+            multispace0,
+            char('#'),
+            multispace0,
+            char('['),
+            multispace0,
+            tag("derive"),
+            multispace0,
+            char('('),
+            multispace0,
+        ),
+        separated_list1(many0((multispace0, char(','), multispace0)), alphanumeric1),
+        (multispace0, char(')'), multispace0, char(']')),
+    )
+    .parse(input)
+}
+
+impl Default for Rasn {
+    fn default() -> Self {
+        Self::new(
+            Config::default(),
+            TaggingEnvironment::default(),
+            ExtensibilityEnvironment::default(),
+        )
     }
 }

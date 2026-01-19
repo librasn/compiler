@@ -403,6 +403,66 @@ e2e_pdu!(
 );
 
 e2e_pdu!(
+    teletexstring,
+    r#" Test-String ::= TeletexString
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    teletexstring_strict,
+    r#" Test-String ::= TeletexString SIZE (4)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    teletexstring_strict_ext,
+    r#" Test-String ::= TeletexString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    teletexstring_range,
+    r#" Test-String ::= TeletexString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    teletexstring_range_ext,
+    r#" Test-String ::= TeletexString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    teletexstring_from,
+    r#" FQDN ::= TeletexString(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-")) (SIZE (1..255))"#
+);
+
+e2e_pdu!(
+    universalstring,
+    r#" Test-String ::= UniversalString
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    universalstring_strict,
+    r#" Test-String ::= UniversalString SIZE (4)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    universalstring_strict_ext,
+    r#" Test-String ::= UniversalString SIZE (4,...)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    universalstring_range,
+    r#" Test-String ::= UniversalString SIZE (4..6)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    universalstring_range_ext,
+    r#" Test-String ::= UniversalString SIZE (4..6,...)
+        test-string-val Test-String ::= "012345""#
+);
+e2e_pdu!(
+    universalstring_from,
+    r#" FQDN ::= UniversalString(FROM ("a".."z" | "A".."Z" | "0".."9" | ".-")) (SIZE (1..255))"#
+);
+
+e2e_pdu!(
     oid_value,
     r#"organizationRoot OBJECT IDENTIFIER ::= { iso(1) identified-organization(3) teletrust(36) gematik(15) organization(2) legal-entity(3) type(1) }"#
 );
