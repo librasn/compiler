@@ -9,8 +9,7 @@ use crate::intermediate::{
         ToplevelInformationDefinition,
     },
     types::Optionality,
-    ASN1Type, ASN1Value, AsnTag, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
-    ToplevelValueDefinition,
+    ASN1Type, ASN1Value, AsnTag, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
 };
 
 use super::{
@@ -24,7 +23,7 @@ pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_";
 macro_rules! call_template {
     ($this:ident, $fn:ident, $tld:ident, $($args:expr),*) => {
         Ok($fn(
-            $this.format_comments(&$tld.comments)?,
+            $this.format_comments(&$tld.comments),
             $this.to_rust_const_case(&$tld.name),
             $($args),*
         ))
@@ -107,7 +106,7 @@ impl Rasn {
             annotations.push(self.format_range_annotations(true, &dec.constraints)?);
             let alias = self.to_rust_qualified_type(dec.module.as_deref(), &dec.identifier);
             Ok(typealias_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 alias,
                 self.join_annotations(annotations, false, true)?,
@@ -131,7 +130,7 @@ impl Rasn {
             };
             if integer_type.is_unbounded() {
                 Ok(lazy_static_value_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     self.to_rust_const_case(&tld.name),
                     ty,
                     val,
@@ -139,7 +138,7 @@ impl Rasn {
                 ))
             } else {
                 Ok(integer_value_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     self.to_rust_const_case(&tld.name),
                     ty,
                     val,
@@ -162,7 +161,7 @@ impl Rasn {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
             Ok(integer_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
                 int.int_type().to_token_stream(),
@@ -183,14 +182,14 @@ impl Rasn {
             }
             if let Some(size) = bitstr.fixed_size() {
                 Ok(fixed_bit_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                     size.to_token_stream(),
                 ))
             } else {
                 Ok(bit_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                 ))
@@ -211,14 +210,14 @@ impl Rasn {
             }
             if let Some(size) = oct_str.fixed_size() {
                 Ok(fixed_octet_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                     size.to_token_stream(),
                 ))
             } else {
                 Ok(octet_string_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name,
                     self.join_annotations(annotations, false, true)?,
                 ))
@@ -239,9 +238,9 @@ impl Rasn {
                 self.format_alphabet_annotations(char_str.ty, &char_str.constraints)?,
             ]);
             Ok(char_string_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
-                self.string_type(&char_str.ty)?,
+                self.string_type(char_str.ty)?,
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
@@ -257,7 +256,7 @@ impl Rasn {
         let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
         if let ASN1Type::Boolean(_) = tld.ty {
             Ok(boolean_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, true, true)?,
             ))
@@ -428,25 +427,7 @@ impl Rasn {
                 self.config.no_std_compliant_bindings
             ),
             ASN1Value::LinkedCharStringValue(cs_ty, _) if ty.is_builtin_type() => {
-                let ty_ts = match cs_ty {
-                    CharacterStringType::NumericString => quote!(NumericString),
-                    CharacterStringType::VisibleString => quote!(VisibleString),
-                    CharacterStringType::IA5String => quote!(IA5String),
-                    CharacterStringType::UTF8String => quote!(UTF8String),
-                    CharacterStringType::BMPString => quote!(BMPString),
-                    CharacterStringType::PrintableString => quote!(PrintableString),
-                    CharacterStringType::GeneralString => quote!(GeneralString),
-                    CharacterStringType::GraphicString => quote!(GraphicString),
-                    CharacterStringType::TeletexString
-                    | CharacterStringType::VideotexString
-                    | CharacterStringType::UniversalString => {
-                        return Err(GeneratorError::new(
-                            None,
-                            &format!("{cs_ty:?} values are currently unsupported"),
-                            GeneratorErrorType::NotYetInplemented,
-                        ))
-                    }
-                };
+                let ty_ts = self.string_type(*cs_ty)?;
                 call_template!(
                     self,
                     lazy_static_value_template,
@@ -508,7 +489,7 @@ impl Rasn {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
         Ok(any_template(
-            self.format_comments(&tld.comments)?,
+            self.format_comments(&tld.comments),
             name,
             self.join_annotations(annotations, false, true)?,
         ))
@@ -521,7 +502,7 @@ impl Rasn {
         if let ASN1Type::GeneralizedTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(generalized_time_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
             ))
@@ -537,7 +518,7 @@ impl Rasn {
         if let ASN1Type::UTCTime(_) = &tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(utc_time_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
             ))
@@ -554,7 +535,7 @@ impl Rasn {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld)?;
             annotations.push(self.format_range_annotations(false, &oid.constraints)?);
             Ok(oid_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
             ))
@@ -570,7 +551,7 @@ impl Rasn {
         if let ASN1Type::Null = tld.ty {
             let (name, annotations) = self.format_name_and_common_annotations(&tld)?;
             Ok(null_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, true, true)?,
             ))
@@ -605,7 +586,7 @@ impl Rasn {
                 ));
             }
             Ok(enumerated_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 name,
                 extensible,
                 self.format_enum_members(enumerated)?,
@@ -665,7 +646,7 @@ impl Rasn {
             }
             let formatted_options = self.format_choice_options(choice, &name.to_string())?;
             let choice_str = choice_template(
-                self.format_comments(&tld.comments)?,
+                self.format_comments(&tld.comments),
                 &name,
                 extensible,
                 formatted_options.enum_body,
@@ -738,13 +719,7 @@ impl Rasn {
                     seq.members.iter().fold(
                     TokenStream::new(),
                     |mut acc, m| {
-                        [
-                            m.constraints.clone(),
-                            m.ty.constraints().map_or(vec![], |c| c.to_vec())
-                        ]
-                        .concat()
-                        .iter()
-                        .for_each(|c| {
+                        m.constraints.iter().chain(m.ty.constraints()).for_each(|c| {
                             if let (Constraint::Table(t), ASN1Type::ObjectClassField(iofr)) = (c, &m.ty) {
                                 let decode_fn = format_ident!("decode_{}", self.to_rust_snake_case(&m.name));
                                 let open_field_name = self.to_rust_snake_case(&m.name);
@@ -798,7 +773,7 @@ impl Rasn {
                     ));
                 }
                 Ok(sequence_or_set_template(
-                    self.format_comments(&tld.comments)?,
+                    self.format_comments(&tld.comments),
                     name.clone(),
                     extensible,
                     formatted_members.struct_body,
@@ -863,7 +838,7 @@ impl Rasn {
         }
         Ok(sequence_or_set_of_template(
             is_set_of,
-            self.format_comments(&tld.comments)?,
+            self.format_comments(&tld.comments),
             name,
             anonymous_item,
             member_type,
@@ -999,7 +974,7 @@ impl Rasn {
                         } => self.to_rust_title_case(ref_id),
                         _ => format_ident!("{field_enum_name}_{index}").to_token_stream(),
                     };
-                    if ty.constraints().is_none_or(|c| c.is_empty()) {
+                    if ty.constraints().is_empty() {
                         ids.push((variant_name, type_id, identifier_value));
                         inner_types.push(TokenStream::new());
                     } else {
@@ -1015,18 +990,11 @@ impl Rasn {
                             .parse::<TokenStream>()
                             .unwrap();
                         let range_constraints = self
-                            .format_range_annotations(
-                                signed_range,
-                                ty.constraints().unwrap_or(&Vec::<_>::new()),
-                            )
+                            .format_range_annotations(signed_range, ty.constraints())
                             .unwrap();
                         let alphabet_constraints = character_string_type
                             .and_then(|c| {
-                                self.format_alphabet_annotations(
-                                    c,
-                                    ty.constraints().unwrap_or(&Vec::<_>::new()),
-                                )
-                                .ok()
+                                self.format_alphabet_annotations(c, ty.constraints()).ok()
                             })
                             .unwrap_or_default();
                         let annotations = self.join_annotations(
