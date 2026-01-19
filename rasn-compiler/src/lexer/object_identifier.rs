@@ -24,29 +24,48 @@ use super::{
     RELATIVE_OID,
 };
 
-/// Tries to parse an ASN1 OBJECT IDENTIFIER
-/// As opposed to other ASN1 "types", an OBJECT IDENTIFIER is always a value.
-/// In some places of an ASN1 spec, we do not encounter the `OBJECT IDENTIFIER` keyword
-/// before an OBJECT IDENTIFIER value, such as in the header's module identifier.
+/// Parse an `ObjectIdentifierValue` or an `RelativeOIDValue`.
 ///
-/// *`input` - [Input]-wrapped string slice to be matched against
+/// Syntax:
 ///
-/// `object_identifier` will try to match an OBJECT IDENTIFIER declaration in the `input` string.
-/// If the match succeeds, the lexer will consume the match and return the remaining string
-/// and an `ObjectIdentifier` value representing the ASN1 declaration.
-/// If the match fails, the lexer will not consume the input and will return an error.
+/// ```text
+/// ObjectIdentifierValue ::=
+///     "{" ObjIdComponentsList "}"  |
+///     "{" DefinedValue ObjIdComponentsList "}"
+///
+/// ObjIdComponentsList ::=
+///     ObjIdComponents  |
+///     ObjIdComponents ObjIdComponentsList
+///
+/// RelativeOIDValue ::=
+///     "{" RelativeOIDComponentsList "}"
+///
+/// RelativeOIDComponentsList ::=
+///     RelativeOIDComponents  |
+///     RelativeOIDComponents RelativeOIDComponentsList
+/// ```
 pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierValue> {
-    into(skip_ws_and_comments(preceded(
-        // TODO: store info whether the object id is relative
-        opt(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
-        in_braces(many1(skip_ws(object_identifier_arc))),
-    )))
+    into(skip_ws_and_comments(in_braces(many1(skip_ws(
+        object_identifier_arc,
+    )))))
     .parse(input)
 }
 
+/// Parse an `ObjectIdentifierType` or an `RelativeOIDType`.
+///
+/// Syntax:
+///
+/// ```text
+/// ObjectIdentifierType ::=
+///     OBJECT IDENTIFIER
+///
+/// RelativeOIDType ::=
+///     RELATIVE-OID
+/// ```
 pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         into(preceded(
+            // TODO: store info whether the object id is relative
             skip_ws_and_comments(alt((tag(OBJECT_IDENTIFIER), tag(RELATIVE_OID)))),
             opt(skip_ws_and_comments(constraints)),
         )),
@@ -55,6 +74,32 @@ pub fn object_identifier(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     .parse(input)
 }
 
+/// Parse an `ObjIdComponents ` or an `RelativeOIDComponents`.
+///
+/// Syntax:
+///
+/// ```text
+/// ObjIdComponents ::=
+///     NameForm          |
+///     NumberForm        |
+///     NameAndNumberForm |
+///     DefinedValue
+///
+/// NameForm ::=
+///     identifier
+///
+/// NumberForm ::=
+///     number  |
+///     DefinedValue
+///
+/// NameAndNumberForm ::=
+///     identifier "(" NumberForm ")"
+///
+/// RelativeOIDComponents ::=
+///     NumberForm        |
+///     NameAndNumberForm |
+///     DefinedValue
+/// ```
 fn object_identifier_arc(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
     skip_ws(alt((
         numeric_id,
@@ -64,6 +109,18 @@ fn object_identifier_arc(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierA
     .parse(input)
 }
 
+/// Parse a `NumberForm`.
+///
+/// Syntax:
+///
+/// ```text
+/// NumberForm ::=
+///     number  |
+///     DefinedValue
+/// ```
+///
+/// Note: The `DefinedValue` alternative is not parsed here, since it is already parsed in
+/// `object_identifier_arc`.
 fn numeric_id(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
     map(u128, |i| i.into()).parse(input)
 }
