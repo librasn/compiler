@@ -9,7 +9,7 @@ use crate::intermediate::{
         ToplevelInformationDefinition,
     },
     types::Optionality,
-    ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
+    ASN1Type, ASN1Value, AsnTag, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
 };
 
 use super::{
@@ -484,7 +484,7 @@ impl Rasn {
         tld: ToplevelTypeDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         let name = self.to_rust_title_case(&tld.name);
-        let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref(), false)];
+        let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref())];
         if name.to_string() != tld.name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
@@ -577,8 +577,7 @@ impl Rasn {
                 })
                 .unwrap_or_default();
             let name = self.to_rust_title_case(&tld.name);
-            let mut annotations =
-                vec![quote!(enumerated), self.format_tag(tld.tag.as_ref(), false)];
+            let mut annotations = vec![quote!(enumerated), self.format_tag(tld.tag.as_ref())];
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -615,14 +614,29 @@ impl Rasn {
                     #[non_exhaustive]}
                 })
                 .unwrap_or_default();
-            let mut annotations = vec![
-                quote!(choice),
-                self.format_tag(
-                    tld.tag.as_ref(),
-                    self.tagging_environment == TaggingEnvironment::Automatic
-                        && !choice.options.iter().any(|o| o.tag.is_some()),
-                ),
-            ];
+            let mut annotations = vec![quote!(choice)];
+
+            // ITU-T X.680 section 31.2.7 clause c:
+            // use explicit tagging in IMPLICIT or AUTOMATIC tagging envirnonments when untagged choice is tagged
+            if let Some(tag) = &tld.tag {
+                if self.tagging_environment != TaggingEnvironment::Explicit {
+                    let explicit_tag = AsnTag {
+                        environment: TaggingEnvironment::Explicit,
+                        ..tag.clone()
+                    };
+                    annotations.push(self.format_tag(Some(&explicit_tag)));
+                } else {
+                    annotations.push(self.format_tag(tld.tag.as_ref()));
+                }
+            }
+
+            // ITU-T X.680 clause 29.2: enable automatic tagging if none of the members are tagged type
+            if self.tagging_environment == TaggingEnvironment::Automatic
+                && !choice.options.iter().any(|o| o.tag.is_some())
+            {
+                annotations.push(quote!(automatic_tags));
+            }
+
             if name.to_string() != tld.name {
                 annotations.push(self.format_identifier_annotation(
                     &tld.name,
@@ -742,14 +756,15 @@ impl Rasn {
                 };
                 let formatted_members =
                     self.format_sequence_or_set_members(seq, &name.to_string())?;
-                let mut annotations = vec![
-                    set_annotation,
-                    self.format_tag(
-                        tld.tag.as_ref(),
-                        self.tagging_environment == TaggingEnvironment::Automatic
-                            && !seq.members.iter().any(|m| m.tag.is_some()),
-                    ),
-                ];
+                let mut annotations = vec![set_annotation, self.format_tag(tld.tag.as_ref())];
+
+                // ITU-T X.680 clause 25.3: enable automatic tagging if none of the members are tagged type
+                if self.tagging_environment == TaggingEnvironment::Automatic
+                    && !seq.members.iter().any(|m| m.tag.is_some())
+                {
+                    annotations.push(quote!(automatic_tags));
+                }
+
                 if name.to_string() != tld.name {
                     annotations.push(self.format_identifier_annotation(
                         &tld.name,
@@ -816,7 +831,7 @@ impl Rasn {
         let mut annotations = vec![
             quote!(delegate),
             self.format_range_annotations(true, &seq_or_set_of.constraints)?,
-            self.format_tag(tld.tag.as_ref(), false),
+            self.format_tag(tld.tag.as_ref()),
         ];
         if name.to_string() != tld.name {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
