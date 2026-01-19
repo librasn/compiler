@@ -38,13 +38,17 @@ where
 }
 
 pub fn until_next_unindented(input: &str, at_least_until: usize, fallback_len: usize) -> &str {
-    match regex::Regex::new("\n[A-Za-z0-9]")
-        .ok()
-        .and_then(|needle| needle.find(&input[at_least_until..]))
-    {
-        Some(m) => &input[..(m.start() + at_least_until)],
-        _ => input[..input.len().min(fallback_len)].trim(),
+    let mut prev_was_newline = false;
+    for (idx, ch) in input[at_least_until..].char_indices() {
+        if prev_was_newline && ch.is_ascii_alphanumeric() {
+            // Found "\n[A-Za-z0-9]" pattern, return up to the newline
+            return &input[..(idx - 1 + at_least_until)];
+        }
+        prev_was_newline = ch == '\n';
     }
+
+    // No match found, use fallback
+    input[..input.len().min(fallback_len)].trim()
 }
 
 pub fn hex_to_bools(c: char) -> [bool; 4] {
