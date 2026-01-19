@@ -9,8 +9,7 @@ use crate::intermediate::{
         ToplevelInformationDefinition,
     },
     types::Optionality,
-    ASN1Type, ASN1Value, CharacterStringType, ToplevelDefinition, ToplevelTypeDefinition,
-    ToplevelValueDefinition,
+    ASN1Type, ASN1Value, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
 };
 
 use super::{
@@ -241,7 +240,7 @@ impl Rasn {
             Ok(char_string_template(
                 self.format_comments(&tld.comments),
                 name,
-                self.string_type(&char_str.ty)?,
+                self.string_type(char_str.ty)?,
                 self.join_annotations(annotations, false, true)?,
             ))
         } else {
@@ -428,25 +427,7 @@ impl Rasn {
                 self.config.no_std_compliant_bindings
             ),
             ASN1Value::LinkedCharStringValue(cs_ty, _) if ty.is_builtin_type() => {
-                let ty_ts = match cs_ty {
-                    CharacterStringType::NumericString => quote!(NumericString),
-                    CharacterStringType::VisibleString => quote!(VisibleString),
-                    CharacterStringType::IA5String => quote!(IA5String),
-                    CharacterStringType::UTF8String => quote!(UTF8String),
-                    CharacterStringType::BMPString => quote!(BMPString),
-                    CharacterStringType::PrintableString => quote!(PrintableString),
-                    CharacterStringType::GeneralString => quote!(GeneralString),
-                    CharacterStringType::GraphicString => quote!(GraphicString),
-                    CharacterStringType::TeletexString
-                    | CharacterStringType::VideotexString
-                    | CharacterStringType::UniversalString => {
-                        return Err(GeneratorError::new(
-                            None,
-                            &format!("{cs_ty:?} values are currently unsupported"),
-                            GeneratorErrorType::NotYetInplemented,
-                        ))
-                    }
-                };
+                let ty_ts = self.string_type(*cs_ty)?;
                 call_template!(
                     self,
                     lazy_static_value_template,
