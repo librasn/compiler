@@ -1297,7 +1297,7 @@ impl Rasn {
     pub(super) fn format_name_and_common_annotations(
         &self,
         tld: &ToplevelTypeDefinition,
-    ) -> Result<(TokenStream, Vec<TokenStream>), GeneratorError> {
+    ) -> (TokenStream, Vec<TokenStream>) {
         let name = self.to_rust_title_case(&tld.name);
         let mut annotations = vec![quote!(delegate), self.format_tag(tld.tag.as_ref())];
 
@@ -1305,7 +1305,7 @@ impl Rasn {
             annotations.push(self.format_identifier_annotation(&tld.name, &tld.comments, &tld.ty));
         }
 
-        Ok((name, annotations))
+        (name, annotations)
     }
 
     fn required_annotations(&self, needs_copy: bool) -> Result<Vec<TokenStream>, GeneratorError> {
