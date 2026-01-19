@@ -19,7 +19,7 @@ use std::{
     borrow::Cow,
     cell::RefCell,
     collections::BTreeMap,
-    ops::{Add, Deref},
+    ops::Add,
     rc::Rc,
     sync::LazyLock,
 };
@@ -1011,9 +1011,17 @@ impl CharacterStringType {
             .enumerate()
             .collect()
         });
+        // X.680 defines VisibleString using the ISO/IEC 646 encoding (cells 2/0–7/14),
+        // i.e. the 95 visible characters with indices computed as (ISO 646 ENCODING) - 32.
+        static VISIBLE_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
+            (0x20u32..=0x7Eu32)
+                .filter_map(char::from_u32)
+                .enumerate()
+                .collect()
+        });
         static IA5_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
             (0..128u32)
-                .map(|i| char::from_u32(i).unwrap())
+                .filter_map(char::from_u32)
                 .enumerate()
                 .collect()
         });
@@ -1026,10 +1034,9 @@ impl CharacterStringType {
 
         match self {
             CharacterStringType::NumericString => &NUMERIC_CHARSET,
-            CharacterStringType::VisibleString | CharacterStringType::PrintableString => {
-                &PRINTABLE_CHARSET
-            }
-            CharacterStringType::IA5String => IA5_CHARSET.deref(),
+            CharacterStringType::VisibleString => &VISIBLE_CHARSET,
+            CharacterStringType::PrintableString => &PRINTABLE_CHARSET,
+            CharacterStringType::IA5String => &IA5_CHARSET,
             _ => &ANY_CHARSET,
         }
     }
