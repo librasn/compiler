@@ -44,45 +44,7 @@ impl Rasn {
         tld: ToplevelDefinition,
     ) -> Result<TokenStream, GeneratorError> {
         match tld {
-            ToplevelDefinition::Type(t) => {
-                if t.parameterization.is_some() {
-                    return Ok(TokenStream::new());
-                }
-                match t.ty {
-                    ASN1Type::Null => self.generate_null(t),
-                    ASN1Type::Boolean(_) => self.generate_boolean(t),
-                    ASN1Type::Integer(_) => self.generate_integer(t),
-                    ASN1Type::Enumerated(_) => self.generate_enumerated(t),
-                    ASN1Type::BitString(_) => self.generate_bit_string(t),
-                    ASN1Type::CharacterString(_) => self.generate_character_string(t),
-                    ASN1Type::Sequence(_) | ASN1Type::Set(_) => self.generate_sequence_or_set(t),
-                    ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => {
-                        self.generate_sequence_or_set_of(t)
-                    }
-                    ASN1Type::ElsewhereDeclaredType(_) => self.generate_typealias(t),
-                    ASN1Type::Choice(_) => self.generate_choice(t),
-                    ASN1Type::OctetString(_) => self.generate_octet_string(t),
-                    ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),
-                    ASN1Type::Real(_) => Err(GeneratorError {
-                        kind: GeneratorErrorType::NotYetInplemented,
-                        details: "Real types are currently unsupported!".into(),
-                        top_level_declaration: None,
-                    }),
-                    ASN1Type::ObjectIdentifier(_) => self.generate_oid(t),
-                    ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
-                        self.generate_any(t)
-                    }
-                    ASN1Type::GeneralizedTime(_) => self.generate_generalized_time(t),
-                    ASN1Type::UTCTime(_) => self.generate_utc_time(t),
-                    ASN1Type::Any => self.generate_any(t),
-                    ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
-                        kind: GeneratorErrorType::Asn1TypeMismatch,
-                        details: "Choice selection type should have been resolved at this point!"
-                            .into(),
-                        top_level_declaration: None,
-                    }),
-                }
-            }
+            ToplevelDefinition::Type(t) => self.generate_type(t),
             ToplevelDefinition::Value(v) => self.generate_value(v),
             ToplevelDefinition::Class(_) => Ok(TokenStream::new()),
             ToplevelDefinition::Object(o) => match o.value {
@@ -93,6 +55,46 @@ impl Rasn {
                 kind: GeneratorErrorType::NotYetInplemented,
                 details: "MACROs are currently unsupported!".to_string(),
                 top_level_declaration: Some(Box::new(tld)),
+            }),
+        }
+    }
+
+    pub(crate) fn generate_type(
+        &self,
+        tld: ToplevelTypeDefinition,
+    ) -> Result<TokenStream, GeneratorError> {
+        if tld.parameterization.is_some() {
+            return Ok(TokenStream::new());
+        }
+        match tld.ty {
+            ASN1Type::Null => self.generate_null(tld),
+            ASN1Type::Boolean(_) => self.generate_boolean(tld),
+            ASN1Type::Integer(_) => self.generate_integer(tld),
+            ASN1Type::Enumerated(_) => self.generate_enumerated(tld),
+            ASN1Type::BitString(_) => self.generate_bit_string(tld),
+            ASN1Type::CharacterString(_) => self.generate_character_string(tld),
+            ASN1Type::Sequence(_) | ASN1Type::Set(_) => self.generate_sequence_or_set(tld),
+            ASN1Type::SequenceOf(_) | ASN1Type::SetOf(_) => self.generate_sequence_or_set_of(tld),
+            ASN1Type::ElsewhereDeclaredType(_) => self.generate_typealias(tld),
+            ASN1Type::Choice(_) => self.generate_choice(tld),
+            ASN1Type::OctetString(_) => self.generate_octet_string(tld),
+            ASN1Type::Time(_) => unimplemented!("rasn does not support TIME types yet!"),
+            ASN1Type::Real(_) => Err(GeneratorError {
+                kind: GeneratorErrorType::NotYetInplemented,
+                details: "Real types are currently unsupported!".into(),
+                top_level_declaration: None,
+            }),
+            ASN1Type::ObjectIdentifier(_) => self.generate_oid(tld),
+            ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
+                self.generate_any(tld)
+            }
+            ASN1Type::GeneralizedTime(_) => self.generate_generalized_time(tld),
+            ASN1Type::UTCTime(_) => self.generate_utc_time(tld),
+            ASN1Type::Any => self.generate_any(tld),
+            ASN1Type::ChoiceSelectionType(_) => Err(GeneratorError {
+                kind: GeneratorErrorType::Asn1TypeMismatch,
+                details: "Choice selection type should have been resolved at this point!".into(),
+                top_level_declaration: None,
             }),
         }
     }
@@ -807,19 +809,17 @@ impl Rasn {
         let name = self.to_rust_title_case(&tld.name);
         let anonymous_item = match seq_or_set_of.element_type.as_ref() {
             ASN1Type::ElsewhereDeclaredType(_) => None,
-            n => Some(
-                self.generate_tld(ToplevelDefinition::Type(ToplevelTypeDefinition {
-                    parameterization: None,
-                    comments: format!(
-                        " Anonymous {} OF member ",
-                        if is_set_of { "SET" } else { "SEQUENCE" }
-                    ),
-                    name: String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string(),
-                    ty: n.clone(),
-                    tag: None,
-                    module_header: None,
-                }))?,
-            ),
+            n => Some(self.generate_type(ToplevelTypeDefinition {
+                parameterization: None,
+                comments: format!(
+                    " Anonymous {} OF member ",
+                    if is_set_of { "SET" } else { "SEQUENCE" }
+                ),
+                name: String::from(INNER_ARRAY_LIKE_PREFIX) + &name.to_string(),
+                ty: n.clone(),
+                tag: None,
+                module_header: None,
+            })?),
         }
         .unwrap_or_default();
         let member_type = match seq_or_set_of.element_type.as_ref() {
