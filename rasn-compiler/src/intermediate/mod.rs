@@ -34,7 +34,6 @@ use information_object::{
 use internal_macros::EnumDebug;
 use macros::ToplevelMacroDefinition;
 use parameterization::Parameterization;
-use quote::{quote, ToTokens, TokenStreamExt};
 use types::*;
 
 #[cfg(doc)]
@@ -1054,22 +1053,6 @@ pub enum IntegerType {
     Int64,
     Uint64,
     Unbounded,
-}
-
-impl ToTokens for IntegerType {
-    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        match self {
-            IntegerType::Int8 => tokens.append_all(quote!(i8)),
-            IntegerType::Uint8 => tokens.append_all(quote!(u8)),
-            IntegerType::Int16 => tokens.append_all(quote!(i16)),
-            IntegerType::Uint16 => tokens.append_all(quote!(u16)),
-            IntegerType::Int32 => tokens.append_all(quote!(i32)),
-            IntegerType::Uint32 => tokens.append_all(quote!(u32)),
-            IntegerType::Int64 => tokens.append_all(quote!(i64)),
-            IntegerType::Uint64 => tokens.append_all(quote!(u64)),
-            IntegerType::Unbounded => tokens.append_all(quote!(Integer)),
-        }
-    }
 }
 
 impl IntegerType {
