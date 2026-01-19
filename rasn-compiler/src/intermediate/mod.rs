@@ -15,7 +15,14 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc};
+use std::{
+    borrow::Cow,
+    cell::RefCell,
+    collections::BTreeMap,
+    ops::{Add, Deref},
+    rc::Rc,
+    sync::LazyLock,
+};
 
 use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
@@ -966,15 +973,6 @@ impl ASN1Type {
     }
 }
 
-pub const NUMERIC_STRING_CHARSET: [char; 11] =
-    [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-pub const PRINTABLE_STRING_CHARSET: [char; 74] = [
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-    'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4',
-    '5', '6', '7', '8', '9', ' ', '\'', '(', ')', '+', ',', '-', '.', '/', ':', '=', '?',
-];
-
 /// The types of an ASN1 character strings.
 #[cfg_attr(test, derive(EnumDebug))]
 #[cfg_attr(not(test), derive(Debug))]
@@ -994,22 +992,45 @@ pub enum CharacterStringType {
 }
 
 impl CharacterStringType {
-    pub fn character_set(&self) -> BTreeMap<usize, char> {
-        match self {
-            CharacterStringType::NumericString => {
-                NUMERIC_STRING_CHARSET.into_iter().enumerate().collect()
-            }
-            CharacterStringType::VisibleString | CharacterStringType::PrintableString => {
-                PRINTABLE_STRING_CHARSET.into_iter().enumerate().collect()
-            }
-            CharacterStringType::IA5String => (0..128u32)
+    pub fn character_set(&self) -> &'static BTreeMap<usize, char> {
+        static NUMERIC_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
+            [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                .into_iter()
+                .enumerate()
+                .collect()
+        });
+        static PRINTABLE_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
+            [
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+                'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '\'',
+                '(', ')', '+', ',', '-', '.', '/', ':', '=', '?',
+            ]
+            .into_iter()
+            .enumerate()
+            .collect()
+        });
+        static IA5_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
+            (0..128u32)
                 .map(|i| char::from_u32(i).unwrap())
                 .enumerate()
-                .collect(),
-            _ => (0..u16::MAX as u32)
+                .collect()
+        });
+        static ANY_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
+            (0..u16::MAX as u32)
                 .filter_map(char::from_u32)
                 .enumerate()
-                .collect(),
+                .collect()
+        });
+
+        match self {
+            CharacterStringType::NumericString => &NUMERIC_CHARSET,
+            CharacterStringType::VisibleString | CharacterStringType::PrintableString => {
+                &PRINTABLE_CHARSET
+            }
+            CharacterStringType::IA5String => IA5_CHARSET.deref(),
+            _ => &ANY_CHARSET,
         }
     }
 }

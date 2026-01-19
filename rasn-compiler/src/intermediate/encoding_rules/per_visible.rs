@@ -84,7 +84,7 @@ impl PerVisibleAlphabetConstraints {
             Constraint::Subtype(c) => match &c.set {
                 ElementOrSetOperation::Element(e) => Self::from_subtype_elem(Some(e), string_type),
                 ElementOrSetOperation::SetOperation(s) => Self::from_subtype_elem(
-                    fold_constraint_set(s, Some(&string_type.character_set()), false)?.as_ref(),
+                    fold_constraint_set(s, Some(string_type.character_set()), false)?.as_ref(),
                     string_type,
                 ),
             },
@@ -133,7 +133,7 @@ impl PerVisibleAlphabetConstraints {
                     let mut char_subset = s
                         .clone()
                         .chars()
-                        .map(|c| find_char_index(&string_type.character_set(), c).map(|i| (i, c)))
+                        .map(|c| find_char_index(string_type.character_set(), c).map(|i| (i, c)))
                         .collect::<Result<Vec<(usize, char)>, _>>()?;
                     char_subset.sort_by(|(a, _), (b, _)| a.cmp(b));
                     Ok(Some(PerVisibleAlphabetConstraints {
@@ -160,12 +160,12 @@ impl PerVisibleAlphabetConstraints {
                 }
                 let (lower, upper) = match (min, max) {
                     (Some(ASN1Value::String(min)), Some(ASN1Value::String(max))) => (
-                        find_string_index(min, &char_set)?,
-                        find_string_index(max, &char_set)?,
+                        find_string_index(min, char_set)?,
+                        find_string_index(max, char_set)?,
                     ),
-                    (None, Some(ASN1Value::String(max))) => (0, find_string_index(max, &char_set)?),
+                    (None, Some(ASN1Value::String(max))) => (0, find_string_index(max, char_set)?),
                     (Some(ASN1Value::String(min)), None) => {
-                        (find_string_index(min, &char_set)?, char_set.len() - 1)
+                        (find_string_index(min, char_set)?, char_set.len() - 1)
                     }
                     _ => (0, char_set.len() - 1),
                 };
@@ -1153,7 +1153,7 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::IA5String.character_set()),
+                Some(CharacterStringType::IA5String.character_set()),
                 false
             )
             .unwrap()
@@ -1178,7 +1178,7 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::IA5String.character_set()),
+                Some(CharacterStringType::IA5String.character_set()),
                 false
             )
             .unwrap()
@@ -1208,7 +1208,7 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 false,
             )
             .unwrap()
@@ -1235,7 +1235,7 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 false
             )
             .unwrap()
@@ -1267,7 +1267,7 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::VisibleString.character_set()),
+                Some(CharacterStringType::VisibleString.character_set()),
                 false,
             )
             .unwrap()
@@ -1295,7 +1295,7 @@ mod tests {
                         }
                     ))
                 },
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 false
             )
             .unwrap()
@@ -1481,7 +1481,7 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Intersection),
-                Some(&CharacterStringType::IA5String.character_set()),
+                Some(CharacterStringType::IA5String.character_set()),
                 false
             )
             .unwrap()
@@ -1498,7 +1498,7 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Union),
-                Some(&CharacterStringType::IA5String.character_set()),
+                Some(CharacterStringType::IA5String.character_set()),
                 false
             )
             .unwrap(),
@@ -1525,7 +1525,7 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Intersection),
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 false
             )
             .unwrap()
@@ -1538,7 +1538,7 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Union),
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 false
             )
             .unwrap(),
@@ -1580,7 +1580,7 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Intersection),
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 true
             )
             .unwrap()
@@ -1604,7 +1604,7 @@ mod tests {
         assert_eq!(
             fold_constraint_set(
                 &set_op(SetOperator::Union),
-                Some(&CharacterStringType::PrintableString.character_set()),
+                Some(CharacterStringType::PrintableString.character_set()),
                 true
             )
             .unwrap(),
