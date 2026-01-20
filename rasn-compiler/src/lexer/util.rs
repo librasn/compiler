@@ -157,7 +157,7 @@ pub fn take_until_unbalanced<'a>(
     move |i: Input<'a>| {
         let mut index = 0;
         let mut bracket_counter = 0;
-        'consume: loop {
+        while index < i.len() {
             let input = i.slice(index..);
 
             if input.inner().starts_with(opening_tag) {
@@ -166,8 +166,6 @@ pub fn take_until_unbalanced<'a>(
             } else if input.inner().starts_with(closing_tag) {
                 bracket_counter -= 1;
                 index += closing_tag.len();
-            } else if index == i.len() - 1 {
-                break 'consume;
             } else {
                 let c = i.slice(index..).inner().chars().next().unwrap_or_default();
                 index += c.len_utf8();
