@@ -109,10 +109,13 @@ fn extension_group(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
 }
 
 pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponent> {
-    skip_ws_and_comments(alt((
+    alt((
         map(
             preceded(
-                tag(COMPONENTS_OF),
+                (
+                    skip_ws_and_comments(tag(COMPONENTS)),
+                    skip_ws_and_comments(tag(OF)),
+                ),
                 skip_ws_and_comments(alt((
                     into_inner(recognize(separated_list1(tag(".&"), identifier))),
                     type_reference,
@@ -121,7 +124,7 @@ pub fn sequence_component(input: Input<'_>) -> ParserResult<'_, SequenceComponen
             |id| SequenceComponent::ComponentsOf(id.into()),
         ),
         map(sequence_or_set_member, SequenceComponent::Member),
-    )))
+    ))
     .parse(input)
 }
 

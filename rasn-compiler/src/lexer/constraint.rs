@@ -388,14 +388,17 @@ fn user_defined_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElements
 ///     DefinedObjectClass
 /// ```
 fn user_defined_constraint_real(input: Input<'_>) -> ParserResult<'_, UserDefinedConstraint> {
-    skip_ws_and_comments(into(preceded(
-        tag(CONSTRAINED_BY),
+    into(preceded(
+        (
+            skip_ws_and_comments(tag(CONSTRAINED)),
+            skip_ws_and_comments(tag(BY)),
+        ),
         skip_ws_and_comments(delimited(
             char(LEFT_BRACE),
             take_until_unbalanced("{", "}"),
             char(RIGHT_BRACE),
         )),
-    )))
+    ))
     .parse(input)
 }
 
@@ -426,10 +429,13 @@ fn permitted_alphabet_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeEl
 fn single_type_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElements> {
     opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
-        skip_ws_and_comments(into(preceded(
-            tag(WITH_COMPONENT),
+        into(preceded(
+            (
+                skip_ws_and_comments(tag(WITH)),
+                skip_ws_and_comments(tag(COMPONENT)),
+            ),
             skip_ws_and_comments(map(constraints, SubtypeElements::SingleTypeConstraint)),
-        ))),
+        )),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
     )
     .parse(input)
@@ -457,8 +463,11 @@ fn single_type_constraint(input: Input<'_>) -> ParserResult<'_, SubtypeElements>
 fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElements> {
     opt_delimited(
         skip_ws_and_comments(char(LEFT_PARENTHESIS)),
-        skip_ws_and_comments(into(preceded(
-            tag(WITH_COMPONENTS),
+        into(preceded(
+            (
+                skip_ws_and_comments(tag(WITH)),
+                skip_ws_and_comments(tag(COMPONENTS)),
+            ),
             in_braces(pair(
                 opt(skip_ws_and_comments(terminated(
                     value(ExtensionMarker(), tag(ELLIPSIS)),
@@ -469,7 +478,7 @@ fn multiple_type_constraints(input: Input<'_>) -> ParserResult<'_, SubtypeElemen
                     opt(skip_ws_and_comments(char(COMMA))),
                 )),
             )),
-        ))),
+        )),
         skip_ws_and_comments(char(RIGHT_PARENTHESIS)),
     )
     .parse(input)
@@ -522,7 +531,13 @@ fn content_constraint(input: Input<'_>) -> ParserResult<'_, ContentConstraint> {
             map(
                 pair(
                     preceded(skip_ws_and_comments(tag(CONTAINING)), skip_ws(asn1_type)),
-                    preceded(skip_ws_and_comments(tag(ENCODED_BY)), skip_ws(asn1_value)),
+                    preceded(
+                        (
+                            skip_ws_and_comments(tag(ENCODED)),
+                            skip_ws_and_comments(tag(BY)),
+                        ),
+                        skip_ws(asn1_value),
+                    ),
                 ),
                 |v| ContentConstraint::ContainingEncodedBy {
                     containing: v.0,
@@ -534,7 +549,13 @@ fn content_constraint(input: Input<'_>) -> ParserResult<'_, ContentConstraint> {
                 ContentConstraint::Containing,
             ),
             map(
-                preceded(skip_ws_and_comments(tag(ENCODED_BY)), skip_ws(asn1_value)),
+                preceded(
+                    (
+                        skip_ws_and_comments(tag(ENCODED)),
+                        skip_ws_and_comments(tag(BY)),
+                    ),
+                    skip_ws(asn1_value),
+                ),
                 ContentConstraint::EncodedBy,
             ),
         ))),

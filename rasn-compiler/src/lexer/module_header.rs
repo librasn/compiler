@@ -6,7 +6,7 @@ use nom::{
     branch::alt,
     bytes::complete::{tag, take_until},
     character::complete::{char, one_of},
-    combinator::{into, map, not, opt, peek, recognize, value},
+    combinator::{into, map, not, opt, peek, recognize, success, value},
     multi::{many0, many1, separated_list1},
     sequence::{delimited, pair, preceded, separated_pair, terminated},
     Parser,
@@ -141,10 +141,13 @@ fn import(input: Input<'_>) -> ParserResult<'_, Import> {
             skip_ws_and_comments(tag(FROM)),
             skip_ws_and_comments(pair(
                 global_module_reference,
-                opt(into_inner(skip_ws_and_comments(alt((
-                    tag(WITH_SUCCESSORS),
-                    tag(WITH_DESCENDANTS),
-                ))))),
+                opt(preceded(
+                    skip_ws_and_comments(tag(WITH)),
+                    skip_ws_and_comments(alt((
+                        value(With::Successors, tag(SUCCESSORS)),
+                        value(With::Descendants, tag(DESCENDANTS)),
+                    ))),
+                )),
             )),
         ),
     )))
@@ -177,13 +180,14 @@ fn environments(
                 _ => TaggingEnvironment::Implicit,
             },
         )),
-        skip_ws_and_comments(map(opt(tag(EXTENSIBILITY_IMPLIED)), |m| {
-            if m.is_some() {
-                ExtensibilityEnvironment::Implied
-            } else {
-                ExtensibilityEnvironment::Explicit
-            }
-        })),
+        value(
+            ExtensibilityEnvironment::Implied,
+            (
+                skip_ws_and_comments(tag(EXTENSIBILITY)),
+                skip_ws_and_comments(tag(IMPLIED)),
+            ),
+        )
+        .or(success(ExtensibilityEnvironment::Explicit)),
     )
         .parse(input)
 }
