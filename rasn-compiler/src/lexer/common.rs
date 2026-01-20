@@ -366,6 +366,14 @@ and one */"#
     }
 
     #[test]
+    fn unterminated_block_comment_is_err() {
+        assert!(block_comment("/*".into()).is_err());
+        assert!(block_comment("/* Unnested".into()).is_err());
+        assert!(block_comment("/* Outer /* Nested".into()).is_err());
+        assert!(block_comment("/* Outer /* Nested */ outer".into()).is_err());
+    }
+
+    #[test]
     fn parses_multiline_block_comment() {
         assert_eq!(comment(r#"/**
       * This DE indicates a change of acceleration.

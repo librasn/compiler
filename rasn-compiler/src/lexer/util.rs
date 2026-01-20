@@ -1,8 +1,7 @@
 use std::{cmp::min, fmt::Debug};
 
 use nom::{
-    bytes::complete::tag,
-    error::{Error, ErrorKind, ParseError},
+    error::{ErrorKind, ParseError},
     Err, FindSubstring, IResult, Input as _, Offset, Parser,
 };
 
@@ -158,17 +157,15 @@ pub fn take_until_unbalanced<'a>(
     move |i: Input<'a>| {
         let mut index = 0;
         let mut bracket_counter = 0;
-        'consume: loop {
+        while index < i.len() {
             let input = i.slice(index..);
 
-            if tag::<&str, Input<'_>, Error<Input<'_>>>(opening_tag)(input.clone()).is_ok() {
+            if input.inner().starts_with(opening_tag) {
                 bracket_counter += 1;
                 index += opening_tag.len();
-            } else if tag::<&str, Input<'_>, Error<Input<'_>>>(closing_tag)(input).is_ok() {
+            } else if input.inner().starts_with(closing_tag) {
                 bracket_counter -= 1;
                 index += closing_tag.len();
-            } else if index == i.len() - 1 {
-                break 'consume;
             } else {
                 let c = i.slice(index..).inner().chars().next().unwrap_or_default();
                 index += c.len_utf8();
