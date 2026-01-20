@@ -9,7 +9,8 @@ use crate::intermediate::{
         ToplevelInformationDefinition,
     },
     types::Optionality,
-    ASN1Type, ASN1Value, AsnTag, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
+    ASN1Type, ASN1Value, AsnTag, ToplevelDefinition, ToplevelTypeDefinition,
+    ToplevelValueDefinition,
 };
 
 use super::{

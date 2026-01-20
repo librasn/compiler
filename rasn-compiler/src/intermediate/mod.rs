@@ -15,14 +15,7 @@ pub mod parameterization;
 pub mod types;
 pub mod utils;
 
-use std::{
-    borrow::Cow,
-    cell::RefCell,
-    collections::BTreeMap,
-    ops::Add,
-    rc::Rc,
-    sync::LazyLock,
-};
+use std::{borrow::Cow, cell::RefCell, collections::BTreeMap, ops::Add, rc::Rc, sync::LazyLock};
 
 use crate::common::INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX;
 use constraints::Constraint;
@@ -1018,12 +1011,8 @@ impl CharacterStringType {
                 .enumerate()
                 .collect()
         });
-        static IA5_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
-            (0..128u32)
-                .filter_map(char::from_u32)
-                .enumerate()
-                .collect()
-        });
+        static IA5_CHARSET: LazyLock<BTreeMap<usize, char>> =
+            LazyLock::new(|| (0..128u32).filter_map(char::from_u32).enumerate().collect());
         static ANY_CHARSET: LazyLock<BTreeMap<usize, char>> = LazyLock::new(|| {
             (0..u16::MAX as u32)
                 .filter_map(char::from_u32)
