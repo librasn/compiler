@@ -55,107 +55,70 @@ impl Validator {
         let mut keys: Vec<_> = keys.into_iter().map(|tld| tld.name().to_owned()).collect();
         let mut visited_headers = HashSet::<String>::new();
         while let Some(key) = keys.pop() {
-            if matches![
-                self.tlds.get(&key),
-                Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
-                    value: ASN1Information::ObjectSet(_),
-                    ..
-                }))
-            ] {
-                let mut item = self.tlds.remove_entry(&key);
-                if let Some((
-                    _,
-                    ToplevelDefinition::Object(ToplevelInformationDefinition {
-                        value: ASN1Information::ObjectSet(set),
-                        ..
-                    }),
-                )) = &mut item
-                {
-                    if let Err(mut e) = set.resolve_object_set_references(&self.tlds) {
-                        e.contextualize(&key);
-                        warnings.push(e.into())
-                    }
-                }
-                if let Some((k, tld)) = item {
-                    self.tlds.insert(k, tld);
+            let Some((name, mut tld)) = self.tlds.remove_entry(&key) else {
+                continue;
+            };
+            if let ToplevelDefinition::Object(ToplevelInformationDefinition {
+                value: ASN1Information::ObjectSet(set),
+                ..
+            }) = &mut tld
+            {
+                if let Err(mut e) = set.resolve_object_set_references(&self.tlds) {
+                    e.contextualize(&key);
+                    warnings.push(e.into())
                 }
             }
-            if self.references_class_by_name(&key) {
-                match self.tlds.remove_entry(&key) {
-                    Some((k, ToplevelDefinition::Type(mut tld))) => {
+            if self.references_class_by_name(&tld) {
+                tld = match tld {
+                    ToplevelDefinition::Type(mut tld) => {
                         tld.ty = tld.ty.resolve_class_reference(&self.tlds);
-                        self.tlds.insert(k, ToplevelDefinition::Type(tld));
+                        ToplevelDefinition::Type(tld)
                     }
-                    Some((k, ToplevelDefinition::Object(mut tld))) => {
+                    ToplevelDefinition::Object(mut tld) => {
                         tld = tld.resolve_class_reference(&self.tlds);
-                        self.tlds.insert(k, ToplevelDefinition::Object(tld));
+                        ToplevelDefinition::Object(tld)
                     }
-                    _ => (),
+                    _ => tld,
                 }
             }
-            if self.has_components_of_notation(&key) {
-                if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
+            if self.has_components_of_notation(&tld) {
+                if let ToplevelDefinition::Type(tld) = &mut tld {
                     tld.ty.link_components_of_notation(&self.tlds);
-                    self.tlds.insert(k, ToplevelDefinition::Type(tld));
                 }
             }
-            if self.has_choice_selection_type(&key) {
-                if let Some((k, ToplevelDefinition::Type(mut tld))) = self.tlds.remove_entry(&key) {
+            if self.has_choice_selection_type(&tld) {
+                if let ToplevelDefinition::Type(tld) = &mut tld {
                     if let Err(mut e) = tld.ty.link_choice_selection_type(&self.tlds) {
                         e.contextualize(&key);
                         warnings.push(e.into());
                     }
-                    self.tlds.insert(k, ToplevelDefinition::Type(tld));
                 }
             }
-            if self.references_object_set_by_name(&key) {
-                if let Some((k, ToplevelDefinition::Object(mut tld))) = self.tlds.remove_entry(&key)
-                {
+            if self.references_object_set_by_name(&tld) {
+                if let ToplevelDefinition::Object(tld) = &mut tld {
                     tld.value.link_object_set_reference(&self.tlds);
-                    self.tlds.insert(k, ToplevelDefinition::Object(tld));
                 }
             }
-            if self.has_constraint_reference(&key) {
-                match self.tlds.remove(&key).ok_or_else(|| LinkerError {
-                    pdu: Some(key.clone()),
-                    details: "Could not find toplevel declaration to remove!".into(),
-                    kind: LinkerErrorType::MissingDependency,
-                }) {
-                    Ok(mut tld) => {
-                        if let Err(mut e) = tld.link_constraint_reference(&self.tlds) {
-                            e.contextualize(&key);
-                            warnings.push(e.into());
-                        }
-                        self.tlds.insert(tld.name().clone(), tld);
-                    }
-                    Err(mut e) => {
-                        e.contextualize(&key);
-                        warnings.push(e.into());
-                    }
-                };
-            }
-            if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(mut e) = tld.collect_supertypes(&self.tlds) {
+            if self.has_constraint_reference(&tld) {
+                if let Err(mut e) = tld.link_constraint_reference(&self.tlds) {
                     e.contextualize(&key);
                     warnings.push(e.into());
                 }
-                self.tlds.insert(k, tld);
             }
-            if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(mut e) = tld.mark_recursive(&self.tlds) {
-                    e.contextualize(&key);
-                    warnings.push(e.into());
+            if let Err(mut e) = tld.collect_supertypes(&self.tlds) {
+                e.contextualize(&key);
+                warnings.push(e.into());
+            }
+            if let Err(mut e) = tld.mark_recursive(&self.tlds) {
+                e.contextualize(&key);
+                warnings.push(e.into());
+            }
+            if let Some(header) = tld.get_module_header() {
+                if !visited_headers.contains(&header.borrow().name) {
+                    self.fill_in_associated_type_imports(&mut tld, &header, &mut visited_headers);
                 }
-                self.tlds.insert(k, tld);
             }
-            if self
-                .tlds
-                .get(&key)
-                .and_then(ToplevelDefinition::get_module_header)
-                .is_some_and(|m| visited_headers.contains(&m.borrow().name).not())
-            {
-                self.fill_in_associated_type_imports(key, &mut visited_headers);
-            }
+            self.tlds.insert(name, tld);
         }
 
         Ok((self, warnings))
@@ -163,76 +126,71 @@ impl Validator {
 
     fn fill_in_associated_type_imports(
         &mut self,
-        key: String,
+        tld: &mut ToplevelDefinition,
+        module_header: &Rc<RefCell<ModuleHeader>>,
         visited_headers: &mut HashSet<String>,
     ) {
-        let tld = self.tlds.remove(&key).unwrap();
+        let mut associated_type_imports = Vec::new();
+        if let ToplevelDefinition::Object(ToplevelInformationDefinition {
+            class: ClassLink::ByReference(ref class_ref),
+            ..
+        }) = tld
         {
-            let module_header = tld.get_module_header().unwrap();
-
-            let mut associated_type_imports = Vec::new();
-            if let ToplevelDefinition::Object(ToplevelInformationDefinition {
-                class: ClassLink::ByReference(ref class_ref),
-                ..
-            }) = tld
-            {
-                for field in &class_ref.fields {
-                    self.associated_import_type_class_field(
-                        field,
-                        module_header.clone(),
-                        &mut associated_type_imports,
-                    );
-                }
+            for field in &class_ref.fields {
+                self.associated_import_type_class_field(
+                    field,
+                    module_header.clone(),
+                    &mut associated_type_imports,
+                );
             }
-            for import_modules in &module_header.borrow().imports {
-                for import in &import_modules.types {
-                    if import.starts_with(|c: char| c.is_lowercase()) {
-                        match self.tlds.get(import) {
-                            Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
-                                class: ClassLink::ByReference(class_ref),
-                                ..
-                            })) => {
-                                for field in &class_ref.fields {
-                                    self.associated_import_type_class_field(
-                                        field,
-                                        module_header.clone(),
-                                        &mut associated_type_imports,
-                                    );
-                                }
-                            }
-                            Some(ToplevelDefinition::Value(ToplevelValueDefinition {
-                                associated_type,
-                                ..
-                            })) => {
-                                self.associated_import_type(
-                                    associated_type.as_str().as_ref(),
+        }
+        for import_modules in &module_header.borrow().imports {
+            for import in &import_modules.types {
+                if import.starts_with(|c: char| c.is_lowercase()) {
+                    match self.tlds.get(import) {
+                        Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
+                            class: ClassLink::ByReference(class_ref),
+                            ..
+                        })) => {
+                            for field in &class_ref.fields {
+                                self.associated_import_type_class_field(
+                                    field,
                                     module_header.clone(),
                                     &mut associated_type_imports,
                                 );
                             }
-                            _ => (),
                         }
+                        Some(ToplevelDefinition::Value(ToplevelValueDefinition {
+                            associated_type,
+                            ..
+                        })) => {
+                            self.associated_import_type(
+                                associated_type.as_str().as_ref(),
+                                module_header.clone(),
+                                &mut associated_type_imports,
+                            );
+                        }
+                        _ => (),
                     }
                 }
             }
-            for mut import in associated_type_imports {
-                let mut mut_module_header = module_header.borrow_mut();
-                if let Some(mod_imports) = mut_module_header
-                    .imports
-                    .iter_mut()
-                    .find(|i| i.global_module_reference == import.global_module_reference)
-                {
-                    if mod_imports.types.contains(&import.types[0]).not() {
-                        mod_imports.types.push(std::mem::take(&mut import.types[0]));
-                    }
-                } else {
-                    mut_module_header.imports.push(import);
-                }
-            }
-
-            visited_headers.insert(module_header.borrow().name.clone());
         }
-        self.tlds.insert(key, tld);
+        for mut import in associated_type_imports {
+            let mut mut_module_header = module_header.borrow_mut();
+            if let Some(mod_imports) = mut_module_header
+                .imports
+                .iter_mut()
+                .find(|i| i.global_module_reference == import.global_module_reference)
+            {
+                if mod_imports.types.contains(&import.types[0]).not() {
+                    mod_imports.types.push(std::mem::take(&mut import.types[0]));
+                }
+            } else {
+                mut_module_header.imports.push(import);
+            }
+        }
+
+        visited_headers.insert(module_header.borrow().name.clone());
     }
 
     fn associated_import_type(
@@ -306,58 +264,42 @@ impl Validator {
         }
     }
 
-    fn has_constraint_reference(&mut self, key: &String) -> bool {
-        if let Some(tld) = self.tlds.get(key) {
-            tld.is_parameterized() || tld.has_constraint_reference()
-        } else {
-            false
+    fn has_constraint_reference(&mut self, tld: &ToplevelDefinition) -> bool {
+        tld.is_parameterized() || tld.has_constraint_reference()
+    }
+
+    fn references_class_by_name(&mut self, tld: &ToplevelDefinition) -> bool {
+        match tld {
+            ToplevelDefinition::Type(t) => t.ty.references_class_by_name(),
+            ToplevelDefinition::Object(i) => match i.class {
+                ClassLink::ByReference(_) => false,
+                ClassLink::ByName(_) => true,
+            },
+            _ => false,
         }
     }
 
-    fn references_class_by_name(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(|t| match t {
-                ToplevelDefinition::Type(t) => t.ty.references_class_by_name(),
-                ToplevelDefinition::Object(i) => match i.class {
-                    ClassLink::ByReference(_) => false,
-                    ClassLink::ByName(_) => true,
-                },
-                _ => false,
-            })
-            .unwrap_or(false)
+    fn references_object_set_by_name(&mut self, tld: &ToplevelDefinition) -> bool {
+        match tld {
+            ToplevelDefinition::Object(ToplevelInformationDefinition { value, .. }) => {
+                value.references_object_set_by_name()
+            }
+            _ => false,
+        }
     }
 
-    fn references_object_set_by_name(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(|t| match t {
-                ToplevelDefinition::Object(ToplevelInformationDefinition { value, .. }) => {
-                    value.references_object_set_by_name()
-                }
-                _ => false,
-            })
-            .unwrap_or(false)
+    fn has_choice_selection_type(&mut self, tld: &ToplevelDefinition) -> bool {
+        match tld {
+            ToplevelDefinition::Type(t) => t.ty.has_choice_selection_type(),
+            _ => false,
+        }
     }
 
-    fn has_choice_selection_type(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(|t| match t {
-                ToplevelDefinition::Type(t) => t.ty.has_choice_selection_type(),
-                _ => false,
-            })
-            .unwrap_or(false)
-    }
-
-    fn has_components_of_notation(&mut self, key: &String) -> bool {
-        self.tlds
-            .get(key)
-            .map(|t| match t {
-                ToplevelDefinition::Type(t) => t.ty.contains_components_of_notation(),
-                _ => false,
-            })
-            .unwrap_or(false)
+    fn has_components_of_notation(&mut self, tld: &ToplevelDefinition) -> bool {
+        match tld {
+            ToplevelDefinition::Type(t) => t.ty.contains_components_of_notation(),
+            _ => false,
+        }
     }
 
     pub fn validate(
