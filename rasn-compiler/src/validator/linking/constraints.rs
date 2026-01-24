@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use crate::intermediate::{constraints::*, error::*, *};
 
@@ -6,7 +6,7 @@ impl Constraint {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             Constraint::Subtype(t) => t.set.link_cross_reference(identifier, tlds),
@@ -27,7 +27,7 @@ impl SubtypeElements {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             SubtypeElements::SingleValue {
@@ -117,7 +117,7 @@ impl ElementOrSetOperation {
     pub(super) fn link_cross_reference(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             ElementOrSetOperation::Element(e) => e.link_cross_reference(identifier, tlds),

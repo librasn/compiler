@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use super::{
     ASN1Type, DeclarationElsewhere, GrammarError, ToplevelDefinition, ToplevelTypeDefinition,
@@ -7,7 +7,7 @@ use super::{
 impl DeclarationElsewhere {
     pub fn root<'a>(
         &self,
-        tlds: &'a BTreeMap<String, ToplevelDefinition>,
+        tlds: &'a HashMap<String, ToplevelDefinition>,
     ) -> Result<&'a ASN1Type, GrammarError> {
         match tlds.get(&self.identifier).ok_or_else(|| GrammarError::new(
             &format!("Failed to resolve reference of ElsewhereDefined: {}", self.identifier),

@@ -8,7 +8,7 @@ mod utils;
 
 use std::{
     borrow::{BorrowMut, Cow},
-    collections::BTreeMap,
+    collections::{BTreeMap, HashMap},
 };
 
 use crate::{
@@ -117,7 +117,7 @@ impl ToplevelDefinition {
     pub fn recurses(
         &self,
         name: &str,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
         reference_graph: Vec<&str>,
     ) -> bool {
         match self {
@@ -183,7 +183,7 @@ impl ToplevelDefinition {
     ///    returns `true` if the reference was resolved successfully.
     pub fn link_constraint_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<bool, GrammarError> {
         match self {
             ToplevelDefinition::Type(t) => {
@@ -200,7 +200,7 @@ impl ToplevelDefinition {
     /// Traverses top-level declarations and marks recursive types
     pub fn mark_recursive(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             ToplevelDefinition::Type(t) => {
@@ -217,7 +217,7 @@ impl ToplevelDefinition {
     /// Collects supertypes of ASN1 values.
     pub fn collect_supertypes(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             ToplevelDefinition::Type(t) => t.ty.collect_supertypes(tlds),
@@ -243,7 +243,7 @@ impl ToplevelValueDefinition {
     /// The supertypes are recorded in a `LinkedASN1Value`
     pub fn collect_supertypes(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         if let Some(ToplevelDefinition::Type(tld)) =
             tlds.get(self.associated_type.as_str().as_ref())
@@ -261,7 +261,7 @@ impl ASN1Type {
     /// values in `SET`s or `SEQUENCE`s.
     pub fn collect_supertypes(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             ASN1Type::Set(ref mut s) | ASN1Type::Sequence(ref mut s) => {
@@ -297,7 +297,7 @@ impl ASN1Type {
 
     pub fn link_choice_selection_type(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             ASN1Type::ChoiceSelectionType(c) => {
@@ -346,7 +346,7 @@ impl ASN1Type {
 
     pub fn link_components_of_notation(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             ASN1Type::Choice(c) => c
@@ -389,7 +389,7 @@ impl ASN1Type {
     pub fn link_constraint_reference(
         &mut self,
         name: &String,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<Option<ASN1Type>, GrammarError> {
         let mut self_replacement = None;
         match self {
@@ -470,7 +470,7 @@ impl ASN1Type {
     pub(crate) fn resolve_parameters(
         identifier: &String,
         _parent: Option<&String>,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
         args: &[Parameter],
     ) -> Result<ASN1Type, GrammarError> {
         match tlds.get(identifier) {
@@ -567,7 +567,7 @@ impl ASN1Type {
     pub fn recurses(
         &self,
         name: &str,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
         mut reference_graph: Vec<&str>,
     ) -> bool {
         match self {
@@ -597,7 +597,7 @@ impl ASN1Type {
     pub fn mark_recursive(
         &mut self,
         name: &str,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<Vec<Cow<'_, str>>, GrammarError> {
         match self {
             ASN1Type::Choice(choice) => {
@@ -698,7 +698,7 @@ impl ASN1Type {
 
     fn link_elsewhere_declared(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             ASN1Type::Choice(c) => c
@@ -805,7 +805,7 @@ impl ASN1Type {
         }
     }
 
-    pub fn resolve_class_reference(self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
+    pub fn resolve_class_reference(self, tlds: &HashMap<String, ToplevelDefinition>) -> Self {
         match self {
             ASN1Type::Choice(c) => ASN1Type::Choice(Choice {
                 extensible: c.extensible,
@@ -841,7 +841,7 @@ impl ASN1Type {
         }
     }
 
-    fn reassign_type_for_ref(mut self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
+    fn reassign_type_for_ref(mut self, tlds: &HashMap<String, ToplevelDefinition>) -> Self {
         if let Self::ObjectClassField(ref ocf) = self {
             if let Some(t) = tlds
                 .iter()
@@ -860,7 +860,7 @@ impl ASN1Type {
 
     pub fn link_subtype_constraint(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         if let Self::ElsewhereDeclaredType(e) = self {
             if let Some(ToplevelDefinition::Type(t)) = tlds.get(&e.identifier) {
@@ -874,7 +874,7 @@ impl ASN1Type {
 impl ASN1Value {
     pub fn link_with_type(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
         ty: &ASN1Type,
         type_name: Option<&String>,
     ) -> Result<(), GrammarError> {
@@ -1337,7 +1337,7 @@ impl ASN1Value {
     }
 
     fn link_enum_or_distinguished(
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
         e: &DeclarationElsewhere,
         identifier: &mut String,
         mut supertypes: Vec<String>,
@@ -1400,7 +1400,7 @@ impl ASN1Value {
     fn link_array_like(
         val: &mut [(Option<String>, Box<ASN1Value>)],
         s: &SequenceOrSetOf,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<ASN1Value, GrammarError> {
         let _ = val.iter_mut().try_for_each(|v| {
             v.1.link_with_type(
@@ -1417,7 +1417,7 @@ impl ASN1Value {
     fn link_struct_like(
         val: &mut [(Option<String>, Box<ASN1Value>)],
         s: &SequenceOrSet,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
         type_name: Option<&String>,
     ) -> Result<ASN1Value, GrammarError> {
         val.iter_mut().try_for_each(|v| {
@@ -1494,7 +1494,7 @@ impl ASN1Value {
     /// The `LDAP-SYNTAX` field refers to a field ob an information object `dn`.
     pub fn resolve_elsewhere_with_parent(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         if let Self::ElsewhereDeclaredValue {
             module: None,
@@ -1586,7 +1586,7 @@ impl ASN1Value {
     pub fn link_elsewhere_declared(
         &mut self,
         identifier: &String,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match self {
             Self::ElsewhereDeclaredValue {
@@ -1632,7 +1632,7 @@ fn bit_string_value_from_named_bits(
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeMap;
+    use std::collections::HashMap;
 
     use crate::intermediate::{types::*, *};
 
@@ -1651,8 +1651,8 @@ mod tests {
 
     #[test]
     fn links_asn1_value() {
-        let tlds: BTreeMap<String, ToplevelDefinition> = {
-            let mut map = BTreeMap::new();
+        let tlds: HashMap<String, ToplevelDefinition> = {
+            let mut map = HashMap::new();
             map.insert(
                 "RootBool".into(),
                 ToplevelDefinition::Type(tld!(

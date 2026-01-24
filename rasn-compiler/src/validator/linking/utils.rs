@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use crate::{
     intermediate::{
@@ -12,7 +12,7 @@ use crate::{
 pub(crate) fn find_tld_or_enum_value_by_name(
     type_name: &String,
     name: &String,
-    tlds: &BTreeMap<String, ToplevelDefinition>,
+    tlds: &HashMap<String, ToplevelDefinition>,
 ) -> Option<ASN1Value> {
     if let Some(ToplevelDefinition::Value(v)) = tlds.get(name) {
         return Some(v.value.clone());
