@@ -435,7 +435,7 @@ pub mod access_control_asn1_module {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct StateConditions(pub SetOf<AnonymousStateConditions>);
-    pub const DENY: DenialResponse = DenialResponse::denyWithResponse;
+    pub const DENY: EnforcementAction = EnforcementAction::denyWithResponse;
     pub static DENY_ALL: LazyLock<DefaultAccess> = LazyLock::new(|| {
         DefaultAccess::new(DENY, DENY, DENY, DENY, DENY, DENY, DENY, DENY, DENY, DENY)
     });
