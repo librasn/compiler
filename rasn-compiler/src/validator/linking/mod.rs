@@ -1305,15 +1305,20 @@ impl ASN1Value {
                 }
                 Ok(())
             }
-            (ASN1Type::Enumerated(_), ASN1Value::ElsewhereDeclaredValue { identifier, .. }) => {
-                if let Some((_, tld)) = tlds
-                    .iter()
-                    .find(|(_, tld)| tld.has_enum_value(None, identifier))
-                {
-                    *self = ASN1Value::EnumeratedValue {
-                        enumerated: tld.name().clone(),
-                        enumerable: identifier.clone(),
-                    };
+            (ASN1Type::Enumerated(e), ASN1Value::ElsewhereDeclaredValue { identifier, .. }) => {
+                if let Some(type_name) = type_name {
+                    if e.members.iter().any(|m| &m.name == identifier) {
+                        *self = ASN1Value::EnumeratedValue {
+                            enumerated: type_name.to_owned(),
+                            enumerable: identifier.to_owned(),
+                        };
+                    } else {
+                        return Err(grammar_error!(
+                            LinkerError,
+                            "Failed to link enumerated value: \
+                            Member '{identifier}' not found on ENUMERATED type '{type_name}'.",
+                        ));
+                    }
                 }
                 Ok(())
             }
