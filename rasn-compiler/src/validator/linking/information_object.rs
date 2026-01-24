@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use crate::intermediate::{information_object::*, *};
 
@@ -8,7 +8,7 @@ use super::{
 };
 
 impl ToplevelInformationDefinition {
-    pub fn resolve_class_reference(mut self, tlds: &BTreeMap<String, ToplevelDefinition>) -> Self {
+    pub fn resolve_class_reference(mut self, tlds: &HashMap<String, ToplevelDefinition>) -> Self {
         if let ClassLink::ByName(name) = &self.class {
             if let Some(ToplevelDefinition::Class(c)) = tlds.get(name) {
                 self.class = ClassLink::ByReference(c.definition.clone());
@@ -22,7 +22,7 @@ impl ToplevelInformationDefinition {
     /// values in `SET`s or `SEQUENCE`s.
     pub fn collect_supertypes(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         match (&mut self.value, &self.class) {
             (ASN1Information::Object(ref mut o), ClassLink::ByReference(class)) => {
@@ -63,7 +63,7 @@ impl ToplevelInformationDefinition {
 fn resolve_and_link(
     fields: &mut InformationObjectFields,
     class: &ObjectClassDefn,
-    tlds: &BTreeMap<String, ToplevelDefinition>,
+    tlds: &HashMap<String, ToplevelDefinition>,
 ) -> Result<Option<ToplevelInformationDefinition>, GrammarError> {
     match resolve_custom_syntax(fields, class) {
         Ok(()) => link_object_fields(fields, class, tlds).map(|_| None),
@@ -91,7 +91,7 @@ fn resolve_and_link(
 fn link_object_fields(
     fields: &mut InformationObjectFields,
     class: &ObjectClassDefn,
-    tlds: &BTreeMap<String, ToplevelDefinition>,
+    tlds: &HashMap<String, ToplevelDefinition>,
 ) -> Result<(), GrammarError> {
     match fields {
         InformationObjectFields::DefaultSyntax(ref mut fields) => {
@@ -136,7 +136,7 @@ fn link_object_fields(
 impl ASN1Information {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             ASN1Information::ObjectSet(s) => s.link_object_set_reference(tlds),
@@ -155,7 +155,7 @@ impl ASN1Information {
 impl SyntaxApplication {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             SyntaxApplication::ObjectSetDeclaration(o) => o.link_object_set_reference(tlds),
@@ -183,7 +183,7 @@ impl ObjectClassDefn {
 impl InformationObject {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> bool {
         match &mut self.fields {
             InformationObjectFields::DefaultSyntax(d) => d
@@ -210,7 +210,7 @@ impl InformationObject {
 impl ObjectSetValue {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Option<Vec<ObjectSetValue>> {
         match self {
             ObjectSetValue::Reference(id) => match tlds.get(id) {
@@ -256,7 +256,7 @@ impl ObjectSetValue {
 impl ObjectSet {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> bool {
         let mut flattened: Vec<_> = self
             .values
@@ -275,7 +275,7 @@ impl ObjectSet {
 
     pub fn resolve_object_set_references(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> Result<(), GrammarError> {
         let mut flattened_members = Vec::new();
         let mut needs_recursing = false;
@@ -318,7 +318,7 @@ impl ObjectSet {
 impl InformationObjectField {
     pub fn link_object_set_reference(
         &mut self,
-        tlds: &BTreeMap<String, ToplevelDefinition>,
+        tlds: &HashMap<String, ToplevelDefinition>,
     ) -> bool {
         match self {
             InformationObjectField::ObjectSetField(ObjectSetField { value, .. }) => {

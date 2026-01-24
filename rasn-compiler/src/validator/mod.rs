@@ -12,7 +12,7 @@ mod tests;
 
 use std::{
     cell::RefCell,
-    collections::{BTreeMap, HashSet},
+    collections::{HashMap, HashSet},
     ops::Not,
     rc::Rc,
 };
@@ -33,7 +33,7 @@ use self::{
 };
 
 pub struct Validator {
-    tlds: BTreeMap<String, ToplevelDefinition>,
+    tlds: HashMap<String, ToplevelDefinition>,
 }
 
 impl Validator {
@@ -48,17 +48,11 @@ impl Validator {
 
     fn link(mut self) -> Result<(Self, Vec<CompilerError>), LinkerError> {
         let mut warnings: Vec<CompilerError> = vec![];
-        // Linking of ASN1 values depends on linked ASN1 types, so we order the key collection accordingly (note that we pop keys)
-        let mut keys = self
-            .tlds
-            .iter()
-            .filter_map(|(k, v)| matches![v, ToplevelDefinition::Value(_)].then_some(k.clone()))
-            .chain(self.tlds.iter().filter_map(|(k, v)| {
-                matches![v, ToplevelDefinition::Value(_)]
-                    .not()
-                    .then_some(k.clone())
-            }))
-            .collect::<Vec<String>>();
+        let mut keys: Vec<_> = self.tlds.values().collect();
+        // Linking of ASN1 values depends on linked ASN1 types, so we order the key collection
+        // accordingly (note that we pop keys).
+        keys.sort_unstable_by_key(|tld| (!matches!(tld, ToplevelDefinition::Value(_)), tld.name()));
+        let mut keys: Vec<_> = keys.into_iter().map(|tld| tld.name().to_owned()).collect();
         let mut visited_headers = HashSet::<String>::new();
         while let Some(key) = keys.pop() {
             if matches![
@@ -371,7 +365,7 @@ impl Validator {
     ) -> Result<(Vec<ToplevelDefinition>, Vec<CompilerError>), CompilerError> {
         let warnings: Vec<CompilerError>;
         (self, warnings) = self.link()?;
-        Ok(self.tlds.into_iter().fold(
+        let (mut tlds, warnings) = self.tlds.into_iter().fold(
             (Vec::<ToplevelDefinition>::new(), warnings),
             |(mut tlds, mut errors), (_, tld)| {
                 match tld.validate() {
@@ -380,7 +374,9 @@ impl Validator {
                 }
                 (tlds, errors)
             },
-        ))
+        );
+        tlds.sort_unstable_by(|tld1, tld2| tld1.name().cmp(tld2.name()));
+        Ok((tlds, warnings))
     }
 }
 
