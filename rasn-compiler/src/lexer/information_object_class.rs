@@ -112,7 +112,7 @@ pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, ObjectClassDefn> {
 pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
-            tag(INSTANCE_OF),
+            skip_ws_and_comments(tag(INSTANCE_OF)),
             pair(
                 skip_ws_and_comments(uppercase_identifier),
                 skip_ws_and_comments(opt(constraints)),

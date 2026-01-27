@@ -45,9 +45,9 @@ use super::{
 ///     RelativeOIDComponents RelativeOIDComponentsList
 /// ```
 pub fn object_identifier_value(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierValue> {
-    into(skip_ws_and_comments(in_braces(many1(skip_ws(
-        object_identifier_arc,
-    )))))
+    into(skip_ws_and_comments(in_braces(many1(
+        skip_ws_and_comments(object_identifier_arc),
+    ))))
     .parse(input)
 }
 

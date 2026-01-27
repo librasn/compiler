@@ -2,13 +2,300 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1551_1997_UPT-DataModel.asn1
 ---
-Error matching ASN syntax at while parsing:
-     ╭─[line 462, column 2]
-     │
-     │ 
- 461 │  -- object-identifiers assignment
- 462 │  id-oc OBJECT IDENTIFIER ::= ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 463 │    {itu-t recommendation q 1551 --upt-- module(0) uptUsefulDefinitions(0)
- 464 │     objectClasses(0) version1(0)}
-     │
-─────╯
+Warnings:
+Not yet implemented error while generating bindings: Real types are currently unsupported!
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod upt_data_model {
+    extern crate alloc;
+    use super::authentication_framework::USER_PASSWORD;
+    use super::information_framework::*;
+    use super::selected_attribute_types::{
+        COMMON_NAME, DESCRIPTION, INTEGER_MATCH, INTEGER_ORDERING_MATCH, NAME,
+        NUMERIC_STRING_MATCH, OCTET_STRING_MATCH, ORGANIZATIONAL_UNIT_NAME, SEE_ALSO,
+        STORED_PREFIX_MATCH, SURNAME,
+    };
+    use super::selected_object_classes::{COUNTRY_NAME_FORM, ORGANIZATION, ORGANIZATIONAL_UNIT};
+    use super::upper_bounds::UB_INTERNATIONAL_ISDN_NUMBER;
+    use super::useful_definitions::{INFORMATION_FRAMEWORK, UPPER_BOUNDS};
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CFServices(pub SetOf<Service>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct CallInfoRecord {
+        #[rasn(tag(context, 0), identifier = "authenticationTime")]
+        pub authentication_time: UtcTime,
+        #[rasn(tag(context, 1), identifier = "callStopTimeValue")]
+        pub call_stop_time_value: UtcTime,
+        #[rasn(tag(context, 2), identifier = "callStartTimeValue")]
+        pub call_start_time_value: UtcTime,
+        #[rasn(tag(context, 3), identifier = "callingAddressValue")]
+        pub calling_address_value: IsdnAddress,
+        #[rasn(tag(context, 4), identifier = "calledNumber")]
+        pub called_number: IsdnAddress,
+        #[rasn(value("0..=2147483647"), tag(context, 5))]
+        pub duration: Option<u32>,
+        #[rasn(tag(context, 6), identifier = "routingAddress")]
+        pub routing_address: Option<IsdnAddress>,
+        #[rasn(tag(context, 7), identifier = "forwardedToAddress")]
+        pub forwarded_to_address: Option<IsdnAddress>,
+        #[rasn(tag(context, 8), identifier = "invokedSupplementaryServices")]
+        pub invoked_supplementary_services: Option<CFServices>,
+        #[rasn(tag(context, 9), identifier = "visitedNetwork")]
+        pub visited_network: Option<NetworkCode>,
+        #[rasn(tag(context, 10), identifier = "callCost")]
+        pub call_cost: Option<Cost>,
+        #[rasn(tag(context, 11))]
+        pub surcharges: Option<Cost>,
+        #[rasn(tag(context, 12), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+    }
+    impl CallInfoRecord {
+        pub fn new(
+            authentication_time: UtcTime,
+            call_stop_time_value: UtcTime,
+            call_start_time_value: UtcTime,
+            calling_address_value: IsdnAddress,
+            called_number: IsdnAddress,
+            duration: Option<u32>,
+            routing_address: Option<IsdnAddress>,
+            forwarded_to_address: Option<IsdnAddress>,
+            invoked_supplementary_services: Option<CFServices>,
+            visited_network: Option<NetworkCode>,
+            call_cost: Option<Cost>,
+            surcharges: Option<Cost>,
+            release_cause: Option<Cause>,
+        ) -> Self {
+            Self {
+                authentication_time,
+                call_stop_time_value,
+                call_start_time_value,
+                calling_address_value,
+                called_number,
+                duration,
+                routing_address,
+                forwarded_to_address,
+                invoked_supplementary_services,
+                visited_network,
+                call_cost,
+                surcharges,
+                release_cause,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("2..=20"))]
+    pub struct Cause(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Cost {
+        #[rasn(value("1..=10000"), tag(context, 0))]
+        pulse(u16),
+        #[rasn(tag(context, 1))]
+        cost(CurrencyValue),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum CurrencyValue {
+        #[rasn(tag(context, 0))]
+        usDollar(Currency),
+        #[rasn(tag(context, 1))]
+        frenchFranc(Currency),
+        #[rasn(tag(context, 2))]
+        germanMark(Currency),
+        #[rasn(tag(context, 3))]
+        dutchGuilder(Currency),
+        #[rasn(tag(context, 4))]
+        italianLira(Currency),
+        #[rasn(tag(context, 5))]
+        englishPound(Currency),
+        #[rasn(tag(context, 6))]
+        spanishPeseta(Currency),
+        #[rasn(tag(context, 7))]
+        swedishKrone(Currency),
+        #[rasn(tag(context, 8))]
+        norwegianKrone(Currency),
+        #[rasn(tag(context, 9))]
+        japaneseYen(Currency),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct IsdnAddress(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1..=3"))]
+    pub struct NetworkCode(pub NumericString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "SS-Code")]
+    pub struct SSCode(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Service(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SupplServiceStatus(pub BitString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct TypesOfNotification(pub BitString);
+    pub static ID_AO: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1551u32, 0u32, 0u32, 1u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AO_SUPPLEMENTARY_SERVICE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AO, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AT: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1551u32, 0u32, 0u32, 2u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_ACTIVE_CHARGING_SERVICE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[10u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_ALLOWED_DESTINATIONS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[21u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_ALLOWED_REGISTRATION_ADDRESS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| {
+            Oid::new(&[&***ID_AT, &[15u32]].concat())
+                .unwrap()
+                .to_owned()
+        });
+    pub static ID_AT_ALLOWED_SERVICE_FEATURES: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[11u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_CALL_INFO_RECORDS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_DEFAULT_CHARGING_REFERENCE: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[13u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_FORWARDED_TO_NUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[18u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_IC_REGISTRATION_ADDRESS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[14u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_NB_OF_FAILED_AUTHENTICATIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_NO_REPLY_CONDITION_TIMER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[20u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_PROVIDED_LOCATIONS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_PROVIDED_SERVICE_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_PROVIDER_ID: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_PUI: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_SPECIAL_PASSWORD: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_SUPPL_SERV_ID: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[16u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_SUPPL_SERVICE_STATUS: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[17u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_TYPES_OF_NOTIFICATION: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[19u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_UPT_NUMBER: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&***ID_AT, &[12u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_AT_USER_CREDIT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_AT_VARIABLE_PASSWORD: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_AT, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_NF: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1551u32, 0u32, 0u32, 3u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_NF_ADMIN_UNIT_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_AGREED_SERVICE_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_CALL_FORWARDING_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_CALLED_UPT_USER_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_CALLING_UPT_USER_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_PARTNER_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_UPT_PROVIDER_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_USER_PROFILE_ALIAS_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[6u32]].concat()).unwrap().to_owned());
+    pub static ID_NF_USER_PROFILE_NAME_FORM: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_NF, &[5u32]].concat()).unwrap().to_owned());
+    #[doc = " object-identifiers assignment"]
+    pub static ID_OC: LazyLock<ObjectIdentifier> = LazyLock::new(|| {
+        Oid::new(&[&[0u32, 0u32], &***Q, &[1551u32, 0u32, 0u32, 0u32, 0u32]].concat())
+            .unwrap()
+            .to_owned()
+    });
+    pub static ID_OC_ADMINISTRATIVE_UNIT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[4u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_AGREEMENT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[3u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_CALL_FORWARDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[9u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_CALLED_UPT_USER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[7u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_CALLING_UPT_USER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[8u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_PARTNER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[2u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_UPT_PROVIDER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[1u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_USER_PROFILE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[5u32]].concat()).unwrap().to_owned());
+    pub static ID_OC_USER_PROFILE_ALIAS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::new(&[&***ID_OC, &[6u32]].concat()).unwrap().to_owned());
+    pub static MAX_CAUSE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(20i128));
+    pub static MIN_CAUSE_LENGTH: LazyLock<Integer> = LazyLock::new(|| Integer::from(2i128));
+    pub static UB_MAX_NB_OF_FAILED_AUTHENTICATIONS: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(6i128));
+    pub static UB_MAX_USER_CREDIT: LazyLock<Integer> = LazyLock::new(|| Integer::from(10000i128));
+    pub static UB_NETWORK_CODE: LazyLock<Integer> = LazyLock::new(|| Integer::from(3i128));
+    pub static UB_NO_REPLY_CONDITION_TIMER: LazyLock<Integer> =
+        LazyLock::new(|| Integer::from(10000i128));
+    pub static UB_PROVIDER_ID: LazyLock<Integer> = LazyLock::new(|| Integer::from(3i128));
+    pub static UB_PUI: LazyLock<Integer> = LazyLock::new(|| Integer::from(15i128));
+    pub static UB_PULSE: LazyLock<Integer> = LazyLock::new(|| Integer::from(10000i128));
+    pub static UB_SPECIAL_PASSWORD: LazyLock<Integer> = LazyLock::new(|| Integer::from(8i128));
+    pub static UB_VARIABLE_PASSWORD: LazyLock<Integer> = LazyLock::new(|| Integer::from(15i128));
+}
