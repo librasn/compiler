@@ -2,20 +2,374 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/oasis_X9.84-CMS_2003_X9-84-Biometrics.asn1
 ---
-Error matching ASN syntax at while parsing:
-     ╭─[line 289, column 2]
-     │
-     │ 
- 281 │  --
- 282 │  -- A domainBiometricTemplates information object can be used to
- 283 │  -- extend the information bound to a public key in an value of
- 284 │  -- ASN.1 type DomainCertificate as defined in the X9.68 Domain
- 285 │  -- Certificate Syntax standard, to include biometric identity
- 286 │  -- information.
- 287 │  --
- 289 │  domainBiometricTemplates PRIVATE-X ::= { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 290 │     NAME  oid : x968-biometricTemplates
- 291 │     TYPE  EncodedBiometricObjects  -- DER or cXER --
- 292 │  }
-     │
-─────╯
+Warnings:
+LinkerError in ASN grammar: Failed to resolve reference in object set.
+
+
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod x9_84_biometrics {
+    extern crate alloc;
+    use super::x9_84_cms::{
+        AuthenticatedData, EncryptedData, EnvelopedData, MACAlgorithmIdentifier,
+        SignatureAlgorithmIdentifier, SignedData,
+    };
+    use super::x9_84_identifiers::{
+        BiometricTypes, CBEFFFormats, IBIAFormats, MatchingAIDs, ProcessingAIDs, X9Formats,
+        X509_BIOMETRIC_TEMPLATES, X968_BIOMETRIC_TEMPLATES,
+    };
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "BIOMETRIC-IDENTIFIER")]
+    pub enum BIOMETRICIDENTIFIER {
+        oid(ObjectIdentifier),
+        id(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricData(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BiometricHeader {
+        #[rasn(default = "biometric_header_version_default")]
+        pub version: BiometricVersion,
+        #[rasn(identifier = "recordType")]
+        pub record_type: Option<RecordType>,
+        #[rasn(identifier = "dataType")]
+        pub data_type: Option<DataType>,
+        pub purpose: Option<Purpose>,
+        pub quality: Option<Quality>,
+        #[rasn(identifier = "validityPeriod")]
+        pub validity_period: Option<ValidityPeriod>,
+        pub format: Option<Format>,
+    }
+    impl BiometricHeader {
+        pub fn new(
+            version: BiometricVersion,
+            record_type: Option<RecordType>,
+            data_type: Option<DataType>,
+            purpose: Option<Purpose>,
+            quality: Option<Quality>,
+            validity_period: Option<ValidityPeriod>,
+            format: Option<Format>,
+        ) -> Self {
+            Self {
+                version,
+                record_type,
+                data_type,
+                purpose,
+                quality,
+                validity_period,
+                format,
+            }
+        }
+    }
+    fn biometric_header_version_default() -> BiometricVersion {
+        BiometricVersion(Integer::from(0i128))
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricHeaders(pub SequenceOf<BiometricHeader>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BiometricInformation {
+        #[rasn(identifier = "processingAlgorithms")]
+        pub processing_algorithms: Option<ProcessingAlgorithms>,
+        #[rasn(identifier = "matchingMethods")]
+        pub matching_methods: Option<MatchingMethods>,
+    }
+    impl BiometricInformation {
+        pub fn new(
+            processing_algorithms: Option<ProcessingAlgorithms>,
+            matching_methods: Option<MatchingMethods>,
+        ) -> Self {
+            Self {
+                processing_algorithms,
+                matching_methods,
+            }
+        }
+    }
+    #[doc = " Authentication Information (AI) "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricInformationSets(pub SequenceOf<BiometricInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BiometricObject {
+        #[rasn(identifier = "biometricHeader")]
+        pub biometric_header: BiometricHeader,
+        #[rasn(identifier = "biometricData")]
+        pub biometric_data: BiometricData,
+    }
+    impl BiometricObject {
+        pub fn new(biometric_header: BiometricHeader, biometric_data: BiometricData) -> Self {
+            Self {
+                biometric_header,
+                biometric_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricObjects(pub SequenceOf<BiometricObject>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum BiometricSyntax {
+        biometricObjects(BiometricObjects),
+        integrityObjects(IntegrityObjects),
+        privacyObjects(PrivacyObjects),
+        privacyAndIntegrityObjects(PrivacyAndIntegrityObjects),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BiometricSyntaxSets(pub SequenceOf<BiometricSyntax>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0.."))]
+    pub struct BiometricVersion(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DataType {
+        raw = 0,
+        intermediate = 1,
+        processed = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DateTime(pub ObjectIdentifier);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DigitalSignature {
+        #[rasn(identifier = "algorithmID")]
+        pub algorithm_id: SignatureAlgorithmIdentifier,
+        #[rasn(value("0.."))]
+        pub signature: OctetString,
+    }
+    impl DigitalSignature {
+        pub fn new(algorithm_id: SignatureAlgorithmIdentifier, signature: OctetString) -> Self {
+            Self {
+                algorithm_id,
+                signature,
+            }
+        }
+    }
+    #[doc = ""]
+    #[doc = " All of the cryptographic processing in this standard is performed"]
+    #[doc = " on a value of type EncodedBiometricObjects. This is a sequence of"]
+    #[doc = " one or more values of type BiometricObject in its encoded form."]
+    #[doc = ""]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct EncodedBiometricObjects(pub Any);
+    #[doc = " { yyyy mm dd hh mm ss z } "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct Format {
+        #[rasn(identifier = "formatOwner")]
+        pub format_owner: BIOMETRICIDENTIFIER,
+        #[rasn(identifier = "formatType")]
+        pub format_type: Option<Any>,
+    }
+    impl Format {
+        pub fn new(format_owner: BIOMETRICIDENTIFIER, format_type: Option<Any>) -> Self {
+            Self {
+                format_owner,
+                format_type,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum Identifier {
+        oid(ObjectIdentifier),
+        id(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum IntegrityBlock {
+        digitalSignature(DigitalSignature),
+        messageAuthenticationCode(MessageAuthenticationCode),
+        signedData(SignedData),
+        authenticatedData(AuthenticatedData),
+    }
+    #[doc = " Integrity "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct IntegrityObjects {
+        #[rasn(identifier = "biometricObjects")]
+        pub biometric_objects: EncodedBiometricObjects,
+        #[rasn(identifier = "integrityBlock")]
+        pub integrity_block: IntegrityBlock,
+    }
+    impl IntegrityObjects {
+        pub fn new(
+            biometric_objects: EncodedBiometricObjects,
+            integrity_block: IntegrityBlock,
+        ) -> Self {
+            Self {
+                biometric_objects,
+                integrity_block,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MatchingInformation {
+        pub id: BIOMETRICIDENTIFIER,
+        pub parms: Option<Any>,
+    }
+    impl MatchingInformation {
+        pub fn new(id: BIOMETRICIDENTIFIER, parms: Option<Any>) -> Self {
+            Self { id, parms }
+        }
+    }
+    #[doc = " Biometric matching methods "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MatchingMethods(pub SequenceOf<MatchingInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MessageAuthenticationCode {
+        #[rasn(identifier = "keyName")]
+        pub key_name: Option<OctetString>,
+        #[rasn(identifier = "algorithmID")]
+        pub algorithm_id: MACAlgorithmIdentifier,
+        #[rasn(value("0.."))]
+        pub mac: OctetString,
+    }
+    impl MessageAuthenticationCode {
+        pub fn new(
+            key_name: Option<OctetString>,
+            algorithm_id: MACAlgorithmIdentifier,
+            mac: OctetString,
+        ) -> Self {
+            Self {
+                key_name,
+                algorithm_id,
+                mac,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct NamedKeyEncryptedData {
+        #[rasn(size("1.."), identifier = "keyName")]
+        pub key_name: OctetString,
+        #[rasn(identifier = "encryptedData")]
+        pub encrypted_data: EncryptedData,
+    }
+    impl NamedKeyEncryptedData {
+        pub fn new(key_name: OctetString, encrypted_data: EncryptedData) -> Self {
+            Self {
+                key_name,
+                encrypted_data,
+            }
+        }
+    }
+    #[doc = " Privacy and integrity "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PrivacyAndIntegrityObjects {
+        #[rasn(identifier = "biometricHeaders")]
+        pub biometric_headers: Option<BiometricHeaders>,
+        #[rasn(identifier = "privacyBlock")]
+        pub privacy_block: PrivacyBlock,
+        #[rasn(identifier = "integrityBlock")]
+        pub integrity_block: IntegrityBlock,
+    }
+    impl PrivacyAndIntegrityObjects {
+        pub fn new(
+            biometric_headers: Option<BiometricHeaders>,
+            privacy_block: PrivacyBlock,
+            integrity_block: IntegrityBlock,
+        ) -> Self {
+            Self {
+                biometric_headers,
+                privacy_block,
+                integrity_block,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    pub enum PrivacyBlock {
+        fixedKey(EncryptedData),
+        namedKey(NamedKeyEncryptedData),
+        establishedKey(EnvelopedData),
+    }
+    #[doc = " Privacy "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PrivacyObjects {
+        #[rasn(identifier = "biometricHeaders")]
+        pub biometric_headers: Option<BiometricHeaders>,
+        #[rasn(identifier = "privacyBlock")]
+        pub privacy_block: PrivacyBlock,
+    }
+    impl PrivacyObjects {
+        pub fn new(
+            biometric_headers: Option<BiometricHeaders>,
+            privacy_block: PrivacyBlock,
+        ) -> Self {
+            Self {
+                biometric_headers,
+                privacy_block,
+            }
+        }
+    }
+    #[doc = " Biometric processing algorithms "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ProcessingAlgorithms(pub SequenceOf<ProcessingInformation>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProcessingInformation {
+        pub id: BIOMETRICIDENTIFIER,
+        pub parms: Option<Any>,
+    }
+    impl ProcessingInformation {
+        pub fn new(id: BIOMETRICIDENTIFIER, parms: Option<Any>) -> Self {
+            Self { id, parms }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    #[non_exhaustive]
+    pub enum Purpose {
+        verify = 1,
+        identify = 2,
+        enroll = 3,
+        enrollVerify = 4,
+        enrollIdentity = 5,
+        audit = 6,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("-2..=100", extensible))]
+    pub struct Quality(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct RecordType(pub BIOMETRICIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ValidityPeriod {
+        #[rasn(identifier = "notBefore")]
+        pub not_before: Option<DateTime>,
+        #[rasn(identifier = "notAfter")]
+        pub not_after: Option<DateTime>,
+    }
+    impl ValidityPeriod {
+        pub fn new(not_before: Option<DateTime>, not_after: Option<DateTime>) -> Self {
+            Self {
+                not_before,
+                not_after,
+            }
+        }
+    }
+}

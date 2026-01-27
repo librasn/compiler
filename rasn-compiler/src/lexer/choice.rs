@@ -16,7 +16,11 @@ use super::{constraint::constraints, error::ParserResult, *};
 
 pub fn choice_value(input: Input<'_>) -> ParserResult<'_, ASN1Value> {
     map(
-        skip_ws_and_comments(separated_pair(identifier, char(':'), asn1_value)),
+        skip_ws_and_comments(separated_pair(
+            identifier,
+            skip_ws_and_comments(char(':')),
+            asn1_value,
+        )),
         |(id, val)| ASN1Value::Choice {
             type_name: None,
             variant_name: id.to_owned(),
