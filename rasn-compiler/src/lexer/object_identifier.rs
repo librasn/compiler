@@ -4,14 +4,18 @@
 //! identify a so-called _information object_.
 use crate::{
     input::Input,
-    intermediate::{ASN1Type, ObjectIdentifierArc, ObjectIdentifierValue, OBJECT_IDENTIFIER},
+    intermediate::{
+        types::{OidIri, RelativeOidIri},
+        ASN1Type, ObjectIdentifierArc, ObjectIdentifierValue, OBJECT_IDENTIFIER, OID_IRI,
+        RELATIVE_OID_IRI,
+    },
 };
 
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::u128,
-    combinator::{into, map, opt},
+    character::complete::{alphanumeric1, u128},
+    combinator::{into, map, not, opt},
     multi::many1,
     sequence::{pair, preceded},
     Parser,
@@ -125,6 +129,49 @@ fn numeric_id(input: Input<'_>) -> ParserResult<'_, ObjectIdentifierArc> {
     map(u128, |i| i.into()).parse(input)
 }
 
+/// Parse a `IRIType`.
+///
+/// Syntax:
+///
+/// ```text
+/// IRIType ::=
+///     OID-IRI
+/// ```
+pub fn iri_type(input: Input<'_>) -> ParserResult<'_, OidIri> {
+    map(
+        preceded(
+            (tag(OID_IRI), not(alt((tag("-"), alphanumeric1)))),
+            opt(skip_ws_and_comments(constraints)),
+        ),
+        |constraints| OidIri {
+            constraints: constraints.unwrap_or_default(),
+        },
+    )
+    .parse(input)
+}
+
+/// Parse a `RelativeIRIType`.
+///
+/// Syntax:
+///
+/// ```text
+/// RelativeIRIType ::=
+///     RELATIVE-OID-IRI
+///
+/// ```
+pub fn relative_iri_type(input: Input<'_>) -> ParserResult<'_, RelativeOidIri> {
+    map(
+        preceded(
+            (tag(RELATIVE_OID_IRI), not(alt((tag("-"), alphanumeric1)))),
+            opt(skip_ws_and_comments(constraints)),
+        ),
+        |constraints| RelativeOidIri {
+            constraints: constraints.unwrap_or_default(),
+        },
+    )
+    .parse(input)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -162,5 +209,35 @@ mod tests {
                 },
             ])
         )
+    }
+
+    #[test]
+    fn parses_absolute_oid_iri_type() {
+        let input = Input::from("OID-IRI");
+
+        let (rest, result) = iri_type(input).unwrap();
+
+        assert_eq!(rest.inner(), "");
+        assert_eq!(
+            result,
+            OidIri {
+                constraints: Vec::new()
+            }
+        );
+    }
+
+    #[test]
+    fn parses_relative_oid_iri_type() {
+        let input = Input::from("RELATIVE-OID-IRI");
+
+        let (rest, result) = relative_iri_type(input).unwrap();
+
+        assert_eq!(rest.inner(), "");
+        assert_eq!(
+            result,
+            RelativeOidIri {
+                constraints: Vec::new()
+            }
+        );
     }
 }

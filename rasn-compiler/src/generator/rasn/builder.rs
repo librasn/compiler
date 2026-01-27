@@ -9,7 +9,8 @@ use crate::intermediate::{
         ToplevelInformationDefinition,
     },
     types::Optionality,
-    ASN1Type, ASN1Value, AsnTag, ToplevelDefinition, ToplevelTypeDefinition, ToplevelValueDefinition,
+    ASN1Type, ASN1Value, AsnTag, ToplevelDefinition, ToplevelTypeDefinition,
+    ToplevelValueDefinition,
 };
 
 use super::{
@@ -85,6 +86,16 @@ impl Rasn {
                 top_level_declaration: None,
             }),
             ASN1Type::ObjectIdentifier(_) => self.generate_oid(tld),
+            ASN1Type::OidIri(_) => Err(GeneratorError {
+                details: "OID-IRI are currently unsupported!".to_owned(),
+                kind: GeneratorErrorType::NotYetInplemented,
+                top_level_declaration: None,
+            }),
+            ASN1Type::RelativeOidIri(_) => Err(GeneratorError {
+                details: "RELATIVE-OID-IRI are currently unsupported!".to_owned(),
+                kind: GeneratorErrorType::NotYetInplemented,
+                top_level_declaration: None,
+            }),
             ASN1Type::ObjectClassField(_) | ASN1Type::EmbeddedPdv | ASN1Type::External => {
                 self.generate_any(tld)
             }

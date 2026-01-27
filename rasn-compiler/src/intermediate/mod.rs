@@ -827,6 +827,8 @@ pub enum ASN1Type {
     ElsewhereDeclaredType(DeclarationElsewhere),
     ChoiceSelectionType(ChoiceSelectionType),
     ObjectIdentifier(ObjectIdentifier),
+    OidIri(OidIri),
+    RelativeOidIri(RelativeOidIri),
     ObjectClassField(ObjectClassFieldType),
     EmbeddedPdv,
     External,
@@ -900,6 +902,8 @@ impl ASN1Type {
             }
             ASN1Type::ChoiceSelectionType(_) => todo!(),
             ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
+            ASN1Type::OidIri(_) => Cow::Borrowed(OID_IRI),
+            ASN1Type::RelativeOidIri(_) => Cow::Borrowed(RELATIVE_OID_IRI),
             ASN1Type::ObjectClassField(ifr) => Cow::Owned(format!(
                 "{INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}{}${}",
                 ifr.class,
@@ -937,6 +941,8 @@ impl ASN1Type {
             ASN1Type::GeneralizedTime(g) => g.constraints(),
             ASN1Type::UTCTime(u) => u.constraints(),
             ASN1Type::ObjectIdentifier(o) => o.constraints(),
+            ASN1Type::OidIri(o) => o.constraints(),
+            ASN1Type::RelativeOidIri(o) => o.constraints(),
             ASN1Type::ChoiceSelectionType(_)
             | ASN1Type::Null
             | ASN1Type::Any
@@ -963,6 +969,8 @@ impl ASN1Type {
             ASN1Type::GeneralizedTime(g) => Some(g.constraints_mut()),
             ASN1Type::UTCTime(u) => Some(u.constraints_mut()),
             ASN1Type::ObjectIdentifier(o) => Some(o.constraints_mut()),
+            ASN1Type::OidIri(o) => Some(o.constraints_mut()),
+            ASN1Type::RelativeOidIri(o) => Some(o.constraints_mut()),
             ASN1Type::ChoiceSelectionType(_)
             | ASN1Type::Null
             | ASN1Type::Any

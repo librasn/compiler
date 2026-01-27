@@ -93,6 +93,8 @@ constrainable!(Time);
 constrainable!(UTCTime);
 constrainable!(GeneralizedTime);
 constrainable!(ObjectIdentifier);
+constrainable!(OidIri);
+constrainable!(RelativeOidIri);
 
 /// Representation of an ASN1 BOOLEAN data element
 /// with corresponding constraints.
@@ -265,6 +267,22 @@ impl From<Option<Vec<Constraint>>> for ObjectIdentifier {
             constraints: value.unwrap_or_default(),
         }
     }
+}
+
+/// Absolute internationalized resource identifier type, `OID-IRI`.
+///
+/// *As defined in Rec. ITU-T X.680 (02/2021) §34*
+#[derive(Debug, Clone, PartialEq)]
+pub struct OidIri {
+    pub constraints: Vec<Constraint>,
+}
+
+/// Relative internationalized resource identifier type, `RELATICE-OID-IRI`.
+///
+/// *As defined in Rec. ITU-T X.680 (02/2021) §35*
+#[derive(Debug, Clone, PartialEq)]
+pub struct RelativeOidIri {
+    pub constraints: Vec<Constraint>,
 }
 
 /// Representation of an ASN1 TIME data element
