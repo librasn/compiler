@@ -154,6 +154,8 @@ pub fn asn1_type(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
             null,
             any_type,
             selection_type_choice,
+            map(iri_type, ASN1Type::OidIri),
+            map(relative_iri_type, ASN1Type::RelativeOidIri),
             object_identifier,
             sequence_of,
             sequence,

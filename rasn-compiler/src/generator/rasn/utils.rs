@@ -577,6 +577,20 @@ impl Rasn {
             }
             ASN1Type::Real(_) => (vec![], quote!(f64)),
             ASN1Type::ObjectIdentifier(o) => (o.constraints.clone(), quote!(ObjectIdentifier)),
+            ASN1Type::OidIri(_) => {
+                return Err(GeneratorError {
+                    kind: GeneratorErrorType::NotYetInplemented,
+                    details: "rasn does not suppoer OID-IRI types yet!".to_owned(),
+                    top_level_declaration: None,
+                });
+            }
+            ASN1Type::RelativeOidIri(_) => {
+                return Err(GeneratorError {
+                    kind: GeneratorErrorType::NotYetInplemented,
+                    details: "rasn does not support RELATIVE-OID-IRI types yet!".to_owned(),
+                    top_level_declaration: None,
+                });
+            }
             ASN1Type::BitString(b) => (b.constraints.clone(), quote!(BitString)),
             ASN1Type::OctetString(o) => (o.constraints.clone(), quote!(OctetString)),
             ASN1Type::GeneralizedTime(o) => (o.constraints.clone(), quote!(GeneralizedTime)),
@@ -739,6 +753,14 @@ impl Rasn {
             ASN1Type::ObjectIdentifier(_) => Err(error!(
                 NotYetInplemented,
                 "Object Identifier values are currently unsupported!"
+            )),
+            ASN1Type::OidIri(_) => Err(error!(
+                NotYetInplemented,
+                "OID-IRI values are currently unsupported!"
+            )),
+            ASN1Type::RelativeOidIri(_) => Err(error!(
+                NotYetInplemented,
+                "RELATIVE-OID-IRI values are currently unsupported!"
             )),
             ASN1Type::Set(_) => Err(error!(
                 NotYetInplemented,

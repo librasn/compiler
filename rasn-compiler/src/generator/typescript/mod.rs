@@ -128,6 +128,16 @@ impl Backend for Typescript {
                         self.generate_any(t)
                     }
                     ASN1Type::OctetString(_) => self.generate_octet_string(t),
+                    ASN1Type::OidIri(_) => Err(GeneratorError::new(
+                        None,
+                        "OID-IRI is not yet supported!",
+                        GeneratorErrorType::NotYetInplemented,
+                    )),
+                    ASN1Type::RelativeOidIri(_) => Err(GeneratorError::new(
+                        None,
+                        "RELATIVE-OID-IRI is not yet supported!",
+                        GeneratorErrorType::NotYetInplemented,
+                    )),
                     ASN1Type::ObjectIdentifier(_)
                     | ASN1Type::GeneralizedTime(_)
                     | ASN1Type::CharacterString(_)
