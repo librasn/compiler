@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     env,
     error::Error,
     io::{self, Write},
@@ -33,6 +34,35 @@ pub struct Rasn {
     /// A combination of the builtin required derives (`Rasn::REQUIRED_DERIVES`) and those supplied
     /// by the user in `Config::type_annotations`.
     required_derives: Vec<String>,
+}
+
+/// Maps an external ASN.1 module to a Rust crate path.
+///
+/// When the ASN.1 compiler encounters an IMPORT from a module that has an external mapping,
+/// it generates `use <rust_path>::<TypeName>;` instead of `use super::<module_name>::<TypeName>;`.
+///
+/// # Example
+/// ```
+/// use std::collections::HashMap;
+/// use rasn_compiler::prelude::*;
+///
+/// let mut config = RasnConfig::default();
+/// config.external_module_mappings.insert(
+///     "PKIX1Explicit88".to_string(),
+///     ExternalModuleMapping {
+///         rust_path: "rasn_pkix".to_string(),
+///         type_mappings: HashMap::new(),
+///     },
+/// );
+/// ```
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct ExternalModuleMapping {
+    /// Rust crate path (e.g., "rasn_pkix", "my_crate::submodule")
+    pub rust_path: String,
+    /// Optional type name mappings if ASN.1 names differ from Rust names.
+    /// Key: ASN.1 type name, Value: Rust type name.
+    /// If a type is not in this map, its name is converted using standard rules.
+    pub type_mappings: HashMap<String, String>,
 }
 
 #[cfg_attr(target_family = "wasm", wasm_bindgen(getter_with_clone))]
@@ -72,6 +102,27 @@ pub struct Config {
     pub type_annotations: Vec<String>,
     /// Create bindings for a `no_std` environment
     pub no_std_compliant_bindings: bool,
+    /// Maps ASN.1 module names to external Rust crate paths.
+    ///
+    /// When the compiler encounters an IMPORT from a module listed here,
+    /// it generates `use <rust_path>::<TypeName>;` instead of the default
+    /// `use super::<module_name>::<TypeName>;`.
+    ///
+    /// This is useful for referencing types from external crates like `rasn-pkix`
+    /// without having to compile their ASN.1 sources.
+    ///
+    /// # Example
+    /// ```ignore
+    /// config.external_module_mappings.insert(
+    ///     "PKIX1Explicit88".to_string(),
+    ///     ExternalModuleMapping {
+    ///         rust_path: "rasn_pkix".to_string(),
+    ///         type_mappings: HashMap::new(),
+    ///     },
+    /// );
+    /// ```
+    #[cfg_attr(target_family = "wasm", wasm_bindgen(skip))]
+    pub external_module_mappings: HashMap<String, ExternalModuleMapping>,
 }
 
 #[cfg(target_family = "wasm")]
@@ -94,6 +145,7 @@ impl Config {
             custom_imports: custom_imports.map_or(Vec::new(), |c| c.into_vec()),
             type_annotations: type_annotations
                 .map_or(Config::default().type_annotations, |c| c.into_vec()),
+            external_module_mappings: HashMap::new(),
         }
     }
 }
@@ -109,6 +161,7 @@ impl Default for Config {
             type_annotations: vec![String::from(
                 "#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]",
             )],
+            external_module_mappings: HashMap::new(),
         }
     }
 }
@@ -183,29 +236,62 @@ impl Backend for Rasn {
                     ..Default::default()
                 })?;
             let imports = module.imports.iter().map(|import| {
-                let module =
-                    self.to_rust_snake_case(&import.global_module_reference.module_reference);
-                let mut usages = Some(vec![]);
-                'imports: for usage in &import.types {
-                    if usage.contains("{}") || usage.chars().all(|c| c.is_uppercase() || c == '-') {
-                        usages = None;
-                        break 'imports;
-                    } else if usage.starts_with(|c: char| c.is_lowercase()) {
-                        if let Some(us) = usages.as_mut() {
-                            us.push(self.to_rust_const_case(usage).to_token_stream())
-                        }
-                    } else if usage.starts_with(|c: char| c.is_uppercase()) {
-                        if let Some(us) = usages.as_mut() {
-                            us.push(self.to_rust_title_case(usage).to_token_stream())
+                let asn1_module_name = &import.global_module_reference.module_reference;
+
+                // Check if this module has an external mapping
+                if let Some(mapping) = self.config.external_module_mappings.get(asn1_module_name) {
+                    // Generate external crate import
+                    let rust_path: TokenStream = mapping
+                        .rust_path
+                        .parse()
+                        .expect("Invalid rust_path in external module mapping");
+
+                    let types: Vec<TokenStream> = import
+                        .types
+                        .iter()
+                        .map(|t| {
+                            // Check if there's an explicit type mapping
+                            let rust_name = mapping
+                                .type_mappings
+                                .get(t)
+                                .map(|s| s.as_str())
+                                .unwrap_or(t);
+                            // Convert to appropriate Rust case
+                            if rust_name.starts_with(|c: char| c.is_lowercase()) {
+                                self.to_rust_const_case(rust_name).to_token_stream()
+                            } else {
+                                self.to_rust_title_case(rust_name).to_token_stream()
+                            }
+                        })
+                        .collect();
+
+                    quote!(use #rust_path::{ #(#types),* };)
+                } else {
+                    // Default behavior: sibling module import
+                    let module = self.to_rust_snake_case(asn1_module_name);
+                    let mut usages = Some(vec![]);
+                    'imports: for usage in &import.types {
+                        if usage.contains("{}") || usage.chars().all(|c| c.is_uppercase() || c == '-')
+                        {
+                            usages = None;
+                            break 'imports;
+                        } else if usage.starts_with(|c: char| c.is_lowercase()) {
+                            if let Some(us) = usages.as_mut() {
+                                us.push(self.to_rust_const_case(usage).to_token_stream())
+                            }
+                        } else if usage.starts_with(|c: char| c.is_uppercase()) {
+                            if let Some(us) = usages.as_mut() {
+                                us.push(self.to_rust_title_case(usage).to_token_stream())
+                            }
                         }
                     }
+                    let used_imports = if self.config.default_wildcard_imports {
+                        vec![TokenStream::from_str("*").unwrap()]
+                    } else {
+                        usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()])
+                    };
+                    quote!(use super:: #module::{ #(#used_imports),* };)
                 }
-                let used_imports = if self.config.default_wildcard_imports {
-                    vec![TokenStream::from_str("*").unwrap()]
-                } else {
-                    usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()])
-                };
-                quote!(use super:: #module::{ #(#used_imports),* };)
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<CompilerError>) =
                 tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {

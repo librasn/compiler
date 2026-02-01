@@ -39,7 +39,7 @@ pub mod prelude {
     };
     pub use crate::generator::{
         error::*,
-        rasn::{Config as RasnConfig, Rasn as RasnBackend},
+        rasn::{Config as RasnConfig, ExternalModuleMapping, Rasn as RasnBackend},
         typescript::{Config as TsConfig, Typescript as TypescriptBackend},
         Backend, GeneratedModule,
     };
