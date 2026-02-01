@@ -165,7 +165,7 @@ pub const DATE_TIME: &str = "DATE-TIME";
 pub const DURATION: &str = "DURATION";
 pub const EMBEDDED_PDV: &str = "EMBEDDED PDV";
 pub const EXTERNAL: &str = "EXTERNAL";
-pub const INSTANCE_OF: &str = "INSTANCE OF";
+pub const INSTANCE: &str = "INSTANCE";
 pub const MINUS_INFINITY: &str = "MINUS-INFINITY";
 pub const NOT_A_NUMBER: &str = "NOT-A-NUMBER";
 pub const OBJECT: &str = "OBJECT";
@@ -189,7 +189,7 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     DURATION,
     EMBEDDED_PDV,
     EXTERNAL,
-    INSTANCE_OF,
+    INSTANCE,
     MINUS_INFINITY,
     NOT_A_NUMBER,
     OBJECT,
