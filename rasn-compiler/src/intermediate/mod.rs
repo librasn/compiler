@@ -83,7 +83,7 @@ pub const SET_OF: &str = "SET OF";
 pub const OF: &str = "OF";
 pub const ALL: &str = "ALL";
 pub const SET: &str = "SET";
-pub const OBJECT_IDENTIFIER: &str = "OBJECT IDENTIFIER";
+pub const IDENTIFIER: &str = "IDENTIFIER";
 pub const COMPONENTS_OF: &str = "COMPONENTS OF";
 pub const ANY: &str = "ANY";
 pub const DEFINED: &str = "DEFINED";
@@ -227,7 +227,7 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     OF,
     ALL,
     SET,
-    OBJECT_IDENTIFIER,
+    IDENTIFIER,
     UNIVERSAL,
     PRIVATE,
     APPLICATION,
@@ -899,7 +899,7 @@ impl ASN1Type {
                 Cow::Borrowed(identifier)
             }
             ASN1Type::ChoiceSelectionType(_) => todo!(),
-            ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
+            ASN1Type::ObjectIdentifier(_) => Cow::Borrowed("OBJECT IDENTIFIER"),
             ASN1Type::ObjectClassField(ifr) => Cow::Owned(format!(
                 "{INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}{}${}",
                 ifr.class,
