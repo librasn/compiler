@@ -695,11 +695,16 @@ impl Rasn {
         let mut output = TokenStream::new();
         for member in members {
             if let Some(value) = member.optionality.default() {
+                // Determine the return type, handling inline types that get delegate wrappers
+                let ty = if Self::needs_unnesting(&member.ty) {
+                    self.inner_name(&member.name, parent_name).to_token_stream()
+                } else {
+                    self.type_to_tokens(&member.ty)?
+                };
                 let val = self.value_to_tokens(
                     value,
-                    Some(&self.to_rust_title_case(&self.type_to_tokens(&member.ty)?.to_string())),
+                    Some(&self.to_rust_title_case(&ty.to_string())),
                 )?;
-                let ty = self.type_to_tokens(&member.ty)?;
                 let method_name = self.default_method_name(parent_name, &member.name);
                 output.append_all(quote! {
                     fn #method_name() -> #ty {
@@ -809,8 +814,20 @@ impl Rasn {
                 }
             }
             ASN1Value::OctetString(o) => {
-                let bytes = o.iter().map(|byte| Literal::u8_unsuffixed(*byte));
-                Ok(quote!(<OctetString as From<&'static [u8]>>::from(&[#(#bytes),*])))
+                let bytes: Vec<_> = o.iter().map(|byte| Literal::u8_unsuffixed(*byte)).collect();
+                // When wrapping in an anonymous type (from SEQUENCE OF with constrained element),
+                // use FixedOctetString if the size matches
+                if let Some(ty) = type_name {
+                    let ty_str = ty.to_string();
+                    if ty_str != "OctetString" && !ty_str.starts_with("FixedOctetString") {
+                        // For anonymous types, use FixedOctetString when we have a fixed-size array
+                        // This handles cases like SEQUENCE OF OCTET STRING (SIZE (6))
+                        let fixed_octet = quote!(FixedOctetString::from([#(#bytes),*]));
+                        return Ok(quote!(#ty(#fixed_octet)));
+                    }
+                }
+                let octet_str = quote!(<OctetString as From<&'static [u8]>>::from(&[#(#bytes),*]));
+                Ok(octet_str)
             }
             ASN1Value::SequenceOrSet(_) => Err(error!(
                 Unidentified,
@@ -885,11 +902,33 @@ impl Rasn {
                 None => Ok(quote!(#t.parse::<_>().unwrap())),
             },
             ASN1Value::LinkedArrayLikeValue(seq) => {
+                // Determine if we need to wrap inner elements in an anonymous type
+                // When outer type is a custom type (not SequenceOf/SetOf), elements may
+                // need wrapping in Anonymous{OuterTypeName}
+                let inner_type_name = type_name.and_then(|ty| {
+                    let ty_str = ty.to_string();
+                    if !ty_str.starts_with("SequenceOf") && !ty_str.starts_with("SetOf") {
+                        let anon_name = format_ident!("Anonymous{}", ty_str);
+                        Some(anon_name.to_token_stream())
+                    } else {
+                        None
+                    }
+                });
+
                 let elems = seq
                     .iter()
-                    .map(|v| self.value_to_tokens(v, None))
+                    .map(|v| self.value_to_tokens(v, inner_type_name.as_ref()))
                     .collect::<Result<Vec<_>, _>>()?;
-                Ok(quote!(alloc::vec![#(#elems),*]))
+                let vec_expr = quote!(alloc::vec![#(#elems),*]);
+
+                // Wrap in outer newtype if type_name is a custom type (not SequenceOf/SetOf)
+                if let Some(ty) = type_name {
+                    let ty_str = ty.to_string();
+                    if !ty_str.starts_with("SequenceOf") && !ty_str.starts_with("SetOf") {
+                        return Ok(quote!(#ty(#vec_expr)));
+                    }
+                }
+                Ok(vec_expr)
             }
             ASN1Value::LinkedNestedValue { supertypes, value } => {
                 fn nester(generator: &Rasn, s: TokenStream, mut types: Vec<String>) -> TokenStream {
@@ -901,13 +940,25 @@ impl Rasn {
                         None => s,
                     }
                 }
-                // Pass None for type_name to inner value_to_tokens because nester
-                // handles the wrapping via supertypes
-                Ok(nester(
-                    self,
-                    self.value_to_tokens(value, None)?,
-                    supertypes.clone(),
-                ))
+                // Pass None for type_name to avoid double-wrapping (nester handles outer wrap)
+                // For LinkedArrayLikeValue, we handle inner element wrapping separately
+                let inner_tokens = match value.as_ref() {
+                    ASN1Value::LinkedArrayLikeValue(seq) => {
+                        // Compute anonymous inner type name from the outer type
+                        let inner_type_name = supertypes.last().map(|outer| {
+                            let outer_str = self.to_rust_title_case(outer).to_string();
+                            format_ident!("Anonymous{}", outer_str).to_token_stream()
+                        });
+                        // Process elements with the anonymous inner type name
+                        let elems = seq
+                            .iter()
+                            .map(|v| self.value_to_tokens(v, inner_type_name.as_ref()))
+                            .collect::<Result<Vec<_>, _>>()?;
+                        quote!(alloc::vec![#(#elems),*])
+                    }
+                    _ => self.value_to_tokens(value, None)?,
+                };
+                Ok(nester(self, inner_tokens, supertypes.clone()))
             }
             ASN1Value::LinkedIntValue {
                 integer_type,

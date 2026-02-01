@@ -136,3 +136,14 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    sequence_of_newtype_default,
+    r#"
+        MyOctet ::= OCTET STRING
+        OctetList ::= SEQUENCE OF MyOctet
+        MySeq ::= SEQUENCE {
+            data OctetList DEFAULT { 'CAFE'H, 'BABE'H }
+        }
+    "#
+);
