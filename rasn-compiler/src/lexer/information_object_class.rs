@@ -13,8 +13,8 @@ use crate::{
     intermediate::{
         information_object::*,
         types::{ObjectIdentifier, Optionality},
-        ASN1Type, DeclarationElsewhere, AMPERSAND, CLASS, COMMA, DOT, INSTANCE_OF, TYPE_IDENTIFIER,
-        UNIQUE, WITH_SYNTAX,
+        ASN1Type, DeclarationElsewhere, AMPERSAND, CLASS, COMMA, DOT, INSTANCE, OF,
+        TYPE_IDENTIFIER, UNIQUE, WITH_SYNTAX,
     },
     lexer::{
         common::{assignment, comment, optionality, skip_ws},
@@ -112,7 +112,7 @@ pub fn type_identifier(input: Input<'_>) -> ParserResult<'_, ObjectClassDefn> {
 pub fn instance_of(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         preceded(
-            tag(INSTANCE_OF),
+            (tag(INSTANCE), skip_ws_and_comments(tag(OF))),
             pair(
                 skip_ws_and_comments(uppercase_identifier),
                 skip_ws_and_comments(opt(constraints)),
