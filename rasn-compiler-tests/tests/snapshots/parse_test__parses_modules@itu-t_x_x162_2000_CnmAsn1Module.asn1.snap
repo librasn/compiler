@@ -2,14 +2,396 @@
 source: rasn-compiler-tests/tests/parse_test.rs
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x162_2000_CnmAsn1Module.asn1
 ---
-Error matching ASN syntax at while parsing:
-     ╭─[line 219, column 2]
-     │
-     │ 
- 219 │  SystemIdRange ::= CHOICE { ◀▪▪▪▪▪▪▪▪▪▪ FAILED AT THIS LINE
- 220 │    name     GraphicString64,
- 221 │    number   Integer,
- 222 │    nothing  NULL
- 223 │  }
-     │
-─────╯
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod cnm_asn1_module {
+    extern crate alloc;
+    use super::asn1_defined_types_module::NameType;
+    use super::attribute_asn1_module::*;
+    use super::cmip_1::*;
+    use super::nlm::{DTEAddress, LogicalChannelId};
+    use super::usage_metering_function::UsageInfo;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[doc = " supporting production"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct AnyNamesBase(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=64"))]
+    pub struct AnyNamesRange(pub SetOf<ObjectInstance>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct Boolean(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "CNM-PACKET-INVOICE")]
+    pub struct CNMPACKETINVOICE(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "CNM-SERVICE-CLASS")]
+    pub struct CNMSERVICECLASS(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "CNM-SERVICE-PROVIDER")]
+    pub struct CNMSERVICEPROVIDER(pub DMITYPEIDENTIFIER);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ConnectionType(pub Integer);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "INTEGER", value("0..=255"))]
+    pub struct AnonymousCustomerTypes(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct CustomerTypes(pub SetOf<AnonymousCustomerTypes>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct DTEAddressList(pub SetOf<DTEAddress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Date(pub GeneralizedTime);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DateRequest {
+        dontCare(()),
+        request(RequestedTime),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GeographicCoordinates(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("0..=64"))]
+    pub struct GraphicString64(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct GraphicStringBase(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Integer(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InterlockCode(pub GraphicString);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInvoiceInfo {
+        #[rasn(identifier = "serviceProviderName")]
+        pub service_provider_name: Any,
+        #[rasn(identifier = "invoiceData")]
+        pub invoice_data: Any,
+    }
+    impl AnonymousInvoiceInfo {
+        pub fn new(service_provider_name: Any, invoice_data: Any) -> Self {
+            Self {
+                service_provider_name,
+                invoice_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct InvoiceInfo(pub SetOf<AnonymousInvoiceInfo>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum LocationDetails {
+        unknown(()),
+        details(GraphicString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct LocationType(pub u8);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(delegate)]
+    pub struct LoopbackStatus(pub bool);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum OperationArgument {
+        #[rasn(tag(context, 0))]
+        actionArgument(ActionArgument),
+        #[rasn(tag(context, 1))]
+        createArgument(CreateArgument),
+        #[rasn(tag(context, 2))]
+        deleteArgument(DeleteArgument),
+        #[rasn(tag(context, 3))]
+        getArgument(GetArgument),
+        #[rasn(tag(context, 4))]
+        setArgument(SetArgument),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct OperationList(pub SequenceOf<OperationArgument>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PacketCompleteType {
+        #[rasn(tag(context, 0), identifier = "providerName")]
+        pub provider_name: GraphicString,
+        #[rasn(tag(context, 1), identifier = "originatingAddress")]
+        pub originating_address: DTEAddress,
+        #[rasn(tag(context, 2), identifier = "destinationAddress")]
+        pub destination_address: DTEAddress,
+        #[rasn(tag(context, 3), identifier = "logicalChannel")]
+        pub logical_channel: LogicalChannelId,
+        #[rasn(tag(context, 4), identifier = "usageMeasurement")]
+        pub usage_measurement: SetOf<UsageMeasurement>,
+        #[rasn(tag(context, 5), identifier = "connectionType")]
+        pub connection_type: ConnectionType,
+        #[rasn(tag(context, 6), identifier = "reverseChargingIndication")]
+        pub reverse_charging_indication: Boolean,
+    }
+    impl PacketCompleteType {
+        pub fn new(
+            provider_name: GraphicString,
+            originating_address: DTEAddress,
+            destination_address: DTEAddress,
+            logical_channel: LogicalChannelId,
+            usage_measurement: SetOf<UsageMeasurement>,
+            connection_type: ConnectionType,
+            reverse_charging_indication: Boolean,
+        ) -> Self {
+            Self {
+                provider_name,
+                originating_address,
+                destination_address,
+                logical_channel,
+                usage_measurement,
+                connection_type,
+                reverse_charging_indication,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PacketInterruptTypeCause {
+        unknown = 0,
+        hostBusy = 1,
+        systemFailure = 2,
+        planedMaintenance = 3,
+    }
+    #[doc = "  Other items such as supplementaryCharge, supplementaryServiceList, interworking charge"]
+    #[doc = "  should be defined by using another attribute (e.g. usageInfo2)."]
+    #[doc = "  We can use this type for the recording of PVC charging data."]
+    #[doc = "  In case of PVC, basically, the same information as the SVC should be provided periodically"]
+    #[doc = "  (e.g. the interval = 1 hour or 12 hours) or when one of the charging conditions is changed,"]
+    #[doc = "  e.g. at the time when the discount rate is changed."]
+    #[doc = "  reverseChargingIndication: the 'TRUE' value of this attribute means that the"]
+    #[doc = "  packetUsageData has been created by an incoming SVC that requests reverse charging."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PacketInterruptType {
+        #[rasn(tag(context, 0), identifier = "interruptionTime")]
+        pub interruption_time: GeneralizedTime,
+        #[rasn(value("0.."), tag(context, 1), identifier = "durationTime")]
+        pub duration_time: Integer,
+        #[rasn(tag(context, 2))]
+        pub cause: PacketInterruptTypeCause,
+    }
+    impl PacketInterruptType {
+        pub fn new(
+            interruption_time: GeneralizedTime,
+            duration_time: Integer,
+            cause: PacketInterruptTypeCause,
+        ) -> Self {
+            Self {
+                interruption_time,
+                duration_time,
+                cause,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct PacketInvoiceData {
+        #[rasn(identifier = "packetInvoiceType")]
+        pub packet_invoice_type: Any,
+        #[rasn(identifier = "packetInvoiceInfo")]
+        pub packet_invoice_info: Any,
+    }
+    impl PacketInvoiceData {
+        pub fn new(packet_invoice_type: Any, packet_invoice_info: Any) -> Self {
+            Self {
+                packet_invoice_type,
+                packet_invoice_info,
+            }
+        }
+    }
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    pub enum AnonymousPacketRegistrationType {
+        #[rasn(tag(context, 0))]
+        userId(DTEAddress),
+        #[rasn(tag(context, 1))]
+        userName(GraphicString),
+        #[rasn(tag(context, 2))]
+        accountId(NumericString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PacketRegistrationType(pub SetOf<AnonymousPacketRegistrationType>);
+    #[doc = " Anonymous SET OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "GraphicString")]
+    pub struct AnonymousPostalAddress(pub GraphicString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PostalAddress(pub SetOf<AnonymousPostalAddress>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ProcessingMode {
+        sequential(Sequential),
+        independent(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum RequestedTime {
+        #[rasn(tag(context, 0))]
+        now(()),
+        #[rasn(tag(context, 1))]
+        scheduled(Date),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Result(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ResultList(pub SequenceOf<Result>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SRChangeDenied(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum Sequential {
+        #[rasn(tag(context, 0))]
+        stopAfterFailure(()),
+        #[rasn(tag(context, 1))]
+        bestEffort(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ServiceClass {
+        #[rasn(identifier = "serviceClassType")]
+        pub service_class_type: Any,
+        #[rasn(identifier = "serviceClassData")]
+        pub service_class_data: Any,
+    }
+    impl ServiceClass {
+        pub fn new(service_class_type: Any, service_class_data: Any) -> Self {
+            Self {
+                service_class_type,
+                service_class_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct Status(pub Integer);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSuborganizationObjectList {
+        #[rasn(identifier = "managedObjectClass")]
+        pub managed_object_class: ObjectClass,
+        #[rasn(identifier = "managedObjectInstance")]
+        pub managed_object_instance: ObjectInstance,
+    }
+    impl AnonymousSuborganizationObjectList {
+        pub fn new(
+            managed_object_class: ObjectClass,
+            managed_object_instance: ObjectInstance,
+        ) -> Self {
+            Self {
+                managed_object_class,
+                managed_object_instance,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct SuborganizationObjectList(pub SequenceOf<AnonymousSuborganizationObjectList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum SystemIdRange {
+        name(GraphicString64),
+        number(Integer),
+        nothing(()),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum TroubleTypePspdn {
+        integerForm(Integer),
+        oidForm(ObjectIdentifier),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct UsageCounter(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UsageMeasurement {
+        #[rasn(tag(context, 0), identifier = "serviceClass")]
+        pub service_class: Option<ServiceClass>,
+        #[rasn(tag(context, 1), identifier = "usageCounterSent")]
+        pub usage_counter_sent: SetOf<UsageCounter>,
+        #[rasn(tag(context, 2), identifier = "usageCounterReceived")]
+        pub usage_counter_received: SetOf<UsageCounter>,
+        #[rasn(tag(context, 3), identifier = "usageStartTime")]
+        pub usage_start_time: GeneralizedTime,
+        #[rasn(tag(context, 4), identifier = "usageStopTime")]
+        pub usage_stop_time: GeneralizedTime,
+        #[rasn(tag(context, 5), identifier = "durationTime")]
+        pub duration_time: Integer,
+    }
+    impl UsageMeasurement {
+        pub fn new(
+            service_class: Option<ServiceClass>,
+            usage_counter_sent: SetOf<UsageCounter>,
+            usage_counter_received: SetOf<UsageCounter>,
+            usage_start_time: GeneralizedTime,
+            usage_stop_time: GeneralizedTime,
+            duration_time: Integer,
+        ) -> Self {
+            Self {
+                service_class,
+                usage_counter_sent,
+                usage_counter_received,
+                usage_start_time,
+                usage_stop_time,
+                duration_time,
+            }
+        }
+    }
+    pub static CNM_ACTION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 9u32]).to_owned());
+    pub static CNM_ATTRIBUTE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 7u32]).to_owned());
+    pub static CNM_ATTRIBUTE_GROUP: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 8u32]).to_owned());
+    pub static CNM_FUNCTIONAL_UNIT: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 11u32, 1u32]).to_owned());
+    pub static CNM_NAME_BINDING: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 6u32]).to_owned());
+    pub static CNM_NOTIFICATION: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 10u32]).to_owned());
+    pub static CNM_OBJECT_CLASS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 3u32]).to_owned());
+    pub static CNM_PACKAGE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 4u32]).to_owned());
+    pub static CNM_PARAMETER: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 5u32]).to_owned());
+    #[doc = " default value definition"]
+    pub const DEFAULT_DATE_REQUEST: DateRequest = DateRequest::dontCare(());
+    pub static DEFAULT_INITIAL_RESULT_LIST: LazyLock<ResultList> =
+        LazyLock::new(|| ResultList(alloc::vec![]));
+    pub static DEFAULT_OPERATION_LIST: LazyLock<OperationList> =
+        LazyLock::new(|| OperationList(alloc::vec![]));
+    pub const DEFAULT_PROCESSING_MODE: ProcessingMode = ProcessingMode::independent(());
+    #[doc = " initial value definition"]
+    pub static INITIAL_RESULT_LIST: LazyLock<ResultList> =
+        LazyLock::new(|| ResultList(alloc::vec![]));
+    pub static INITIAL_STATUS: LazyLock<Status> = LazyLock::new(|| Status(Integer::from(0i128)));
+    pub static MISCELLANEOUS: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 12u32]).to_owned());
+    #[doc = "  invoice number"]
+    pub static PACKET_SERVICE: LazyLock<ObjectIdentifier> =
+        LazyLock::new(|| Oid::const_new(&[0u32, 0u32, 24u32, 162u32, 12u32, 1u32]).to_owned());
+}

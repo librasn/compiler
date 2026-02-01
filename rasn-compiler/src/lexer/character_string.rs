@@ -1,8 +1,8 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{char, u8},
-    combinator::{map, map_res, opt, value},
+    character::complete::{alphanumeric1, char, u8},
+    combinator::{map, map_res, not, opt, value},
     sequence::{delimited, pair, terminated},
     Parser,
 };
@@ -116,20 +116,23 @@ fn quadruple(input: Input<'_>) -> ParserResult<'_, char> {
 pub fn character_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
         pair(
-            skip_ws_and_comments(alt((
-                value(CharacterStringType::IA5String, tag(IA5_STRING)),
-                value(CharacterStringType::UTF8String, tag(UTF8_STRING)),
-                value(CharacterStringType::NumericString, tag(NUMERIC_STRING)),
-                value(CharacterStringType::VisibleString, tag(VISIBLE_STRING)),
-                value(CharacterStringType::TeletexString, tag(TELETEX_STRING)),
-                value(CharacterStringType::TeletexString, tag(T61_STRING)),
-                value(CharacterStringType::VideotexString, tag(VIDEOTEX_STRING)),
-                value(CharacterStringType::GraphicString, tag(GRAPHIC_STRING)),
-                value(CharacterStringType::GeneralString, tag(GENERAL_STRING)),
-                value(CharacterStringType::UniversalString, tag(UNIVERSAL_STRING)),
-                value(CharacterStringType::BMPString, tag(BMP_STRING)),
-                value(CharacterStringType::PrintableString, tag(PRINTABLE_STRING)),
-            ))),
+            skip_ws_and_comments(terminated(
+                alt((
+                    value(CharacterStringType::IA5String, tag(IA5_STRING)),
+                    value(CharacterStringType::UTF8String, tag(UTF8_STRING)),
+                    value(CharacterStringType::NumericString, tag(NUMERIC_STRING)),
+                    value(CharacterStringType::VisibleString, tag(VISIBLE_STRING)),
+                    value(CharacterStringType::TeletexString, tag(TELETEX_STRING)),
+                    value(CharacterStringType::TeletexString, tag(T61_STRING)),
+                    value(CharacterStringType::VideotexString, tag(VIDEOTEX_STRING)),
+                    value(CharacterStringType::GraphicString, tag(GRAPHIC_STRING)),
+                    value(CharacterStringType::GeneralString, tag(GENERAL_STRING)),
+                    value(CharacterStringType::UniversalString, tag(UNIVERSAL_STRING)),
+                    value(CharacterStringType::BMPString, tag(BMP_STRING)),
+                    value(CharacterStringType::PrintableString, tag(PRINTABLE_STRING)),
+                )),
+                not(alt((tag("-"), alphanumeric1))),
+            )),
             opt(constraints),
         ),
         |(ty, constraints)| {
