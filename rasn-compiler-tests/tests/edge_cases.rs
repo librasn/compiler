@@ -126,3 +126,13 @@ e2e_pdu!(
         LDAPString ::= [UNIVERSAL 4] IMPLICIT UTF8String
     "#
 );
+
+e2e_pdu!(
+    constrained_integer_newtype_default,
+    r#"
+        UInt8 ::= INTEGER (0..255)
+        MySeq ::= SEQUENCE {
+            value UInt8 DEFAULT 8
+        }
+    "#
+);

@@ -1,0 +1,42 @@
+---
+source: rasn-compiler-tests/tests/edge_cases.rs
+description: "\n        UInt8 ::= INTEGER (0..255)\n        MySeq ::= SEQUENCE {\n            value UInt8 DEFAULT 8\n        }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MySeq {
+        #[rasn(default = "my_seq_value_default")]
+        pub value: UInt8,
+    }
+    impl MySeq {
+        pub fn new(value: UInt8) -> Self {
+            Self { value }
+        }
+    }
+    impl std::default::Default for MySeq {
+        fn default() -> Self {
+            Self {
+                value: my_seq_value_default(),
+            }
+        }
+    }
+    fn my_seq_value_default() -> UInt8 {
+        UInt8(8)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct UInt8(pub u8);
+}

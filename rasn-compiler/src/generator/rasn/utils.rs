@@ -833,7 +833,29 @@ impl Rasn {
                 }
             }
             ASN1Value::Boolean(b) => Ok(b.to_token_stream()),
-            ASN1Value::Integer(i) => Ok(Literal::i128_unsuffixed(*i).to_token_stream()),
+            ASN1Value::Integer(i) => {
+                let literal = Literal::i128_unsuffixed(*i);
+                // Wrap in newtype if type_name is a custom type (not a primitive integer)
+                if let Some(ty) = type_name {
+                    let ty_str = ty.to_string();
+                    if !matches!(
+                        ty_str.as_str(),
+                        "i8" | "u8"
+                            | "i16"
+                            | "u16"
+                            | "i32"
+                            | "u32"
+                            | "i64"
+                            | "u64"
+                            | "i128"
+                            | "u128"
+                            | "Integer"
+                    ) {
+                        return Ok(quote!(#ty(#literal)));
+                    }
+                }
+                Ok(literal.into_token_stream())
+            }
             ASN1Value::String(s) => Ok(s.to_token_stream()),
             ASN1Value::Real(r) => Ok(r.to_token_stream()),
             ASN1Value::BitStringNamedBits(_) => Err(GeneratorError {
@@ -879,9 +901,11 @@ impl Rasn {
                         None => s,
                     }
                 }
+                // Pass None for type_name to inner value_to_tokens because nester
+                // handles the wrapping via supertypes
                 Ok(nester(
                     self,
-                    self.value_to_tokens(value, type_name)?,
+                    self.value_to_tokens(value, None)?,
                     supertypes.clone(),
                 ))
             }
@@ -896,7 +920,28 @@ impl Rasn {
                         let val = Literal::i128_suffixed(*value);
                         Ok(quote!(Integer::from(#val)))
                     }
-                    _ => Ok(Literal::i128_unsuffixed(*value).into_token_stream()),
+                    _ => {
+                        let literal = Literal::i128_unsuffixed(*value);
+                        // Wrap in newtype if type_name is a custom type (not a primitive integer)
+                        if let Some(ty) = type_name {
+                            let ty_str = ty.to_string();
+                            if !matches!(
+                                ty_str.as_str(),
+                                "i8" | "u8"
+                                    | "i16"
+                                    | "u16"
+                                    | "i32"
+                                    | "u32"
+                                    | "i64"
+                                    | "u64"
+                                    | "i128"
+                                    | "u128"
+                            ) {
+                                return Ok(quote!(#ty(#literal)));
+                            }
+                        }
+                        Ok(literal.into_token_stream())
+                    }
                 }
             }
             ASN1Value::LinkedCharStringValue(string_type, value) => {
