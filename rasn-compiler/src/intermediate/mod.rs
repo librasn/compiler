@@ -131,8 +131,9 @@ pub const DEFAULT: &str = "DEFAULT";
 pub const CONTAINING: &str = "CONTAINING";
 pub const ENCODED_BY: &str = "ENCODED BY";
 pub const OPTIONAL: &str = "OPTIONAL";
-pub const WITH_COMPONENTS: &str = "WITH COMPONENTS";
-pub const WITH_COMPONENT: &str = "WITH COMPONENT";
+pub const WITH: &str = "WITH";
+pub const COMPONENTS: &str = "COMPONENTS";
+pub const COMPONENT: &str = "COMPONENT";
 pub const UNION: &str = "UNION";
 pub const EXCEPT: &str = "EXCEPT";
 pub const INTERSECTION: &str = "INTERSECTION";
@@ -179,7 +180,7 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 67] = [
+pub const ASN1_KEYWORDS: [&str; 68] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -204,8 +205,9 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     SIZE,
     DEFAULT,
     OPTIONAL,
-    WITH_COMPONENTS,
-    WITH_COMPONENT,
+    WITH,
+    COMPONENTS,
+    COMPONENT,
     UNION,
     EXCEPT,
     INTERSECTION,
