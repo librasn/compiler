@@ -701,10 +701,20 @@ impl Rasn {
                 } else {
                     self.type_to_tokens(&member.ty)?
                 };
-                let val = self.value_to_tokens(
-                    value,
-                    Some(&self.to_rust_title_case(&ty.to_string())),
-                )?;
+
+                // For primitive types, don't convert case (avoids u32 -> U32 issue)
+                let ty_str = ty.to_string();
+                let type_name_for_value = if matches!(
+                    ty_str.as_str(),
+                    "i8" | "u8" | "i16" | "u16" | "i32" | "u32" | "i64" | "u64"
+                        | "i128" | "u128" | "bool" | "f64" | "Integer"
+                ) {
+                    None // Don't pass type_name for primitives
+                } else {
+                    Some(self.to_rust_title_case(&ty_str))
+                };
+
+                let val = self.value_to_tokens(value, type_name_for_value.as_ref())?;
                 let method_name = self.default_method_name(parent_name, &member.name);
                 output.append_all(quote! {
                     fn #method_name() -> #ty {

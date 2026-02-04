@@ -147,3 +147,35 @@ e2e_pdu!(
         }
     "#
 );
+
+#[test]
+fn inline_constrained_integer_default() {
+    // INTEGER with inline constraint should NOT wrap in newtype
+    let generated = rasn_compiler::Compiler::<rasn_compiler::prelude::RasnBackend, _>::new()
+        .add_asn_literal(
+            r#"
+            TestModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+                TestSeq ::= SEQUENCE {
+                    count INTEGER (0..255) DEFAULT 1,
+                    bigCount INTEGER (0..4294967295) DEFAULT 100
+                }
+            END
+            "#,
+        )
+        .compile_to_string()
+        .unwrap()
+        .generated;
+
+    // Should NOT generate U8(1) or U32(100) - just bare literals
+    assert!(
+        !generated.contains("U8(1)") && !generated.contains("U32(100)"),
+        "Inline constrained integers should not be wrapped. Generated:\n{}",
+        generated
+    );
+    assert!(
+        generated.contains("fn test_seq_count_default() -> u8")
+            && generated.contains("1\n"),
+        "Should generate bare integer literal. Generated:\n{}",
+        generated
+    );
+}
