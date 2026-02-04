@@ -898,7 +898,10 @@ impl ASN1Type {
             ASN1Type::ElsewhereDeclaredType(DeclarationElsewhere { identifier, .. }) => {
                 Cow::Borrowed(identifier)
             }
-            ASN1Type::ChoiceSelectionType(_) => todo!(),
+            ASN1Type::ChoiceSelectionType(ChoiceSelectionType {
+                choice_name,
+                selected_option,
+            }) => Cow::Owned(format!("{selected_option} < {choice_name}")),
             ASN1Type::ObjectIdentifier(_) => Cow::Borrowed(OBJECT_IDENTIFIER),
             ASN1Type::ObjectClassField(ifr) => Cow::Owned(format!(
                 "{INTERNAL_IO_FIELD_REF_TYPE_NAME_PREFIX}{}${}",

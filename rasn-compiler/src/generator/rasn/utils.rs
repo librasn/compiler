@@ -628,7 +628,13 @@ impl Rasn {
             | ASN1Type::ObjectClassField(_)
             | ASN1Type::EmbeddedPdv
             | ASN1Type::External => (vec![], quote!(Any)),
-            ASN1Type::ChoiceSelectionType(_) => unreachable!(),
+            ASN1Type::ChoiceSelectionType(_) => {
+                return Err(GeneratorError {
+                    kind: GeneratorErrorType::NotYetInplemented,
+                    details: "Choice selection types should be resolved by now.".into(),
+                    top_level_declaration: None,
+                })
+            }
         })
     }
 
