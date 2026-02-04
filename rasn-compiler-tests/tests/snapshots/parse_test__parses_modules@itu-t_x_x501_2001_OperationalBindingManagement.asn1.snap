@@ -1,9 +1,9 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2001_OperationalBindingManagement.asn1
 ---
 Warnings:
-Not yet implemented error while generating bindings: Choice values are currently unsupported!
 LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
 LinkerError in ASN grammar: Failed to resolve supertype OPTIONALLY-PROTECTED-SEQ of parameterized implementation.
 LinkerError in ASN grammar: Failed to resolve reference in object set.
@@ -135,6 +135,61 @@ pub mod operational_binding_management {
     pub enum Time {
         utcTime(UtcTime),
         generalizedTime(GeneralizedTime),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ValidityValidFrom {
+        #[rasn(tag(context, 0))]
+        now(()),
+        #[rasn(tag(context, 1))]
+        time(Time),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ValidityValidUntil {
+        #[rasn(tag(context, 0))]
+        explicitTermination(()),
+        #[rasn(tag(context, 1))]
+        time(Time),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct Validity {
+        #[rasn(
+            tag(context, 0),
+            default = "validity_valid_from_default",
+            identifier = "validFrom"
+        )]
+        pub valid_from: ValidityValidFrom,
+        #[rasn(
+            tag(context, 1),
+            default = "validity_valid_until_default",
+            identifier = "validUntil"
+        )]
+        pub valid_until: ValidityValidUntil,
+    }
+    impl Validity {
+        pub fn new(valid_from: ValidityValidFrom, valid_until: ValidityValidUntil) -> Self {
+            Self {
+                valid_from,
+                valid_until,
+            }
+        }
+    }
+    impl std::default::Default for Validity {
+        fn default() -> Self {
+            Self {
+                valid_from: validity_valid_from_default(),
+                valid_until: validity_valid_until_default(),
+            }
+        }
+    }
+    fn validity_valid_from_default() -> ValidityValidFrom {
+        CHOICE::now(())
+    }
+    fn validity_valid_until_default() -> ValidityValidUntil {
+        CHOICE::explicitTermination(())
     }
     #[doc = " bind and unbind"]
     pub static D_SAOPERATIONAL_BINDING_MANAGEMENT_BIND: LazyLock<OPERATION> =

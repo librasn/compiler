@@ -1,9 +1,9 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_q_q824.1_1995_CAISDNModule.asn1
 ---
 Warnings:
-Unidentified error while generating bindings: A type name is needed to stringify sequence value LinkedStructLikeValue([("callControlTEItotal", Integer(Integer { constraints: [], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Unbounded, value: 64 })), ("callControlTEIsw", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "FlexType", constraints: [] }), Explicit(LinkedNestedValue { supertypes: [], value: Choice { type_name: Some("FlexType"), variant_name: "switchAssigned", inner_value: LinkedIntValue { integer_type: Unbounded, value: 63 } } })), ("packTEItotal", Integer(Integer { constraints: [], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Unbounded, value: 64 })), ("packTEIsw", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "FlexType", constraints: [] }), Explicit(LinkedNestedValue { supertypes: [], value: Choice { type_name: Some("FlexType"), variant_name: "switchAssigned", inner_value: LinkedIntValue { integer_type: Unbounded, value: 63 } } }))])
 LinkerError in ASN grammar: Failed to link value with 'Boolean'
 LinkerError in ASN grammar: Failed to link value with 'Boolean'
 
@@ -805,6 +805,14 @@ pub mod caisdnmodule {
         LazyLock::new(|| AccessChannelPtrList(alloc::vec![]));
     #[doc = "  default value definitions"]
     pub const R_FALSE: Boolean = Boolean(Boolean(false));
+    pub static LINK_OPTION_DEFAULT: LazyLock<LinkOption> = LazyLock::new(|| {
+        LinkOption::dynamic(Dynamic(Dynamic::new(
+            Integer::from(64i128),
+            FlexType::switchAssigned(Integer::from(63i128)),
+            Integer::from(64i128),
+            FlexType::switchAssigned(Integer::from(63i128)),
+        )))
+    });
     pub static MINUS_ONE: LazyLock<Integer> = LazyLock::new(|| Integer::from(-1i128));
     pub const NULL: () = ();
     pub static ONE: LazyLock<Integer> = LazyLock::new(|| Integer::from(1i128));

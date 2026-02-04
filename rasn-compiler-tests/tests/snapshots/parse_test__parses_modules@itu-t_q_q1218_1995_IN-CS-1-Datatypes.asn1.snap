@@ -1,53 +1,8 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_q_q1218_1995_IN-CS-1-Datatypes.asn1
 ---
-Warnings:
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-
-
 Generated:
 #[allow(
     non_camel_case_types,
@@ -74,6 +29,86 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AccessCode(pub LocationNumber);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousActivateServiceFilteringArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousActivateServiceFilteringArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(
+            default = "anonymous_activate_service_filtering_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousActivateServiceFilteringArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousActivateServiceFilteringArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousActivateServiceFilteringArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_activate_service_filtering_arg_extensions_criticality_default(
+    ) -> AnonymousActivateServiceFilteringArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ActivateServiceFilteringArgExtensions(
+        pub SequenceOf<AnonymousActivateServiceFilteringArgExtensions>,
+    );
+    #[doc = "  The ordering of parameters in the argument sequences has been arbitrary. Further study may be"]
+    #[doc = "  required to order arguments in a manner which will facilitate efficient encoding and decoding."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ActivateServiceFilteringArg {
+        #[rasn(tag(context, 0), identifier = "filteredCallTreatment")]
+        pub filtered_call_treatment: FilteredCallTreatment,
+        #[rasn(tag(context, 1), identifier = "filteringCharacteristics")]
+        pub filtering_characteristics: FilteringCharacteristics,
+        #[rasn(tag(context, 2), identifier = "filteringTimeOut")]
+        pub filtering_time_out: FilteringTimeOut,
+        #[rasn(tag(context, 3), identifier = "filteringCriteria")]
+        pub filtering_criteria: FilteringCriteria,
+        #[rasn(tag(context, 4), identifier = "startTime")]
+        pub start_time: Option<DateAndTime>,
+        #[rasn(tag(context, 5))]
+        pub extensions: ActivateServiceFilteringArgExtensions,
+    }
+    impl ActivateServiceFilteringArg {
+        pub fn new(
+            filtered_call_treatment: FilteredCallTreatment,
+            filtering_characteristics: FilteringCharacteristics,
+            filtering_time_out: FilteringTimeOut,
+            filtering_criteria: FilteringCriteria,
+            start_time: Option<DateAndTime>,
+            extensions: ActivateServiceFilteringArgExtensions,
+        ) -> Self {
+            Self {
+                filtered_call_treatment,
+                filtering_characteristics,
+                filtering_time_out,
+                filtering_criteria,
+                start_time,
+                extensions,
+            }
+        }
+    }
     #[doc = "  The AChBillingChargingCharacteristics parameter specifies the charging related information"]
     #[doc = "  to be provided by the SSF and the conditions on which this information has to be reported"]
     #[doc = "  back to the SCF with the ApplyChargingReport operation."]
@@ -88,17 +123,363 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AlertingPattern(pub FixedOctetString<3usize>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousAnalyseInformationArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAnalyseInformationArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_analyse_information_arg_extensions_criticality_default")]
+        pub criticality: AnonymousAnalyseInformationArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousAnalyseInformationArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousAnalyseInformationArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_analyse_information_arg_extensions_criticality_default(
+    ) -> AnonymousAnalyseInformationArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct AnalyseInformationArgExtensions(
+        pub SequenceOf<AnonymousAnalyseInformationArgExtensions>,
+    );
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnalyseInformationArg {
+        #[rasn(tag(context, 0), identifier = "destinationRoutingAddress")]
+        pub destination_routing_address: DestinationRoutingAddress,
+        #[rasn(tag(context, 1), identifier = "alertingPattern")]
+        pub alerting_pattern: Option<AlertingPattern>,
+        #[rasn(tag(context, 2), identifier = "iSDNAccessRelatedInformation")]
+        pub i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+        #[rasn(tag(context, 3), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 4))]
+        pub extensions: AnalyseInformationArgExtensions,
+        #[rasn(tag(context, 5), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+        #[rasn(tag(context, 6), identifier = "callingPartysCategory")]
+        pub calling_partys_category: Option<CallingPartysCategory>,
+        #[rasn(tag(context, 7), identifier = "calledPartyNumber")]
+        pub called_party_number: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 8), identifier = "chargeNumber")]
+        pub charge_number: Option<ChargeNumber>,
+        #[rasn(tag(context, 9), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 10))]
+        pub carrier: Option<Carrier>,
+    }
+    impl AnalyseInformationArg {
+        pub fn new(
+            destination_routing_address: DestinationRoutingAddress,
+            alerting_pattern: Option<AlertingPattern>,
+            i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            extensions: AnalyseInformationArgExtensions,
+            calling_party_number: Option<CallingPartyNumber>,
+            calling_partys_category: Option<CallingPartysCategory>,
+            called_party_number: Option<CalledPartyNumber>,
+            charge_number: Option<ChargeNumber>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                destination_routing_address,
+                alerting_pattern,
+                i_sdnaccess_related_information,
+                original_called_party_id,
+                extensions,
+                calling_party_number,
+                calling_partys_category,
+                called_party_number,
+                charge_number,
+                travelling_class_mark,
+                carrier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousAnalysedInformationArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAnalysedInformationArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_analysed_information_arg_extensions_criticality_default")]
+        pub criticality: AnonymousAnalysedInformationArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousAnalysedInformationArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousAnalysedInformationArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_analysed_information_arg_extensions_criticality_default(
+    ) -> AnonymousAnalysedInformationArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct AnalysedInformationArgExtensions(
+        pub SequenceOf<AnonymousAnalysedInformationArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AnalysedInformationArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "dialledDigits")]
+        pub dialled_digits: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 2), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 3), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 5), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 6), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 7))]
+        pub prefix: Option<Digits>,
+        #[rasn(tag(context, 8), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 9), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 10), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 11), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 12))]
+        pub extensions: AnalysedInformationArgExtensions,
+        #[rasn(tag(context, 13), identifier = "featureCode")]
+        pub feature_code: Option<FeatureCode>,
+        #[rasn(tag(context, 14), identifier = "accessCode")]
+        pub access_code: Option<AccessCode>,
+        #[rasn(tag(context, 15))]
+        pub carrier: Option<Carrier>,
+    }
+    impl AnalysedInformationArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            dialled_digits: Option<CalledPartyNumber>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            prefix: Option<Digits>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: AnalysedInformationArgExtensions,
+            feature_code: Option<FeatureCode>,
+            access_code: Option<AccessCode>,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                dialled_digits,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                original_called_party_id,
+                prefix,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+                feature_code,
+                access_code,
+                carrier,
+            }
+        }
+    }
     #[doc = "  Indicates a specific pattern that is used to alert a subscriber (e.g. distinctive ringing, tones, etc.)."]
     #[doc = "  Only applies if SSF is the terminating local exchange for the subscriber. Refer to the Q.931"]
     #[doc = "  Signal parameter for encoding."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=2047"))]
     pub struct ApplicationTimer(pub u16);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousApplyChargingArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousApplyChargingArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_apply_charging_arg_extensions_criticality_default")]
+        pub criticality: AnonymousApplyChargingArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousApplyChargingArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousApplyChargingArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_apply_charging_arg_extensions_criticality_default(
+    ) -> AnonymousApplyChargingArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ApplyChargingArgExtensions(pub SequenceOf<AnonymousApplyChargingArgExtensions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ApplyChargingArg {
+        #[rasn(tag(context, 0), identifier = "aChBillingChargingCharacteristics")]
+        pub a_ch_billing_charging_characteristics: AChBillingChargingCharacteristics,
+        #[rasn(tag(context, 2), identifier = "partyToCharge")]
+        pub party_to_charge: Option<LegID>,
+        #[rasn(tag(context, 3))]
+        pub extensions: ApplyChargingArgExtensions,
+    }
+    impl ApplyChargingArg {
+        pub fn new(
+            a_ch_billing_charging_characteristics: AChBillingChargingCharacteristics,
+            party_to_charge: Option<LegID>,
+            extensions: ApplyChargingArgExtensions,
+        ) -> Self {
+            Self {
+                a_ch_billing_charging_characteristics,
+                party_to_charge,
+                extensions,
+            }
+        }
+    }
     #[doc = "  The partyToCharge parameter indicates the party in the call to which the ApplyCharging operation"]
     #[doc = "  should be applied. If it is not present, then it is applied to the A-party."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct ApplyChargingReportArg(pub CallResult);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousAssistRequestInstructionsArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousAssistRequestInstructionsArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(
+            default = "anonymous_assist_request_instructions_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousAssistRequestInstructionsArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousAssistRequestInstructionsArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousAssistRequestInstructionsArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_assist_request_instructions_arg_extensions_criticality_default(
+    ) -> AnonymousAssistRequestInstructionsArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct AssistRequestInstructionsArgExtensions(
+        pub SequenceOf<AnonymousAssistRequestInstructionsArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct AssistRequestInstructionsArg {
+        #[rasn(tag(context, 0), identifier = "correlationID")]
+        pub correlation_id: CorrelationID,
+        #[rasn(tag(context, 1), identifier = "iPAvailable")]
+        pub i_pavailable: Option<IPAvailable>,
+        #[rasn(tag(context, 2), identifier = "iPSSPCapabilities")]
+        pub i_psspcapabilities: Option<IPSSPCapabilities>,
+        #[rasn(tag(context, 3))]
+        pub extensions: AssistRequestInstructionsArgExtensions,
+    }
+    impl AssistRequestInstructionsArg {
+        pub fn new(
+            correlation_id: CorrelationID,
+            i_pavailable: Option<IPAvailable>,
+            i_psspcapabilities: Option<IPSSPCapabilities>,
+            extensions: AssistRequestInstructionsArgExtensions,
+        ) -> Self {
+            Self {
+                correlation_id,
+                i_pavailable,
+                i_psspcapabilities,
+                extensions,
+            }
+        }
+    }
     #[doc = "  Used by the SCF to set a timer in the SSF. The timer is in seconds."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
@@ -149,6 +530,209 @@ pub mod in_cs_1_datatypes {
         manualCGencountered = 1,
         scpOverload = 2,
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCallGapArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCallGapArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_call_gap_arg_extensions_criticality_default")]
+        pub criticality: AnonymousCallGapArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousCallGapArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousCallGapArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_call_gap_arg_extensions_criticality_default(
+    ) -> AnonymousCallGapArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct CallGapArgExtensions(pub SequenceOf<AnonymousCallGapArgExtensions>);
+    #[doc = "  OPTIONAL denotes network operator specific use. The value of the correlationID may be the"]
+    #[doc = "  Called Party Number supplied by the initiating SSF."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CallGapArg {
+        #[rasn(tag(context, 0), identifier = "gapCriteria")]
+        pub gap_criteria: GapCriteria,
+        #[rasn(tag(context, 1), identifier = "gapIndicators")]
+        pub gap_indicators: GapIndicators,
+        #[rasn(tag(context, 2), identifier = "controlType")]
+        pub control_type: Option<ControlType>,
+        #[rasn(tag(context, 3), identifier = "gapTreatment")]
+        pub gap_treatment: Option<GapTreatment>,
+        #[rasn(tag(context, 4))]
+        pub extensions: CallGapArgExtensions,
+    }
+    impl CallGapArg {
+        pub fn new(
+            gap_criteria: GapCriteria,
+            gap_indicators: GapIndicators,
+            control_type: Option<ControlType>,
+            gap_treatment: Option<GapTreatment>,
+            extensions: CallGapArgExtensions,
+        ) -> Self {
+            Self {
+                gap_criteria,
+                gap_indicators,
+                control_type,
+                gap_treatment,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCallInformationReportArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCallInformationReportArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_call_information_report_arg_extensions_criticality_default")]
+        pub criticality: AnonymousCallInformationReportArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousCallInformationReportArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousCallInformationReportArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_call_information_report_arg_extensions_criticality_default(
+    ) -> AnonymousCallInformationReportArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct CallInformationReportArgExtensions(
+        pub SequenceOf<AnonymousCallInformationReportArgExtensions>,
+    );
+    #[doc = "  OPTIONAL denotes network operator optional. If gapTreatment is not present, the SSF will use"]
+    #[doc = "  a default treatment depending on network operator implementation."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CallInformationReportArg {
+        #[rasn(tag(context, 0), identifier = "requestedInformationList")]
+        pub requested_information_list: RequestedInformationList,
+        #[rasn(tag(context, 1), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2))]
+        pub extensions: CallInformationReportArgExtensions,
+    }
+    impl CallInformationReportArg {
+        pub fn new(
+            requested_information_list: RequestedInformationList,
+            correlation_id: Option<CorrelationID>,
+            extensions: CallInformationReportArgExtensions,
+        ) -> Self {
+            Self {
+                requested_information_list,
+                correlation_id,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCallInformationRequestArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCallInformationRequestArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_call_information_request_arg_extensions_criticality_default")]
+        pub criticality: AnonymousCallInformationRequestArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousCallInformationRequestArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousCallInformationRequestArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_call_information_request_arg_extensions_criticality_default(
+    ) -> AnonymousCallInformationRequestArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct CallInformationRequestArgExtensions(
+        pub SequenceOf<AnonymousCallInformationRequestArgExtensions>,
+    );
+    #[doc = "  OPTIONAL denotes network operator optional."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CallInformationRequestArg {
+        #[rasn(tag(context, 0), identifier = "requestedInformationTypeList")]
+        pub requested_information_type_list: RequestedInformationTypeList,
+        #[rasn(tag(context, 1), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2))]
+        pub extensions: CallInformationRequestArgExtensions,
+    }
+    impl CallInformationRequestArg {
+        pub fn new(
+            requested_information_type_list: RequestedInformationTypeList,
+            correlation_id: Option<CorrelationID>,
+            extensions: CallInformationRequestArgExtensions,
+        ) -> Self {
+            Self {
+                requested_information_type_list,
+                correlation_id,
+                extensions,
+            }
+        }
+    }
     #[doc = "  Indicates the type of calling party (e.g. operator, payphone, ordinary subscriber)."]
     #[doc = "  Refer to Recommendation Q.763 for encoding."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -194,6 +778,69 @@ pub mod in_cs_1_datatypes {
         invokeID(InvokeID),
         #[rasn(tag(context, 1))]
         allRequests(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCancelStatusReportRequestArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCancelStatusReportRequestArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(
+            default = "anonymous_cancel_status_report_request_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousCancelStatusReportRequestArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousCancelStatusReportRequestArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousCancelStatusReportRequestArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_cancel_status_report_request_arg_extensions_criticality_default(
+    ) -> AnonymousCancelStatusReportRequestArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct CancelStatusReportRequestArgExtensions(
+        pub SequenceOf<AnonymousCancelStatusReportRequestArgExtensions>,
+    );
+    #[doc = "  The InvokeID has the same value as that which was used for the operation to be cancelled."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CancelStatusReportRequestArg {
+        #[rasn(tag(context, 0), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+        #[rasn(tag(context, 1))]
+        pub extensions: CancelStatusReportRequestArgExtensions,
+    }
+    impl CancelStatusReportRequestArg {
+        pub fn new(
+            resource_id: Option<ResourceID>,
+            extensions: CancelStatusReportRequestArgExtensions,
+        ) -> Self {
+            Self {
+                resource_id,
+                extensions,
+            }
+        }
     }
     #[doc = "  This parameter provides the SCF with the charging related information previously requested"]
     #[doc = "  using the ApplyCharging operation. This shall include the partyToCharge parameter as"]
@@ -253,6 +900,88 @@ pub mod in_cs_1_datatypes {
                 event_type_charging,
                 monitor_mode,
                 leg_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCollectInformationArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCollectInformationArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_collect_information_arg_extensions_criticality_default")]
+        pub criticality: AnonymousCollectInformationArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousCollectInformationArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousCollectInformationArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_collect_information_arg_extensions_criticality_default(
+    ) -> AnonymousCollectInformationArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct CollectInformationArgExtensions(
+        pub SequenceOf<AnonymousCollectInformationArgExtensions>,
+    );
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CollectInformationArg {
+        #[rasn(tag(context, 0), identifier = "alertingPattern")]
+        pub alerting_pattern: Option<AlertingPattern>,
+        #[rasn(tag(context, 1), identifier = "numberingPlan")]
+        pub numbering_plan: Option<NumberingPlan>,
+        #[rasn(tag(context, 2), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 3), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 4))]
+        pub extensions: CollectInformationArgExtensions,
+        #[rasn(tag(context, 5), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+        #[rasn(tag(context, 6), identifier = "dialledDigits")]
+        pub dialled_digits: Option<CalledPartyNumber>,
+    }
+    impl CollectInformationArg {
+        pub fn new(
+            alerting_pattern: Option<AlertingPattern>,
+            numbering_plan: Option<NumberingPlan>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: CollectInformationArgExtensions,
+            calling_party_number: Option<CallingPartyNumber>,
+            dialled_digits: Option<CalledPartyNumber>,
+        ) -> Self {
+            Self {
+                alerting_pattern,
+                numbering_plan,
+                original_called_party_id,
+                travelling_class_mark,
+                extensions,
+                calling_party_number,
+                dialled_digits,
             }
         }
     }
@@ -360,6 +1089,331 @@ pub mod in_cs_1_datatypes {
         #[rasn(tag(context, 1))]
         iA5Information(bool),
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousCollectedInformationArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousCollectedInformationArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_collected_information_arg_extensions_criticality_default")]
+        pub criticality: AnonymousCollectedInformationArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousCollectedInformationArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousCollectedInformationArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_collected_information_arg_extensions_criticality_default(
+    ) -> AnonymousCollectedInformationArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct CollectedInformationArgExtensions(
+        pub SequenceOf<AnonymousCollectedInformationArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct CollectedInformationArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "dialledDigits")]
+        pub dialled_digits: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 2), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 3), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 5), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 6), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 7))]
+        pub prefix: Option<Digits>,
+        #[rasn(tag(context, 8), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 9), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 10), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 11))]
+        pub extensions: CollectedInformationArgExtensions,
+        #[rasn(tag(context, 12), identifier = "featureCode")]
+        pub feature_code: Option<FeatureCode>,
+        #[rasn(tag(context, 13), identifier = "accessCode")]
+        pub access_code: Option<AccessCode>,
+        #[rasn(tag(context, 14))]
+        pub carrier: Option<Carrier>,
+    }
+    impl CollectedInformationArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            dialled_digits: Option<CalledPartyNumber>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            prefix: Option<Digits>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: CollectedInformationArgExtensions,
+            feature_code: Option<FeatureCode>,
+            access_code: Option<AccessCode>,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                dialled_digits,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                original_called_party_id,
+                prefix,
+                redirecting_party_id,
+                redirection_information,
+                travelling_class_mark,
+                extensions,
+                feature_code,
+                access_code,
+                carrier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousConnectArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousConnectArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_connect_arg_extensions_criticality_default")]
+        pub criticality: AnonymousConnectArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousConnectArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousConnectArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_connect_arg_extensions_criticality_default(
+    ) -> AnonymousConnectArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ConnectArgExtensions(pub SequenceOf<AnonymousConnectArgExtensions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ConnectArg {
+        #[rasn(tag(context, 0), identifier = "destinationRoutingAddress")]
+        pub destination_routing_address: DestinationRoutingAddress,
+        #[rasn(tag(context, 1), identifier = "alertingPattern")]
+        pub alerting_pattern: Option<AlertingPattern>,
+        #[rasn(tag(context, 2), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 3), identifier = "cutAndPaste")]
+        pub cut_and_paste: Option<CutAndPaste>,
+        #[rasn(tag(context, 4), identifier = "forwardingCondition")]
+        pub forwarding_condition: Option<ForwardingCondition>,
+        #[rasn(tag(context, 5), identifier = "iSDNAccessRelatedInformation")]
+        pub i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+        #[rasn(tag(context, 6), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 7), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 8), identifier = "scfID")]
+        pub scf_id: Option<ScfID>,
+        #[rasn(tag(context, 9), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 10))]
+        pub extensions: ConnectArgExtensions,
+        #[rasn(tag(context, 11))]
+        pub carrier: Option<Carrier>,
+        #[rasn(tag(context, 26), identifier = "serviceInteractionIndicators")]
+        pub service_interaction_indicators: Option<ServiceInteractionIndicators>,
+        #[rasn(tag(context, 27), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+        #[rasn(tag(context, 28), identifier = "callingPartysCategory")]
+        pub calling_partys_category: Option<CallingPartysCategory>,
+        #[rasn(tag(context, 29), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 30), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+    }
+    impl ConnectArg {
+        pub fn new(
+            destination_routing_address: DestinationRoutingAddress,
+            alerting_pattern: Option<AlertingPattern>,
+            correlation_id: Option<CorrelationID>,
+            cut_and_paste: Option<CutAndPaste>,
+            forwarding_condition: Option<ForwardingCondition>,
+            i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            route_list: Option<RouteList>,
+            scf_id: Option<ScfID>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: ConnectArgExtensions,
+            carrier: Option<Carrier>,
+            service_interaction_indicators: Option<ServiceInteractionIndicators>,
+            calling_party_number: Option<CallingPartyNumber>,
+            calling_partys_category: Option<CallingPartysCategory>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+        ) -> Self {
+            Self {
+                destination_routing_address,
+                alerting_pattern,
+                correlation_id,
+                cut_and_paste,
+                forwarding_condition,
+                i_sdnaccess_related_information,
+                original_called_party_id,
+                route_list,
+                scf_id,
+                travelling_class_mark,
+                extensions,
+                carrier,
+                service_interaction_indicators,
+                calling_party_number,
+                calling_partys_category,
+                redirecting_party_id,
+                redirection_information,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct ConnectToResourceArgResourceAddressBoth {
+        #[rasn(tag(context, 0), identifier = "ipRoutingAddress")]
+        pub ip_routing_address: IPRoutingAddress,
+        #[rasn(tag(context, 1), identifier = "legID")]
+        pub leg_id: LegID,
+    }
+    impl ConnectToResourceArgResourceAddressBoth {
+        pub fn new(ip_routing_address: IPRoutingAddress, leg_id: LegID) -> Self {
+            Self {
+                ip_routing_address,
+                leg_id,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum ConnectToResourceArgResourceAddress {
+        #[rasn(tag(context, 0))]
+        ipRoutingAddress(IPRoutingAddress),
+        #[rasn(tag(context, 1))]
+        legID(LegID),
+        #[rasn(tag(context, 2))]
+        both(ConnectToResourceArgResourceAddressBoth),
+        #[rasn(tag(context, 3))]
+        none(()),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousConnectToResourceArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousConnectToResourceArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_connect_to_resource_arg_extensions_criticality_default")]
+        pub criticality: AnonymousConnectToResourceArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousConnectToResourceArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousConnectToResourceArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_connect_to_resource_arg_extensions_criticality_default(
+    ) -> AnonymousConnectToResourceArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ConnectToResourceArgExtensions(
+        pub SequenceOf<AnonymousConnectToResourceArgExtensions>,
+    );
+    #[doc = "  For alerting pattern, OPTIONAL denotes that this parameter only applies if SSF is the terminating"]
+    #[doc = "  local exchange for the subscriber."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ConnectToResourceArg {
+        #[rasn(identifier = "resourceAddress")]
+        pub resource_address: ConnectToResourceArgResourceAddress,
+        #[rasn(tag(context, 4))]
+        pub extensions: ConnectToResourceArgExtensions,
+        #[rasn(tag(context, 30), identifier = "serviceInteractionIndicators")]
+        pub service_interaction_indicators: Option<ServiceInteractionIndicators>,
+    }
+    impl ConnectToResourceArg {
+        pub fn new(
+            resource_address: ConnectToResourceArgResourceAddress,
+            extensions: ConnectToResourceArgExtensions,
+            service_interaction_indicators: Option<ServiceInteractionIndicators>,
+        ) -> Self {
+            Self {
+                resource_address,
+                extensions,
+                service_interaction_indicators,
+            }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum ControlType {
@@ -439,6 +1493,118 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=1"))]
     pub struct DisplayInformation(pub Ia5String);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousDpSpecificCommonParametersExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousDpSpecificCommonParametersExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_dp_specific_common_parameters_extensions_criticality_default")]
+        pub criticality: AnonymousDpSpecificCommonParametersExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousDpSpecificCommonParametersExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousDpSpecificCommonParametersExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_dp_specific_common_parameters_extensions_criticality_default(
+    ) -> AnonymousDpSpecificCommonParametersExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct DpSpecificCommonParametersExtensions(
+        pub SequenceOf<AnonymousDpSpecificCommonParametersExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct DpSpecificCommonParameters {
+        #[rasn(tag(context, 0), identifier = "serviceAddressInformation")]
+        pub service_address_information: ServiceAddressInformation,
+        #[rasn(tag(context, 1), identifier = "bearerCapability")]
+        pub bearer_capability: Option<BearerCapability>,
+        #[rasn(tag(context, 2), identifier = "calledPartyNumber")]
+        pub called_party_number: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 3), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+        #[rasn(tag(context, 4), identifier = "callingPartysCategory")]
+        pub calling_partys_category: Option<CallingPartysCategory>,
+        #[rasn(tag(context, 5), identifier = "iPSSPCapabilities")]
+        pub i_psspcapabilities: Option<IPSSPCapabilities>,
+        #[rasn(tag(context, 6), identifier = "iPAvailable")]
+        pub i_pavailable: Option<IPAvailable>,
+        #[rasn(tag(context, 7), identifier = "iSDNAccessRelatedInformation")]
+        pub i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+        #[rasn(tag(context, 8), identifier = "cGEncountered")]
+        pub c_gencountered: Option<CGEncountered>,
+        #[rasn(tag(context, 9), identifier = "locationNumber")]
+        pub location_number: Option<LocationNumber>,
+        #[rasn(tag(context, 10), identifier = "serviceProfileIdentifier")]
+        pub service_profile_identifier: Option<ServiceProfileIdentifier>,
+        #[rasn(tag(context, 11), identifier = "terminalType")]
+        pub terminal_type: Option<TerminalType>,
+        #[rasn(tag(context, 12))]
+        pub extensions: DpSpecificCommonParametersExtensions,
+        #[rasn(tag(context, 13), identifier = "chargeNumber")]
+        pub charge_number: Option<ChargeNumber>,
+        #[rasn(tag(context, 14), identifier = "servingAreaID")]
+        pub serving_area_id: Option<ServingAreaID>,
+    }
+    impl DpSpecificCommonParameters {
+        pub fn new(
+            service_address_information: ServiceAddressInformation,
+            bearer_capability: Option<BearerCapability>,
+            called_party_number: Option<CalledPartyNumber>,
+            calling_party_number: Option<CallingPartyNumber>,
+            calling_partys_category: Option<CallingPartysCategory>,
+            i_psspcapabilities: Option<IPSSPCapabilities>,
+            i_pavailable: Option<IPAvailable>,
+            i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+            c_gencountered: Option<CGEncountered>,
+            location_number: Option<LocationNumber>,
+            service_profile_identifier: Option<ServiceProfileIdentifier>,
+            terminal_type: Option<TerminalType>,
+            extensions: DpSpecificCommonParametersExtensions,
+            charge_number: Option<ChargeNumber>,
+            serving_area_id: Option<ServingAreaID>,
+        ) -> Self {
+            Self {
+                service_address_information,
+                bearer_capability,
+                called_party_number,
+                calling_party_number,
+                calling_partys_category,
+                i_psspcapabilities,
+                i_pavailable,
+                i_sdnaccess_related_information,
+                c_gencountered,
+                location_number,
+                service_profile_identifier,
+                terminal_type,
+                extensions,
+                charge_number,
+                serving_area_id,
+            }
+        }
+    }
     #[doc = "  Indicates the display information."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice)]
@@ -462,6 +1628,259 @@ pub mod in_cs_1_datatypes {
         reportErrorToScf = 0,
         help = 1,
         repeatPrompt = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousEstablishTemporaryConnectionArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousEstablishTemporaryConnectionArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(
+            default = "anonymous_establish_temporary_connection_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousEstablishTemporaryConnectionArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousEstablishTemporaryConnectionArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousEstablishTemporaryConnectionArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_establish_temporary_connection_arg_extensions_criticality_default(
+    ) -> AnonymousEstablishTemporaryConnectionArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct EstablishTemporaryConnectionArgExtensions(
+        pub SequenceOf<AnonymousEstablishTemporaryConnectionArgExtensions>,
+    );
+    #[doc = "  OPTIONAL for iPSSPCapabilities, iPAvailable, and cGEncountered denotes network operator"]
+    #[doc = "  specific use. OPTIONAL for callingPartyNumber, and callingPartysCategory refer to clause 3 for"]
+    #[doc = "  the trigger detection point processing rules to specify when these parameters are included in the"]
+    #[doc = "  message. bearerCapability should be appropriately coded as speech."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EstablishTemporaryConnectionArg {
+        #[rasn(tag(context, 0), identifier = "assistingSSPIPRoutingAddress")]
+        pub assisting_sspiprouting_address: AssistingSSPIPRoutingAddress,
+        #[rasn(tag(context, 1), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2), identifier = "legID")]
+        pub leg_id: Option<LegID>,
+        #[rasn(tag(context, 3), identifier = "scfID")]
+        pub scf_id: Option<ScfID>,
+        #[rasn(tag(context, 4))]
+        pub extensions: EstablishTemporaryConnectionArgExtensions,
+        #[rasn(tag(context, 5))]
+        pub carrier: Option<Carrier>,
+        #[rasn(tag(context, 30), identifier = "serviceInteractionIndicators")]
+        pub service_interaction_indicators: Option<ServiceInteractionIndicators>,
+    }
+    impl EstablishTemporaryConnectionArg {
+        pub fn new(
+            assisting_sspiprouting_address: AssistingSSPIPRoutingAddress,
+            correlation_id: Option<CorrelationID>,
+            leg_id: Option<LegID>,
+            scf_id: Option<ScfID>,
+            extensions: EstablishTemporaryConnectionArgExtensions,
+            carrier: Option<Carrier>,
+            service_interaction_indicators: Option<ServiceInteractionIndicators>,
+        ) -> Self {
+            Self {
+                assisting_sspiprouting_address,
+                correlation_id,
+                leg_id,
+                scf_id,
+                extensions,
+                carrier,
+                service_interaction_indicators,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousEventNotificationChargingArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousEventNotificationChargingArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(
+            default = "anonymous_event_notification_charging_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousEventNotificationChargingArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousEventNotificationChargingArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousEventNotificationChargingArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_event_notification_charging_arg_extensions_criticality_default(
+    ) -> AnonymousEventNotificationChargingArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct EventNotificationChargingArgExtensions(
+        pub SequenceOf<AnonymousEventNotificationChargingArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventNotificationChargingArg {
+        #[rasn(tag(context, 0), identifier = "eventTypeCharging")]
+        pub event_type_charging: EventTypeCharging,
+        #[rasn(tag(context, 1), identifier = "eventSpecificInformationCharging")]
+        pub event_specific_information_charging: Option<EventSpecificInformationCharging>,
+        #[rasn(tag(context, 2), identifier = "legID")]
+        pub leg_id: Option<LegID>,
+        #[rasn(tag(context, 3))]
+        pub extensions: EventNotificationChargingArgExtensions,
+        #[rasn(
+            tag(context, 30),
+            default = "event_notification_charging_arg_monitor_mode_default",
+            identifier = "monitorMode"
+        )]
+        pub monitor_mode: MonitorMode,
+    }
+    impl EventNotificationChargingArg {
+        pub fn new(
+            event_type_charging: EventTypeCharging,
+            event_specific_information_charging: Option<EventSpecificInformationCharging>,
+            leg_id: Option<LegID>,
+            extensions: EventNotificationChargingArgExtensions,
+            monitor_mode: MonitorMode,
+        ) -> Self {
+            Self {
+                event_type_charging,
+                event_specific_information_charging,
+                leg_id,
+                extensions,
+                monitor_mode,
+            }
+        }
+    }
+    fn event_notification_charging_arg_monitor_mode_default() -> MonitorMode {
+        MonitorMode::notifyAndContinue
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousEventReportBCSMArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousEventReportBCSMArgExtensions {
+        #[rasn(value("0.."), identifier = "type")]
+        pub r_type: Integer,
+        #[rasn(default = "anonymous_event_report_bcsmarg_extensions_criticality_default")]
+        pub criticality: AnonymousEventReportBCSMArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousEventReportBCSMArgExtensions {
+        pub fn new(
+            r_type: Integer,
+            criticality: AnonymousEventReportBCSMArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_event_report_bcsmarg_extensions_criticality_default(
+    ) -> AnonymousEventReportBCSMArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct EventReportBCSMArgExtensions(pub SequenceOf<AnonymousEventReportBCSMArgExtensions>);
+    #[doc = "  OPTIONAL denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct EventReportBCSMArg {
+        #[rasn(tag(context, 0), identifier = "eventTypeBCSM")]
+        pub event_type_bcsm: EventTypeBCSM,
+        #[rasn(tag(context, 1), identifier = "bcsmEventCorrelationID")]
+        pub bcsm_event_correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2), identifier = "eventSpecificInformationBCSM")]
+        pub event_specific_information_bcsm: Option<EventSpecificInformationBCSM>,
+        #[rasn(tag(context, 3), identifier = "legID")]
+        pub leg_id: Option<LegID>,
+        #[rasn(
+            tag(context, 4),
+            default = "event_report_bcsmarg_misc_call_info_default",
+            identifier = "miscCallInfo"
+        )]
+        pub misc_call_info: MiscCallInfo,
+        #[rasn(tag(context, 5))]
+        pub extensions: EventReportBCSMArgExtensions,
+    }
+    impl EventReportBCSMArg {
+        pub fn new(
+            event_type_bcsm: EventTypeBCSM,
+            bcsm_event_correlation_id: Option<CorrelationID>,
+            event_specific_information_bcsm: Option<EventSpecificInformationBCSM>,
+            leg_id: Option<LegID>,
+            misc_call_info: MiscCallInfo,
+            extensions: EventReportBCSMArgExtensions,
+        ) -> Self {
+            Self {
+                event_type_bcsm,
+                bcsm_event_correlation_id,
+                event_specific_information_bcsm,
+                leg_id,
+                misc_call_info,
+                extensions,
+            }
+        }
+    }
+    fn event_report_bcsmarg_misc_call_info_default() -> MiscCallInfo {
+        MiscCallInfo(
+            Oid::new(&[&***MESSAGE_TYPE, &***REQUEST].concat())
+                .unwrap()
+                .to_owned(),
+        )
     }
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -1073,6 +2492,243 @@ pub mod in_cs_1_datatypes {
         #[rasn(tag(context, 2))]
         displayInformation(DisplayInformation),
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousInitialDPArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInitialDPArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_initial_dparg_extensions_criticality_default")]
+        pub criticality: AnonymousInitialDPArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousInitialDPArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousInitialDPArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_initial_dparg_extensions_criticality_default(
+    ) -> AnonymousInitialDPArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct InitialDPArgExtensions(pub SequenceOf<AnonymousInitialDPArgExtensions>);
+    #[doc = "  holdcause is optional and denotes network operator specific use."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct InitialDPArg {
+        #[rasn(tag(context, 0), identifier = "serviceKey")]
+        pub service_key: Option<ServiceKey>,
+        #[rasn(tag(context, 1), identifier = "dialledDigits")]
+        pub dialled_digits: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 2), identifier = "calledPartyNumber")]
+        pub called_party_number: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 3), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+        #[rasn(tag(context, 4), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 5), identifier = "callingPartysCategory")]
+        pub calling_partys_category: Option<CallingPartysCategory>,
+        #[rasn(tag(context, 6), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 7), identifier = "cGEncountered")]
+        pub c_gencountered: Option<CGEncountered>,
+        #[rasn(tag(context, 8), identifier = "iPSSPCapabilities")]
+        pub i_psspcapabilities: Option<IPSSPCapabilities>,
+        #[rasn(tag(context, 9), identifier = "iPAvailable")]
+        pub i_pavailable: Option<IPAvailable>,
+        #[rasn(tag(context, 10), identifier = "locationNumber")]
+        pub location_number: Option<LocationNumber>,
+        #[rasn(tag(context, 11), identifier = "miscCallInfo")]
+        pub misc_call_info: Option<MiscCallInfo>,
+        #[rasn(tag(context, 12), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 13), identifier = "serviceProfileIdentifier")]
+        pub service_profile_identifier: Option<ServiceProfileIdentifier>,
+        #[rasn(tag(context, 14), identifier = "terminalType")]
+        pub terminal_type: Option<TerminalType>,
+        #[rasn(tag(context, 15))]
+        pub extensions: InitialDPArgExtensions,
+        #[rasn(tag(context, 16), identifier = "triggerType")]
+        pub trigger_type: Option<TriggerType>,
+        #[rasn(tag(context, 23), identifier = "highLayerCompatibility")]
+        pub high_layer_compatibility: Option<HighLayerCompatibility>,
+        #[rasn(tag(context, 24), identifier = "serviceInteractionIndicators")]
+        pub service_interaction_indicators: Option<ServiceInteractionIndicators>,
+        #[rasn(tag(context, 25), identifier = "additionalCallingPartyNumber")]
+        pub additional_calling_party_number: Option<AdditionalCallingPartyNumber>,
+        #[rasn(tag(context, 26), identifier = "forwardCallIndicators")]
+        pub forward_call_indicators: Option<ForwardCallIndicators>,
+        #[rasn(tag(context, 27), identifier = "bearerCapability")]
+        pub bearer_capability: Option<BearerCapability>,
+        #[rasn(tag(context, 28), identifier = "eventTypeBCSM")]
+        pub event_type_bcsm: Option<EventTypeBCSM>,
+        #[rasn(tag(context, 29), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 30), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+    }
+    impl InitialDPArg {
+        pub fn new(
+            service_key: Option<ServiceKey>,
+            dialled_digits: Option<CalledPartyNumber>,
+            called_party_number: Option<CalledPartyNumber>,
+            calling_party_number: Option<CallingPartyNumber>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_partys_category: Option<CallingPartysCategory>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            c_gencountered: Option<CGEncountered>,
+            i_psspcapabilities: Option<IPSSPCapabilities>,
+            i_pavailable: Option<IPAvailable>,
+            location_number: Option<LocationNumber>,
+            misc_call_info: Option<MiscCallInfo>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            service_profile_identifier: Option<ServiceProfileIdentifier>,
+            terminal_type: Option<TerminalType>,
+            extensions: InitialDPArgExtensions,
+            trigger_type: Option<TriggerType>,
+            high_layer_compatibility: Option<HighLayerCompatibility>,
+            service_interaction_indicators: Option<ServiceInteractionIndicators>,
+            additional_calling_party_number: Option<AdditionalCallingPartyNumber>,
+            forward_call_indicators: Option<ForwardCallIndicators>,
+            bearer_capability: Option<BearerCapability>,
+            event_type_bcsm: Option<EventTypeBCSM>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+        ) -> Self {
+            Self {
+                service_key,
+                dialled_digits,
+                called_party_number,
+                calling_party_number,
+                calling_party_business_group_id,
+                calling_partys_category,
+                calling_party_subaddress,
+                c_gencountered,
+                i_psspcapabilities,
+                i_pavailable,
+                location_number,
+                misc_call_info,
+                original_called_party_id,
+                service_profile_identifier,
+                terminal_type,
+                extensions,
+                trigger_type,
+                high_layer_compatibility,
+                service_interaction_indicators,
+                additional_calling_party_number,
+                forward_call_indicators,
+                bearer_capability,
+                event_type_bcsm,
+                redirecting_party_id,
+                redirection_information,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousInitiateCallAttemptArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousInitiateCallAttemptArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_initiate_call_attempt_arg_extensions_criticality_default")]
+        pub criticality: AnonymousInitiateCallAttemptArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousInitiateCallAttemptArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousInitiateCallAttemptArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_initiate_call_attempt_arg_extensions_criticality_default(
+    ) -> AnonymousInitiateCallAttemptArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct InitiateCallAttemptArgExtensions(
+        pub SequenceOf<AnonymousInitiateCallAttemptArgExtensions>,
+    );
+    #[doc = "  OPTIONAL for iPSSPCapabilities, iPAvailable, cGEncountered, and miscCallInfo denotes network"]
+    #[doc = "  operator specific use."]
+    #[doc = "  OPTIONAL for dialledDigits, callingPartyNumber, and callingPartysCategory refer to clause 3 for the"]
+    #[doc = "  trigger detection point processing rules to specify when these parameters are included in the message."]
+    #[doc = "  OPTIONAL for terminalType indicates that this parameter applies only at originating or terminating"]
+    #[doc = "  local exchanges if the SSF has this information."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct InitiateCallAttemptArg {
+        #[rasn(tag(context, 0), identifier = "destinationRoutingAddress")]
+        pub destination_routing_address: DestinationRoutingAddress,
+        #[rasn(tag(context, 1), identifier = "alertingPattern")]
+        pub alerting_pattern: Option<AlertingPattern>,
+        #[rasn(tag(context, 2), identifier = "iSDNAccessRelatedInformation")]
+        pub i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+        #[rasn(tag(context, 3), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 4))]
+        pub extensions: InitiateCallAttemptArgExtensions,
+        #[rasn(tag(context, 29), identifier = "serviceInteractionIndicators")]
+        pub service_interaction_indicators: Option<ServiceInteractionIndicators>,
+        #[rasn(tag(context, 30), identifier = "callingPartyNumber")]
+        pub calling_party_number: Option<CallingPartyNumber>,
+    }
+    impl InitiateCallAttemptArg {
+        pub fn new(
+            destination_routing_address: DestinationRoutingAddress,
+            alerting_pattern: Option<AlertingPattern>,
+            i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: InitiateCallAttemptArgExtensions,
+            service_interaction_indicators: Option<ServiceInteractionIndicators>,
+            calling_party_number: Option<CallingPartyNumber>,
+        ) -> Self {
+            Self {
+                destination_routing_address,
+                alerting_pattern,
+                i_sdnaccess_related_information,
+                travelling_class_mark,
+                extensions,
+                service_interaction_indicators,
+                calling_party_number,
+            }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, value("0..=2147483647"))]
     pub struct Integer4(pub u32);
@@ -1167,6 +2823,88 @@ pub mod in_cs_1_datatypes {
     #[doc = " Inner type "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
+    pub enum AnonymousMidCallArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousMidCallArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_mid_call_arg_extensions_criticality_default")]
+        pub criticality: AnonymousMidCallArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousMidCallArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousMidCallArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_mid_call_arg_extensions_criticality_default(
+    ) -> AnonymousMidCallArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct MidCallArgExtensions(pub SequenceOf<AnonymousMidCallArgExtensions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct MidCallArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "calledPartyBusinessGroupID")]
+        pub called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 4), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 5), identifier = "featureRequestIndicator")]
+        pub feature_request_indicator: Option<FeatureRequestIndicator>,
+        #[rasn(tag(context, 6))]
+        pub extensions: MidCallArgExtensions,
+        #[rasn(tag(context, 7))]
+        pub carrier: Option<Carrier>,
+    }
+    impl MidCallArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            feature_request_indicator: Option<FeatureRequestIndicator>,
+            extensions: MidCallArgExtensions,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                called_party_business_group_id,
+                called_party_subaddress,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                feature_request_indicator,
+                extensions,
+                carrier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
     pub enum MiscCallInfoMessageType {
         request = 0,
         notification = 1,
@@ -1225,10 +2963,665 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct NumberingPlan(pub FixedOctetString<1usize>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousOAnswerArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousOAnswerArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_oanswer_arg_extensions_criticality_default")]
+        pub criticality: AnonymousOAnswerArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousOAnswerArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousOAnswerArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_oanswer_arg_extensions_criticality_default(
+    ) -> AnonymousOAnswerArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct OAnswerArgExtensions(pub SequenceOf<AnonymousOAnswerArgExtensions>);
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct OAnswerArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 6), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 7), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 8), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 9), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 10))]
+        pub extensions: OAnswerArgExtensions,
+    }
+    impl OAnswerArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: OAnswerArgExtensions,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                original_called_party_id,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousOCalledPartyBusyArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousOCalledPartyBusyArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_ocalled_party_busy_arg_extensions_criticality_default")]
+        pub criticality: AnonymousOCalledPartyBusyArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousOCalledPartyBusyArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousOCalledPartyBusyArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_ocalled_party_busy_arg_extensions_criticality_default(
+    ) -> AnonymousOCalledPartyBusyArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct OCalledPartyBusyArgExtensions(
+        pub SequenceOf<AnonymousOCalledPartyBusyArgExtensions>,
+    );
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct OCalledPartyBusyArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "busyCause")]
+        pub busy_cause: Option<Cause>,
+        #[rasn(tag(context, 2), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 3), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 5), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 6), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 7))]
+        pub prefix: Option<Digits>,
+        #[rasn(tag(context, 8), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 9), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 10), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 11), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 12))]
+        pub extensions: OCalledPartyBusyArgExtensions,
+        #[rasn(tag(context, 13))]
+        pub carrier: Option<Carrier>,
+    }
+    impl OCalledPartyBusyArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            busy_cause: Option<Cause>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            prefix: Option<Digits>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: OCalledPartyBusyArgExtensions,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                busy_cause,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                original_called_party_id,
+                prefix,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+                carrier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousODisconnectArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousODisconnectArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_odisconnect_arg_extensions_criticality_default")]
+        pub criticality: AnonymousODisconnectArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousODisconnectArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousODisconnectArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_odisconnect_arg_extensions_criticality_default(
+    ) -> AnonymousODisconnectArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ODisconnectArgExtensions(pub SequenceOf<AnonymousODisconnectArgExtensions>);
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ODisconnectArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+        #[rasn(tag(context, 6), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 7))]
+        pub extensions: ODisconnectArgExtensions,
+        #[rasn(tag(context, 8))]
+        pub carrier: Option<Carrier>,
+        #[rasn(tag(context, 9), identifier = "connectTime")]
+        pub connect_time: Option<Integer4>,
+    }
+    impl ODisconnectArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            release_cause: Option<Cause>,
+            route_list: Option<RouteList>,
+            extensions: ODisconnectArgExtensions,
+            carrier: Option<Carrier>,
+            connect_time: Option<Integer4>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                release_cause,
+                route_list,
+                extensions,
+                carrier,
+                connect_time,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousONoAnswerArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousONoAnswerArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_ono_answer_arg_extensions_criticality_default")]
+        pub criticality: AnonymousONoAnswerArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousONoAnswerArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousONoAnswerArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_ono_answer_arg_extensions_criticality_default(
+    ) -> AnonymousONoAnswerArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ONoAnswerArgExtensions(pub SequenceOf<AnonymousONoAnswerArgExtensions>);
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ONoAnswerArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 6))]
+        pub prefix: Option<Digits>,
+        #[rasn(tag(context, 7), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 8), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 9), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 10), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 11))]
+        pub extensions: ONoAnswerArgExtensions,
+        #[rasn(tag(context, 12))]
+        pub carrier: Option<Carrier>,
+    }
+    impl ONoAnswerArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            prefix: Option<Digits>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: ONoAnswerArgExtensions,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                original_called_party_id,
+                prefix,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+                carrier,
+            }
+        }
+    }
     #[doc = " Indicates the number of digits to be collected"]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=1"))]
     pub struct OriginalCalledPartyID(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousOriginationAttemptAuthorizedArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousOriginationAttemptAuthorizedArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(
+            default = "anonymous_origination_attempt_authorized_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousOriginationAttemptAuthorizedArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousOriginationAttemptAuthorizedArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousOriginationAttemptAuthorizedArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_origination_attempt_authorized_arg_extensions_criticality_default(
+    ) -> AnonymousOriginationAttemptAuthorizedArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct OriginationAttemptAuthorizedArgExtensions(
+        pub SequenceOf<AnonymousOriginationAttemptAuthorizedArgExtensions>,
+    );
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct OriginationAttemptAuthorizedArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "dialledDigits")]
+        pub dialled_digits: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 2), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 3), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 5), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 6), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 7))]
+        pub extensions: OriginationAttemptAuthorizedArgExtensions,
+        #[rasn(tag(context, 8))]
+        pub carrier: Option<Carrier>,
+    }
+    impl OriginationAttemptAuthorizedArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            dialled_digits: Option<CalledPartyNumber>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: OriginationAttemptAuthorizedArgExtensions,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                dialled_digits,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                travelling_class_mark,
+                extensions,
+                carrier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousPlayAnnouncementArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPlayAnnouncementArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_play_announcement_arg_extensions_criticality_default")]
+        pub criticality: AnonymousPlayAnnouncementArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousPlayAnnouncementArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousPlayAnnouncementArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_play_announcement_arg_extensions_criticality_default(
+    ) -> AnonymousPlayAnnouncementArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct PlayAnnouncementArgExtensions(
+        pub SequenceOf<AnonymousPlayAnnouncementArgExtensions>,
+    );
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PlayAnnouncementArg {
+        #[rasn(tag(context, 0), identifier = "informationToSend")]
+        pub information_to_send: InformationToSend,
+        #[rasn(
+            tag(context, 1),
+            default = "play_announcement_arg_disconnect_from_ipforbidden_default",
+            identifier = "disconnectFromIPForbidden"
+        )]
+        pub disconnect_from_ipforbidden: bool,
+        #[rasn(
+            tag(context, 2),
+            default = "play_announcement_arg_request_announcement_complete_default",
+            identifier = "requestAnnouncementComplete"
+        )]
+        pub request_announcement_complete: bool,
+        #[rasn(tag(context, 3))]
+        pub extensions: PlayAnnouncementArgExtensions,
+    }
+    impl PlayAnnouncementArg {
+        pub fn new(
+            information_to_send: InformationToSend,
+            disconnect_from_ipforbidden: bool,
+            request_announcement_complete: bool,
+            extensions: PlayAnnouncementArgExtensions,
+        ) -> Self {
+            Self {
+                information_to_send,
+                disconnect_from_ipforbidden,
+                request_announcement_complete,
+                extensions,
+            }
+        }
+    }
+    fn play_announcement_arg_disconnect_from_ipforbidden_default() -> bool {
+        true
+    }
+    fn play_announcement_arg_request_announcement_complete_default() -> bool {
+        true
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousPromptAndCollectUserInformationArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousPromptAndCollectUserInformationArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(
+            default = "anonymous_prompt_and_collect_user_information_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousPromptAndCollectUserInformationArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousPromptAndCollectUserInformationArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousPromptAndCollectUserInformationArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_prompt_and_collect_user_information_arg_extensions_criticality_default(
+    ) -> AnonymousPromptAndCollectUserInformationArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct PromptAndCollectUserInformationArgExtensions(
+        pub SequenceOf<AnonymousPromptAndCollectUserInformationArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PromptAndCollectUserInformationArg {
+        #[rasn(tag(context, 0), identifier = "collectedInfo")]
+        pub collected_info: CollectedInfo,
+        #[rasn(
+            tag(context, 1),
+            default = "prompt_and_collect_user_information_arg_disconnect_from_ipforbidden_default",
+            identifier = "disconnectFromIPForbidden"
+        )]
+        pub disconnect_from_ipforbidden: bool,
+        #[rasn(tag(context, 2), identifier = "informationToSend")]
+        pub information_to_send: Option<InformationToSend>,
+        #[rasn(tag(context, 3))]
+        pub extensions: PromptAndCollectUserInformationArgExtensions,
+    }
+    impl PromptAndCollectUserInformationArg {
+        pub fn new(
+            collected_info: CollectedInfo,
+            disconnect_from_ipforbidden: bool,
+            information_to_send: Option<InformationToSend>,
+            extensions: PromptAndCollectUserInformationArgExtensions,
+        ) -> Self {
+            Self {
+                collected_info,
+                disconnect_from_ipforbidden,
+                information_to_send,
+                extensions,
+            }
+        }
+    }
+    fn prompt_and_collect_user_information_arg_disconnect_from_ipforbidden_default() -> bool {
+        true
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice)]
     pub enum ReceivedInformationArg {
@@ -1260,12 +3653,293 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct RequestCurrentStatusReportArg(pub ResourceID);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousRequestCurrentStatusReportResultArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRequestCurrentStatusReportResultArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(
+            default = "anonymous_request_current_status_report_result_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousRequestCurrentStatusReportResultArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousRequestCurrentStatusReportResultArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousRequestCurrentStatusReportResultArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_request_current_status_report_result_arg_extensions_criticality_default(
+    ) -> AnonymousRequestCurrentStatusReportResultArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct RequestCurrentStatusReportResultArgExtensions(
+        pub SequenceOf<AnonymousRequestCurrentStatusReportResultArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RequestCurrentStatusReportResultArg {
+        #[rasn(tag(context, 0), identifier = "resourceStatus")]
+        pub resource_status: ResourceStatus,
+        #[rasn(tag(context, 1), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+        #[rasn(tag(context, 2))]
+        pub extensions: RequestCurrentStatusReportResultArgExtensions,
+    }
+    impl RequestCurrentStatusReportResultArg {
+        pub fn new(
+            resource_status: ResourceStatus,
+            resource_id: Option<ResourceID>,
+            extensions: RequestCurrentStatusReportResultArgExtensions,
+        ) -> Self {
+            Self {
+                resource_status,
+                resource_id,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousRequestEveryStatusChangeReportArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRequestEveryStatusChangeReportArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(
+            default = "anonymous_request_every_status_change_report_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousRequestEveryStatusChangeReportArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousRequestEveryStatusChangeReportArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousRequestEveryStatusChangeReportArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_request_every_status_change_report_arg_extensions_criticality_default(
+    ) -> AnonymousRequestEveryStatusChangeReportArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct RequestEveryStatusChangeReportArgExtensions(
+        pub SequenceOf<AnonymousRequestEveryStatusChangeReportArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RequestEveryStatusChangeReportArg {
+        #[rasn(tag(context, 0), identifier = "resourceID")]
+        pub resource_id: ResourceID,
+        #[rasn(tag(context, 1), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2), identifier = "monitorDuration")]
+        pub monitor_duration: Option<Duration>,
+        #[rasn(tag(context, 3))]
+        pub extensions: RequestEveryStatusChangeReportArgExtensions,
+    }
+    impl RequestEveryStatusChangeReportArg {
+        pub fn new(
+            resource_id: ResourceID,
+            correlation_id: Option<CorrelationID>,
+            monitor_duration: Option<Duration>,
+            extensions: RequestEveryStatusChangeReportArgExtensions,
+        ) -> Self {
+            Self {
+                resource_id,
+                correlation_id,
+                monitor_duration,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousRequestFirstStatusMatchReportArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRequestFirstStatusMatchReportArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(
+            default = "anonymous_request_first_status_match_report_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousRequestFirstStatusMatchReportArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousRequestFirstStatusMatchReportArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousRequestFirstStatusMatchReportArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_request_first_status_match_report_arg_extensions_criticality_default(
+    ) -> AnonymousRequestFirstStatusMatchReportArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct RequestFirstStatusMatchReportArgExtensions(
+        pub SequenceOf<AnonymousRequestFirstStatusMatchReportArgExtensions>,
+    );
+    #[doc = "  For correlationID OPTIONAL denotes network operator optional."]
+    #[doc = "  monitorDuration is required if outside the context of a call. It is not expected if we are in the context"]
+    #[doc = "  of a call, because in that case the end of the call implicitly means the end of the monitoring."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RequestFirstStatusMatchReportArg {
+        #[rasn(tag(context, 0), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+        #[rasn(tag(context, 1), identifier = "resourceStatus")]
+        pub resource_status: Option<ResourceStatus>,
+        #[rasn(tag(context, 2), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 3), identifier = "monitorDuration")]
+        pub monitor_duration: Option<Duration>,
+        #[rasn(tag(context, 4))]
+        pub extensions: RequestFirstStatusMatchReportArgExtensions,
+        #[rasn(tag(context, 5), identifier = "bearerCapability")]
+        pub bearer_capability: Option<BearerCapability>,
+    }
+    impl RequestFirstStatusMatchReportArg {
+        pub fn new(
+            resource_id: Option<ResourceID>,
+            resource_status: Option<ResourceStatus>,
+            correlation_id: Option<CorrelationID>,
+            monitor_duration: Option<Duration>,
+            extensions: RequestFirstStatusMatchReportArgExtensions,
+            bearer_capability: Option<BearerCapability>,
+        ) -> Self {
+            Self {
+                resource_id,
+                resource_status,
+                correlation_id,
+                monitor_duration,
+                extensions,
+                bearer_capability,
+            }
+        }
+    }
     #[doc = "  For correlationID OPTIONAL denotes network operator optional."]
     #[doc = "  monitorDuration is required if outside the context of a call. It is not expected if we are in the context"]
     #[doc = "  of a call, because in that case the end of the call implicitly means the end of the monitoring."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1"))]
     pub struct RequestNotificationChargingEventArg(pub SequenceOf<ChargingEvent>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousRequestReportBCSMEventArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRequestReportBCSMEventArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_request_report_bcsmevent_arg_extensions_criticality_default")]
+        pub criticality: AnonymousRequestReportBCSMEventArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousRequestReportBCSMEventArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousRequestReportBCSMEventArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_request_report_bcsmevent_arg_extensions_criticality_default(
+    ) -> AnonymousRequestReportBCSMEventArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct RequestReportBCSMEventArgExtensions(
+        pub SequenceOf<AnonymousRequestReportBCSMEventArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RequestReportBCSMEventArg {
+        #[rasn(size("1"), tag(context, 0), identifier = "bcsmEvents")]
+        pub bcsm_events: SequenceOf<BCSMEvent>,
+        #[rasn(tag(context, 1), identifier = "bcsmEventCorrelationID")]
+        pub bcsm_event_correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2))]
+        pub extensions: RequestReportBCSMEventArgExtensions,
+    }
+    impl RequestReportBCSMEventArg {
+        pub fn new(
+            bcsm_events: SequenceOf<BCSMEvent>,
+            bcsm_event_correlation_id: Option<CorrelationID>,
+            extensions: RequestReportBCSMEventArgExtensions,
+        ) -> Self {
+            Self {
+                bcsm_events,
+                bcsm_event_correlation_id,
+                extensions,
+            }
+        }
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     pub struct RequestedInformation {
         #[rasn(tag(context, 0), identifier = "requestedInformationType")]
@@ -1314,6 +3988,77 @@ pub mod in_cs_1_datatypes {
         #[rasn(tag(context, 30))]
         releaseCauseValue(Cause),
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousResetTimerArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousResetTimerArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_reset_timer_arg_extensions_criticality_default")]
+        pub criticality: AnonymousResetTimerArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousResetTimerArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousResetTimerArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_reset_timer_arg_extensions_criticality_default(
+    ) -> AnonymousResetTimerArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ResetTimerArgExtensions(pub SequenceOf<AnonymousResetTimerArgExtensions>);
+    #[doc = "  Indicates the BCSM related events for notification."]
+    #[doc = "  For correlationID OPTIONAL denotes network operator optional."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ResetTimerArg {
+        #[rasn(
+            tag(context, 0),
+            default = "reset_timer_arg_timer_id_default",
+            identifier = "timerID"
+        )]
+        pub timer_id: TimerID,
+        #[rasn(tag(context, 1))]
+        pub timervalue: TimerValue,
+        #[rasn(tag(context, 2))]
+        pub extensions: ResetTimerArgExtensions,
+    }
+    impl ResetTimerArg {
+        pub fn new(
+            timer_id: TimerID,
+            timervalue: TimerValue,
+            extensions: ResetTimerArgExtensions,
+        ) -> Self {
+            Self {
+                timer_id,
+                timervalue,
+                extensions,
+            }
+        }
+    }
+    fn reset_timer_arg_timer_id_default() -> TimerID {
+        TimerID::tssf
+    }
     #[doc = " The callAttemptElapsedTimeValue is specified in seconds. The unit for the"]
     #[doc = " callConnectedElapsedTimeValue is 100 milliseconds."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -1353,6 +4098,118 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1..=3"))]
     pub struct RouteList(pub SequenceOf<AnonymousRouteList>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousRouteSelectFailureArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousRouteSelectFailureArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_route_select_failure_arg_extensions_criticality_default")]
+        pub criticality: AnonymousRouteSelectFailureArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousRouteSelectFailureArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousRouteSelectFailureArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_route_select_failure_arg_extensions_criticality_default(
+    ) -> AnonymousRouteSelectFailureArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct RouteSelectFailureArgExtensions(
+        pub SequenceOf<AnonymousRouteSelectFailureArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct RouteSelectFailureArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "dialledDigits")]
+        pub dialled_digits: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 2), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 3), identifier = "callingPartySubaddress")]
+        pub calling_party_subaddress: Option<CallingPartySubaddress>,
+        #[rasn(tag(context, 4), identifier = "callingFacilityGroup")]
+        pub calling_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 5), identifier = "callingFacilityGroupMember")]
+        pub calling_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 6), identifier = "failureCause")]
+        pub failure_cause: Option<Cause>,
+        #[rasn(tag(context, 7), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 8))]
+        pub prefix: Option<Digits>,
+        #[rasn(tag(context, 9), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 10), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 11), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 12), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 13))]
+        pub extensions: RouteSelectFailureArgExtensions,
+        #[rasn(tag(context, 14))]
+        pub carrier: Option<Carrier>,
+    }
+    impl RouteSelectFailureArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            dialled_digits: Option<CalledPartyNumber>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            calling_party_subaddress: Option<CallingPartySubaddress>,
+            calling_facility_group: Option<FacilityGroup>,
+            calling_facility_group_member: Option<FacilityGroupMember>,
+            failure_cause: Option<Cause>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            prefix: Option<Digits>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: RouteSelectFailureArgExtensions,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                dialled_digits,
+                calling_party_business_group_id,
+                calling_party_subaddress,
+                calling_facility_group,
+                calling_facility_group_member,
+                failure_cause,
+                original_called_party_id,
+                prefix,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+                carrier,
+            }
+        }
+    }
     #[doc = " defined by network operator."]
     #[doc = " Indicates the SCF identifier."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -1370,6 +4227,242 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=1"))]
     pub struct ScfID(pub OctetString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSelectFacilityArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSelectFacilityArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_select_facility_arg_extensions_criticality_default")]
+        pub criticality: AnonymousSelectFacilityArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousSelectFacilityArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousSelectFacilityArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_select_facility_arg_extensions_criticality_default(
+    ) -> AnonymousSelectFacilityArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct SelectFacilityArgExtensions(pub SequenceOf<AnonymousSelectFacilityArgExtensions>);
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing"]
+    #[doc = "  rules to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SelectFacilityArg {
+        #[rasn(tag(context, 0), identifier = "alertingPattern")]
+        pub alerting_pattern: Option<AlertingPattern>,
+        #[rasn(tag(context, 1), identifier = "destinationNumberRoutingAddress")]
+        pub destination_number_routing_address: Option<CalledPartyNumber>,
+        #[rasn(tag(context, 2), identifier = "iSDNAccessRelatedInformation")]
+        pub i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+        #[rasn(tag(context, 3), identifier = "calledFacilityGroup")]
+        pub called_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "calledFacilityGroupMember")]
+        pub called_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 6))]
+        pub extensions: SelectFacilityArgExtensions,
+    }
+    impl SelectFacilityArg {
+        pub fn new(
+            alerting_pattern: Option<AlertingPattern>,
+            destination_number_routing_address: Option<CalledPartyNumber>,
+            i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+            called_facility_group: Option<FacilityGroup>,
+            called_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            extensions: SelectFacilityArgExtensions,
+        ) -> Self {
+            Self {
+                alerting_pattern,
+                destination_number_routing_address,
+                i_sdnaccess_related_information,
+                called_facility_group,
+                called_facility_group_member,
+                original_called_party_id,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSelectRouteArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSelectRouteArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_select_route_arg_extensions_criticality_default")]
+        pub criticality: AnonymousSelectRouteArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousSelectRouteArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousSelectRouteArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_select_route_arg_extensions_criticality_default(
+    ) -> AnonymousSelectRouteArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct SelectRouteArgExtensions(pub SequenceOf<AnonymousSelectRouteArgExtensions>);
+    #[doc = "  OPTIONAL parameters are only provided if modifications desired to basic call processing values."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SelectRouteArg {
+        #[rasn(tag(context, 0), identifier = "destinationRoutingAddress")]
+        pub destination_routing_address: DestinationRoutingAddress,
+        #[rasn(tag(context, 1), identifier = "alertingPattern")]
+        pub alerting_pattern: Option<AlertingPattern>,
+        #[rasn(tag(context, 2), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 3), identifier = "iSDNAccessRelatedInformation")]
+        pub i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+        #[rasn(tag(context, 4), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 5), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 6), identifier = "scfID")]
+        pub scf_id: Option<ScfID>,
+        #[rasn(tag(context, 7), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 8))]
+        pub extensions: SelectRouteArgExtensions,
+        #[rasn(tag(context, 9))]
+        pub carrier: Option<Carrier>,
+    }
+    impl SelectRouteArg {
+        pub fn new(
+            destination_routing_address: DestinationRoutingAddress,
+            alerting_pattern: Option<AlertingPattern>,
+            correlation_id: Option<CorrelationID>,
+            i_sdnaccess_related_information: Option<ISDNAccessRelatedInformation>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            route_list: Option<RouteList>,
+            scf_id: Option<ScfID>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: SelectRouteArgExtensions,
+            carrier: Option<Carrier>,
+        ) -> Self {
+            Self {
+                destination_routing_address,
+                alerting_pattern,
+                correlation_id,
+                i_sdnaccess_related_information,
+                original_called_party_id,
+                route_list,
+                scf_id,
+                travelling_class_mark,
+                extensions,
+                carrier,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSendChargingInformationArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousSendChargingInformationArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_send_charging_information_arg_extensions_criticality_default")]
+        pub criticality: AnonymousSendChargingInformationArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousSendChargingInformationArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousSendChargingInformationArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_send_charging_information_arg_extensions_criticality_default(
+    ) -> AnonymousSendChargingInformationArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct SendChargingInformationArgExtensions(
+        pub SequenceOf<AnonymousSendChargingInformationArgExtensions>,
+    );
+    #[doc = "  OPTIONAL parameters are only provided if modifications desired to basic call processing values."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct SendChargingInformationArg {
+        #[rasn(tag(context, 0), identifier = "sCIBillingChargingCharacteristics")]
+        pub s_cibilling_charging_characteristics: SCIBillingChargingCharacteristics,
+        #[rasn(tag(context, 1), identifier = "partyToCharge")]
+        pub party_to_charge: LegID,
+        #[rasn(tag(context, 2))]
+        pub extensions: SendChargingInformationArgExtensions,
+    }
+    impl SendChargingInformationArg {
+        pub fn new(
+            s_cibilling_charging_characteristics: SCIBillingChargingCharacteristics,
+            party_to_charge: LegID,
+            extensions: SendChargingInformationArgExtensions,
+        ) -> Self {
+            Self {
+                s_cibilling_charging_characteristics,
+                party_to_charge,
+                extensions,
+            }
+        }
+    }
     #[doc = " This parameter indicates the billing and/or charging characteristics. Its content is network operator"]
     #[doc = " specific. An example datatype definition for this parameter is given below:"]
     #[doc = " SCIBillingChargingCharacteristics  ::= CHOICE {"]
@@ -1404,6 +4497,76 @@ pub mod in_cs_1_datatypes {
             }
         }
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousServiceFilteringResponseArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousServiceFilteringResponseArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(
+            default = "anonymous_service_filtering_response_arg_extensions_criticality_default"
+        )]
+        pub criticality: AnonymousServiceFilteringResponseArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousServiceFilteringResponseArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousServiceFilteringResponseArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_service_filtering_response_arg_extensions_criticality_default(
+    ) -> AnonymousServiceFilteringResponseArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct ServiceFilteringResponseArgExtensions(
+        pub SequenceOf<AnonymousServiceFilteringResponseArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ServiceFilteringResponseArg {
+        #[rasn(tag(context, 0), identifier = "countersValue")]
+        pub counters_value: CountersValue,
+        #[rasn(tag(context, 1), identifier = "filteringCriteria")]
+        pub filtering_criteria: FilteringCriteria,
+        #[rasn(tag(context, 2))]
+        pub extensions: ServiceFilteringResponseArgExtensions,
+        #[rasn(tag(context, 3), identifier = "responseCondition")]
+        pub response_condition: Option<ResponseCondition>,
+    }
+    impl ServiceFilteringResponseArg {
+        pub fn new(
+            counters_value: CountersValue,
+            filtering_criteria: FilteringCriteria,
+            extensions: ServiceFilteringResponseArgExtensions,
+            response_condition: Option<ResponseCondition>,
+        ) -> Self {
+            Self {
+                counters_value,
+                filtering_criteria,
+                extensions,
+                response_condition,
+            }
+        }
+    }
     #[doc = " Information that represents the result of trigger analysis and allows the SCF to choose the appropriate"]
     #[doc = " service logic."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
@@ -1431,6 +4594,509 @@ pub mod in_cs_1_datatypes {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(delegate)]
     pub struct SpecializedResourceReportArg(pub ());
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousStatusReportArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousStatusReportArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_status_report_arg_extensions_criticality_default")]
+        pub criticality: AnonymousStatusReportArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousStatusReportArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousStatusReportArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_status_report_arg_extensions_criticality_default(
+    ) -> AnonymousStatusReportArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct StatusReportArgExtensions(pub SequenceOf<AnonymousStatusReportArgExtensions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct StatusReportArg {
+        #[rasn(tag(context, 0), identifier = "resourceStatus")]
+        pub resource_status: Option<ResourceStatus>,
+        #[rasn(tag(context, 1), identifier = "correlationID")]
+        pub correlation_id: Option<CorrelationID>,
+        #[rasn(tag(context, 2), identifier = "resourceID")]
+        pub resource_id: Option<ResourceID>,
+        #[rasn(tag(context, 3))]
+        pub extensions: StatusReportArgExtensions,
+        #[rasn(tag(context, 4), identifier = "reportCondition")]
+        pub report_condition: Option<ReportCondition>,
+    }
+    impl StatusReportArg {
+        pub fn new(
+            resource_status: Option<ResourceStatus>,
+            correlation_id: Option<CorrelationID>,
+            resource_id: Option<ResourceID>,
+            extensions: StatusReportArgExtensions,
+            report_condition: Option<ReportCondition>,
+        ) -> Self {
+            Self {
+                resource_status,
+                correlation_id,
+                resource_id,
+                extensions,
+                report_condition,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTAnswerArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTAnswerArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_tanswer_arg_extensions_criticality_default")]
+        pub criticality: AnonymousTAnswerArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousTAnswerArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousTAnswerArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_tanswer_arg_extensions_criticality_default(
+    ) -> AnonymousTAnswerArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct TAnswerArgExtensions(pub SequenceOf<AnonymousTAnswerArgExtensions>);
+    #[doc = "  For correlationID, OPTIONAL denotes network operator optional."]
+    #[doc = "  resourceID is required when the SSF sends a report as an answer to a previous request when the"]
+    #[doc = "  correlationID was present."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TAnswerArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "calledPartyBusinessGroupID")]
+        pub called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "calledFacilityGroup")]
+        pub called_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "calledFacilityGroupMember")]
+        pub called_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5))]
+        pub extensions: TAnswerArgExtensions,
+    }
+    impl TAnswerArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            called_facility_group: Option<FacilityGroup>,
+            called_facility_group_member: Option<FacilityGroupMember>,
+            extensions: TAnswerArgExtensions,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                called_party_business_group_id,
+                called_party_subaddress,
+                called_facility_group,
+                called_facility_group_member,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTBusyArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTBusyArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_tbusy_arg_extensions_criticality_default")]
+        pub criticality: AnonymousTBusyArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousTBusyArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousTBusyArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_tbusy_arg_extensions_criticality_default() -> AnonymousTBusyArgExtensionsCriticality
+    {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct TBusyArgExtensions(pub SequenceOf<AnonymousTBusyArgExtensions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TBusyArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "busyCause")]
+        pub busy_cause: Option<Cause>,
+        #[rasn(tag(context, 2), identifier = "calledPartyBusinessGroupID")]
+        pub called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+        #[rasn(tag(context, 3), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 4), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 5), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 6), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 7), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 8), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 9))]
+        pub extensions: TBusyArgExtensions,
+    }
+    impl TBusyArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            busy_cause: Option<Cause>,
+            called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: TBusyArgExtensions,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                busy_cause,
+                called_party_business_group_id,
+                called_party_subaddress,
+                original_called_party_id,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTDisconnectArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTDisconnectArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_tdisconnect_arg_extensions_criticality_default")]
+        pub criticality: AnonymousTDisconnectArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousTDisconnectArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousTDisconnectArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_tdisconnect_arg_extensions_criticality_default(
+    ) -> AnonymousTDisconnectArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct TDisconnectArgExtensions(pub SequenceOf<AnonymousTDisconnectArgExtensions>);
+    #[doc = "  For the OPTIONAL parameters, refer to clause 3 for the trigger detection point processing rules"]
+    #[doc = "  to specify when these parameters are included in the message."]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TDisconnectArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "calledPartyBusinessGroupID")]
+        pub called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "calledFacilityGroup")]
+        pub called_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "calledFacilityGroupMember")]
+        pub called_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5), identifier = "releaseCause")]
+        pub release_cause: Option<Cause>,
+        #[rasn(tag(context, 6))]
+        pub extensions: TDisconnectArgExtensions,
+        #[rasn(tag(context, 7), identifier = "connectTime")]
+        pub connect_time: Option<Integer4>,
+    }
+    impl TDisconnectArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            called_facility_group: Option<FacilityGroup>,
+            called_facility_group_member: Option<FacilityGroupMember>,
+            release_cause: Option<Cause>,
+            extensions: TDisconnectArgExtensions,
+            connect_time: Option<Integer4>,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                called_party_business_group_id,
+                called_party_subaddress,
+                called_facility_group,
+                called_facility_group_member,
+                release_cause,
+                extensions,
+                connect_time,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTNoAnswerArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTNoAnswerArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_tno_answer_arg_extensions_criticality_default")]
+        pub criticality: AnonymousTNoAnswerArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousTNoAnswerArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousTNoAnswerArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_tno_answer_arg_extensions_criticality_default(
+    ) -> AnonymousTNoAnswerArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct TNoAnswerArgExtensions(pub SequenceOf<AnonymousTNoAnswerArgExtensions>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TNoAnswerArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "calledPartyBusinessGroupID")]
+        pub called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "calledFacilityGroup")]
+        pub called_facility_group: Option<FacilityGroup>,
+        #[rasn(tag(context, 4), identifier = "calledFacilityGroupMember")]
+        pub called_facility_group_member: Option<FacilityGroupMember>,
+        #[rasn(tag(context, 5), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 6), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 7), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 8), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 9))]
+        pub extensions: TNoAnswerArgExtensions,
+    }
+    impl TNoAnswerArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            called_facility_group: Option<FacilityGroup>,
+            called_facility_group_member: Option<FacilityGroupMember>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: TNoAnswerArgExtensions,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                called_party_business_group_id,
+                called_party_subaddress,
+                called_facility_group,
+                called_facility_group_member,
+                original_called_party_id,
+                redirecting_party_id,
+                redirection_information,
+                travelling_class_mark,
+                extensions,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTermAttemptAuthorizedArgExtensionsCriticality {
+        ignored = 0,
+        abort = 1,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousTermAttemptAuthorizedArgExtensions {
+        #[rasn(identifier = "type")]
+        pub r_type: ExtensionType,
+        #[rasn(default = "anonymous_term_attempt_authorized_arg_extensions_criticality_default")]
+        pub criticality: AnonymousTermAttemptAuthorizedArgExtensionsCriticality,
+        #[rasn(tag(context, 1))]
+        pub value: Any,
+    }
+    impl AnonymousTermAttemptAuthorizedArgExtensions {
+        pub fn new(
+            r_type: ExtensionType,
+            criticality: AnonymousTermAttemptAuthorizedArgExtensionsCriticality,
+            value: Any,
+        ) -> Self {
+            Self {
+                r_type,
+                criticality,
+                value,
+            }
+        }
+    }
+    fn anonymous_term_attempt_authorized_arg_extensions_criticality_default(
+    ) -> AnonymousTermAttemptAuthorizedArgExtensionsCriticality {
+        Criticality::ignored
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1"))]
+    pub struct TermAttemptAuthorizedArgExtensions(
+        pub SequenceOf<AnonymousTermAttemptAuthorizedArgExtensions>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct TermAttemptAuthorizedArg {
+        #[rasn(tag(context, 0), identifier = "dpSpecificCommonParameters")]
+        pub dp_specific_common_parameters: DpSpecificCommonParameters,
+        #[rasn(tag(context, 1), identifier = "calledPartyBusinessGroupID")]
+        pub called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+        #[rasn(tag(context, 2), identifier = "calledPartySubaddress")]
+        pub called_party_subaddress: Option<CalledPartySubaddress>,
+        #[rasn(tag(context, 3), identifier = "callingPartyBusinessGroupID")]
+        pub calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+        #[rasn(tag(context, 4), identifier = "originalCalledPartyID")]
+        pub original_called_party_id: Option<OriginalCalledPartyID>,
+        #[rasn(tag(context, 5), identifier = "redirectingPartyID")]
+        pub redirecting_party_id: Option<RedirectingPartyID>,
+        #[rasn(tag(context, 6), identifier = "redirectionInformation")]
+        pub redirection_information: Option<RedirectionInformation>,
+        #[rasn(tag(context, 7), identifier = "routeList")]
+        pub route_list: Option<RouteList>,
+        #[rasn(tag(context, 8), identifier = "travellingClassMark")]
+        pub travelling_class_mark: Option<TravellingClassMark>,
+        #[rasn(tag(context, 9))]
+        pub extensions: TermAttemptAuthorizedArgExtensions,
+    }
+    impl TermAttemptAuthorizedArg {
+        pub fn new(
+            dp_specific_common_parameters: DpSpecificCommonParameters,
+            called_party_business_group_id: Option<CalledPartyBusinessGroupID>,
+            called_party_subaddress: Option<CalledPartySubaddress>,
+            calling_party_business_group_id: Option<CallingPartyBusinessGroupID>,
+            original_called_party_id: Option<OriginalCalledPartyID>,
+            redirecting_party_id: Option<RedirectingPartyID>,
+            redirection_information: Option<RedirectionInformation>,
+            route_list: Option<RouteList>,
+            travelling_class_mark: Option<TravellingClassMark>,
+            extensions: TermAttemptAuthorizedArgExtensions,
+        ) -> Self {
+            Self {
+                dp_specific_common_parameters,
+                called_party_business_group_id,
+                called_party_subaddress,
+                calling_party_business_group_id,
+                original_called_party_id,
+                redirecting_party_id,
+                redirection_information,
+                route_list,
+                travelling_class_mark,
+                extensions,
+            }
+        }
+    }
     #[doc = " This parameter indicates the billing and/or charging characteristics for filtered calls."]
     #[doc = " Its content is network operator specific."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]

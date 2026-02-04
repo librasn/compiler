@@ -1,14 +1,10 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x692_2008_Example2-ASN1-Module.asn1
 ---
 Warnings:
-Unidentified error while generating bindings: A type name is needed to stringify sequence value LinkedStructLikeValue([("a", Boolean(Boolean { constraints: [] }), Explicit(Boolean(true)))])
 Unidentified error while generating bindings: Unexpectedly encountered unlinked struct-like ASN1 value!
-Unidentified error while generating bindings: A type name is needed to stringify sequence value LinkedStructLikeValue([("choice", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "UnevenChoiceProbability", constraints: [] }), Explicit(LinkedNestedValue { supertypes: [], value: Choice { type_name: Some("UnevenChoiceProbability"), variant_name: "common2", inner_value: Boolean(false) } }))])
-Unidentified error while generating bindings: A type name is needed to stringify sequence value LinkedStructLikeValue([("list", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "VariableLengthList", constraints: [] }), Explicit(LinkedNestedValue { supertypes: ["VariableLengthList"], value: LinkedArrayLikeValue([LinkedIntValue { integer_type: Uint8, value: 1 }, LinkedIntValue { integer_type: Uint8, value: 2 }, LinkedIntValue { integer_type: Uint8, value: 1 }]) }))])
-Unidentified error while generating bindings: A type name is needed to stringify sequence value LinkedStructLikeValue([("list1", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "List1", constraints: [] }), Explicit(LinkedNestedValue { supertypes: ["List1"], value: LinkedArrayLikeValue([Boolean(true), Boolean(false), Boolean(true)]) })), ("list2", ElsewhereDeclaredType(DeclarationElsewhere { parent: None, module: None, identifier: "List2", constraints: [] }), Explicit(LinkedNestedValue { supertypes: ["List2"], value: LinkedArrayLikeValue([LinkedIntValue { integer_type: Uint8, value: 1 }, LinkedIntValue { integer_type: Uint8, value: 2 }, LinkedIntValue { integer_type: Uint8, value: 1 }]) }))])
-Unidentified error while generating bindings: A type name is needed to stringify sequence value LinkedStructLikeValue([("ie-1", Boolean(Boolean { constraints: [] }), Explicit(Boolean(true))), ("ie-2", Integer(Integer { constraints: [Subtype(ElementSetSpecs { set: Element(ValueRange { min: Some(Integer(0)), max: Some(Integer(20)), extensible: false }), extensible: false })], distinguished_values: None }), Explicit(LinkedIntValue { integer_type: Uint8, value: 10 }))])
 LinkerError in ASN grammar: No value for field c found!
 
 
@@ -158,6 +154,41 @@ pub mod example2_asn1_module {
             Self { ie_1, ie_2 }
         }
     }
+    #[doc = " Note that the presence constraint can only be supplied in comment."]
+    pub static CONDITIONAL_PRESENCE_ON_EXTERNAL_CONDITION: LazyLock<ExampleMessages> =
+        LazyLock::new(|| {
+            ExampleMessages::conditionalPresenceOnExternalCondition(
+                ConditionalPresenceOnExternalCondition(
+                    ConditionalPresenceOnExternalCondition::new(true),
+                ),
+            )
+        });
+    pub static ENCLOSING_STRUCTURE_FOR_CHOICE: LazyLock<ExampleMessages> = LazyLock::new(|| {
+        ExampleMessages::enclosingStructureForChoice(EnclosingStructureForChoice(
+            EnclosingStructureForChoice::new(UnevenChoiceProbability::common2(false)),
+        ))
+    });
+    #[doc = " Normally the list contains only a few elements (0..31),"]
+    #[doc = " but it might contain many."]
+    pub static ENCLOSING_STRUCTURE_FOR_LIST: LazyLock<ExampleMessages> = LazyLock::new(|| {
+        ExampleMessages::enclosingStructureForList(EnclosingStructureForList(
+            EnclosingStructureForList::new(VariableLengthList(alloc::vec![
+                AnonymousVariableLengthList(1),
+                AnonymousVariableLengthList(2),
+                AnonymousVariableLengthList(1)
+            ])),
+        ))
+    });
+    pub static EQUAL_LENGTH_LISTS: LazyLock<ExampleMessages> = LazyLock::new(|| {
+        ExampleMessages::equalLengthLists(EqualLengthLists(EqualLengthLists::new(
+            List1(alloc::vec![true, false, true]),
+            List2(alloc::vec![
+                AnonymousList2(1),
+                AnonymousList2(2),
+                AnonymousList2(1)
+            ]),
+        )))
+    });
     pub const NORMALLY_SMALL_VALUES1: ExampleMessages =
         ExampleMessages::normallySmallValues1(NormallySmallValues1(30));
     pub const NORMALLY_SMALL_VALUES2: ExampleMessages =
@@ -174,4 +205,7 @@ pub mod example2_asn1_module {
                 Integer::from(11i128),
             ))
         });
+    pub static VERSION1_MESSAGE: LazyLock<ExampleMessages> = LazyLock::new(|| {
+        ExampleMessages::version1Message(Version1Message(Version1Message::new(true, 10)))
+    });
 }

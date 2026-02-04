@@ -1,42 +1,8 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_f_f515_2003_Uds.asn1
 ---
-Warnings:
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-
-
 Generated:
 #[allow(
     non_camel_case_types,
@@ -55,6 +21,28 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AddrCoverage(pub AddrCoverageType);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrCoverageAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AddrCoverageAs {
+        pub base: AddrCoverageType,
+        #[rasn(default = "addr_coverage_as_weight_default")]
+        pub weight: AddrCoverageAsWeight,
+    }
+    impl AddrCoverageAs {
+        pub fn new(base: AddrCoverageType, weight: AddrCoverageAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn addr_coverage_as_weight_default() -> AddrCoverageAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum AddrCoverageType {
@@ -66,6 +54,28 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AddrRestriction(pub AddrRestrictionType);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrRestrictionAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AddrRestrictionAs {
+        pub base: AddrRestrictionType,
+        #[rasn(default = "addr_restriction_as_weight_default")]
+        pub weight: AddrRestrictionAsWeight,
+    }
+    impl AddrRestrictionAs {
+        pub fn new(base: AddrRestrictionType, weight: AddrRestrictionAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn addr_restriction_as_weight_default() -> AddrRestrictionAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum AddrRestrictionType {
@@ -81,6 +91,28 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AddrTariff(pub AddrTariffType);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrTariffAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AddrTariffAs {
+        pub base: AddrTariffType,
+        #[rasn(default = "addr_tariff_as_weight_default")]
+        pub weight: AddrTariffAsWeight,
+    }
+    impl AddrTariffAs {
+        pub fn new(base: AddrTariffType, weight: AddrTariffAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn addr_tariff_as_weight_default() -> AddrTariffAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum AddrTariffType {
@@ -98,6 +130,28 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct AddrValidity(pub AddrValidityType);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AddrValidityAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AddrValidityAs {
+        pub base: AddrValidityType,
+        #[rasn(default = "addr_validity_as_weight_default")]
+        pub weight: AddrValidityAsWeight,
+    }
+    impl AddrValidityAs {
+        pub fn new(base: AddrValidityType, weight: AddrValidityAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn addr_validity_as_weight_default() -> AddrValidityAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum AddrValidityType {
@@ -119,6 +173,34 @@ pub mod uds {
         addrCoverageAs(AddrCoverageAs),
         addrTariffAs(AddrTariffAs),
         addrRestrictionAs(AddrRestrictionAs),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AssertionAttrWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AssertionAttr {
+        #[rasn(default = "assertion_attr_weight_default")]
+        pub weight: AssertionAttrWeight,
+    }
+    impl AssertionAttr {
+        pub fn new(weight: AssertionAttrWeight) -> Self {
+            Self { weight }
+        }
+    }
+    impl std::default::Default for AssertionAttr {
+        fn default() -> Self {
+            Self {
+                weight: assertion_attr_weight_default(),
+            }
+        }
+    }
+    fn assertion_attr_weight_default() -> AssertionAttrWeight {
+        HIGH
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
@@ -218,6 +300,109 @@ pub mod uds {
             Self { lang, base }
         }
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousBusinessCategorySubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousBusinessCategorySubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousBusinessCategorySubValue {
+        pub base: Ub128,
+        #[rasn(
+            default = "anonymous_business_category_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousBusinessCategorySubValueWordMatch,
+        #[rasn(
+            default = "anonymous_business_category_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousBusinessCategorySubValueCharacterMatch,
+    }
+    impl AnonymousBusinessCategorySubValue {
+        pub fn new(
+            base: Ub128,
+            word_match: AnonymousBusinessCategorySubValueWordMatch,
+            character_match: AnonymousBusinessCategorySubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_business_category_sub_value_word_match_default(
+    ) -> AnonymousBusinessCategorySubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_business_category_sub_value_character_match_default(
+    ) -> AnonymousBusinessCategorySubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct BusinessCategorySubValue(pub SequenceOf<AnonymousBusinessCategorySubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BusinessCategorySubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum BusinessCategorySubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct BusinessCategorySub {
+        pub value: BusinessCategorySubValue,
+        #[rasn(default = "business_category_sub_string_default")]
+        pub string: BusinessCategorySubString,
+        #[rasn(default = "business_category_sub_weight_default")]
+        pub weight: BusinessCategorySubWeight,
+    }
+    impl BusinessCategorySub {
+        pub fn new(
+            value: BusinessCategorySubValue,
+            string: BusinessCategorySubString,
+            weight: BusinessCategorySubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn business_category_sub_string_default() -> BusinessCategorySubString {
+        CharacterMatchType::exact
+    }
+    fn business_category_sub_weight_default() -> BusinessCategorySubWeight {
+        HIGH
+    }
     #[doc = " Anonymous SEQUENCE OF member "]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags, identifier = "CHOICE")]
@@ -260,9 +445,53 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct CommNetwork(pub NetworkType);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CommNetworkAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CommNetworkAs {
+        pub base: NetworkType,
+        #[rasn(default = "comm_network_as_weight_default")]
+        pub weight: CommNetworkAsWeight,
+    }
+    impl CommNetworkAs {
+        pub fn new(base: NetworkType, weight: CommNetworkAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn comm_network_as_weight_default() -> CommNetworkAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct CommService(pub ComServiceTypes);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CommServiceAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CommServiceAs {
+        pub base: ComServiceType,
+        #[rasn(default = "comm_service_as_weight_default")]
+        pub weight: CommServiceAsWeight,
+    }
+    impl CommServiceAs {
+        pub fn new(base: ComServiceType, weight: CommServiceAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn comm_service_as_weight_default() -> CommServiceAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct CommsAddress {
@@ -288,6 +517,28 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct Country(pub NMTOKEN);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum CountryAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct CountryAs {
+        pub base: NMTOKEN,
+        #[rasn(default = "country_as_weight_default")]
+        pub weight: CountryAsWeight,
+    }
+    impl CountryAs {
+        pub fn new(base: NMTOKEN, weight: CountryAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn country_as_weight_default() -> CountryAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Description {
@@ -302,6 +553,108 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct DmdName(pub Ub64);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousDmdNameSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousDmdNameSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousDmdNameSubValue {
+        pub base: Ub64,
+        #[rasn(
+            default = "anonymous_dmd_name_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousDmdNameSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_dmd_name_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousDmdNameSubValueCharacterMatch,
+    }
+    impl AnonymousDmdNameSubValue {
+        pub fn new(
+            base: Ub64,
+            word_match: AnonymousDmdNameSubValueWordMatch,
+            character_match: AnonymousDmdNameSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_dmd_name_sub_value_word_match_default() -> AnonymousDmdNameSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_dmd_name_sub_value_character_match_default(
+    ) -> AnonymousDmdNameSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct DmdNameSubValue(pub SequenceOf<AnonymousDmdNameSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DmdNameSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DmdNameSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct DmdNameSub {
+        pub value: DmdNameSubValue,
+        #[rasn(default = "dmd_name_sub_string_default")]
+        pub string: DmdNameSubString,
+        #[rasn(default = "dmd_name_sub_weight_default")]
+        pub weight: DmdNameSubWeight,
+    }
+    impl DmdNameSub {
+        pub fn new(
+            value: DmdNameSubValue,
+            string: DmdNameSubString,
+            weight: DmdNameSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn dmd_name_sub_string_default() -> DmdNameSubString {
+        CharacterMatchType::exact
+    }
+    fn dmd_name_sub_weight_default() -> DmdNameSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     pub enum Family {
@@ -333,6 +686,108 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct GivenName(pub Ub64);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousGivenNameSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousGivenNameSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousGivenNameSubValue {
+        pub base: Ub64,
+        #[rasn(
+            default = "anonymous_given_name_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousGivenNameSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_given_name_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousGivenNameSubValueCharacterMatch,
+    }
+    impl AnonymousGivenNameSubValue {
+        pub fn new(
+            base: Ub64,
+            word_match: AnonymousGivenNameSubValueWordMatch,
+            character_match: AnonymousGivenNameSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_given_name_sub_value_word_match_default() -> AnonymousGivenNameSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_given_name_sub_value_character_match_default(
+    ) -> AnonymousGivenNameSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct GivenNameSubValue(pub SequenceOf<AnonymousGivenNameSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GivenNameSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum GivenNameSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct GivenNameSub {
+        pub value: GivenNameSubValue,
+        #[rasn(default = "given_name_sub_string_default")]
+        pub string: GivenNameSubString,
+        #[rasn(default = "given_name_sub_weight_default")]
+        pub weight: GivenNameSubWeight,
+    }
+    impl GivenNameSub {
+        pub fn new(
+            value: GivenNameSubValue,
+            string: GivenNameSubString,
+            weight: GivenNameSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn given_name_sub_string_default() -> GivenNameSubString {
+        CharacterMatchType::exact
+    }
+    fn given_name_sub_weight_default() -> GivenNameSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct HierarchySelectList(pub HierarchySelections);
@@ -354,9 +809,133 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct HouseId(pub Ub64);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousHouseIdSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousHouseIdSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousHouseIdSubValue {
+        pub base: Ub64,
+        #[rasn(
+            default = "anonymous_house_id_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousHouseIdSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_house_id_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousHouseIdSubValueCharacterMatch,
+    }
+    impl AnonymousHouseIdSubValue {
+        pub fn new(
+            base: Ub64,
+            word_match: AnonymousHouseIdSubValueWordMatch,
+            character_match: AnonymousHouseIdSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_house_id_sub_value_word_match_default() -> AnonymousHouseIdSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_house_id_sub_value_character_match_default(
+    ) -> AnonymousHouseIdSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct HouseIdSubValue(pub SequenceOf<AnonymousHouseIdSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum HouseIdSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum HouseIdSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct HouseIdSub {
+        pub value: HouseIdSubValue,
+        #[rasn(default = "house_id_sub_string_default")]
+        pub string: HouseIdSubString,
+        #[rasn(default = "house_id_sub_weight_default")]
+        pub weight: HouseIdSubWeight,
+    }
+    impl HouseIdSub {
+        pub fn new(
+            value: HouseIdSubValue,
+            string: HouseIdSubString,
+            weight: HouseIdSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn house_id_sub_string_default() -> HouseIdSubString {
+        CharacterMatchType::exact
+    }
+    fn house_id_sub_weight_default() -> HouseIdSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct Language(pub super::xsd::Language);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LanguageAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LanguageAs {
+        pub base: Language,
+        #[rasn(default = "language_as_weight_default")]
+        pub weight: LanguageAsWeight,
+    }
+    impl LanguageAs {
+        pub fn new(base: Language, weight: LanguageAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn language_as_weight_default() -> LanguageAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum LimitProblem {
@@ -369,12 +948,200 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct LocalityCode(pub Ub64);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LocalityCodeAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LocalityCodeAs {
+        pub base: Ub64,
+        #[rasn(default = "locality_code_as_weight_default")]
+        pub weight: LocalityCodeAsWeight,
+    }
+    impl LocalityCodeAs {
+        pub fn new(base: Ub64, weight: LocalityCodeAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn locality_code_as_weight_default() -> LocalityCodeAsWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct LocalityNDC(pub Ub16NumericString);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LocalityNDCAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LocalityNDCAs {
+        pub base: Ub16NumericString,
+        #[rasn(default = "locality_ndcas_weight_default")]
+        pub weight: LocalityNDCAsWeight,
+    }
+    impl LocalityNDCAs {
+        pub fn new(base: Ub16NumericString, weight: LocalityNDCAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn locality_ndcas_weight_default() -> LocalityNDCAsWeight {
+        HIGH
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LocalitySubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum LocalitySubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct LocalitySub {
+        #[rasn(size("1.."))]
+        pub value: SequenceOf<Ub128>,
+        #[rasn(default = "locality_sub_string_default")]
+        pub string: LocalitySubString,
+        #[rasn(default = "locality_sub_weight_default")]
+        pub weight: LocalitySubWeight,
+    }
+    impl LocalitySub {
+        pub fn new(
+            value: SequenceOf<Ub128>,
+            string: LocalitySubString,
+            weight: LocalitySubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn locality_sub_string_default() -> LocalitySubString {
+        CharacterMatchType::exact
+    }
+    fn locality_sub_weight_default() -> LocalitySubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct Mail(pub Ub256);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousMailSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousMailSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousMailSubValue {
+        pub base: Ub256,
+        #[rasn(
+            default = "anonymous_mail_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousMailSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_mail_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousMailSubValueCharacterMatch,
+    }
+    impl AnonymousMailSubValue {
+        pub fn new(
+            base: Ub256,
+            word_match: AnonymousMailSubValueWordMatch,
+            character_match: AnonymousMailSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_mail_sub_value_word_match_default() -> AnonymousMailSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_mail_sub_value_character_match_default() -> AnonymousMailSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct MailSubValue(pub SequenceOf<AnonymousMailSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MailSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum MailSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct MailSub {
+        pub value: MailSubValue,
+        #[rasn(default = "mail_sub_string_default")]
+        pub string: MailSubString,
+        #[rasn(default = "mail_sub_weight_default")]
+        pub weight: MailSubWeight,
+    }
+    impl MailSub {
+        pub fn new(value: MailSubValue, string: MailSubString, weight: MailSubWeight) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn mail_sub_string_default() -> MailSubString {
+        CharacterMatchType::exact
+    }
+    fn mail_sub_weight_default() -> MailSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum NetworkType {
@@ -418,6 +1185,108 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct OrAddress(pub Ub1024);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousOrAddressSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousOrAddressSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousOrAddressSubValue {
+        pub base: Ub1024,
+        #[rasn(
+            default = "anonymous_or_address_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousOrAddressSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_or_address_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousOrAddressSubValueCharacterMatch,
+    }
+    impl AnonymousOrAddressSubValue {
+        pub fn new(
+            base: Ub1024,
+            word_match: AnonymousOrAddressSubValueWordMatch,
+            character_match: AnonymousOrAddressSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_or_address_sub_value_word_match_default() -> AnonymousOrAddressSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_or_address_sub_value_character_match_default(
+    ) -> AnonymousOrAddressSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct OrAddressSubValue(pub SequenceOf<AnonymousOrAddressSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OrAddressSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum OrAddressSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct OrAddressSub {
+        pub value: OrAddressSubValue,
+        #[rasn(default = "or_address_sub_string_default")]
+        pub string: OrAddressSubString,
+        #[rasn(default = "or_address_sub_weight_default")]
+        pub weight: OrAddressSubWeight,
+    }
+    impl OrAddressSub {
+        pub fn new(
+            value: OrAddressSubValue,
+            string: OrAddressSubString,
+            weight: OrAddressSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn or_address_sub_string_default() -> OrAddressSubString {
+        CharacterMatchType::exact
+    }
+    fn or_address_sub_weight_default() -> OrAddressSubWeight {
+        HIGH
+    }
     #[doc = " The XSD module is defined in the ASN.1 standards."]
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -445,9 +1314,220 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct PostOfficeBox(pub Ub40);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousPostOfficeBoxSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousPostOfficeBoxSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousPostOfficeBoxSubValue {
+        #[rasn(
+            default = "anonymous_post_office_box_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousPostOfficeBoxSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_post_office_box_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousPostOfficeBoxSubValueCharacterMatch,
+    }
+    impl AnonymousPostOfficeBoxSubValue {
+        pub fn new(
+            word_match: AnonymousPostOfficeBoxSubValueWordMatch,
+            character_match: AnonymousPostOfficeBoxSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                word_match,
+                character_match,
+            }
+        }
+    }
+    impl std::default::Default for AnonymousPostOfficeBoxSubValue {
+        fn default() -> Self {
+            Self {
+                word_match: anonymous_post_office_box_sub_value_word_match_default(),
+                character_match: anonymous_post_office_box_sub_value_character_match_default(),
+            }
+        }
+    }
+    fn anonymous_post_office_box_sub_value_word_match_default(
+    ) -> AnonymousPostOfficeBoxSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_post_office_box_sub_value_character_match_default(
+    ) -> AnonymousPostOfficeBoxSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PostOfficeBoxSubValue(pub SequenceOf<AnonymousPostOfficeBoxSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PostOfficeBoxSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PostOfficeBoxSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PostOfficeBoxSub {
+        pub value: PostOfficeBoxSubValue,
+        #[rasn(default = "post_office_box_sub_string_default")]
+        pub string: PostOfficeBoxSubString,
+        #[rasn(default = "post_office_box_sub_weight_default")]
+        pub weight: PostOfficeBoxSubWeight,
+    }
+    impl PostOfficeBoxSub {
+        pub fn new(
+            value: PostOfficeBoxSubValue,
+            string: PostOfficeBoxSubString,
+            weight: PostOfficeBoxSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn post_office_box_sub_string_default() -> PostOfficeBoxSubString {
+        CharacterMatchType::exact
+    }
+    fn post_office_box_sub_weight_default() -> PostOfficeBoxSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct PostalCode(pub Ub40);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousPostalCodeSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousPostalCodeSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousPostalCodeSubValue {
+        pub base: Ub40,
+        #[rasn(
+            default = "anonymous_postal_code_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousPostalCodeSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_postal_code_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousPostalCodeSubValueCharacterMatch,
+    }
+    impl AnonymousPostalCodeSubValue {
+        pub fn new(
+            base: Ub40,
+            word_match: AnonymousPostalCodeSubValueWordMatch,
+            character_match: AnonymousPostalCodeSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_postal_code_sub_value_word_match_default() -> AnonymousPostalCodeSubValueWordMatch
+    {
+        CharacterMatchType::exact
+    }
+    fn anonymous_postal_code_sub_value_character_match_default(
+    ) -> AnonymousPostalCodeSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PostalCodeSubValue(pub SequenceOf<AnonymousPostalCodeSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PostalCodeSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum PostalCodeSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct PostalCodeSub {
+        pub value: PostalCodeSubValue,
+        #[rasn(default = "postal_code_sub_string_default")]
+        pub string: PostalCodeSubString,
+        #[rasn(default = "postal_code_sub_weight_default")]
+        pub weight: PostalCodeSubWeight,
+    }
+    impl PostalCodeSub {
+        pub fn new(
+            value: PostalCodeSubValue,
+            string: PostalCodeSubString,
+            weight: PostalCodeSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn postal_code_sub_string_default() -> PostalCodeSubString {
+        CharacterMatchType::exact
+    }
+    fn postal_code_sub_weight_default() -> PostalCodeSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Profession {
@@ -458,6 +1538,108 @@ pub mod uds {
         pub fn new(lang: Option<Lang>, base: Ub128) -> Self {
             Self { lang, base }
         }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousProfessionSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousProfessionSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousProfessionSubValue {
+        pub base: Ub128,
+        #[rasn(
+            default = "anonymous_profession_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousProfessionSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_profession_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousProfessionSubValueCharacterMatch,
+    }
+    impl AnonymousProfessionSubValue {
+        pub fn new(
+            base: Ub128,
+            word_match: AnonymousProfessionSubValueWordMatch,
+            character_match: AnonymousProfessionSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_profession_sub_value_word_match_default() -> AnonymousProfessionSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_profession_sub_value_character_match_default(
+    ) -> AnonymousProfessionSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct ProfessionSubValue(pub SequenceOf<AnonymousProfessionSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ProfessionSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ProfessionSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ProfessionSub {
+        pub value: ProfessionSubValue,
+        #[rasn(default = "profession_sub_string_default")]
+        pub string: ProfessionSubString,
+        #[rasn(default = "profession_sub_weight_default")]
+        pub weight: ProfessionSubWeight,
+    }
+    impl ProfessionSub {
+        pub fn new(
+            value: ProfessionSubValue,
+            string: ProfessionSubString,
+            weight: ProfessionSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn profession_sub_string_default() -> ProfessionSubString {
+        CharacterMatchType::exact
+    }
+    fn profession_sub_weight_default() -> ProfessionSubWeight {
+        HIGH
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
@@ -474,6 +1656,39 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct ProviderName(pub ProviderId);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum ReqHeadUserClass {
+        operator = 0,
+        publicUser = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct ReqHead {
+        #[rasn(identifier = "requestRef")]
+        pub request_ref: Integer,
+        #[rasn(identifier = "searchType")]
+        pub search_type: SearchType,
+        #[rasn(default = "req_head_user_class_default", identifier = "userClass")]
+        pub user_class: ReqHeadUserClass,
+    }
+    impl ReqHead {
+        pub fn new(
+            request_ref: Integer,
+            search_type: SearchType,
+            user_class: ReqHeadUserClass,
+        ) -> Self {
+            Self {
+                request_ref,
+                search_type,
+                user_class,
+            }
+        }
+    }
+    fn req_head_user_class_default() -> ReqHeadUserClass {
+        OPERATOR
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct SearchControlOptionsList(pub SearchOptions);
@@ -583,6 +1798,109 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct SecondFamilyName(pub Ub128);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSecondFamilyNameSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSecondFamilyNameSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousSecondFamilyNameSubValue {
+        pub base: Ub128,
+        #[rasn(
+            default = "anonymous_second_family_name_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousSecondFamilyNameSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_second_family_name_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousSecondFamilyNameSubValueCharacterMatch,
+    }
+    impl AnonymousSecondFamilyNameSubValue {
+        pub fn new(
+            base: Ub128,
+            word_match: AnonymousSecondFamilyNameSubValueWordMatch,
+            character_match: AnonymousSecondFamilyNameSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_second_family_name_sub_value_word_match_default(
+    ) -> AnonymousSecondFamilyNameSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_second_family_name_sub_value_character_match_default(
+    ) -> AnonymousSecondFamilyNameSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SecondFamilyNameSubValue(pub SequenceOf<AnonymousSecondFamilyNameSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SecondFamilyNameSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SecondFamilyNameSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SecondFamilyNameSub {
+        pub value: SecondFamilyNameSubValue,
+        #[rasn(default = "second_family_name_sub_string_default")]
+        pub string: SecondFamilyNameSubString,
+        #[rasn(default = "second_family_name_sub_weight_default")]
+        pub weight: SecondFamilyNameSubWeight,
+    }
+    impl SecondFamilyNameSub {
+        pub fn new(
+            value: SecondFamilyNameSubValue,
+            string: SecondFamilyNameSubString,
+            weight: SecondFamilyNameSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn second_family_name_sub_string_default() -> SecondFamilyNameSubString {
+        CharacterMatchType::exact
+    }
+    fn second_family_name_sub_weight_default() -> SecondFamilyNameSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum ServiceProblem {
@@ -593,9 +1911,215 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct StateOrProvince(pub Ub128);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousStateOrProvinceSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousStateOrProvinceSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousStateOrProvinceSubValue {
+        pub base: Ub128,
+        #[rasn(
+            default = "anonymous_state_or_province_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousStateOrProvinceSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_state_or_province_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousStateOrProvinceSubValueCharacterMatch,
+    }
+    impl AnonymousStateOrProvinceSubValue {
+        pub fn new(
+            base: Ub128,
+            word_match: AnonymousStateOrProvinceSubValueWordMatch,
+            character_match: AnonymousStateOrProvinceSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_state_or_province_sub_value_word_match_default(
+    ) -> AnonymousStateOrProvinceSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_state_or_province_sub_value_character_match_default(
+    ) -> AnonymousStateOrProvinceSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct StateOrProvinceSubValue(pub SequenceOf<AnonymousStateOrProvinceSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum StateOrProvinceSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum StateOrProvinceSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct StateOrProvinceSub {
+        pub value: StateOrProvinceSubValue,
+        #[rasn(default = "state_or_province_sub_string_default")]
+        pub string: StateOrProvinceSubString,
+        #[rasn(default = "state_or_province_sub_weight_default")]
+        pub weight: StateOrProvinceSubWeight,
+    }
+    impl StateOrProvinceSub {
+        pub fn new(
+            value: StateOrProvinceSubValue,
+            string: StateOrProvinceSubString,
+            weight: StateOrProvinceSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn state_or_province_sub_string_default() -> StateOrProvinceSubString {
+        CharacterMatchType::exact
+    }
+    fn state_or_province_sub_weight_default() -> StateOrProvinceSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct StreetAddress(pub Ub128);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousStreetAddressSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousStreetAddressSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousStreetAddressSubValue {
+        pub base: Ub128,
+        #[rasn(
+            default = "anonymous_street_address_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousStreetAddressSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_street_address_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousStreetAddressSubValueCharacterMatch,
+    }
+    impl AnonymousStreetAddressSubValue {
+        pub fn new(
+            base: Ub128,
+            word_match: AnonymousStreetAddressSubValueWordMatch,
+            character_match: AnonymousStreetAddressSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_street_address_sub_value_word_match_default(
+    ) -> AnonymousStreetAddressSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_street_address_sub_value_character_match_default(
+    ) -> AnonymousStreetAddressSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct StreetAddressSubValue(pub SequenceOf<AnonymousStreetAddressSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum StreetAddressSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum StreetAddressSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct StreetAddressSub {
+        pub value: StreetAddressSubValue,
+        #[rasn(default = "street_address_sub_string_default")]
+        pub string: StreetAddressSubString,
+        #[rasn(default = "street_address_sub_weight_default")]
+        pub weight: StreetAddressSubWeight,
+    }
+    impl StreetAddressSub {
+        pub fn new(
+            value: StreetAddressSubValue,
+            string: StreetAddressSubString,
+            weight: StreetAddressSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn street_address_sub_string_default() -> StreetAddressSubString {
+        CharacterMatchType::exact
+    }
+    fn street_address_sub_weight_default() -> StreetAddressSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum StringMatchType {
@@ -630,9 +2154,234 @@ pub mod uds {
             Self { lang, base }
         }
     }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSubscriberNameSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousSubscriberNameSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousSubscriberNameSubValue {
+        pub base: Ub64,
+        #[rasn(
+            default = "anonymous_subscriber_name_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousSubscriberNameSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_subscriber_name_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousSubscriberNameSubValueCharacterMatch,
+    }
+    impl AnonymousSubscriberNameSubValue {
+        pub fn new(
+            base: Ub64,
+            word_match: AnonymousSubscriberNameSubValueWordMatch,
+            character_match: AnonymousSubscriberNameSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_subscriber_name_sub_value_word_match_default(
+    ) -> AnonymousSubscriberNameSubValueWordMatch {
+        CharacterMatchType::exact
+    }
+    fn anonymous_subscriber_name_sub_value_character_match_default(
+    ) -> AnonymousSubscriberNameSubValueCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct SubscriberNameSubValue(pub SequenceOf<AnonymousSubscriberNameSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubscriberNameSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubscriberNameSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SubscriberNameSub {
+        pub value: SubscriberNameSubValue,
+        #[rasn(default = "subscriber_name_sub_string_default")]
+        pub string: SubscriberNameSubString,
+        #[rasn(default = "subscriber_name_sub_weight_default")]
+        pub weight: SubscriberNameSubWeight,
+    }
+    impl SubscriberNameSub {
+        pub fn new(
+            value: SubscriberNameSubValue,
+            string: SubscriberNameSubString,
+            weight: SubscriberNameSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn subscriber_name_sub_string_default() -> SubscriberNameSubString {
+        CharacterMatchType::exact
+    }
+    fn subscriber_name_sub_weight_default() -> SubscriberNameSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct SubscriberType(pub SubscrTypes);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubscriberTypeAsWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SubscriberTypeAs {
+        pub base: SubscrType,
+        #[rasn(default = "subscriber_type_as_weight_default")]
+        pub weight: SubscriberTypeAsWeight,
+    }
+    impl SubscriberTypeAs {
+        pub fn new(base: SubscrType, weight: SubscriberTypeAsWeight) -> Self {
+            Self { base, weight }
+        }
+    }
+    fn subscriber_type_as_weight_default() -> SubscriberTypeAsWeight {
+        HIGH
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubstringAttrString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubstringAttrWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SubstringAttr {
+        #[rasn(default = "substring_attr_string_default")]
+        pub string: SubstringAttrString,
+        #[rasn(default = "substring_attr_weight_default")]
+        pub weight: SubstringAttrWeight,
+    }
+    impl SubstringAttr {
+        pub fn new(string: SubstringAttrString, weight: SubstringAttrWeight) -> Self {
+            Self { string, weight }
+        }
+    }
+    impl std::default::Default for SubstringAttr {
+        fn default() -> Self {
+            Self {
+                string: substring_attr_string_default(),
+                weight: substring_attr_weight_default(),
+            }
+        }
+    }
+    fn substring_attr_string_default() -> SubstringAttrString {
+        CharacterMatchType::exact
+    }
+    fn substring_attr_weight_default() -> SubstringAttrWeight {
+        HIGH
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubstringValueAttrWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum SubstringValueAttrCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct SubstringValueAttr {
+        #[rasn(
+            default = "substring_value_attr_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: SubstringValueAttrWordMatch,
+        #[rasn(
+            default = "substring_value_attr_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: SubstringValueAttrCharacterMatch,
+    }
+    impl SubstringValueAttr {
+        pub fn new(
+            word_match: SubstringValueAttrWordMatch,
+            character_match: SubstringValueAttrCharacterMatch,
+        ) -> Self {
+            Self {
+                word_match,
+                character_match,
+            }
+        }
+    }
+    impl std::default::Default for SubstringValueAttr {
+        fn default() -> Self {
+            Self {
+                word_match: substring_value_attr_word_match_default(),
+                character_match: substring_value_attr_character_match_default(),
+            }
+        }
+    }
+    fn substring_value_attr_word_match_default() -> SubstringValueAttrWordMatch {
+        CharacterMatchType::exact
+    }
+    fn substring_value_attr_character_match_default() -> SubstringValueAttrCharacterMatch {
+        CharacterMatchType::caseIgnore
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(choice, automatic_tags)]
     pub enum Substrings {
@@ -657,6 +2406,108 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct Telephone(pub Ub32);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTelephoneSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTelephoneSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousTelephoneSubValue {
+        pub base: Ub32,
+        #[rasn(
+            default = "anonymous_telephone_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousTelephoneSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_telephone_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousTelephoneSubValueCharacterMatch,
+    }
+    impl AnonymousTelephoneSubValue {
+        pub fn new(
+            base: Ub32,
+            word_match: AnonymousTelephoneSubValueWordMatch,
+            character_match: AnonymousTelephoneSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_telephone_sub_value_word_match_default() -> AnonymousTelephoneSubValueWordMatch {
+        EXACT
+    }
+    fn anonymous_telephone_sub_value_character_match_default(
+    ) -> AnonymousTelephoneSubValueCharacterMatch {
+        CASE_IGNORE
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct TelephoneSubValue(pub SequenceOf<AnonymousTelephoneSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TelephoneSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TelephoneSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TelephoneSub {
+        pub value: TelephoneSubValue,
+        #[rasn(default = "telephone_sub_string_default")]
+        pub string: TelephoneSubString,
+        #[rasn(default = "telephone_sub_weight_default")]
+        pub weight: TelephoneSubWeight,
+    }
+    impl TelephoneSub {
+        pub fn new(
+            value: TelephoneSubValue,
+            string: TelephoneSubString,
+            weight: TelephoneSubWeight,
+        ) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn telephone_sub_string_default() -> TelephoneSubString {
+        CharacterMatchType::exact
+    }
+    fn telephone_sub_weight_default() -> TelephoneSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(automatic_tags)]
     pub struct Title {
@@ -667,6 +2518,103 @@ pub mod uds {
         pub fn new(lang: Option<Lang>, base: Ub64) -> Self {
             Self { lang, base }
         }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTitleSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousTitleSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousTitleSubValue {
+        pub base: Ub64,
+        #[rasn(
+            default = "anonymous_title_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousTitleSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_title_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousTitleSubValueCharacterMatch,
+    }
+    impl AnonymousTitleSubValue {
+        pub fn new(
+            base: Ub64,
+            word_match: AnonymousTitleSubValueWordMatch,
+            character_match: AnonymousTitleSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_title_sub_value_word_match_default() -> AnonymousTitleSubValueWordMatch {
+        EXACT
+    }
+    fn anonymous_title_sub_value_character_match_default() -> AnonymousTitleSubValueCharacterMatch {
+        CASE_IGNORE
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct TitleSubValue(pub SequenceOf<AnonymousTitleSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TitleSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum TitleSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct TitleSub {
+        pub value: TitleSubValue,
+        #[rasn(default = "title_sub_string_default")]
+        pub string: TitleSubString,
+        #[rasn(default = "title_sub_weight_default")]
+        pub weight: TitleSubWeight,
+    }
+    impl TitleSub {
+        pub fn new(value: TitleSubValue, string: TitleSubString, weight: TitleSubWeight) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn title_sub_string_default() -> TitleSubString {
+        CharacterMatchType::exact
+    }
+    fn title_sub_weight_default() -> TitleSubWeight {
+        HIGH
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("0..=1024"))]
@@ -695,6 +2643,103 @@ pub mod uds {
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]
     pub struct Url(pub Ub1024);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousUrlSubValueWordMatch {
+        exact = 0,
+        truncated = 1,
+        phonetic = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousUrlSubValueCharacterMatch {
+        exact = 0,
+        caseIgnore = 1,
+        mapped = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    pub struct AnonymousUrlSubValue {
+        pub base: Ub1024,
+        #[rasn(
+            default = "anonymous_url_sub_value_word_match_default",
+            identifier = "wordMatch"
+        )]
+        pub word_match: AnonymousUrlSubValueWordMatch,
+        #[rasn(
+            default = "anonymous_url_sub_value_character_match_default",
+            identifier = "characterMatch"
+        )]
+        pub character_match: AnonymousUrlSubValueCharacterMatch,
+    }
+    impl AnonymousUrlSubValue {
+        pub fn new(
+            base: Ub1024,
+            word_match: AnonymousUrlSubValueWordMatch,
+            character_match: AnonymousUrlSubValueCharacterMatch,
+        ) -> Self {
+            Self {
+                base,
+                word_match,
+                character_match,
+            }
+        }
+    }
+    fn anonymous_url_sub_value_word_match_default() -> AnonymousUrlSubValueWordMatch {
+        EXACT
+    }
+    fn anonymous_url_sub_value_character_match_default() -> AnonymousUrlSubValueCharacterMatch {
+        CASE_IGNORE
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct UrlSubValue(pub SequenceOf<AnonymousUrlSubValue>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UrlSubString {
+        exact = 0,
+        deletion = 1,
+        restrDeletion = 2,
+        permutation = 3,
+        permutationAndDeletion = 4,
+        providerDefined = 5,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UrlSubWeight {
+        low = 0,
+        high = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct UrlSub {
+        pub value: UrlSubValue,
+        #[rasn(default = "url_sub_string_default")]
+        pub string: UrlSubString,
+        #[rasn(default = "url_sub_weight_default")]
+        pub weight: UrlSubWeight,
+    }
+    impl UrlSub {
+        pub fn new(value: UrlSubValue, string: UrlSubString, weight: UrlSubWeight) -> Self {
+            Self {
+                value,
+                string,
+                weight,
+            }
+        }
+    }
+    fn url_sub_string_default() -> UrlSubString {
+        CharacterMatchType::exact
+    }
+    fn url_sub_weight_default() -> UrlSubWeight {
+        HIGH
+    }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
     #[rasn(enumerated)]
     pub enum WordMatchType {

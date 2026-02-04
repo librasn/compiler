@@ -1,10 +1,9 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x520_2016_SelectedAttributeTypes.asn1
 ---
 Warnings:
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
 LinkerError in ASN grammar: Failed to resolve supertype MAPPING-BASED-MATCHING of parameterized implementation.
 LinkerError in ASN grammar: Failed to resolve supertype Attribute of parameterized implementation.
 
@@ -195,6 +194,78 @@ pub mod selected_attribute_types {
     }
     fn enhanced_guide_subset_default() -> Integer {
         Integer::from(1i128)
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum AnonymousEpcFormatFieldsCharField {
+        #[rasn(tag(context, 0))]
+        characters(Integer),
+        #[rasn(tag(context, 1))]
+        maxValue(Integer),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum AnonymousEpcFormatFieldsResult {
+        numericPad = 0,
+        numeric = 1,
+        alpha7bits = 2,
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    pub struct AnonymousEpcFormatFields {
+        pub bits: Integer,
+        #[rasn(identifier = "charField")]
+        pub char_field: AnonymousEpcFormatFieldsCharField,
+        #[rasn(default = "anonymous_epc_format_fields_result_default")]
+        pub result: AnonymousEpcFormatFieldsResult,
+    }
+    impl AnonymousEpcFormatFields {
+        pub fn new(
+            bits: Integer,
+            char_field: AnonymousEpcFormatFieldsCharField,
+            result: AnonymousEpcFormatFieldsResult,
+        ) -> Self {
+            Self {
+                bits,
+                char_field,
+                result,
+            }
+        }
+    }
+    fn anonymous_epc_format_fields_result_default() -> AnonymousEpcFormatFieldsResult {
+        NUMERIC_PAD
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct EpcFormatFields(pub SequenceOf<AnonymousEpcFormatFields>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct EpcFormat {
+        pub fields: EpcFormatFields,
+        #[rasn(tag(context, 0), identifier = "digitShift")]
+        pub digit_shift: Option<Integer>,
+        #[rasn(tag(context, 1), identifier = "checkCalc")]
+        pub check_calc: Option<Integer>,
+        #[rasn(identifier = "urnPrefix")]
+        pub urn_prefix: Option<Utf8String>,
+    }
+    impl EpcFormat {
+        pub fn new(
+            fields: EpcFormatFields,
+            digit_shift: Option<Integer>,
+            check_calc: Option<Integer>,
+            urn_prefix: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                fields,
+                digit_shift,
+                check_calc,
+                urn_prefix,
+            }
+        }
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[non_exhaustive]
@@ -634,6 +705,41 @@ pub mod selected_attribute_types {
         or(SetOf<UiiFilter>),
         #[rasn(tag(context, 3))]
         not(Box<UiiFilter>),
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum UiiFormatSubset {
+        baseObject = 0,
+        oneLevel = 1,
+        wholeSubtree = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum UiiFormatNext {
+        length(Integer),
+        filter(UiiFilter),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    pub struct UiiFormat {
+        #[rasn(identifier = "baseObject")]
+        pub base_object: Option<URI>,
+        #[rasn(default = "uii_format_subset_default")]
+        pub subset: UiiFormatSubset,
+        pub next: UiiFormatNext,
+    }
+    impl UiiFormat {
+        pub fn new(base_object: Option<URI>, subset: UiiFormatSubset, next: UiiFormatNext) -> Self {
+            Self {
+                base_object,
+                subset,
+                next,
+            }
+        }
+    }
+    fn uii_format_subset_default() -> UiiFormatSubset {
+        BASE_OBJECT
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     pub struct UiiItem {

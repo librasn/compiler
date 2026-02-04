@@ -1,9 +1,9 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
+assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x402_1999_MHSDirectoryObjectsAndAttributes.asn1
 ---
 Warnings:
-Not yet implemented error while generating bindings: Enumerated values are currently unsupported!
 Unidentified error while generating bindings: Unexpectedly encountered unlinked struct-like ASN1 value!
 LinkerError in ASN grammar: Failed to link value with 'ORName'
 
@@ -125,6 +125,216 @@ pub mod mhsdirectory_objects_and_attributes {
                 security_labels,
             }
         }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DLPolicyReturnOfContent {
+        unchanged = 0,
+        #[rasn(identifier = "content-return-not-requested")]
+        content_return_not_requested = 1,
+        #[rasn(identifier = "content-return-requested")]
+        content_return_requested = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DLPolicyDisclosureOfOtherRecipients {
+        unchanged = 0,
+        #[rasn(identifier = "disclosure-of-other-recipients-prohibited")]
+        disclosure_of_other_recipients_prohibited = 1,
+        #[rasn(identifier = "disclosure-of-other-recipients-allowed")]
+        disclosure_of_other_recipients_allowed = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DLPolicyImplicitConversionProhibited {
+        unchanged = 0,
+        #[rasn(identifier = "implicit-conversion-allowed")]
+        implicit_conversion_allowed = 1,
+        #[rasn(identifier = "implicit-conversion-prohibited")]
+        implicit_conversion_prohibited = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum DLPolicyConversionWithLossProhibited {
+        unchanged = 0,
+        #[rasn(identifier = "conversion-with-loss-allowed")]
+        conversion_with_loss_allowed = 1,
+        #[rasn(identifier = "conversion-with-loss-prohibited")]
+        conversion_with_loss_prohibited = 2,
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice)]
+    pub enum DLPolicyRequestedDeliveryMethod {
+        #[rasn(tag(context, 0))]
+        unchanged(()),
+        #[rasn(tag(context, 1))]
+        removed(()),
+        replaced(RequestedDeliveryMethod),
+    }
+    #[doc = " DL Policy"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(set)]
+    #[non_exhaustive]
+    pub struct DLPolicy {
+        #[rasn(
+            tag(context, 0),
+            default = "dlpolicy_report_propagation_default",
+            identifier = "report-propagation"
+        )]
+        pub report_propagation: Integer,
+        #[rasn(
+            tag(context, 1),
+            default = "dlpolicy_report_from_dl_default",
+            identifier = "report-from-dl"
+        )]
+        pub report_from_dl: Integer,
+        #[rasn(
+            tag(context, 2),
+            default = "dlpolicy_originating_mta_report_default",
+            identifier = "originating-MTA-report"
+        )]
+        pub originating_mta_report: Integer,
+        #[rasn(
+            tag(context, 3),
+            default = "dlpolicy_originator_report_default",
+            identifier = "originator-report"
+        )]
+        pub originator_report: Integer,
+        #[rasn(
+            tag(context, 4),
+            default = "dlpolicy_return_of_content_default",
+            identifier = "return-of-content"
+        )]
+        pub return_of_content: DLPolicyReturnOfContent,
+        #[rasn(tag(context, 5), default = "dlpolicy_priority_default")]
+        pub priority: Integer,
+        #[rasn(
+            tag(context, 6),
+            default = "dlpolicy_disclosure_of_other_recipients_default",
+            identifier = "disclosure-of-other-recipients"
+        )]
+        pub disclosure_of_other_recipients: DLPolicyDisclosureOfOtherRecipients,
+        #[rasn(
+            tag(context, 7),
+            default = "dlpolicy_implicit_conversion_prohibited_default",
+            identifier = "implicit-conversion-prohibited"
+        )]
+        pub implicit_conversion_prohibited: DLPolicyImplicitConversionProhibited,
+        #[rasn(
+            tag(context, 8),
+            default = "dlpolicy_conversion_with_loss_prohibited_default",
+            identifier = "conversion-with-loss-prohibited"
+        )]
+        pub conversion_with_loss_prohibited: DLPolicyConversionWithLossProhibited,
+        #[rasn(
+            tag(context, 9),
+            default = "dlpolicy_further_dl_expansion_allowed_default",
+            identifier = "further-dl-expansion-allowed"
+        )]
+        pub further_dl_expansion_allowed: bool,
+        #[rasn(
+            tag(context, 10),
+            default = "dlpolicy_originator_requested_alternate_recipient_removed_default",
+            identifier = "originator-requested-alternate-recipient-removed"
+        )]
+        pub originator_requested_alternate_recipient_removed: bool,
+        #[rasn(
+            tag(context, 11),
+            default = "dlpolicy_proof_of_delivery_default",
+            identifier = "proof-of-delivery"
+        )]
+        pub proof_of_delivery: Integer,
+        #[rasn(
+            tag(context, 12),
+            default = "dlpolicy_requested_delivery_method_default",
+            identifier = "requested-delivery-method"
+        )]
+        pub requested_delivery_method: DLPolicyRequestedDeliveryMethod,
+        #[rasn(tag(context, 13), identifier = "token-encryption-algorithm-preference")]
+        pub token_encryption_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+        #[rasn(tag(context, 14), identifier = "token-signature-algorithm-preference")]
+        pub token_signature_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+    }
+    impl DLPolicy {
+        pub fn new(
+            report_propagation: Integer,
+            report_from_dl: Integer,
+            originating_mta_report: Integer,
+            originator_report: Integer,
+            return_of_content: DLPolicyReturnOfContent,
+            priority: Integer,
+            disclosure_of_other_recipients: DLPolicyDisclosureOfOtherRecipients,
+            implicit_conversion_prohibited: DLPolicyImplicitConversionProhibited,
+            conversion_with_loss_prohibited: DLPolicyConversionWithLossProhibited,
+            further_dl_expansion_allowed: bool,
+            originator_requested_alternate_recipient_removed: bool,
+            proof_of_delivery: Integer,
+            requested_delivery_method: DLPolicyRequestedDeliveryMethod,
+            token_encryption_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+            token_signature_algorithm_preference: Option<SequenceOf<AlgorithmInformation>>,
+        ) -> Self {
+            Self {
+                report_propagation,
+                report_from_dl,
+                originating_mta_report,
+                originator_report,
+                return_of_content,
+                priority,
+                disclosure_of_other_recipients,
+                implicit_conversion_prohibited,
+                conversion_with_loss_prohibited,
+                further_dl_expansion_allowed,
+                originator_requested_alternate_recipient_removed,
+                proof_of_delivery,
+                requested_delivery_method,
+                token_encryption_algorithm_preference,
+                token_signature_algorithm_preference,
+            }
+        }
+    }
+    fn dlpolicy_report_propagation_default() -> Integer {
+        Integer::from(0i128)
+    }
+    fn dlpolicy_report_from_dl_default() -> Integer {
+        Integer::from(0i128)
+    }
+    fn dlpolicy_originating_mta_report_default() -> Integer {
+        Integer::from(0i128)
+    }
+    fn dlpolicy_originator_report_default() -> Integer {
+        Integer::from(0i128)
+    }
+    fn dlpolicy_return_of_content_default() -> DLPolicyReturnOfContent {
+        UNCHANGED
+    }
+    fn dlpolicy_priority_default() -> Integer {
+        Integer::from(0i128)
+    }
+    fn dlpolicy_disclosure_of_other_recipients_default() -> DLPolicyDisclosureOfOtherRecipients {
+        UNCHANGED
+    }
+    fn dlpolicy_implicit_conversion_prohibited_default() -> DLPolicyImplicitConversionProhibited {
+        UNCHANGED
+    }
+    fn dlpolicy_conversion_with_loss_prohibited_default() -> DLPolicyConversionWithLossProhibited {
+        UNCHANGED
+    }
+    fn dlpolicy_further_dl_expansion_allowed_default() -> bool {
+        true
+    }
+    fn dlpolicy_originator_requested_alternate_recipient_removed_default() -> bool {
+        true
+    }
+    fn dlpolicy_proof_of_delivery_default() -> Integer {
+        Integer::from(1i128)
+    }
+    fn dlpolicy_requested_delivery_method_default() -> DLPolicyRequestedDeliveryMethod {
+        CHOICE::unchanged(())
     }
     #[doc = " ATTRIBUTE SYNTAXES"]
     #[doc = " DL Submit Permission"]

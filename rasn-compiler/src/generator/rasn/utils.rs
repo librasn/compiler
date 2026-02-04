@@ -971,6 +971,15 @@ impl Rasn {
                         let choice_type = supertypes.last().map(|t| self.to_rust_title_case(t));
                         self.value_to_tokens(value, choice_type.as_ref())?
                     }
+                    ASN1Value::LinkedStructLikeValue(_) => {
+                        // Struct-like values need type context - try supertypes first,
+                        // fall back to passed-in type_name
+                        let struct_type = supertypes
+                            .last()
+                            .map(|t| self.to_rust_title_case(t))
+                            .or_else(|| type_name.cloned());
+                        self.value_to_tokens(value, struct_type.as_ref())?
+                    }
                     _ => self.value_to_tokens(value, None)?,
                 };
                 Ok(nester(self, inner_tokens, supertypes.clone()))
