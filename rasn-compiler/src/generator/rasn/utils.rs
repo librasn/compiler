@@ -966,6 +966,11 @@ impl Rasn {
                             .collect::<Result<Vec<_>, _>>()?;
                         quote!(alloc::vec![#(#elems),*])
                     }
+                    ASN1Value::Choice { .. } => {
+                        // CHOICE values need type context - get from supertypes
+                        let choice_type = supertypes.last().map(|t| self.to_rust_title_case(t));
+                        self.value_to_tokens(value, choice_type.as_ref())?
+                    }
                     _ => self.value_to_tokens(value, None)?,
                 };
                 Ok(nester(self, inner_tokens, supertypes.clone()))
