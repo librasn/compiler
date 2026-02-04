@@ -23,7 +23,10 @@ use super::{common::skip_ws_and_comments, error::ParserResult};
 pub fn embedded_pdv(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     value(
         ASN1Type::EmbeddedPdv,
-        skip_ws_and_comments(tag(EMBEDDED_PDV)),
+        (
+            skip_ws_and_comments(tag(EMBEDDED)),
+            skip_ws_and_comments(tag(PDV)),
+        ),
     )
     .parse(input)
 }
