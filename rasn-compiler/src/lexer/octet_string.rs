@@ -19,7 +19,13 @@ use super::{common::*, constraint::constraints, error::ParserResult};
 /// If the match fails, the lexer will not consume the input and will return an error.
 pub fn octet_string(input: Input<'_>) -> ParserResult<'_, ASN1Type> {
     map(
-        preceded(skip_ws_and_comments(tag(OCTET_STRING)), opt(constraints)),
+        preceded(
+            (
+                skip_ws_and_comments(tag(OCTET)),
+                skip_ws_and_comments(tag(STRING)),
+            ),
+            opt(constraints),
+        ),
         |m| ASN1Type::OctetString(m.into()),
     )
     .parse(input)

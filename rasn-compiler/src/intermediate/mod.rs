@@ -59,8 +59,7 @@ pub const NULL: &str = "NULL";
 pub const BOOLEAN: &str = "BOOLEAN";
 pub const INTEGER: &str = "INTEGER";
 pub const REAL: &str = "REAL";
-pub const BIT_STRING: &str = "BIT STRING";
-pub const OCTET_STRING: &str = "OCTET STRING";
+pub const STRING: &str = "STRING";
 pub const IA5_STRING: &str = "IA5String";
 pub const UTF8_STRING: &str = "UTF8String";
 pub const NUMERIC_STRING: &str = "NumericString";
@@ -839,8 +838,8 @@ impl ASN1Type {
             ASN1Type::Boolean(_) => Cow::Borrowed(BOOLEAN),
             ASN1Type::Integer(_) => Cow::Borrowed(INTEGER),
             ASN1Type::Real(_) => Cow::Borrowed(REAL),
-            ASN1Type::BitString(_) => Cow::Borrowed(BIT_STRING),
-            ASN1Type::OctetString(_) => Cow::Borrowed(OCTET_STRING),
+            ASN1Type::BitString(_) => Cow::Borrowed("BIT STRING"),
+            ASN1Type::OctetString(_) => Cow::Borrowed("OCTET STRING"),
             ASN1Type::CharacterString(CharacterString {
                 ty: CharacterStringType::BMPString,
                 ..
