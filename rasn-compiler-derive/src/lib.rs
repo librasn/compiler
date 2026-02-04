@@ -8,7 +8,7 @@ const DUMMY_HEADER: &str = r#"asn1 { dummy(999) header(999) }
 
 DEFINITIONS AUTOMATIC TAGS::= BEGIN
 "#;
-const DUMMY_FOOTER: &str = r#"END"#;
+const DUMMY_FOOTER: &str = "\nEND";
 
 struct MacroInput {
     asn: LitStr,
