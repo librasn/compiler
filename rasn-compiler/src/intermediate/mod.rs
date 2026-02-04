@@ -163,7 +163,8 @@ pub const CHARACTER: &str = "CHARACTER";
 pub const DATE: &str = "DATE";
 pub const DATE_TIME: &str = "DATE-TIME";
 pub const DURATION: &str = "DURATION";
-pub const EMBEDDED_PDV: &str = "EMBEDDED PDV";
+pub const PDV: &str = "PDV";
+pub const EMBEDDED: &str = "EMBEDDED";
 pub const EXTERNAL: &str = "EXTERNAL";
 pub const INSTANCE_OF: &str = "INSTANCE OF";
 pub const MINUS_INFINITY: &str = "MINUS-INFINITY";
@@ -179,7 +180,7 @@ pub const TIME_OF_DAY: &str = "TIME-OF-DAY";
 pub const TYPE_IDENTIFIER: &str = "TYPE-IDENTIFIER";
 pub const ENCODING_CONTROL: &str = "ENCODING-CONTROL";
 
-pub const ASN1_KEYWORDS: [&str; 67] = [
+pub const ASN1_KEYWORDS: [&str; 68] = [
     ABSTRACT_SYNTAX,
     BIT,
     CHARACTER,
@@ -187,7 +188,8 @@ pub const ASN1_KEYWORDS: [&str; 67] = [
     DATE,
     DATE_TIME,
     DURATION,
-    EMBEDDED_PDV,
+    EMBEDDED,
+    PDV,
     EXTERNAL,
     INSTANCE_OF,
     MINUS_INFINITY,
@@ -905,7 +907,7 @@ impl ASN1Type {
                 ifr.class,
                 ifr.field_path_as_str()
             )),
-            ASN1Type::EmbeddedPdv => Cow::Borrowed(EMBEDDED_PDV),
+            ASN1Type::EmbeddedPdv => Cow::Borrowed("EMBEDDED PDV"),
             ASN1Type::External => Cow::Borrowed(EXTERNAL),
         }
     }
