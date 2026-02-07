@@ -1,6 +1,5 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
-assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x501_2008_OperationalBindingManagement.asn1
 ---
 Warnings:
@@ -96,10 +95,7 @@ pub mod operational_binding_management {
         }
     }
     fn establish_operational_binding_argument_data_valid_default() -> Validity {
-        Validity(Validity::new(
-            CHOICE::now(()),
-            CHOICE::explicitTermination(()),
-        ))
+        Validity::new(CHOICE::now(()), CHOICE::explicitTermination(()))
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate)]

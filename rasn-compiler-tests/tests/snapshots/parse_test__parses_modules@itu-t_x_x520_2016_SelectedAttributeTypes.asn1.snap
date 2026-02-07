@@ -1,6 +1,5 @@
 ---
 source: rasn-compiler-tests/tests/parse_test.rs
-assertion_line: 33
 input_file: rasn-compiler-tests/tests/modules/itu-t_x_x520_2016_SelectedAttributeTypes.asn1
 ---
 Warnings:
@@ -165,7 +164,7 @@ pub mod selected_attribute_types {
         DayTime(Oid::new(&[&***HOUR, &[0u32]].concat()).unwrap().to_owned())
     }
     fn day_time_band_end_day_time_default() -> DayTime {
-        DayTime(DayTime::new(23, 59, 59))
+        DayTime::new(23, 59, 59)
     }
     #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
     #[rasn(delegate, size("1.."))]

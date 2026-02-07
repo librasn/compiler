@@ -978,7 +978,11 @@ impl Rasn {
                             .last()
                             .map(|t| self.to_rust_title_case(t))
                             .or_else(|| type_name.cloned());
-                        self.value_to_tokens(value, struct_type.as_ref())?
+                        // value_to_tokens generates Type::new(...), so we need to exclude
+                        // the last supertype from nester to avoid double-wrapping
+                        let inner = self.value_to_tokens(value, struct_type.as_ref())?;
+                        let remaining_supertypes: Vec<_> = supertypes.iter().take(supertypes.len().saturating_sub(1)).cloned().collect();
+                        return Ok(nester(self, inner, remaining_supertypes));
                     }
                     _ => self.value_to_tokens(value, None)?,
                 };
