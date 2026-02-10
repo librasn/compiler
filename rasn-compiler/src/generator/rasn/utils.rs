@@ -902,9 +902,18 @@ impl Rasn {
                 let enumerable_id = self.to_rust_enum_identifier(enumerable);
                 Ok(quote!(#enum_name::#enumerable_id))
             }
-            ASN1Value::LinkedElsewhereDefinedValue { identifier: e, .. }
-            | ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
+            ASN1Value::LinkedElsewhereDefinedValue { identifier: e, .. } => {
+                // Already resolved by linker — refers to a module-level value declaration
                 Ok(self.to_rust_const_case(e).to_token_stream())
+            }
+            ASN1Value::ElsewhereDeclaredValue { identifier: e, .. } => {
+                // Unresolved — likely a distinguished integer value from an external module.
+                // Qualify with the type name so it resolves as TypeName::CONST_NAME.
+                let const_name = self.to_rust_const_case(e);
+                match type_name {
+                    Some(ty) => Ok(quote!(#ty :: #const_name)),
+                    None => Ok(const_name.to_token_stream()),
+                }
             }
             ASN1Value::ObjectIdentifier(oid) => self.format_oid(oid),
             ASN1Value::Time(t) => match type_name {

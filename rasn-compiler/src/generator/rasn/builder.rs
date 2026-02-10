@@ -162,14 +162,49 @@ impl Rasn {
         if let ASN1Type::Integer(ref int) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
+            let constants = self.generate_integer_constants(&tld.name, int);
             Ok(integer_template(
                 self.format_comments(&tld.comments),
                 name,
                 self.join_annotations(annotations, false, true)?,
                 int.int_type().to_token_stream(),
+                constants,
             ))
         } else {
             self.type_mismatch_error(tld, "INTEGER")
+        }
+    }
+
+    fn generate_integer_constants(
+        &self,
+        type_name: &str,
+        int: &crate::intermediate::types::Integer,
+    ) -> TokenStream {
+        use crate::intermediate::IntegerType;
+        let distinguished_values = match &int.distinguished_values {
+            Some(vals) if !vals.is_empty() => vals,
+            _ => return TokenStream::new(),
+        };
+        // Skip constant generation for unbounded integers — Integer::from()
+        // is not const, so `pub const` items cannot be created for types that
+        // use the bignum Integer representation.
+        if int.int_type() == IntegerType::Unbounded {
+            return TokenStream::new();
+        }
+        let name = self.to_rust_title_case(type_name);
+        let consts: Vec<TokenStream> = distinguished_values
+            .iter()
+            .map(|dv| {
+                let const_name = self.to_rust_const_case(&dv.name);
+                let value = dv.value;
+                let lit = proc_macro2::Literal::i128_unsuffixed(value);
+                quote!(pub const #const_name: Self = Self(#lit);)
+            })
+            .collect();
+        quote! {
+            impl #name {
+                #(#consts)*
+            }
         }
     }
 

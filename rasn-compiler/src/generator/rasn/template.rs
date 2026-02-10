@@ -55,12 +55,14 @@ pub fn integer_template(
     name: TokenStream,
     annotations: TokenStream,
     integer_type: TokenStream,
+    constants: TokenStream,
 ) -> TokenStream {
     quote! {
         #comments
         #annotations
         pub struct #name (pub #integer_type);
 
+        #constants
     }
 }
 
