@@ -646,13 +646,31 @@ impl ToplevelDefinition {
                         id: t.id,
                     });
                 }),
-                ASN1Type::Choice(c) => c.options.iter_mut().for_each(|o| {
-                    o.tag = o.tag.as_ref().map(|t| AsnTag {
-                        environment: env + &t.environment,
-                        tag_class: t.tag_class,
-                        id: t.id,
+                ASN1Type::Choice(c) => {
+                    // ITU-T X.680 §29.2: In AUTOMATIC TAGS mode, if NONE of the
+                    // alternatives have explicit tags, assign context tags [0],
+                    // [1], [2]... If any alternative already has a tag, automatic
+                    // tagging does not apply (all-or-nothing).
+                    if *env == TaggingEnvironment::Automatic
+                        && !c.options.iter().any(|o| o.tag.is_some())
+                    {
+                        for (i, o) in c.options.iter_mut().enumerate() {
+                            o.tag = Some(AsnTag {
+                                environment: TaggingEnvironment::Automatic,
+                                tag_class: TagClass::ContextSpecific,
+                                id: i as u64,
+                            });
+                        }
+                    }
+                    // Adjust existing tags with the tagging environment
+                    c.options.iter_mut().for_each(|o| {
+                        o.tag = o.tag.as_ref().map(|t| AsnTag {
+                            environment: env + &t.environment,
+                            tag_class: t.tag_class,
+                            id: t.id,
+                        });
                     });
-                }),
+                }
                 _ => (),
             }
         }
