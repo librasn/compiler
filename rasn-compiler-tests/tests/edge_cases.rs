@@ -172,9 +172,9 @@ fn inline_constrained_integer_default() {
         "Inline constrained integers should not be wrapped. Generated:\n{}",
         generated
     );
+    let normalized = generated.replace(' ', "");
     assert!(
-        generated.contains("fn test_seq_count_default() -> u8")
-            && generated.contains("1\n"),
+        normalized.contains("fntest_seq_count_default()->u8") && normalized.contains("{1}"),
         "Should generate bare integer literal. Generated:\n{}",
         generated
     );

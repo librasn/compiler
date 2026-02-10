@@ -35,16 +35,17 @@ fn external_module_mapping_generates_correct_import() {
         .compile_to_string()
         .unwrap();
 
-    // Verify the generated code uses external crate import
+    // Verify the generated code uses external crate import (handle unformatted output)
+    let normalized = result.generated.replace(' ', "");
     assert!(
-        result.generated.contains("use rasn_pkix::Certificate;"),
+        normalized.contains("userasn_pkix::{Certificate"),
         "Expected external crate import, got:\n{}",
         result.generated
     );
 
     // Verify it does NOT use sibling module import
     assert!(
-        !result.generated.contains("use super::pkix1_explicit88"),
+        !normalized.contains("super::pkix1_explicit88"),
         "Should not have sibling module import, got:\n{}",
         result.generated
     );
@@ -77,19 +78,20 @@ fn external_module_mapping_multiple_types() {
         .compile_to_string()
         .unwrap();
 
-    // Verify all types are imported from external crate (order may vary after formatting)
+    // Verify all types are imported from external crate (handle unformatted output)
+    let normalized = result.generated.replace(' ', "");
     assert!(
-        result.generated.contains("use rasn_pkix::")
-            && result.generated.contains("Certificate")
-            && result.generated.contains("CertificateList")
-            && result.generated.contains("Time"),
+        normalized.contains("userasn_pkix::{")
+            && normalized.contains("Certificate")
+            && normalized.contains("CertificateList")
+            && normalized.contains("Time"),
         "Expected all types from external crate, got:\n{}",
         result.generated
     );
 
     // Verify no sibling imports for PKIX
     assert!(
-        !result.generated.contains("super::pkix1_explicit88"),
+        !normalized.contains("super::pkix1_explicit88"),
         "Should not have sibling module import"
     );
 }
@@ -124,9 +126,10 @@ fn external_module_mapping_with_type_mapping() {
         .compile_to_string()
         .unwrap();
 
-    // Verify the mapped type name is used in the import
+    // Verify the mapped type name is used in the import (handle unformatted output)
+    let normalized = result.generated.replace(' ', "");
     assert!(
-        result.generated.contains("use my_crate::submodule::RustTypeName;"),
+        normalized.contains("usemy_crate::submodule::{RustTypeName"),
         "Expected mapped type name in import, got:\n{}",
         result.generated
     );
@@ -163,16 +166,17 @@ fn unmapped_module_uses_sibling_import() {
         .compile_to_string()
         .unwrap();
 
-    // Verify mapped module uses external import
+    // Verify mapped module uses external import (handle unformatted output)
+    let normalized = result.generated.replace(' ', "");
     assert!(
-        result.generated.contains("use mapped_crate::"),
+        normalized.contains("usemapped_crate::{"),
         "Expected external crate import for mapped module, got:\n{}",
         result.generated
     );
 
     // Verify unmapped module uses sibling import
     assert!(
-        result.generated.contains("use super::unmapped_module::"),
+        normalized.contains("usesuper::unmapped_module::{"),
         "Expected sibling import for unmapped module, got:\n{}",
         result.generated
     );

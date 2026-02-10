@@ -72,8 +72,9 @@ fn custom_imports() {
         .compile_to_string()
         .unwrap()
         .generated;
-    assert!(bindings.contains("use std::error::Error;"));
-    assert!(bindings.contains("use std::fmt::*;"));
+    let normalized = bindings.replace(' ', "");
+    assert!(normalized.contains("usestd::error::Error;"));
+    assert!(normalized.contains("usestd::fmt::*;"));
 }
 
 #[test]
@@ -98,12 +99,15 @@ fn custom_derives_without_any_required() {
         .compile_to_string()
         .unwrap()
         .generated;
-    assert!(bindings.contains(
-        r#"#[serde(rename = "camelCase")]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Serialize)]
-    #[rasn(delegate, value("4..=8"))]
-    pub struct Hello(pub u8);"#
-    ))
+    let normalized = bindings.replace(' ', "");
+    assert!(
+        normalized.contains(r#"#[serde(rename="camelCase")]"#)
+            && normalized.contains("#[derive(AsnType,Debug,Clone,Decode,Encode,PartialEq,Serialize)]")
+            && normalized.contains(r#"#[rasn(delegate,value("4..=8"))]"#)
+            && normalized.contains("pubstructHello(pubu8);"),
+        "Expected custom derives. Generated:\n{}",
+        bindings
+    )
 }
 
 #[test]
@@ -128,12 +132,15 @@ fn custom_derives_without_some_required() {
         .compile_to_string()
         .unwrap()
         .generated;
-    assert!(bindings.contains(
-        r#"#[serde(rename = "camelCase")]
-    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Serialize)]
-    #[rasn(delegate, value("4..=8"))]
-    pub struct Hello(pub u8);"#
-    ))
+    let normalized = bindings.replace(' ', "");
+    assert!(
+        normalized.contains(r#"#[serde(rename="camelCase")]"#)
+            && normalized.contains("#[derive(AsnType,Debug,Clone,Decode,Encode,PartialEq,Serialize)]")
+            && normalized.contains(r#"#[rasn(delegate,value("4..=8"))]"#)
+            && normalized.contains("pubstructHello(pubu8);"),
+        "Expected custom derives. Generated:\n{}",
+        bindings
+    )
 }
 
 #[test]
@@ -159,10 +166,15 @@ fn no_std_compliant_bindings() {
         .compile_to_string()
         .unwrap()
         .generated;
-    assert!(bindings.contains(r#"use lazy_static::lazy_static;"#));
-    assert!(bindings.contains(
-        r#"lazy_static! {
-        pub static ref HELLO_WORLD: World = World::new(Hello(5));
-    }"#
-    ));
+    let normalized = bindings.replace(' ', "");
+    assert!(
+        normalized.contains("uselazy_static::lazy_static;"),
+        "Expected lazy_static import. Generated:\n{}",
+        bindings
+    );
+    assert!(
+        normalized.contains("lazy_static!{pubstaticrefHELLO_WORLD:World=World::new(Hello(5));"),
+        "Expected lazy_static value. Generated:\n{}",
+        bindings
+    );
 }
