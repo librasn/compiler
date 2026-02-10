@@ -1346,16 +1346,30 @@ impl Rasn {
 
     pub(crate) fn to_rust_snake_case(&self, input: &str) -> Ident {
         let input = input.replace('-', "_");
-        let mut lowercase = String::with_capacity(input.len());
+        let chars: Vec<char> = input.chars().collect();
+        let mut lowercase = String::with_capacity(input.len() + 4);
 
-        let peekable = &mut input.chars().peekable();
-        while let Some(c) = peekable.next() {
-            if c.is_lowercase() || c == '_' || c.is_numeric() {
+        for i in 0..chars.len() {
+            let c = chars[i];
+            if c == '_' {
+                lowercase.push('_');
+            } else if c.is_lowercase() || c.is_numeric() {
                 lowercase.push(c);
-                if c != '_' && peekable.peek().is_some_and(|next| next.is_uppercase()) {
-                    lowercase.push('_');
+                if let Some(&next) = chars.get(i + 1) {
+                    if next.is_uppercase() {
+                        lowercase.push('_');
+                    }
                 }
             } else {
+                // Acronym-end boundary: previous was uppercase AND next is lowercase
+                // e.g. "PEDefinitions" -> "pe_definitions" (insert _ before 'D')
+                if i > 0 && chars[i - 1].is_uppercase() {
+                    if let Some(&next) = chars.get(i + 1) {
+                        if next.is_lowercase() {
+                            lowercase.push('_');
+                        }
+                    }
+                }
                 lowercase.push(c.to_ascii_lowercase());
             }
         }
