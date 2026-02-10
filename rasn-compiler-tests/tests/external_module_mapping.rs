@@ -38,7 +38,7 @@ fn external_module_mapping_generates_correct_import() {
     // Verify the generated code uses external crate import (handle unformatted output)
     let normalized = result.generated.replace(' ', "");
     assert!(
-        normalized.contains("userasn_pkix::{Certificate"),
+        normalized.contains("pubuserasn_pkix::{Certificate"),
         "Expected external crate import, got:\n{}",
         result.generated
     );
@@ -81,7 +81,7 @@ fn external_module_mapping_multiple_types() {
     // Verify all types are imported from external crate (handle unformatted output)
     let normalized = result.generated.replace(' ', "");
     assert!(
-        normalized.contains("userasn_pkix::{")
+        normalized.contains("pubuserasn_pkix::{")
             && normalized.contains("Certificate")
             && normalized.contains("CertificateList")
             && normalized.contains("Time"),
@@ -129,7 +129,7 @@ fn external_module_mapping_with_type_mapping() {
     // Verify the mapped type name is used in the import (handle unformatted output)
     let normalized = result.generated.replace(' ', "");
     assert!(
-        normalized.contains("usemy_crate::submodule::{RustTypeName"),
+        normalized.contains("pubusemy_crate::submodule::{RustTypeName"),
         "Expected mapped type name in import, got:\n{}",
         result.generated
     );
@@ -169,14 +169,14 @@ fn unmapped_module_uses_sibling_import() {
     // Verify mapped module uses external import (handle unformatted output)
     let normalized = result.generated.replace(' ', "");
     assert!(
-        normalized.contains("usemapped_crate::{"),
+        normalized.contains("pubusemapped_crate::{"),
         "Expected external crate import for mapped module, got:\n{}",
         result.generated
     );
 
     // Verify unmapped module uses sibling import
     assert!(
-        normalized.contains("usesuper::unmapped_module::{"),
+        normalized.contains("pubusesuper::unmapped_module::{"),
         "Expected sibling import for unmapped module, got:\n{}",
         result.generated
     );

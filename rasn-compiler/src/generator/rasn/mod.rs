@@ -265,7 +265,7 @@ impl Backend for Rasn {
                         })
                         .collect();
 
-                    quote!(use #rust_path::{ #(#types),* };)
+                    quote!(pub use #rust_path::{ #(#types),* };)
                 } else {
                     // Default behavior: sibling module import
                     let module = self.to_rust_snake_case(asn1_module_name);
@@ -290,7 +290,7 @@ impl Backend for Rasn {
                     } else {
                         usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()])
                     };
-                    quote!(use super:: #module::{ #(#used_imports),* };)
+                    quote!(pub use super:: #module::{ #(#used_imports),* };)
                 }
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<CompilerError>) =
