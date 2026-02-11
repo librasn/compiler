@@ -1,5 +1,5 @@
 use std::{
-    collections::HashMap,
+    collections::{HashMap, HashSet},
     env,
     error::Error,
     io::{self, Write},
@@ -123,6 +123,14 @@ pub struct Config {
     /// ```
     #[cfg_attr(target_family = "wasm", wasm_bindgen(skip))]
     pub external_module_mappings: HashMap<String, ExternalModuleMapping>,
+    /// When set, only generate code for ASN.1 modules whose names are in this set.
+    /// Other modules are still parsed and linked (so cross-module references resolve),
+    /// but no Rust code is emitted for them.
+    ///
+    /// Module names should match the ASN.1 module name (e.g., "SGP32Definitions"),
+    /// not the Rust module name.
+    #[cfg_attr(target_family = "wasm", wasm_bindgen(skip))]
+    pub generate_only_modules: Option<HashSet<String>>,
 }
 
 #[cfg(target_family = "wasm")]
@@ -146,6 +154,7 @@ impl Config {
             type_annotations: type_annotations
                 .map_or(Config::default().type_annotations, |c| c.into_vec()),
             external_module_mappings: HashMap::new(),
+            generate_only_modules: None,
         }
     }
 }
@@ -162,6 +171,7 @@ impl Default for Config {
                 "#[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]",
             )],
             external_module_mappings: HashMap::new(),
+            generate_only_modules: None,
         }
     }
 }
@@ -222,6 +232,12 @@ impl Backend for Rasn {
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
+            // Skip code generation for modules not in generate_only_modules
+            if let Some(ref only) = self.config.generate_only_modules {
+                if !only.contains(&module.name) {
+                    return Ok(GeneratedModule::empty());
+                }
+            }
             self.tagging_environment = module.tagging_environment;
             self.extensibility_environment = module.extensibility_environment;
             let name = self.to_rust_snake_case(&module.name);
