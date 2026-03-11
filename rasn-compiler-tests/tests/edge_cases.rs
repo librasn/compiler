@@ -126,3 +126,14 @@ e2e_pdu!(
         LDAPString ::= [UNIVERSAL 4] IMPLICIT UTF8String
     "#
 );
+
+// Regression test for issue #167.2 (Bug B): a type alias used as a SEQUENCE field type
+// with a plain integer literal DEFAULT must generate a newtype-wrapped value, e.g.
+// `MyUInt8(1)` rather than bare `1`.
+e2e_pdu!(
+    integer_type_alias_with_literal_default,
+    r#"
+        MySeq ::= SEQUENCE { count MyUInt8 DEFAULT 1 }
+        MyUInt8 ::= INTEGER (0..255)
+    "#
+);

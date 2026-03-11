@@ -687,6 +687,24 @@ impl Rasn {
         )
     }
 
+    /// Generates the private free functions that back `#[rasn(default = "…")]` attributes on
+    /// SEQUENCE/SET fields.  For each member that carries a DEFAULT value a function of the form
+    ///
+    /// ```rust,ignore
+    /// fn parent_name_field_name_default() -> FieldType { <value> }
+    /// ```
+    ///
+    /// is emitted.  Two field categories require special handling beyond a straight
+    /// `value_to_tokens` call:
+    ///
+    /// * **SequenceOf/SetOf with `needs_unnesting`** — when the element type has constraints or
+    ///   a tag the generator wraps the whole sequence in a named newtype
+    ///   (`OuterName(SequenceOf<ElemType>)`).  The default function must return that outer type
+    ///   rather than the raw `SequenceOf`.
+    ///
+    /// * **Type-alias integer defaults** — `UInt8 ::= INTEGER (0..255)` generates a newtype
+    ///   `struct UInt8(pub u8)`.  A plain integer literal DEFAULT must be wrapped as `UInt8(1)`,
+    ///   not left as the bare literal `1` that `value_to_tokens` produces.
     pub(crate) fn format_default_methods(
         &self,
         members: &Vec<SequenceOrSetMember>,
@@ -695,12 +713,95 @@ impl Rasn {
         let mut output = TokenStream::new();
         for member in members {
             if let Some(value) = member.optionality.default() {
-                let val = self.value_to_tokens(
-                    value,
-                    Some(&self.to_rust_title_case(&self.type_to_tokens(&member.ty)?.to_string())),
-                )?;
-                let ty = self.type_to_tokens(&member.ty)?;
                 let method_name = self.default_method_name(parent_name, &member.name);
+                let (ty, val) = match &member.ty {
+                    // SequenceOf/SetOf whose element type has constraints or a tag: the generator
+                    // always emits an outer newtype `OuterName(SequenceOf<ElemType>)`, so the
+                    // default method return type is `OuterName = inner_name(field, parent)`.
+                    //
+                    // Whether each element needs an additional `Anonymous*` wrapper depends on
+                    // the element type:
+                    //   • concrete element (OctetString, Integer, …) → builder creates
+                    //     `AnonymousOuterName`; each value must be wrapped in it.
+                    //   • ElsewhereDeclaredType element → builder uses the declared type name
+                    //     directly; no `Anonymous*` struct exists, so values are emitted as-is.
+                    ASN1Type::SequenceOf(so) | ASN1Type::SetOf(so)
+                        if Self::needs_unnesting(&member.ty) =>
+                    {
+                        // outer_name is e.g. `PEAKAParameterSqnInit` for field `sqnInit` in
+                        // parent `PEAKAParameter`.
+                        let outer_name = self.inner_name(&member.name, parent_name);
+                        let ASN1Value::LinkedArrayLikeValue(elems) = value else {
+                            return Err(error!(
+                                Unidentified,
+                                "Expected LinkedArrayLikeValue for SequenceOf DEFAULT, found {:?}",
+                                value
+                            ));
+                        };
+                        let elem_vals = if matches!(
+                            so.element_type.as_ref(),
+                            ASN1Type::ElsewhereDeclaredType(_)
+                        ) {
+                            // ElsewhereDeclaredType: builder uses the declared name as the vec
+                            // element type, no Anonymous* wrapper struct is generated.
+                            elems
+                                .iter()
+                                .map(|elem| self.value_to_tokens(elem, None))
+                                .collect::<Result<Vec<_>, GeneratorError>>()?
+                        } else {
+                            // Concrete element type: builder generates `AnonymousOuterName`
+                            // (e.g. `AnonymousPEAKAParameterSqnInit`) and each value must be
+                            // wrapped in it.
+                            let elem_name =
+                                format_ident!("Anonymous{}", outer_name.to_string());
+                            elems
+                                .iter()
+                                .map(|elem| {
+                                    let elem_val = self
+                                        .value_to_tokens_for_element(elem, &so.element_type)
+                                        .map_err(|mut e| {
+                                            e.details = format!(
+                                                "in field '{}.{}': {}",
+                                                parent_name, member.name, e.details
+                                            );
+                                            e
+                                        })?;
+                                    Ok(quote!(#elem_name(#elem_val)))
+                                })
+                                .collect::<Result<Vec<_>, GeneratorError>>()?
+                        };
+                        (
+                            outer_name.to_token_stream(),
+                            quote!(#outer_name(alloc::vec![#(#elem_vals),*])),
+                        )
+                    }
+                    _ => {
+                        let ty = self.type_to_tokens(&member.ty)?;
+                        let val_raw = self.value_to_tokens(
+                            value,
+                            Some(&self.to_rust_title_case(&ty.to_string())),
+                        )?;
+                        // ElsewhereDeclaredType with a plain integer DEFAULT: the generated type
+                        // is a newtype so the literal must be wrapped, e.g. `UInt8(1)` not `1`.
+                        //
+                        // Two value variants arise depending on whether the linker has run on
+                        // this member:
+                        //   • LinkedIntValue — normal top-level SEQUENCE, linked by validator
+                        //   • Integer        — anonymous inline type synthesised by the generator
+                        //     (never enters the linker's collect_supertypes pass)
+                        //
+                        // Note: LinkedNestedValue (named-value DEFAULT, e.g. `DEFAULT first`)
+                        // is already handled correctly by the nester in value_to_tokens.
+                        let val = match (&member.ty, value) {
+                            (
+                                ASN1Type::ElsewhereDeclaredType(_),
+                                ASN1Value::LinkedIntValue { .. } | ASN1Value::Integer(_),
+                            ) => quote!(#ty(#val_raw)),
+                            _ => val_raw,
+                        };
+                        (ty, val)
+                    }
+                };
                 output.append_all(quote! {
                     fn #method_name() -> #ty {
                         #val
@@ -709,6 +810,32 @@ impl Rasn {
             }
         }
         Ok(output)
+    }
+
+    /// Generates tokens for a single element of a SequenceOf/SetOf DEFAULT value, taking the
+    /// element's declared type into account.  When the element type is an `OCTET STRING` with a
+    /// fixed SIZE constraint the value is emitted as `FixedOctetString::new([…])` rather than
+    /// the heap-allocating `OctetString` form that `value_to_tokens` would produce.
+    fn value_to_tokens_for_element(
+        &self,
+        value: &ASN1Value,
+        element_type: &ASN1Type,
+    ) -> Result<TokenStream, GeneratorError> {
+        if let (ASN1Value::OctetString(bytes), ASN1Type::OctetString(o)) = (value, element_type) {
+            if let Some(n) = o.fixed_size() {
+                if bytes.len() == n {
+                    let byte_lits = bytes.iter().map(|b| Literal::u8_suffixed(*b));
+                    return Ok(quote!(FixedOctetString::new([#(#byte_lits),*])));
+                }
+                return Err(error!(
+                    Asn1TypeMismatch,
+                    "OCTET STRING DEFAULT value has {} bytes but SIZE constraint requires {}",
+                    bytes.len(),
+                    n
+                ));
+            }
+        }
+        self.value_to_tokens(value, None)
     }
 
     pub(crate) fn type_to_tokens(&self, ty: &ASN1Type) -> Result<TokenStream, GeneratorError> {
