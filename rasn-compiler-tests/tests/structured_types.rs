@@ -233,3 +233,15 @@ e2e_pdu!(
         T ::= CHOICE { a INTEGER, b [1] BOOLEAN, c OCTET STRING }
     "#
 );
+
+// Regression test for issue #167.2 (Bug A): a SEQUENCE OF with a fixed-size element type
+// whose DEFAULT value must be wrapped in the generated newtype (`MySeqItems`) and each
+// element wrapped in the anonymous element type (`AnonymousMySeqItems`).
+e2e_pdu!(
+    sequence_of_fixed_octet_with_default,
+    r#"
+        MySeq ::= SEQUENCE {
+            items SEQUENCE OF OCTET STRING (SIZE(3)) DEFAULT {'AABBCC'H}
+        }
+    "#
+);

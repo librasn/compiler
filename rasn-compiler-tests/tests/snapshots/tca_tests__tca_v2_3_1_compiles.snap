@@ -1,0 +1,2822 @@
+---
+source: rasn-compiler-tests/tests/tca_tests.rs
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod pedefinitions {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ADFRFMAccess {
+        #[rasn(identifier = "adfAID")]
+        pub adf_aid: ApplicationIdentifier,
+        #[rasn(identifier = "adfAccessDomain")]
+        pub adf_access_domain: OctetString,
+        #[rasn(identifier = "adfAdminAccessDomain")]
+        pub adf_admin_access_domain: OctetString,
+    }
+    impl ADFRFMAccess {
+        pub fn new(
+            adf_aid: ApplicationIdentifier,
+            adf_access_domain: OctetString,
+            adf_admin_access_domain: OctetString,
+        ) -> Self {
+            Self {
+                adf_aid,
+                adf_access_domain,
+                adf_admin_access_domain,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct AlgoParameter {
+        #[rasn(identifier = "algorithmID")]
+        pub algorithm_id: Integer,
+        #[rasn(size("1"), identifier = "algorithmOptions")]
+        pub algorithm_options: OctetString,
+        pub key: OctetString,
+        pub opc: OctetString,
+        #[rasn(
+            size("5"),
+            default = "algo_parameter_rotation_constants_default",
+            identifier = "rotationConstants"
+        )]
+        pub rotation_constants: OctetString,
+        #[rasn(
+            size("80"),
+            default = "algo_parameter_xoring_constants_default",
+            identifier = "xoringConstants"
+        )]
+        pub xoring_constants: OctetString,
+        #[rasn(size("3"), identifier = "authCounterMax")]
+        pub auth_counter_max: Option<OctetString>,
+        #[rasn(
+            default = "algo_parameter_number_of_keccak_default",
+            identifier = "numberOfKeccak"
+        )]
+        pub number_of_keccak: UInt8,
+    }
+    impl AlgoParameter {
+        pub fn new(
+            algorithm_id: Integer,
+            algorithm_options: OctetString,
+            key: OctetString,
+            opc: OctetString,
+            rotation_constants: OctetString,
+            xoring_constants: OctetString,
+            auth_counter_max: Option<OctetString>,
+            number_of_keccak: UInt8,
+        ) -> Self {
+            Self {
+                algorithm_id,
+                algorithm_options,
+                key,
+                opc,
+                rotation_constants,
+                xoring_constants,
+                auth_counter_max,
+                number_of_keccak,
+            }
+        }
+    }
+    fn algo_parameter_rotation_constants_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[64, 0, 32, 64, 96])
+    }
+    fn algo_parameter_xoring_constants_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8,
+        ])
+    }
+    fn algo_parameter_number_of_keccak_default() -> UInt8 {
+        UInt8(1)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("5..=16"))]
+    pub struct ApplicationIdentifier(pub OctetString);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ApplicationInstance {
+        #[rasn(tag(application, 15), identifier = "applicationLoadPackageAID")]
+        pub application_load_package_aid: ApplicationIdentifier,
+        #[rasn(tag(application, 15), identifier = "classAID")]
+        pub class_aid: ApplicationIdentifier,
+        #[rasn(tag(application, 15), identifier = "instanceAID")]
+        pub instance_aid: ApplicationIdentifier,
+        #[rasn(tag(application, 15), identifier = "extraditeSecurityDomainAID")]
+        pub extradite_security_domain_aid: Option<ApplicationIdentifier>,
+        #[rasn(tag(context, 2), identifier = "applicationPrivileges")]
+        pub application_privileges: OctetString,
+        #[rasn(
+            size("1"),
+            tag(context, 3),
+            default = "application_instance_life_cycle_state_default",
+            identifier = "lifeCycleState"
+        )]
+        pub life_cycle_state: OctetString,
+        #[rasn(tag(private, 9), identifier = "applicationSpecificParametersC9")]
+        pub application_specific_parameters_c9: OctetString,
+        #[rasn(tag(private, 15), identifier = "systemSpecificParameters")]
+        pub system_specific_parameters: Option<ApplicationSystemParameters>,
+        #[rasn(tag(private, 10), identifier = "applicationParameters")]
+        pub application_parameters: Option<UICCApplicationParameters>,
+        #[rasn(size("1.."), identifier = "processData")]
+        pub process_data: Option<SequenceOf<OctetString>>,
+    }
+    impl ApplicationInstance {
+        pub fn new(
+            application_load_package_aid: ApplicationIdentifier,
+            class_aid: ApplicationIdentifier,
+            instance_aid: ApplicationIdentifier,
+            extradite_security_domain_aid: Option<ApplicationIdentifier>,
+            application_privileges: OctetString,
+            life_cycle_state: OctetString,
+            application_specific_parameters_c9: OctetString,
+            system_specific_parameters: Option<ApplicationSystemParameters>,
+            application_parameters: Option<UICCApplicationParameters>,
+            process_data: Option<SequenceOf<OctetString>>,
+        ) -> Self {
+            Self {
+                application_load_package_aid,
+                class_aid,
+                instance_aid,
+                extradite_security_domain_aid,
+                application_privileges,
+                life_cycle_state,
+                application_specific_parameters_c9,
+                system_specific_parameters,
+                application_parameters,
+                process_data,
+            }
+        }
+    }
+    fn application_instance_life_cycle_state_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[7])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ApplicationLoadPackage {
+        #[rasn(tag(application, 15), identifier = "loadPackageAID")]
+        pub load_package_aid: ApplicationIdentifier,
+        #[rasn(tag(application, 15), identifier = "securityDomainAID")]
+        pub security_domain_aid: Option<ApplicationIdentifier>,
+        #[rasn(tag(private, 6), identifier = "nonVolatileCodeLimitC6")]
+        pub non_volatile_code_limit_c6: Option<OctetString>,
+        #[rasn(tag(private, 7), identifier = "volatileDataLimitC7")]
+        pub volatile_data_limit_c7: Option<OctetString>,
+        #[rasn(tag(private, 8), identifier = "nonVolatileDataLimitC8")]
+        pub non_volatile_data_limit_c8: Option<OctetString>,
+        #[rasn(tag(private, 1), identifier = "hashValue")]
+        pub hash_value: Option<OctetString>,
+        #[rasn(tag(private, 4), identifier = "loadBlockObject")]
+        pub load_block_object: OctetString,
+    }
+    impl ApplicationLoadPackage {
+        pub fn new(
+            load_package_aid: ApplicationIdentifier,
+            security_domain_aid: Option<ApplicationIdentifier>,
+            non_volatile_code_limit_c6: Option<OctetString>,
+            volatile_data_limit_c7: Option<OctetString>,
+            non_volatile_data_limit_c8: Option<OctetString>,
+            hash_value: Option<OctetString>,
+            load_block_object: OctetString,
+        ) -> Self {
+            Self {
+                load_package_aid,
+                security_domain_aid,
+                non_volatile_code_limit_c6,
+                volatile_data_limit_c7,
+                non_volatile_data_limit_c8,
+                hash_value,
+                load_block_object,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ApplicationSystemParameters {
+        #[rasn(size("2..=4"), tag(private, 7), identifier = "volatileMemoryQuotaC7")]
+        pub volatile_memory_quota_c7: Option<OctetString>,
+        #[rasn(
+            size("2..=4"),
+            tag(private, 8),
+            identifier = "nonVolatileMemoryQuotaC8"
+        )]
+        pub non_volatile_memory_quota_c8: Option<OctetString>,
+        #[rasn(tag(private, 11), identifier = "globalServiceParameters")]
+        pub global_service_parameters: Option<OctetString>,
+        #[rasn(tag(private, 15), identifier = "implicitSelectionParameter")]
+        pub implicit_selection_parameter: Option<OctetString>,
+        #[rasn(size("2..=4"), tag(private, 23), identifier = "volatileReservedMemory")]
+        pub volatile_reserved_memory: Option<OctetString>,
+        #[rasn(
+            size("2..=4"),
+            tag(private, 24),
+            identifier = "nonVolatileReservedMemory"
+        )]
+        pub non_volatile_reserved_memory: Option<OctetString>,
+        #[rasn(tag(private, 10), identifier = "ts102226SIMFileAccessToolkitParameter")]
+        pub ts102226_simfile_access_toolkit_parameter: Option<OctetString>,
+        #[rasn(
+            tag(context, 0),
+            identifier = "ts102226AdditionalContactlessParameters"
+        )]
+        pub ts102226_additional_contactless_parameters:
+            Option<TS102226AdditionalContactlessParameters>,
+        #[rasn(tag(private, 25), identifier = "contactlessProtocolParameters")]
+        pub contactless_protocol_parameters: Option<OctetString>,
+        #[rasn(tag(private, 26), identifier = "userInteractionContactlessParameters")]
+        pub user_interaction_contactless_parameters: Option<OctetString>,
+        #[rasn(
+            size("2..=4"),
+            tag(context, 2),
+            identifier = "cumulativeGrantedVolatileMemory"
+        )]
+        pub cumulative_granted_volatile_memory: Option<OctetString>,
+        #[rasn(
+            size("2..=4"),
+            tag(context, 3),
+            identifier = "cumulativeGrantedNonVolatileMemory"
+        )]
+        pub cumulative_granted_non_volatile_memory: Option<OctetString>,
+    }
+    impl ApplicationSystemParameters {
+        pub fn new(
+            volatile_memory_quota_c7: Option<OctetString>,
+            non_volatile_memory_quota_c8: Option<OctetString>,
+            global_service_parameters: Option<OctetString>,
+            implicit_selection_parameter: Option<OctetString>,
+            volatile_reserved_memory: Option<OctetString>,
+            non_volatile_reserved_memory: Option<OctetString>,
+            ts102226_simfile_access_toolkit_parameter: Option<OctetString>,
+            ts102226_additional_contactless_parameters: Option<
+                TS102226AdditionalContactlessParameters,
+            >,
+            contactless_protocol_parameters: Option<OctetString>,
+            user_interaction_contactless_parameters: Option<OctetString>,
+            cumulative_granted_volatile_memory: Option<OctetString>,
+            cumulative_granted_non_volatile_memory: Option<OctetString>,
+        ) -> Self {
+            Self {
+                volatile_memory_quota_c7,
+                non_volatile_memory_quota_c8,
+                global_service_parameters,
+                implicit_selection_parameter,
+                volatile_reserved_memory,
+                non_volatile_reserved_memory,
+                ts102226_simfile_access_toolkit_parameter,
+                ts102226_additional_contactless_parameters,
+                contactless_protocol_parameters,
+                user_interaction_contactless_parameters,
+                cumulative_granted_volatile_memory,
+                cumulative_granted_non_volatile_memory,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct EUICCResponse {
+        #[rasn(identifier = "peStatus")]
+        pub pe_status: SequenceOf<PEStatus>,
+        #[rasn(identifier = "profileInstallationAborted")]
+        pub profile_installation_aborted: Option<()>,
+        #[rasn(identifier = "statusMessage")]
+        pub status_message: Option<Utf8String>,
+    }
+    impl EUICCResponse {
+        pub fn new(
+            pe_status: SequenceOf<PEStatus>,
+            profile_installation_aborted: Option<()>,
+            status_message: Option<Utf8String>,
+        ) -> Self {
+            Self {
+                pe_status,
+                profile_installation_aborted,
+                status_message,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct Fcp {
+        #[rasn(size("2..=4"), tag(context, 2), identifier = "fileDescriptor")]
+        pub file_descriptor: Option<OctetString>,
+        #[rasn(size("2"), tag(context, 3), identifier = "fileID")]
+        pub file_id: Option<OctetString>,
+        #[rasn(tag(context, 4), identifier = "dfName")]
+        pub df_name: Option<ApplicationIdentifier>,
+        #[rasn(size("1"), tag(context, 10), default = "fcp_lcsi_default")]
+        pub lcsi: OctetString,
+        #[rasn(
+            size("1..=3"),
+            tag(context, 11),
+            identifier = "securityAttributesReferenced"
+        )]
+        pub security_attributes_referenced: Option<OctetString>,
+        #[rasn(tag(context, 0), identifier = "efFileSize")]
+        pub ef_file_size: Option<OctetString>,
+        #[rasn(tag(private, 6), identifier = "pinStatusTemplateDO")]
+        pub pin_status_template_do: Option<OctetString>,
+        #[rasn(size("0..=1"), tag(context, 8), identifier = "shortEFID")]
+        pub short_efid: Option<OctetString>,
+        #[rasn(tag(context, 5), identifier = "proprietaryEFInfo")]
+        pub proprietary_efinfo: Option<ProprietaryInfo>,
+        #[rasn(tag(private, 7), identifier = "linkPath")]
+        pub link_path: Option<OctetString>,
+    }
+    impl Fcp {
+        pub fn new(
+            file_descriptor: Option<OctetString>,
+            file_id: Option<OctetString>,
+            df_name: Option<ApplicationIdentifier>,
+            lcsi: OctetString,
+            security_attributes_referenced: Option<OctetString>,
+            ef_file_size: Option<OctetString>,
+            pin_status_template_do: Option<OctetString>,
+            short_efid: Option<OctetString>,
+            proprietary_efinfo: Option<ProprietaryInfo>,
+            link_path: Option<OctetString>,
+        ) -> Self {
+            Self {
+                file_descriptor,
+                file_id,
+                df_name,
+                lcsi,
+                security_attributes_referenced,
+                ef_file_size,
+                pin_status_template_do,
+                short_efid,
+                proprietary_efinfo,
+                link_path,
+            }
+        }
+    }
+    fn fcp_lcsi_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[5])
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousFile {
+        doNotCreate(()),
+        fileDescriptor(Fcp),
+        fillFileOffset(UInt16),
+        fillFileContent(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct File(pub SequenceOf<AnonymousFile>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, identifier = "CHOICE")]
+    #[non_exhaustive]
+    pub enum AnonymousFileManagement {
+        #[rasn(size("0..=8"), tag(context, 0))]
+        filePath(OctetString),
+        #[rasn(tag(application, 2))]
+        createFCP(Fcp),
+        fillFileOffset(UInt16),
+        #[rasn(tag(context, 1))]
+        fillFileContent(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct FileManagement(pub SequenceOf<AnonymousFileManagement>);
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousKeyObjectKeyCompontents {
+        #[rasn(tag(context, 0), identifier = "keyType")]
+        pub key_type: OctetString,
+        #[rasn(tag(context, 6), identifier = "keyData")]
+        pub key_data: OctetString,
+        #[rasn(
+            tag(context, 7),
+            default = "anonymous_key_object_key_compontents_mac_length_default",
+            identifier = "macLength"
+        )]
+        pub mac_length: UInt8,
+    }
+    impl AnonymousKeyObjectKeyCompontents {
+        pub fn new(key_type: OctetString, key_data: OctetString, mac_length: UInt8) -> Self {
+            Self {
+                key_type,
+                key_data,
+                mac_length,
+            }
+        }
+    }
+    fn anonymous_key_object_key_compontents_mac_length_default() -> UInt8 {
+        UInt8(8)
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct KeyObjectKeyCompontents(pub SequenceOf<AnonymousKeyObjectKeyCompontents>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct KeyObject {
+        #[rasn(size("1..=2"), tag(context, 21), identifier = "keyUsageQualifier")]
+        pub key_usage_qualifier: OctetString,
+        #[rasn(
+            size("1"),
+            tag(context, 22),
+            default = "key_object_key_access_default",
+            identifier = "keyAccess"
+        )]
+        pub key_access: OctetString,
+        #[rasn(size("1"), tag(context, 2), identifier = "keyIdentifier")]
+        pub key_identifier: OctetString,
+        #[rasn(size("1"), tag(context, 3), identifier = "keyVersionNumber")]
+        pub key_version_number: OctetString,
+        #[rasn(tag(context, 5), identifier = "keyCounterValue")]
+        pub key_counter_value: Option<OctetString>,
+        #[rasn(identifier = "keyCompontents")]
+        pub key_compontents: KeyObjectKeyCompontents,
+    }
+    impl KeyObject {
+        pub fn new(
+            key_usage_qualifier: OctetString,
+            key_access: OctetString,
+            key_identifier: OctetString,
+            key_version_number: OctetString,
+            key_counter_value: Option<OctetString>,
+            key_compontents: KeyObjectKeyCompontents,
+        ) -> Self {
+            Self {
+                key_usage_qualifier,
+                key_access,
+                key_identifier,
+                key_version_number,
+                key_counter_value,
+                key_compontents,
+            }
+        }
+    }
+    fn key_object_key_access_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[0])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct MappingParameter {
+        #[rasn(size("1"), identifier = "mappingOptions")]
+        pub mapping_options: OctetString,
+        #[rasn(identifier = "mappingSource")]
+        pub mapping_source: ApplicationIdentifier,
+    }
+    impl MappingParameter {
+        pub fn new(mapping_options: OctetString, mapping_source: ApplicationIdentifier) -> Self {
+            Self {
+                mapping_options,
+                mapping_source,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PEAKAParameterAlgoConfiguration {
+        mappingParameter(MappingParameter),
+        algoParameter(AlgoParameter),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING")]
+    pub struct AnonymousPEAKAParameterSqnInit(pub FixedOctetString<6usize>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("32"))]
+    pub struct PEAKAParameterSqnInit(pub SequenceOf<AnonymousPEAKAParameterSqnInit>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-AKAParameter")]
+    #[non_exhaustive]
+    pub struct PEAKAParameter {
+        #[rasn(identifier = "aka-header")]
+        pub aka_header: PEHeader,
+        #[rasn(identifier = "algoConfiguration")]
+        pub algo_configuration: PEAKAParameterAlgoConfiguration,
+        #[rasn(
+            size("1"),
+            default = "peakaparameter_sqn_options_default",
+            identifier = "sqnOptions"
+        )]
+        pub sqn_options: OctetString,
+        #[rasn(
+            size("6"),
+            default = "peakaparameter_sqn_delta_default",
+            identifier = "sqnDelta"
+        )]
+        pub sqn_delta: OctetString,
+        #[rasn(
+            size("6"),
+            default = "peakaparameter_sqn_age_limit_default",
+            identifier = "sqnAgeLimit"
+        )]
+        pub sqn_age_limit: OctetString,
+        #[rasn(default = "peakaparameter_sqn_init_default", identifier = "sqnInit")]
+        pub sqn_init: PEAKAParameterSqnInit,
+    }
+    impl PEAKAParameter {
+        pub fn new(
+            aka_header: PEHeader,
+            algo_configuration: PEAKAParameterAlgoConfiguration,
+            sqn_options: OctetString,
+            sqn_delta: OctetString,
+            sqn_age_limit: OctetString,
+            sqn_init: PEAKAParameterSqnInit,
+        ) -> Self {
+            Self {
+                aka_header,
+                algo_configuration,
+                sqn_options,
+                sqn_delta,
+                sqn_age_limit,
+                sqn_init,
+            }
+        }
+    }
+    fn peakaparameter_sqn_options_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[2])
+    }
+    fn peakaparameter_sqn_delta_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[0, 0, 16, 0, 0, 0])
+    }
+    fn peakaparameter_sqn_age_limit_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[0, 0, 16, 0, 0, 0])
+    }
+    fn peakaparameter_sqn_init_default() -> PEAKAParameterSqnInit {
+        PEAKAParameterSqnInit(alloc::vec![
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8])),
+            AnonymousPEAKAParameterSqnInit(FixedOctetString::new([0u8, 0u8, 0u8, 0u8, 0u8, 0u8]))
+        ])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-Application")]
+    #[non_exhaustive]
+    pub struct PEApplication {
+        #[rasn(identifier = "app-Header")]
+        pub app_header: PEHeader,
+        #[rasn(identifier = "loadBlock")]
+        pub load_block: Option<ApplicationLoadPackage>,
+        #[rasn(size("1.."), identifier = "instanceList")]
+        pub instance_list: Option<SequenceOf<ApplicationInstance>>,
+    }
+    impl PEApplication {
+        pub fn new(
+            app_header: PEHeader,
+            load_block: Option<ApplicationLoadPackage>,
+            instance_list: Option<SequenceOf<ApplicationInstance>>,
+        ) -> Self {
+            Self {
+                app_header,
+                load_block,
+                instance_list,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-CD")]
+    #[non_exhaustive]
+    pub struct PECD {
+        #[rasn(identifier = "cd-header")]
+        pub cd_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-cd")]
+        pub df_cd: File,
+        #[rasn(identifier = "ef-launchpad")]
+        pub ef_launchpad: Option<File>,
+        #[rasn(identifier = "ef-icon")]
+        pub ef_icon: Option<File>,
+    }
+    impl PECD {
+        pub fn new(
+            cd_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_cd: File,
+            ef_launchpad: Option<File>,
+            ef_icon: Option<File>,
+        ) -> Self {
+            Self {
+                cd_header,
+                template_id,
+                df_cd,
+                ef_launchpad,
+                ef_icon,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-CDMAParameter")]
+    #[non_exhaustive]
+    pub struct PECDMAParameter {
+        #[rasn(identifier = "cdma-header")]
+        pub cdma_header: PEHeader,
+        #[rasn(size("8"), identifier = "authenticationKey")]
+        pub authentication_key: OctetString,
+        #[rasn(size("16"))]
+        pub ssd: Option<OctetString>,
+        #[rasn(size("2..=32"), identifier = "hrpdAccessAuthenticationData")]
+        pub hrpd_access_authentication_data: Option<OctetString>,
+        #[rasn(size("3..=483"), identifier = "simpleIPAuthenticationData")]
+        pub simple_ipauthentication_data: Option<OctetString>,
+        #[rasn(size("5..=957"), identifier = "mobileIPAuthenticationData")]
+        pub mobile_ipauthentication_data: Option<OctetString>,
+    }
+    impl PECDMAParameter {
+        pub fn new(
+            cdma_header: PEHeader,
+            authentication_key: OctetString,
+            ssd: Option<OctetString>,
+            hrpd_access_authentication_data: Option<OctetString>,
+            simple_ipauthentication_data: Option<OctetString>,
+            mobile_ipauthentication_data: Option<OctetString>,
+        ) -> Self {
+            Self {
+                cdma_header,
+                authentication_key,
+                ssd,
+                hrpd_access_authentication_data,
+                simple_ipauthentication_data,
+                mobile_ipauthentication_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-CSIM")]
+    #[non_exhaustive]
+    pub struct PECSIM {
+        #[rasn(identifier = "csim-header")]
+        pub csim_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "adf-csim")]
+        pub adf_csim: File,
+        #[rasn(identifier = "ef-arr")]
+        pub ef_arr: File,
+        #[rasn(identifier = "ef-call-count")]
+        pub ef_call_count: File,
+        #[rasn(identifier = "ef-imsi-m")]
+        pub ef_imsi_m: File,
+        #[rasn(identifier = "ef-imsi-t")]
+        pub ef_imsi_t: File,
+        #[rasn(identifier = "ef-tmsi")]
+        pub ef_tmsi: File,
+        #[rasn(identifier = "ef-ah")]
+        pub ef_ah: File,
+        #[rasn(identifier = "ef-aop")]
+        pub ef_aop: File,
+        #[rasn(identifier = "ef-aloc")]
+        pub ef_aloc: File,
+        #[rasn(identifier = "ef-cdmahome")]
+        pub ef_cdmahome: File,
+        #[rasn(identifier = "ef-znregi")]
+        pub ef_znregi: File,
+        #[rasn(identifier = "ef-snregi")]
+        pub ef_snregi: File,
+        #[rasn(identifier = "ef-distregi")]
+        pub ef_distregi: File,
+        #[rasn(identifier = "ef-accolc")]
+        pub ef_accolc: File,
+        #[rasn(identifier = "ef-term")]
+        pub ef_term: File,
+        #[rasn(identifier = "ef-acp")]
+        pub ef_acp: File,
+        #[rasn(identifier = "ef-prl")]
+        pub ef_prl: File,
+        #[rasn(identifier = "ef-ruimid")]
+        pub ef_ruimid: File,
+        #[rasn(identifier = "ef-csim-st")]
+        pub ef_csim_st: File,
+        #[rasn(identifier = "ef-spc")]
+        pub ef_spc: File,
+        #[rasn(identifier = "ef-otapaspc")]
+        pub ef_otapaspc: File,
+        #[rasn(identifier = "ef-namlock")]
+        pub ef_namlock: File,
+        #[rasn(identifier = "ef-ota")]
+        pub ef_ota: File,
+        #[rasn(identifier = "ef-sp")]
+        pub ef_sp: File,
+        #[rasn(identifier = "ef-esn-meid-me")]
+        pub ef_esn_meid_me: File,
+        #[rasn(identifier = "ef-li")]
+        pub ef_li: File,
+        #[rasn(identifier = "ef-usgind")]
+        pub ef_usgind: File,
+        #[rasn(identifier = "ef-ad")]
+        pub ef_ad: File,
+        #[rasn(identifier = "ef-max-prl")]
+        pub ef_max_prl: File,
+        #[rasn(identifier = "ef-spcs")]
+        pub ef_spcs: File,
+        #[rasn(identifier = "ef-mecrp")]
+        pub ef_mecrp: File,
+        #[rasn(identifier = "ef-home-tag")]
+        pub ef_home_tag: File,
+        #[rasn(identifier = "ef-group-tag")]
+        pub ef_group_tag: File,
+        #[rasn(identifier = "ef-specific-tag")]
+        pub ef_specific_tag: File,
+        #[rasn(identifier = "ef-call-prompt")]
+        pub ef_call_prompt: File,
+    }
+    impl PECSIM {
+        pub fn new(
+            csim_header: PEHeader,
+            template_id: ObjectIdentifier,
+            adf_csim: File,
+            ef_arr: File,
+            ef_call_count: File,
+            ef_imsi_m: File,
+            ef_imsi_t: File,
+            ef_tmsi: File,
+            ef_ah: File,
+            ef_aop: File,
+            ef_aloc: File,
+            ef_cdmahome: File,
+            ef_znregi: File,
+            ef_snregi: File,
+            ef_distregi: File,
+            ef_accolc: File,
+            ef_term: File,
+            ef_acp: File,
+            ef_prl: File,
+            ef_ruimid: File,
+            ef_csim_st: File,
+            ef_spc: File,
+            ef_otapaspc: File,
+            ef_namlock: File,
+            ef_ota: File,
+            ef_sp: File,
+            ef_esn_meid_me: File,
+            ef_li: File,
+            ef_usgind: File,
+            ef_ad: File,
+            ef_max_prl: File,
+            ef_spcs: File,
+            ef_mecrp: File,
+            ef_home_tag: File,
+            ef_group_tag: File,
+            ef_specific_tag: File,
+            ef_call_prompt: File,
+        ) -> Self {
+            Self {
+                csim_header,
+                template_id,
+                adf_csim,
+                ef_arr,
+                ef_call_count,
+                ef_imsi_m,
+                ef_imsi_t,
+                ef_tmsi,
+                ef_ah,
+                ef_aop,
+                ef_aloc,
+                ef_cdmahome,
+                ef_znregi,
+                ef_snregi,
+                ef_distregi,
+                ef_accolc,
+                ef_term,
+                ef_acp,
+                ef_prl,
+                ef_ruimid,
+                ef_csim_st,
+                ef_spc,
+                ef_otapaspc,
+                ef_namlock,
+                ef_ota,
+                ef_sp,
+                ef_esn_meid_me,
+                ef_li,
+                ef_usgind,
+                ef_ad,
+                ef_max_prl,
+                ef_spcs,
+                ef_mecrp,
+                ef_home_tag,
+                ef_group_tag,
+                ef_specific_tag,
+                ef_call_prompt,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-DF-5GS")]
+    #[non_exhaustive]
+    pub struct PEDF5GS {
+        #[rasn(identifier = "df-5gs-header")]
+        pub df_5gs_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-df-5gs")]
+        pub df_df_5gs: File,
+        #[rasn(identifier = "ef-5gs3gpploci")]
+        pub ef_5gs3gpploci: Option<File>,
+        #[rasn(identifier = "ef-5gsn3gpploci")]
+        pub ef_5gsn3gpploci: Option<File>,
+        #[rasn(identifier = "ef-5gs3gppnsc")]
+        pub ef_5gs3gppnsc: Option<File>,
+        #[rasn(identifier = "ef-5gsn3gppnsc")]
+        pub ef_5gsn3gppnsc: Option<File>,
+        #[rasn(identifier = "ef-5gauthkeys")]
+        pub ef_5gauthkeys: Option<File>,
+        #[rasn(identifier = "ef-uac-aic")]
+        pub ef_uac_aic: Option<File>,
+        #[rasn(identifier = "ef-suci-calc-info")]
+        pub ef_suci_calc_info: Option<File>,
+        #[rasn(identifier = "ef-opl5g")]
+        pub ef_opl5g: Option<File>,
+        #[rasn(identifier = "ef-nsi")]
+        pub ef_nsi: Option<File>,
+        #[rasn(identifier = "ef-routing-indicator")]
+        pub ef_routing_indicator: Option<File>,
+    }
+    impl PEDF5GS {
+        pub fn new(
+            df_5gs_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_df_5gs: File,
+            ef_5gs3gpploci: Option<File>,
+            ef_5gsn3gpploci: Option<File>,
+            ef_5gs3gppnsc: Option<File>,
+            ef_5gsn3gppnsc: Option<File>,
+            ef_5gauthkeys: Option<File>,
+            ef_uac_aic: Option<File>,
+            ef_suci_calc_info: Option<File>,
+            ef_opl5g: Option<File>,
+            ef_nsi: Option<File>,
+            ef_routing_indicator: Option<File>,
+        ) -> Self {
+            Self {
+                df_5gs_header,
+                template_id,
+                df_df_5gs,
+                ef_5gs3gpploci,
+                ef_5gsn3gpploci,
+                ef_5gs3gppnsc,
+                ef_5gsn3gppnsc,
+                ef_5gauthkeys,
+                ef_uac_aic,
+                ef_suci_calc_info,
+                ef_opl5g,
+                ef_nsi,
+                ef_routing_indicator,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-DF-SAIP")]
+    #[non_exhaustive]
+    pub struct PEDFSAIP {
+        #[rasn(identifier = "df-saip-header")]
+        pub df_saip_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-df-saip")]
+        pub df_df_saip: File,
+        #[rasn(identifier = "ef-suci-calc-info-usim")]
+        pub ef_suci_calc_info_usim: Option<File>,
+    }
+    impl PEDFSAIP {
+        pub fn new(
+            df_saip_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_df_saip: File,
+            ef_suci_calc_info_usim: Option<File>,
+        ) -> Self {
+            Self {
+                df_saip_header,
+                template_id,
+                df_df_saip,
+                ef_suci_calc_info_usim,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-Dummy")]
+    #[non_exhaustive]
+    pub struct PEDummy {}
+    impl PEDummy {
+        pub fn new() -> Self {
+            Self {}
+        }
+    }
+    impl std::default::Default for PEDummy {
+        fn default() -> Self {
+            Self {}
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-EAP")]
+    #[non_exhaustive]
+    pub struct PEEAP {
+        #[rasn(identifier = "eap-header")]
+        pub eap_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-eap")]
+        pub df_eap: File,
+        #[rasn(identifier = "ef-eapkeys")]
+        pub ef_eapkeys: Option<File>,
+        #[rasn(identifier = "ef-eapstatus")]
+        pub ef_eapstatus: File,
+        #[rasn(identifier = "ef-puid")]
+        pub ef_puid: Option<File>,
+        #[rasn(identifier = "ef-ps")]
+        pub ef_ps: Option<File>,
+        #[rasn(identifier = "ef-curid")]
+        pub ef_curid: Option<File>,
+        #[rasn(identifier = "ef-reid")]
+        pub ef_reid: Option<File>,
+        #[rasn(identifier = "ef-realm")]
+        pub ef_realm: Option<File>,
+    }
+    impl PEEAP {
+        pub fn new(
+            eap_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_eap: File,
+            ef_eapkeys: Option<File>,
+            ef_eapstatus: File,
+            ef_puid: Option<File>,
+            ef_ps: Option<File>,
+            ef_curid: Option<File>,
+            ef_reid: Option<File>,
+            ef_realm: Option<File>,
+        ) -> Self {
+            Self {
+                eap_header,
+                template_id,
+                df_eap,
+                ef_eapkeys,
+                ef_eapstatus,
+                ef_puid,
+                ef_ps,
+                ef_curid,
+                ef_reid,
+                ef_realm,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-End")]
+    #[non_exhaustive]
+    pub struct PEEnd {
+        #[rasn(identifier = "end-header")]
+        pub end_header: PEHeader,
+    }
+    impl PEEnd {
+        pub fn new(end_header: PEHeader) -> Self {
+            Self { end_header }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-GSM-ACCESS")]
+    #[non_exhaustive]
+    pub struct PEGSMACCESS {
+        #[rasn(identifier = "gsm-access-header")]
+        pub gsm_access_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-gsm-access")]
+        pub df_gsm_access: File,
+        #[rasn(identifier = "ef-kc")]
+        pub ef_kc: Option<File>,
+        #[rasn(identifier = "ef-kcgprs")]
+        pub ef_kcgprs: Option<File>,
+        #[rasn(identifier = "ef-cpbcch")]
+        pub ef_cpbcch: Option<File>,
+        #[rasn(identifier = "ef-invscan")]
+        pub ef_invscan: Option<File>,
+    }
+    impl PEGSMACCESS {
+        pub fn new(
+            gsm_access_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_gsm_access: File,
+            ef_kc: Option<File>,
+            ef_kcgprs: Option<File>,
+            ef_cpbcch: Option<File>,
+            ef_invscan: Option<File>,
+        ) -> Self {
+            Self {
+                gsm_access_header,
+                template_id,
+                df_gsm_access,
+                ef_kc,
+                ef_kcgprs,
+                ef_cpbcch,
+                ef_invscan,
+            }
+        }
+    }
+    #[doc = " Create GenericFileManagement"]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-GenericFileManagement")]
+    #[non_exhaustive]
+    pub struct PEGenericFileManagement {
+        #[rasn(identifier = "gfm-header")]
+        pub gfm_header: PEHeader,
+        #[rasn(size("1.."), identifier = "fileManagementCMD")]
+        pub file_management_cmd: SequenceOf<FileManagement>,
+    }
+    impl PEGenericFileManagement {
+        pub fn new(gfm_header: PEHeader, file_management_cmd: SequenceOf<FileManagement>) -> Self {
+            Self {
+                gfm_header,
+                file_management_cmd,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-ISIM")]
+    #[non_exhaustive]
+    pub struct PEISIM {
+        #[rasn(identifier = "isim-header")]
+        pub isim_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "adf-isim")]
+        pub adf_isim: File,
+        #[rasn(identifier = "ef-impi")]
+        pub ef_impi: File,
+        #[rasn(identifier = "ef-impu")]
+        pub ef_impu: File,
+        #[rasn(identifier = "ef-domain")]
+        pub ef_domain: File,
+        #[rasn(identifier = "ef-ist")]
+        pub ef_ist: File,
+        #[rasn(identifier = "ef-ad")]
+        pub ef_ad: Option<File>,
+        #[rasn(identifier = "ef-arr")]
+        pub ef_arr: File,
+    }
+    impl PEISIM {
+        pub fn new(
+            isim_header: PEHeader,
+            template_id: ObjectIdentifier,
+            adf_isim: File,
+            ef_impi: File,
+            ef_impu: File,
+            ef_domain: File,
+            ef_ist: File,
+            ef_ad: Option<File>,
+            ef_arr: File,
+        ) -> Self {
+            Self {
+                isim_header,
+                template_id,
+                adf_isim,
+                ef_impi,
+                ef_impu,
+                ef_domain,
+                ef_ist,
+                ef_ad,
+                ef_arr,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-MF")]
+    #[non_exhaustive]
+    pub struct PEMF {
+        #[rasn(identifier = "mf-header")]
+        pub mf_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        pub mf: File,
+        #[rasn(identifier = "ef-pl")]
+        pub ef_pl: Option<File>,
+        #[rasn(identifier = "ef-iccid")]
+        pub ef_iccid: File,
+        #[rasn(identifier = "ef-dir")]
+        pub ef_dir: File,
+        #[rasn(identifier = "ef-arr")]
+        pub ef_arr: File,
+        #[rasn(identifier = "ef-umpc")]
+        pub ef_umpc: Option<File>,
+    }
+    impl PEMF {
+        pub fn new(
+            mf_header: PEHeader,
+            template_id: ObjectIdentifier,
+            mf: File,
+            ef_pl: Option<File>,
+            ef_iccid: File,
+            ef_dir: File,
+            ef_arr: File,
+            ef_umpc: Option<File>,
+        ) -> Self {
+            Self {
+                mf_header,
+                template_id,
+                mf,
+                ef_pl,
+                ef_iccid,
+                ef_dir,
+                ef_arr,
+                ef_umpc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-NonStandard")]
+    #[non_exhaustive]
+    pub struct PENonStandard {
+        #[rasn(identifier = "nonStandard-header")]
+        pub non_standard_header: PEHeader,
+        #[rasn(identifier = "issuerID")]
+        pub issuer_id: ObjectIdentifier,
+        pub content: OctetString,
+    }
+    impl PENonStandard {
+        pub fn new(
+            non_standard_header: PEHeader,
+            issuer_id: ObjectIdentifier,
+            content: OctetString,
+        ) -> Self {
+            Self {
+                non_standard_header,
+                issuer_id,
+                content,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-OPT-CSIM")]
+    #[non_exhaustive]
+    pub struct PEOPTCSIM {
+        #[rasn(identifier = "optcsim-header")]
+        pub optcsim_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "ef-ssci")]
+        pub ef_ssci: Option<File>,
+        #[rasn(identifier = "ef-fdn")]
+        pub ef_fdn: Option<File>,
+        #[rasn(identifier = "ef-sms")]
+        pub ef_sms: Option<File>,
+        #[rasn(identifier = "ef-smsp")]
+        pub ef_smsp: Option<File>,
+        #[rasn(identifier = "ef-smss")]
+        pub ef_smss: Option<File>,
+        #[rasn(identifier = "ef-ssfc")]
+        pub ef_ssfc: Option<File>,
+        #[rasn(identifier = "ef-spn")]
+        pub ef_spn: Option<File>,
+        #[rasn(identifier = "ef-mdn")]
+        pub ef_mdn: Option<File>,
+        #[rasn(identifier = "ef-ecc")]
+        pub ef_ecc: Option<File>,
+        #[rasn(identifier = "ef-me3gpdopc")]
+        pub ef_me3gpdopc: Option<File>,
+        #[rasn(identifier = "ef-3gpdopm")]
+        pub ef_3gpdopm: Option<File>,
+        #[rasn(identifier = "ef-sipcap")]
+        pub ef_sipcap: Option<File>,
+        #[rasn(identifier = "ef-mipcap")]
+        pub ef_mipcap: Option<File>,
+        #[rasn(identifier = "ef-sipupp")]
+        pub ef_sipupp: Option<File>,
+        #[rasn(identifier = "ef-mipupp")]
+        pub ef_mipupp: Option<File>,
+        #[rasn(identifier = "ef-sipsp")]
+        pub ef_sipsp: Option<File>,
+        #[rasn(identifier = "ef-mipsp")]
+        pub ef_mipsp: Option<File>,
+        #[rasn(identifier = "ef-sippapss")]
+        pub ef_sippapss: Option<File>,
+        #[rasn(identifier = "ef-puzl")]
+        pub ef_puzl: Option<File>,
+        #[rasn(identifier = "ef-maxpuzl")]
+        pub ef_maxpuzl: Option<File>,
+        #[rasn(identifier = "ef-hrpdcap")]
+        pub ef_hrpdcap: Option<File>,
+        #[rasn(identifier = "ef-hrpdupp")]
+        pub ef_hrpdupp: Option<File>,
+        #[rasn(identifier = "ef-csspr")]
+        pub ef_csspr: Option<File>,
+        #[rasn(identifier = "ef-atc")]
+        pub ef_atc: Option<File>,
+        #[rasn(identifier = "ef-eprl")]
+        pub ef_eprl: Option<File>,
+        #[rasn(identifier = "ef-bcsmscfg")]
+        pub ef_bcsmscfg: Option<File>,
+        #[rasn(identifier = "ef-bcsmspref")]
+        pub ef_bcsmspref: Option<File>,
+        #[rasn(identifier = "ef-bcsmstable")]
+        pub ef_bcsmstable: Option<File>,
+        #[rasn(identifier = "ef-bcsmsp")]
+        pub ef_bcsmsp: Option<File>,
+        #[rasn(identifier = "ef-bakpara")]
+        pub ef_bakpara: Option<File>,
+        #[rasn(identifier = "ef-upbakpara")]
+        pub ef_upbakpara: Option<File>,
+        #[rasn(identifier = "ef-mmsn")]
+        pub ef_mmsn: Option<File>,
+        #[rasn(identifier = "ef-ext8")]
+        pub ef_ext8: Option<File>,
+        #[rasn(identifier = "ef-mmsicp")]
+        pub ef_mmsicp: Option<File>,
+        #[rasn(identifier = "ef-mmsup")]
+        pub ef_mmsup: Option<File>,
+        #[rasn(identifier = "ef-mmsucp")]
+        pub ef_mmsucp: Option<File>,
+        #[rasn(identifier = "ef-auth-capability")]
+        pub ef_auth_capability: Option<File>,
+        #[rasn(identifier = "ef-3gcik")]
+        pub ef_3gcik: Option<File>,
+        #[rasn(identifier = "ef-dck")]
+        pub ef_dck: Option<File>,
+        #[rasn(identifier = "ef-gid1")]
+        pub ef_gid1: Option<File>,
+        #[rasn(identifier = "ef-gid2")]
+        pub ef_gid2: Option<File>,
+        #[rasn(identifier = "ef-cdmacnl")]
+        pub ef_cdmacnl: Option<File>,
+        #[rasn(identifier = "ef-sf-euimid")]
+        pub ef_sf_euimid: Option<File>,
+        #[rasn(identifier = "ef-est")]
+        pub ef_est: Option<File>,
+        #[rasn(identifier = "ef-hidden-key")]
+        pub ef_hidden_key: Option<File>,
+        #[rasn(identifier = "ef-lcsver")]
+        pub ef_lcsver: Option<File>,
+        #[rasn(identifier = "ef-lcscp")]
+        pub ef_lcscp: Option<File>,
+        #[rasn(identifier = "ef-sdn")]
+        pub ef_sdn: Option<File>,
+        #[rasn(identifier = "ef-ext2")]
+        pub ef_ext2: Option<File>,
+        #[rasn(identifier = "ef-ext3")]
+        pub ef_ext3: Option<File>,
+        #[rasn(identifier = "ef-ici")]
+        pub ef_ici: Option<File>,
+        #[rasn(identifier = "ef-oci")]
+        pub ef_oci: Option<File>,
+        #[rasn(identifier = "ef-ext5")]
+        pub ef_ext5: Option<File>,
+        #[rasn(identifier = "ef-ccp2")]
+        pub ef_ccp2: Option<File>,
+        #[rasn(identifier = "ef-applabels")]
+        pub ef_applabels: Option<File>,
+        #[rasn(identifier = "ef-model")]
+        pub ef_model: Option<File>,
+        #[rasn(identifier = "ef-rc")]
+        pub ef_rc: Option<File>,
+        #[rasn(identifier = "ef-smscap")]
+        pub ef_smscap: Option<File>,
+        #[rasn(identifier = "ef-mipflags")]
+        pub ef_mipflags: Option<File>,
+        #[rasn(identifier = "ef-3gpduppext")]
+        pub ef_3gpduppext: Option<File>,
+        #[rasn(identifier = "ef-ipv6cap")]
+        pub ef_ipv6cap: Option<File>,
+        #[rasn(identifier = "ef-tcpconfig")]
+        pub ef_tcpconfig: Option<File>,
+        #[rasn(identifier = "ef-dgc")]
+        pub ef_dgc: Option<File>,
+        #[rasn(identifier = "ef-wapbrowsercp")]
+        pub ef_wapbrowsercp: Option<File>,
+        #[rasn(identifier = "ef-wapbrowserbm")]
+        pub ef_wapbrowserbm: Option<File>,
+        #[rasn(identifier = "ef-mmsconfig")]
+        pub ef_mmsconfig: Option<File>,
+        #[rasn(identifier = "ef-jdl")]
+        pub ef_jdl: Option<File>,
+    }
+    impl PEOPTCSIM {
+        pub fn new(
+            optcsim_header: PEHeader,
+            template_id: ObjectIdentifier,
+            ef_ssci: Option<File>,
+            ef_fdn: Option<File>,
+            ef_sms: Option<File>,
+            ef_smsp: Option<File>,
+            ef_smss: Option<File>,
+            ef_ssfc: Option<File>,
+            ef_spn: Option<File>,
+            ef_mdn: Option<File>,
+            ef_ecc: Option<File>,
+            ef_me3gpdopc: Option<File>,
+            ef_3gpdopm: Option<File>,
+            ef_sipcap: Option<File>,
+            ef_mipcap: Option<File>,
+            ef_sipupp: Option<File>,
+            ef_mipupp: Option<File>,
+            ef_sipsp: Option<File>,
+            ef_mipsp: Option<File>,
+            ef_sippapss: Option<File>,
+            ef_puzl: Option<File>,
+            ef_maxpuzl: Option<File>,
+            ef_hrpdcap: Option<File>,
+            ef_hrpdupp: Option<File>,
+            ef_csspr: Option<File>,
+            ef_atc: Option<File>,
+            ef_eprl: Option<File>,
+            ef_bcsmscfg: Option<File>,
+            ef_bcsmspref: Option<File>,
+            ef_bcsmstable: Option<File>,
+            ef_bcsmsp: Option<File>,
+            ef_bakpara: Option<File>,
+            ef_upbakpara: Option<File>,
+            ef_mmsn: Option<File>,
+            ef_ext8: Option<File>,
+            ef_mmsicp: Option<File>,
+            ef_mmsup: Option<File>,
+            ef_mmsucp: Option<File>,
+            ef_auth_capability: Option<File>,
+            ef_3gcik: Option<File>,
+            ef_dck: Option<File>,
+            ef_gid1: Option<File>,
+            ef_gid2: Option<File>,
+            ef_cdmacnl: Option<File>,
+            ef_sf_euimid: Option<File>,
+            ef_est: Option<File>,
+            ef_hidden_key: Option<File>,
+            ef_lcsver: Option<File>,
+            ef_lcscp: Option<File>,
+            ef_sdn: Option<File>,
+            ef_ext2: Option<File>,
+            ef_ext3: Option<File>,
+            ef_ici: Option<File>,
+            ef_oci: Option<File>,
+            ef_ext5: Option<File>,
+            ef_ccp2: Option<File>,
+            ef_applabels: Option<File>,
+            ef_model: Option<File>,
+            ef_rc: Option<File>,
+            ef_smscap: Option<File>,
+            ef_mipflags: Option<File>,
+            ef_3gpduppext: Option<File>,
+            ef_ipv6cap: Option<File>,
+            ef_tcpconfig: Option<File>,
+            ef_dgc: Option<File>,
+            ef_wapbrowsercp: Option<File>,
+            ef_wapbrowserbm: Option<File>,
+            ef_mmsconfig: Option<File>,
+            ef_jdl: Option<File>,
+        ) -> Self {
+            Self {
+                optcsim_header,
+                template_id,
+                ef_ssci,
+                ef_fdn,
+                ef_sms,
+                ef_smsp,
+                ef_smss,
+                ef_ssfc,
+                ef_spn,
+                ef_mdn,
+                ef_ecc,
+                ef_me3gpdopc,
+                ef_3gpdopm,
+                ef_sipcap,
+                ef_mipcap,
+                ef_sipupp,
+                ef_mipupp,
+                ef_sipsp,
+                ef_mipsp,
+                ef_sippapss,
+                ef_puzl,
+                ef_maxpuzl,
+                ef_hrpdcap,
+                ef_hrpdupp,
+                ef_csspr,
+                ef_atc,
+                ef_eprl,
+                ef_bcsmscfg,
+                ef_bcsmspref,
+                ef_bcsmstable,
+                ef_bcsmsp,
+                ef_bakpara,
+                ef_upbakpara,
+                ef_mmsn,
+                ef_ext8,
+                ef_mmsicp,
+                ef_mmsup,
+                ef_mmsucp,
+                ef_auth_capability,
+                ef_3gcik,
+                ef_dck,
+                ef_gid1,
+                ef_gid2,
+                ef_cdmacnl,
+                ef_sf_euimid,
+                ef_est,
+                ef_hidden_key,
+                ef_lcsver,
+                ef_lcscp,
+                ef_sdn,
+                ef_ext2,
+                ef_ext3,
+                ef_ici,
+                ef_oci,
+                ef_ext5,
+                ef_ccp2,
+                ef_applabels,
+                ef_model,
+                ef_rc,
+                ef_smscap,
+                ef_mipflags,
+                ef_3gpduppext,
+                ef_ipv6cap,
+                ef_tcpconfig,
+                ef_dgc,
+                ef_wapbrowsercp,
+                ef_wapbrowserbm,
+                ef_mmsconfig,
+                ef_jdl,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-OPT-ISIM")]
+    #[non_exhaustive]
+    pub struct PEOPTISIM {
+        #[rasn(identifier = "optisim-header")]
+        pub optisim_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "ef-pcscf")]
+        pub ef_pcscf: Option<File>,
+        #[rasn(identifier = "ef-sms")]
+        pub ef_sms: Option<File>,
+        #[rasn(identifier = "ef-smsp")]
+        pub ef_smsp: Option<File>,
+        #[rasn(identifier = "ef-smss")]
+        pub ef_smss: Option<File>,
+        #[rasn(identifier = "ef-smsr")]
+        pub ef_smsr: Option<File>,
+        #[rasn(identifier = "ef-gbabp")]
+        pub ef_gbabp: Option<File>,
+        #[rasn(identifier = "ef-gbanl")]
+        pub ef_gbanl: Option<File>,
+        #[rasn(identifier = "ef-nafkca")]
+        pub ef_nafkca: Option<File>,
+        #[rasn(identifier = "ef-uicciari")]
+        pub ef_uicciari: Option<File>,
+    }
+    impl PEOPTISIM {
+        pub fn new(
+            optisim_header: PEHeader,
+            template_id: ObjectIdentifier,
+            ef_pcscf: Option<File>,
+            ef_sms: Option<File>,
+            ef_smsp: Option<File>,
+            ef_smss: Option<File>,
+            ef_smsr: Option<File>,
+            ef_gbabp: Option<File>,
+            ef_gbanl: Option<File>,
+            ef_nafkca: Option<File>,
+            ef_uicciari: Option<File>,
+        ) -> Self {
+            Self {
+                optisim_header,
+                template_id,
+                ef_pcscf,
+                ef_sms,
+                ef_smsp,
+                ef_smss,
+                ef_smsr,
+                ef_gbabp,
+                ef_gbanl,
+                ef_nafkca,
+                ef_uicciari,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-OPT-USIM")]
+    #[non_exhaustive]
+    pub struct PEOPTUSIM {
+        #[rasn(identifier = "optusim-header")]
+        pub optusim_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "ef-li")]
+        pub ef_li: Option<File>,
+        #[rasn(identifier = "ef-acmax")]
+        pub ef_acmax: Option<File>,
+        #[rasn(identifier = "ef-acm")]
+        pub ef_acm: Option<File>,
+        #[rasn(identifier = "ef-gid1")]
+        pub ef_gid1: Option<File>,
+        #[rasn(identifier = "ef-gid2")]
+        pub ef_gid2: Option<File>,
+        #[rasn(identifier = "ef-msisdn")]
+        pub ef_msisdn: Option<File>,
+        #[rasn(identifier = "ef-puct")]
+        pub ef_puct: Option<File>,
+        #[rasn(identifier = "ef-cbmi")]
+        pub ef_cbmi: Option<File>,
+        #[rasn(identifier = "ef-cbmid")]
+        pub ef_cbmid: Option<File>,
+        #[rasn(identifier = "ef-sdn")]
+        pub ef_sdn: Option<File>,
+        #[rasn(identifier = "ef-ext2")]
+        pub ef_ext2: Option<File>,
+        #[rasn(identifier = "ef-ext3")]
+        pub ef_ext3: Option<File>,
+        #[rasn(identifier = "ef-cbmir")]
+        pub ef_cbmir: Option<File>,
+        #[rasn(identifier = "ef-plmnwact")]
+        pub ef_plmnwact: Option<File>,
+        #[rasn(identifier = "ef-oplmnwact")]
+        pub ef_oplmnwact: Option<File>,
+        #[rasn(identifier = "ef-hplmnwact")]
+        pub ef_hplmnwact: Option<File>,
+        #[rasn(identifier = "ef-dck")]
+        pub ef_dck: Option<File>,
+        #[rasn(identifier = "ef-cnl")]
+        pub ef_cnl: Option<File>,
+        #[rasn(identifier = "ef-smsr")]
+        pub ef_smsr: Option<File>,
+        #[rasn(identifier = "ef-bdn")]
+        pub ef_bdn: Option<File>,
+        #[rasn(identifier = "ef-ext5")]
+        pub ef_ext5: Option<File>,
+        #[rasn(identifier = "ef-ccp2")]
+        pub ef_ccp2: Option<File>,
+        #[rasn(identifier = "ef-ext4")]
+        pub ef_ext4: Option<File>,
+        #[rasn(identifier = "ef-acl")]
+        pub ef_acl: Option<File>,
+        #[rasn(identifier = "ef-cmi")]
+        pub ef_cmi: Option<File>,
+        #[rasn(identifier = "ef-ici")]
+        pub ef_ici: Option<File>,
+        #[rasn(identifier = "ef-oci")]
+        pub ef_oci: Option<File>,
+        #[rasn(identifier = "ef-ict")]
+        pub ef_ict: Option<File>,
+        #[rasn(identifier = "ef-oct")]
+        pub ef_oct: Option<File>,
+        #[rasn(identifier = "ef-vgcs")]
+        pub ef_vgcs: Option<File>,
+        #[rasn(identifier = "ef-vgcss")]
+        pub ef_vgcss: Option<File>,
+        #[rasn(identifier = "ef-vbs")]
+        pub ef_vbs: Option<File>,
+        #[rasn(identifier = "ef-vbss")]
+        pub ef_vbss: Option<File>,
+        #[rasn(identifier = "ef-emlpp")]
+        pub ef_emlpp: Option<File>,
+        #[rasn(identifier = "ef-aaem")]
+        pub ef_aaem: Option<File>,
+        #[rasn(identifier = "ef-hiddenkey")]
+        pub ef_hiddenkey: Option<File>,
+        #[rasn(identifier = "ef-pnn")]
+        pub ef_pnn: Option<File>,
+        #[rasn(identifier = "ef-opl")]
+        pub ef_opl: Option<File>,
+        #[rasn(identifier = "ef-mbdn")]
+        pub ef_mbdn: Option<File>,
+        #[rasn(identifier = "ef-ext6")]
+        pub ef_ext6: Option<File>,
+        #[rasn(identifier = "ef-mbi")]
+        pub ef_mbi: Option<File>,
+        #[rasn(identifier = "ef-mwis")]
+        pub ef_mwis: Option<File>,
+        #[rasn(identifier = "ef-cfis")]
+        pub ef_cfis: Option<File>,
+        #[rasn(identifier = "ef-ext7")]
+        pub ef_ext7: Option<File>,
+        #[rasn(identifier = "ef-spdi")]
+        pub ef_spdi: Option<File>,
+        #[rasn(identifier = "ef-mmsn")]
+        pub ef_mmsn: Option<File>,
+        #[rasn(identifier = "ef-ext8")]
+        pub ef_ext8: Option<File>,
+        #[rasn(identifier = "ef-mmsicp")]
+        pub ef_mmsicp: Option<File>,
+        #[rasn(identifier = "ef-mmsup")]
+        pub ef_mmsup: Option<File>,
+        #[rasn(identifier = "ef-mmsucp")]
+        pub ef_mmsucp: Option<File>,
+        #[rasn(identifier = "ef-nia")]
+        pub ef_nia: Option<File>,
+        #[rasn(identifier = "ef-vgcsca")]
+        pub ef_vgcsca: Option<File>,
+        #[rasn(identifier = "ef-vbsca")]
+        pub ef_vbsca: Option<File>,
+        #[rasn(identifier = "ef-gbabp")]
+        pub ef_gbabp: Option<File>,
+        #[rasn(identifier = "ef-msk")]
+        pub ef_msk: Option<File>,
+        #[rasn(identifier = "ef-muk")]
+        pub ef_muk: Option<File>,
+        #[rasn(identifier = "ef-ehplmn")]
+        pub ef_ehplmn: Option<File>,
+        #[rasn(identifier = "ef-gbanl")]
+        pub ef_gbanl: Option<File>,
+        #[rasn(identifier = "ef-ehplmnpi")]
+        pub ef_ehplmnpi: Option<File>,
+        #[rasn(identifier = "ef-lrplmnsi")]
+        pub ef_lrplmnsi: Option<File>,
+        #[rasn(identifier = "ef-nafkca")]
+        pub ef_nafkca: Option<File>,
+        #[rasn(identifier = "ef-spni")]
+        pub ef_spni: Option<File>,
+        #[rasn(identifier = "ef-pnni")]
+        pub ef_pnni: Option<File>,
+        #[rasn(identifier = "ef-ncp-ip")]
+        pub ef_ncp_ip: Option<File>,
+        #[rasn(identifier = "ef-ufc")]
+        pub ef_ufc: Option<File>,
+        #[rasn(identifier = "ef-nasconfig")]
+        pub ef_nasconfig: Option<File>,
+        #[rasn(identifier = "ef-uicciari")]
+        pub ef_uicciari: Option<File>,
+        #[rasn(identifier = "ef-pws")]
+        pub ef_pws: Option<File>,
+        #[rasn(identifier = "ef-fdnuri")]
+        pub ef_fdnuri: Option<File>,
+        #[rasn(identifier = "ef-bdnuri")]
+        pub ef_bdnuri: Option<File>,
+        #[rasn(identifier = "ef-sdnuri")]
+        pub ef_sdnuri: Option<File>,
+        #[rasn(identifier = "ef-iwl")]
+        pub ef_iwl: Option<File>,
+        #[rasn(identifier = "ef-ips")]
+        pub ef_ips: Option<File>,
+        #[rasn(identifier = "ef-ipd")]
+        pub ef_ipd: Option<File>,
+    }
+    impl PEOPTUSIM {
+        pub fn new(
+            optusim_header: PEHeader,
+            template_id: ObjectIdentifier,
+            ef_li: Option<File>,
+            ef_acmax: Option<File>,
+            ef_acm: Option<File>,
+            ef_gid1: Option<File>,
+            ef_gid2: Option<File>,
+            ef_msisdn: Option<File>,
+            ef_puct: Option<File>,
+            ef_cbmi: Option<File>,
+            ef_cbmid: Option<File>,
+            ef_sdn: Option<File>,
+            ef_ext2: Option<File>,
+            ef_ext3: Option<File>,
+            ef_cbmir: Option<File>,
+            ef_plmnwact: Option<File>,
+            ef_oplmnwact: Option<File>,
+            ef_hplmnwact: Option<File>,
+            ef_dck: Option<File>,
+            ef_cnl: Option<File>,
+            ef_smsr: Option<File>,
+            ef_bdn: Option<File>,
+            ef_ext5: Option<File>,
+            ef_ccp2: Option<File>,
+            ef_ext4: Option<File>,
+            ef_acl: Option<File>,
+            ef_cmi: Option<File>,
+            ef_ici: Option<File>,
+            ef_oci: Option<File>,
+            ef_ict: Option<File>,
+            ef_oct: Option<File>,
+            ef_vgcs: Option<File>,
+            ef_vgcss: Option<File>,
+            ef_vbs: Option<File>,
+            ef_vbss: Option<File>,
+            ef_emlpp: Option<File>,
+            ef_aaem: Option<File>,
+            ef_hiddenkey: Option<File>,
+            ef_pnn: Option<File>,
+            ef_opl: Option<File>,
+            ef_mbdn: Option<File>,
+            ef_ext6: Option<File>,
+            ef_mbi: Option<File>,
+            ef_mwis: Option<File>,
+            ef_cfis: Option<File>,
+            ef_ext7: Option<File>,
+            ef_spdi: Option<File>,
+            ef_mmsn: Option<File>,
+            ef_ext8: Option<File>,
+            ef_mmsicp: Option<File>,
+            ef_mmsup: Option<File>,
+            ef_mmsucp: Option<File>,
+            ef_nia: Option<File>,
+            ef_vgcsca: Option<File>,
+            ef_vbsca: Option<File>,
+            ef_gbabp: Option<File>,
+            ef_msk: Option<File>,
+            ef_muk: Option<File>,
+            ef_ehplmn: Option<File>,
+            ef_gbanl: Option<File>,
+            ef_ehplmnpi: Option<File>,
+            ef_lrplmnsi: Option<File>,
+            ef_nafkca: Option<File>,
+            ef_spni: Option<File>,
+            ef_pnni: Option<File>,
+            ef_ncp_ip: Option<File>,
+            ef_ufc: Option<File>,
+            ef_nasconfig: Option<File>,
+            ef_uicciari: Option<File>,
+            ef_pws: Option<File>,
+            ef_fdnuri: Option<File>,
+            ef_bdnuri: Option<File>,
+            ef_sdnuri: Option<File>,
+            ef_iwl: Option<File>,
+            ef_ips: Option<File>,
+            ef_ipd: Option<File>,
+        ) -> Self {
+            Self {
+                optusim_header,
+                template_id,
+                ef_li,
+                ef_acmax,
+                ef_acm,
+                ef_gid1,
+                ef_gid2,
+                ef_msisdn,
+                ef_puct,
+                ef_cbmi,
+                ef_cbmid,
+                ef_sdn,
+                ef_ext2,
+                ef_ext3,
+                ef_cbmir,
+                ef_plmnwact,
+                ef_oplmnwact,
+                ef_hplmnwact,
+                ef_dck,
+                ef_cnl,
+                ef_smsr,
+                ef_bdn,
+                ef_ext5,
+                ef_ccp2,
+                ef_ext4,
+                ef_acl,
+                ef_cmi,
+                ef_ici,
+                ef_oci,
+                ef_ict,
+                ef_oct,
+                ef_vgcs,
+                ef_vgcss,
+                ef_vbs,
+                ef_vbss,
+                ef_emlpp,
+                ef_aaem,
+                ef_hiddenkey,
+                ef_pnn,
+                ef_opl,
+                ef_mbdn,
+                ef_ext6,
+                ef_mbi,
+                ef_mwis,
+                ef_cfis,
+                ef_ext7,
+                ef_spdi,
+                ef_mmsn,
+                ef_ext8,
+                ef_mmsicp,
+                ef_mmsup,
+                ef_mmsucp,
+                ef_nia,
+                ef_vgcsca,
+                ef_vbsca,
+                ef_gbabp,
+                ef_msk,
+                ef_muk,
+                ef_ehplmn,
+                ef_gbanl,
+                ef_ehplmnpi,
+                ef_lrplmnsi,
+                ef_nafkca,
+                ef_spni,
+                ef_pnni,
+                ef_ncp_ip,
+                ef_ufc,
+                ef_nasconfig,
+                ef_uicciari,
+                ef_pws,
+                ef_fdnuri,
+                ef_bdnuri,
+                ef_sdnuri,
+                ef_iwl,
+                ef_ips,
+                ef_ipd,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-PHONEBOOK")]
+    #[non_exhaustive]
+    pub struct PEPHONEBOOK {
+        #[rasn(identifier = "phonebook-header")]
+        pub phonebook_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-phonebook")]
+        pub df_phonebook: File,
+        #[rasn(identifier = "ef-pbr")]
+        pub ef_pbr: Option<File>,
+        #[rasn(identifier = "ef-ext1")]
+        pub ef_ext1: Option<File>,
+        #[rasn(identifier = "ef-aas")]
+        pub ef_aas: Option<File>,
+        #[rasn(identifier = "ef-gas")]
+        pub ef_gas: Option<File>,
+        #[rasn(identifier = "ef-psc")]
+        pub ef_psc: Option<File>,
+        #[rasn(identifier = "ef-cc")]
+        pub ef_cc: Option<File>,
+        #[rasn(identifier = "ef-puid")]
+        pub ef_puid: Option<File>,
+        #[rasn(identifier = "ef-iap")]
+        pub ef_iap: Option<File>,
+        #[rasn(identifier = "ef-adn")]
+        pub ef_adn: Option<File>,
+        #[rasn(identifier = "ef-pbc")]
+        pub ef_pbc: Option<File>,
+        #[rasn(identifier = "ef-anr")]
+        pub ef_anr: Option<File>,
+        #[rasn(identifier = "ef-puri")]
+        pub ef_puri: Option<File>,
+        #[rasn(identifier = "ef-email")]
+        pub ef_email: Option<File>,
+        #[rasn(identifier = "ef-sne")]
+        pub ef_sne: Option<File>,
+        #[rasn(identifier = "ef-uid")]
+        pub ef_uid: Option<File>,
+        #[rasn(identifier = "ef-grp")]
+        pub ef_grp: Option<File>,
+        #[rasn(identifier = "ef-ccp1")]
+        pub ef_ccp1: Option<File>,
+    }
+    impl PEPHONEBOOK {
+        pub fn new(
+            phonebook_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_phonebook: File,
+            ef_pbr: Option<File>,
+            ef_ext1: Option<File>,
+            ef_aas: Option<File>,
+            ef_gas: Option<File>,
+            ef_psc: Option<File>,
+            ef_cc: Option<File>,
+            ef_puid: Option<File>,
+            ef_iap: Option<File>,
+            ef_adn: Option<File>,
+            ef_pbc: Option<File>,
+            ef_anr: Option<File>,
+            ef_puri: Option<File>,
+            ef_email: Option<File>,
+            ef_sne: Option<File>,
+            ef_uid: Option<File>,
+            ef_grp: Option<File>,
+            ef_ccp1: Option<File>,
+        ) -> Self {
+            Self {
+                phonebook_header,
+                template_id,
+                df_phonebook,
+                ef_pbr,
+                ef_ext1,
+                ef_aas,
+                ef_gas,
+                ef_psc,
+                ef_cc,
+                ef_puid,
+                ef_iap,
+                ef_adn,
+                ef_pbc,
+                ef_anr,
+                ef_puri,
+                ef_email,
+                ef_sne,
+                ef_uid,
+                ef_grp,
+                ef_ccp1,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum PEPINCodesPinCodes {
+        #[rasn(size("1..=26"))]
+        pinconfig(SequenceOf<PINConfiguration>),
+        #[rasn(size("0..=8"))]
+        filePath(OctetString),
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-PINCodes")]
+    #[non_exhaustive]
+    pub struct PEPINCodes {
+        #[rasn(identifier = "pin-Header")]
+        pub pin_header: PEHeader,
+        #[rasn(identifier = "pinCodes")]
+        pub pin_codes: PEPINCodesPinCodes,
+    }
+    impl PEPINCodes {
+        pub fn new(pin_header: PEHeader, pin_codes: PEPINCodesPinCodes) -> Self {
+            Self {
+                pin_header,
+                pin_codes,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-PUKCodes")]
+    #[non_exhaustive]
+    pub struct PEPUKCodes {
+        #[rasn(identifier = "puk-Header")]
+        pub puk_header: PEHeader,
+        #[rasn(size("1..=16"), identifier = "pukCodes")]
+        pub puk_codes: SequenceOf<PUKConfiguration>,
+    }
+    impl PEPUKCodes {
+        pub fn new(puk_header: PEHeader, puk_codes: SequenceOf<PUKConfiguration>) -> Self {
+            Self {
+                puk_header,
+                puk_codes,
+            }
+        }
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, identifier = "OCTET_STRING")]
+    pub struct AnonymousPERFMTarList(pub FixedOctetString<3usize>);
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, size("1.."))]
+    pub struct PERFMTarList(pub SequenceOf<AnonymousPERFMTarList>);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(identifier = "PE-RFM")]
+    #[non_exhaustive]
+    pub struct PERFM {
+        #[rasn(tag(context, 0), identifier = "rfm-header")]
+        pub rfm_header: PEHeader,
+        #[rasn(tag(application, 15), identifier = "instanceAID")]
+        pub instance_aid: ApplicationIdentifier,
+        #[rasn(tag(application, 15), identifier = "securityDomainAID")]
+        pub security_domain_aid: Option<ApplicationIdentifier>,
+        #[rasn(tag(context, 0), identifier = "tarList")]
+        pub tar_list: Option<PERFMTarList>,
+        #[rasn(size("1"), tag(context, 1), identifier = "minimumSecurityLevel")]
+        pub minimum_security_level: OctetString,
+        #[rasn(identifier = "uiccAccessDomain")]
+        pub uicc_access_domain: OctetString,
+        #[rasn(identifier = "uiccAdminAccessDomain")]
+        pub uicc_admin_access_domain: OctetString,
+        #[rasn(identifier = "adfRFMAccess")]
+        pub adf_rfmaccess: Option<ADFRFMAccess>,
+    }
+    impl PERFM {
+        pub fn new(
+            rfm_header: PEHeader,
+            instance_aid: ApplicationIdentifier,
+            security_domain_aid: Option<ApplicationIdentifier>,
+            tar_list: Option<PERFMTarList>,
+            minimum_security_level: OctetString,
+            uicc_access_domain: OctetString,
+            uicc_admin_access_domain: OctetString,
+            adf_rfmaccess: Option<ADFRFMAccess>,
+        ) -> Self {
+            Self {
+                rfm_header,
+                instance_aid,
+                security_domain_aid,
+                tar_list,
+                minimum_security_level,
+                uicc_access_domain,
+                uicc_admin_access_domain,
+                adf_rfmaccess,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct PESecurityDomainOpenPersoData {
+        #[rasn(tag(private, 25), identifier = "restrictParameter")]
+        pub restrict_parameter: Option<OctetString>,
+        #[rasn(identifier = "contactlessProtocolParameters")]
+        pub contactless_protocol_parameters: Option<OctetString>,
+    }
+    impl PESecurityDomainOpenPersoData {
+        pub fn new(
+            restrict_parameter: Option<OctetString>,
+            contactless_protocol_parameters: Option<OctetString>,
+        ) -> Self {
+            Self {
+                restrict_parameter,
+                contactless_protocol_parameters,
+            }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PESecurityDomainCatTpParameters {
+        #[rasn(identifier = "catTpMaxSduSize")]
+        pub cat_tp_max_sdu_size: UInt16,
+        #[rasn(identifier = "catTpMaxPduSize")]
+        pub cat_tp_max_pdu_size: UInt16,
+    }
+    impl PESecurityDomainCatTpParameters {
+        pub fn new(cat_tp_max_sdu_size: UInt16, cat_tp_max_pdu_size: UInt16) -> Self {
+            Self {
+                cat_tp_max_sdu_size,
+                cat_tp_max_pdu_size,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-SecurityDomain")]
+    #[non_exhaustive]
+    pub struct PESecurityDomain {
+        #[rasn(identifier = "sd-Header")]
+        pub sd_header: PEHeader,
+        pub instance: ApplicationInstance,
+        #[rasn(size("1.."), identifier = "keyList")]
+        pub key_list: Option<SequenceOf<KeyObject>>,
+        #[rasn(size("1.."), identifier = "sdPersoData")]
+        pub sd_perso_data: Option<SequenceOf<OctetString>>,
+        #[rasn(identifier = "openPersoData")]
+        pub open_perso_data: Option<PESecurityDomainOpenPersoData>,
+        #[rasn(identifier = "catTpParameters")]
+        pub cat_tp_parameters: Option<PESecurityDomainCatTpParameters>,
+    }
+    impl PESecurityDomain {
+        pub fn new(
+            sd_header: PEHeader,
+            instance: ApplicationInstance,
+            key_list: Option<SequenceOf<KeyObject>>,
+            sd_perso_data: Option<SequenceOf<OctetString>>,
+            open_perso_data: Option<PESecurityDomainOpenPersoData>,
+            cat_tp_parameters: Option<PESecurityDomainCatTpParameters>,
+        ) -> Self {
+            Self {
+                sd_header,
+                instance,
+                key_list,
+                sd_perso_data,
+                open_perso_data,
+                cat_tp_parameters,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-TELECOM")]
+    #[non_exhaustive]
+    pub struct PETELECOM {
+        #[rasn(identifier = "telecom-header")]
+        pub telecom_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "df-telecom")]
+        pub df_telecom: File,
+        #[rasn(identifier = "ef-arr")]
+        pub ef_arr: Option<File>,
+        #[rasn(identifier = "ef-rma")]
+        pub ef_rma: Option<File>,
+        #[rasn(identifier = "ef-sume")]
+        pub ef_sume: Option<File>,
+        #[rasn(identifier = "ef-ice-dn")]
+        pub ef_ice_dn: Option<File>,
+        #[rasn(identifier = "ef-ice-ff")]
+        pub ef_ice_ff: Option<File>,
+        #[rasn(identifier = "ef-psismsc")]
+        pub ef_psismsc: Option<File>,
+        #[rasn(identifier = "df-graphics")]
+        pub df_graphics: Option<File>,
+        #[rasn(identifier = "ef-img")]
+        pub ef_img: Option<File>,
+        #[rasn(identifier = "ef-iidf")]
+        pub ef_iidf: Option<File>,
+        #[rasn(identifier = "ef-ice-graphics")]
+        pub ef_ice_graphics: Option<File>,
+        #[rasn(identifier = "ef-launch-scws")]
+        pub ef_launch_scws: Option<File>,
+        #[rasn(identifier = "ef-icon")]
+        pub ef_icon: Option<File>,
+        #[rasn(identifier = "df-phonebook")]
+        pub df_phonebook: Option<File>,
+        #[rasn(identifier = "ef-pbr")]
+        pub ef_pbr: Option<File>,
+        #[rasn(identifier = "ef-ext1")]
+        pub ef_ext1: Option<File>,
+        #[rasn(identifier = "ef-aas")]
+        pub ef_aas: Option<File>,
+        #[rasn(identifier = "ef-gas")]
+        pub ef_gas: Option<File>,
+        #[rasn(identifier = "ef-psc")]
+        pub ef_psc: Option<File>,
+        #[rasn(identifier = "ef-cc")]
+        pub ef_cc: Option<File>,
+        #[rasn(identifier = "ef-puid")]
+        pub ef_puid: Option<File>,
+        #[rasn(identifier = "ef-iap")]
+        pub ef_iap: Option<File>,
+        #[rasn(identifier = "ef-adn")]
+        pub ef_adn: Option<File>,
+        #[rasn(identifier = "ef-pbc")]
+        pub ef_pbc: Option<File>,
+        #[rasn(identifier = "ef-anr")]
+        pub ef_anr: Option<File>,
+        #[rasn(identifier = "ef-puri")]
+        pub ef_puri: Option<File>,
+        #[rasn(identifier = "ef-email")]
+        pub ef_email: Option<File>,
+        #[rasn(identifier = "ef-sne")]
+        pub ef_sne: Option<File>,
+        #[rasn(identifier = "ef-uid")]
+        pub ef_uid: Option<File>,
+        #[rasn(identifier = "ef-grp")]
+        pub ef_grp: Option<File>,
+        #[rasn(identifier = "ef-ccp1")]
+        pub ef_ccp1: Option<File>,
+        #[rasn(identifier = "df-multimedia")]
+        pub df_multimedia: Option<File>,
+        #[rasn(identifier = "ef-mml")]
+        pub ef_mml: Option<File>,
+        #[rasn(identifier = "ef-mmdf")]
+        pub ef_mmdf: Option<File>,
+        #[rasn(identifier = "df-mmss")]
+        pub df_mmss: Option<File>,
+        #[rasn(identifier = "ef-mlpl")]
+        pub ef_mlpl: Option<File>,
+        #[rasn(identifier = "ef-mspl")]
+        pub ef_mspl: Option<File>,
+        #[rasn(identifier = "ef-mmssmode")]
+        pub ef_mmssmode: Option<File>,
+    }
+    impl PETELECOM {
+        pub fn new(
+            telecom_header: PEHeader,
+            template_id: ObjectIdentifier,
+            df_telecom: File,
+            ef_arr: Option<File>,
+            ef_rma: Option<File>,
+            ef_sume: Option<File>,
+            ef_ice_dn: Option<File>,
+            ef_ice_ff: Option<File>,
+            ef_psismsc: Option<File>,
+            df_graphics: Option<File>,
+            ef_img: Option<File>,
+            ef_iidf: Option<File>,
+            ef_ice_graphics: Option<File>,
+            ef_launch_scws: Option<File>,
+            ef_icon: Option<File>,
+            df_phonebook: Option<File>,
+            ef_pbr: Option<File>,
+            ef_ext1: Option<File>,
+            ef_aas: Option<File>,
+            ef_gas: Option<File>,
+            ef_psc: Option<File>,
+            ef_cc: Option<File>,
+            ef_puid: Option<File>,
+            ef_iap: Option<File>,
+            ef_adn: Option<File>,
+            ef_pbc: Option<File>,
+            ef_anr: Option<File>,
+            ef_puri: Option<File>,
+            ef_email: Option<File>,
+            ef_sne: Option<File>,
+            ef_uid: Option<File>,
+            ef_grp: Option<File>,
+            ef_ccp1: Option<File>,
+            df_multimedia: Option<File>,
+            ef_mml: Option<File>,
+            ef_mmdf: Option<File>,
+            df_mmss: Option<File>,
+            ef_mlpl: Option<File>,
+            ef_mspl: Option<File>,
+            ef_mmssmode: Option<File>,
+        ) -> Self {
+            Self {
+                telecom_header,
+                template_id,
+                df_telecom,
+                ef_arr,
+                ef_rma,
+                ef_sume,
+                ef_ice_dn,
+                ef_ice_ff,
+                ef_psismsc,
+                df_graphics,
+                ef_img,
+                ef_iidf,
+                ef_ice_graphics,
+                ef_launch_scws,
+                ef_icon,
+                df_phonebook,
+                ef_pbr,
+                ef_ext1,
+                ef_aas,
+                ef_gas,
+                ef_psc,
+                ef_cc,
+                ef_puid,
+                ef_iap,
+                ef_adn,
+                ef_pbc,
+                ef_anr,
+                ef_puri,
+                ef_email,
+                ef_sne,
+                ef_uid,
+                ef_grp,
+                ef_ccp1,
+                df_multimedia,
+                ef_mml,
+                ef_mmdf,
+                df_mmss,
+                ef_mlpl,
+                ef_mspl,
+                ef_mmssmode,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "PE-USIM")]
+    #[non_exhaustive]
+    pub struct PEUSIM {
+        #[rasn(identifier = "usim-header")]
+        pub usim_header: PEHeader,
+        #[rasn(identifier = "templateID")]
+        pub template_id: ObjectIdentifier,
+        #[rasn(identifier = "adf-usim")]
+        pub adf_usim: File,
+        #[rasn(identifier = "ef-imsi")]
+        pub ef_imsi: File,
+        #[rasn(identifier = "ef-arr")]
+        pub ef_arr: File,
+        #[rasn(identifier = "ef-keys")]
+        pub ef_keys: Option<File>,
+        #[rasn(identifier = "ef-keysPS")]
+        pub ef_keys_ps: Option<File>,
+        #[rasn(identifier = "ef-hpplmn")]
+        pub ef_hpplmn: Option<File>,
+        #[rasn(identifier = "ef-ust")]
+        pub ef_ust: File,
+        #[rasn(identifier = "ef-fdn")]
+        pub ef_fdn: Option<File>,
+        #[rasn(identifier = "ef-sms")]
+        pub ef_sms: Option<File>,
+        #[rasn(identifier = "ef-smsp")]
+        pub ef_smsp: Option<File>,
+        #[rasn(identifier = "ef-smss")]
+        pub ef_smss: Option<File>,
+        #[rasn(identifier = "ef-spn")]
+        pub ef_spn: File,
+        #[rasn(identifier = "ef-est")]
+        pub ef_est: File,
+        #[rasn(identifier = "ef-start-hfn")]
+        pub ef_start_hfn: Option<File>,
+        #[rasn(identifier = "ef-threshold")]
+        pub ef_threshold: Option<File>,
+        #[rasn(identifier = "ef-psloci")]
+        pub ef_psloci: Option<File>,
+        #[rasn(identifier = "ef-acc")]
+        pub ef_acc: File,
+        #[rasn(identifier = "ef-fplmn")]
+        pub ef_fplmn: Option<File>,
+        #[rasn(identifier = "ef-loci")]
+        pub ef_loci: Option<File>,
+        #[rasn(identifier = "ef-ad")]
+        pub ef_ad: Option<File>,
+        #[rasn(identifier = "ef-ecc")]
+        pub ef_ecc: File,
+        #[rasn(identifier = "ef-netpar")]
+        pub ef_netpar: Option<File>,
+        #[rasn(identifier = "ef-epsloci")]
+        pub ef_epsloci: Option<File>,
+        #[rasn(identifier = "ef-epsnsc")]
+        pub ef_epsnsc: Option<File>,
+    }
+    impl PEUSIM {
+        pub fn new(
+            usim_header: PEHeader,
+            template_id: ObjectIdentifier,
+            adf_usim: File,
+            ef_imsi: File,
+            ef_arr: File,
+            ef_keys: Option<File>,
+            ef_keys_ps: Option<File>,
+            ef_hpplmn: Option<File>,
+            ef_ust: File,
+            ef_fdn: Option<File>,
+            ef_sms: Option<File>,
+            ef_smsp: Option<File>,
+            ef_smss: Option<File>,
+            ef_spn: File,
+            ef_est: File,
+            ef_start_hfn: Option<File>,
+            ef_threshold: Option<File>,
+            ef_psloci: Option<File>,
+            ef_acc: File,
+            ef_fplmn: Option<File>,
+            ef_loci: Option<File>,
+            ef_ad: Option<File>,
+            ef_ecc: File,
+            ef_netpar: Option<File>,
+            ef_epsloci: Option<File>,
+            ef_epsnsc: Option<File>,
+        ) -> Self {
+            Self {
+                usim_header,
+                template_id,
+                adf_usim,
+                ef_imsi,
+                ef_arr,
+                ef_keys,
+                ef_keys_ps,
+                ef_hpplmn,
+                ef_ust,
+                ef_fdn,
+                ef_sms,
+                ef_smsp,
+                ef_smss,
+                ef_spn,
+                ef_est,
+                ef_start_hfn,
+                ef_threshold,
+                ef_psloci,
+                ef_acc,
+                ef_fplmn,
+                ef_loci,
+                ef_ad,
+                ef_ecc,
+                ef_netpar,
+                ef_epsloci,
+                ef_epsnsc,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PEHeader {
+        pub mandated: Option<()>,
+        pub identification: UInt15,
+    }
+    impl PEHeader {
+        pub fn new(mandated: Option<()>, identification: UInt15) -> Self {
+            Self {
+                mandated,
+                identification,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PEStatus {
+        pub status: Integer,
+        pub identification: Option<UInt15>,
+        #[rasn(identifier = "additional-information")]
+        pub additional_information: Option<UInt8>,
+        pub offset: Option<UInt31>,
+    }
+    impl PEStatus {
+        pub fn new(
+            status: Integer,
+            identification: Option<UInt15>,
+            additional_information: Option<UInt8>,
+            offset: Option<UInt31>,
+        ) -> Self {
+            Self {
+                status,
+                identification,
+                additional_information,
+                offset,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PINConfiguration {
+        #[rasn(identifier = "keyReference")]
+        pub key_reference: PINKeyReferenceValue,
+        #[rasn(size("8"), identifier = "pinValue")]
+        pub pin_value: OctetString,
+        #[rasn(identifier = "unblockingPINReference")]
+        pub unblocking_pinreference: Option<PUKKeyReferenceValue>,
+        #[rasn(
+            default = "pinconfiguration_pin_attributes_default",
+            identifier = "pinAttributes"
+        )]
+        pub pin_attributes: UInt8,
+        #[rasn(
+            default = "pinconfiguration_max_num_of_attemps_retry_num_left_default",
+            identifier = "maxNumOfAttemps-retryNumLeft"
+        )]
+        pub max_num_of_attemps_retry_num_left: UInt8,
+    }
+    impl PINConfiguration {
+        pub fn new(
+            key_reference: PINKeyReferenceValue,
+            pin_value: OctetString,
+            unblocking_pinreference: Option<PUKKeyReferenceValue>,
+            pin_attributes: UInt8,
+            max_num_of_attemps_retry_num_left: UInt8,
+        ) -> Self {
+            Self {
+                key_reference,
+                pin_value,
+                unblocking_pinreference,
+                pin_attributes,
+                max_num_of_attemps_retry_num_left,
+            }
+        }
+    }
+    fn pinconfiguration_pin_attributes_default() -> UInt8 {
+        UInt8(7)
+    }
+    fn pinconfiguration_max_num_of_attemps_retry_num_left_default() -> UInt8 {
+        UInt8(51)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PINKeyReferenceValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct PUKConfiguration {
+        #[rasn(identifier = "keyReference")]
+        pub key_reference: PUKKeyReferenceValue,
+        #[rasn(size("8"), identifier = "pukValue")]
+        pub puk_value: OctetString,
+        #[rasn(
+            default = "pukconfiguration_max_num_of_attemps_retry_num_left_default",
+            identifier = "maxNumOfAttemps-retryNumLeft"
+        )]
+        pub max_num_of_attemps_retry_num_left: UInt8,
+    }
+    impl PUKConfiguration {
+        pub fn new(
+            key_reference: PUKKeyReferenceValue,
+            puk_value: OctetString,
+            max_num_of_attemps_retry_num_left: UInt8,
+        ) -> Self {
+            Self {
+                key_reference,
+                puk_value,
+                max_num_of_attemps_retry_num_left,
+            }
+        }
+    }
+    fn pukconfiguration_max_num_of_attemps_retry_num_left_default() -> UInt8 {
+        UInt8(170)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct PUKKeyReferenceValue(pub Integer);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(choice, automatic_tags)]
+    #[non_exhaustive]
+    pub enum ProfileElement {
+        header(ProfileHeader),
+        genericFileManagement(PEGenericFileManagement),
+        pinCodes(PEPINCodes),
+        pukCodes(PEPUKCodes),
+        akaParameter(PEAKAParameter),
+        cdmaParameter(PECDMAParameter),
+        securityDomain(PESecurityDomain),
+        rfm(PERFM),
+        application(PEApplication),
+        nonStandard(PENonStandard),
+        end(PEEnd),
+        rfu1(PEDummy),
+        rfu2(PEDummy),
+        rfu3(PEDummy),
+        rfu4(PEDummy),
+        rfu5(PEDummy),
+        mf(PEMF),
+        cd(PECD),
+        telecom(PETELECOM),
+        usim(PEUSIM),
+        #[rasn(identifier = "opt-usim")]
+        opt_usim(PEOPTUSIM),
+        isim(PEISIM),
+        #[rasn(identifier = "opt-isim")]
+        opt_isim(PEOPTISIM),
+        phonebook(PEPHONEBOOK),
+        #[rasn(identifier = "gsm-access")]
+        gsm_access(PEGSMACCESS),
+        csim(PECSIM),
+        #[rasn(identifier = "opt-csim")]
+        opt_csim(PEOPTCSIM),
+        eap(PEEAP),
+        #[rasn(identifier = "df-5gs")]
+        df_5gs(PEDF5GS),
+        #[rasn(identifier = "df-saip")]
+        df_saip(PEDFSAIP),
+    }
+    #[doc = " Anonymous SEQUENCE OF member "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "SEQUENCE")]
+    #[non_exhaustive]
+    pub struct AnonymousProfileHeaderEUICCMandatoryAIDs {
+        pub aid: ApplicationIdentifier,
+        #[rasn(size("2"))]
+        pub version: OctetString,
+    }
+    impl AnonymousProfileHeaderEUICCMandatoryAIDs {
+        pub fn new(aid: ApplicationIdentifier, version: OctetString) -> Self {
+            Self { aid, version }
+        }
+    }
+    #[doc = " Inner type "]
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate)]
+    pub struct ProfileHeaderEUICCMandatoryAIDs(
+        pub SequenceOf<AnonymousProfileHeaderEUICCMandatoryAIDs>,
+    );
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ProfileHeader {
+        #[rasn(identifier = "major-version")]
+        pub major_version: UInt8,
+        #[rasn(identifier = "minor-version")]
+        pub minor_version: UInt8,
+        #[rasn(identifier = "profileType")]
+        pub profile_type: Option<Utf8String>,
+        #[rasn(size("10"))]
+        pub iccid: OctetString,
+        pub pol: Option<OctetString>,
+        #[rasn(identifier = "eUICC-Mandatory-services")]
+        pub e_uicc_mandatory_services: ServicesList,
+        #[rasn(identifier = "eUICC-Mandatory-GFSTEList")]
+        pub e_uicc_mandatory_gfstelist: SequenceOf<ObjectIdentifier>,
+        #[rasn(identifier = "connectivityParameters")]
+        pub connectivity_parameters: Option<OctetString>,
+        #[rasn(identifier = "eUICC-Mandatory-AIDs")]
+        pub e_uicc_mandatory_aids: Option<ProfileHeaderEUICCMandatoryAIDs>,
+    }
+    impl ProfileHeader {
+        pub fn new(
+            major_version: UInt8,
+            minor_version: UInt8,
+            profile_type: Option<Utf8String>,
+            iccid: OctetString,
+            pol: Option<OctetString>,
+            e_uicc_mandatory_services: ServicesList,
+            e_uicc_mandatory_gfstelist: SequenceOf<ObjectIdentifier>,
+            connectivity_parameters: Option<OctetString>,
+            e_uicc_mandatory_aids: Option<ProfileHeaderEUICCMandatoryAIDs>,
+        ) -> Self {
+            Self {
+                major_version,
+                minor_version,
+                profile_type,
+                iccid,
+                pol,
+                e_uicc_mandatory_services,
+                e_uicc_mandatory_gfstelist,
+                connectivity_parameters,
+                e_uicc_mandatory_aids,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct ProprietaryInfo {
+        #[rasn(
+            size("1"),
+            tag(private, 0),
+            default = "proprietary_info_special_file_information_default",
+            identifier = "specialFileInformation"
+        )]
+        pub special_file_information: OctetString,
+        #[rasn(size("1..=200"), tag(private, 1), identifier = "fillPattern")]
+        pub fill_pattern: Option<OctetString>,
+        #[rasn(size("1..=200"), tag(private, 2), identifier = "repeatPattern")]
+        pub repeat_pattern: Option<OctetString>,
+    }
+    impl ProprietaryInfo {
+        pub fn new(
+            special_file_information: OctetString,
+            fill_pattern: Option<OctetString>,
+            repeat_pattern: Option<OctetString>,
+        ) -> Self {
+            Self {
+                special_file_information,
+                fill_pattern,
+                repeat_pattern,
+            }
+        }
+    }
+    fn proprietary_info_special_file_information_default() -> OctetString {
+        <OctetString as From<&'static [u8]>>::from(&[0])
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct ServicesList {
+        pub contactless: Option<()>,
+        pub usim: Option<()>,
+        pub isim: Option<()>,
+        pub csim: Option<()>,
+        pub milenage: Option<()>,
+        pub tuak128: Option<()>,
+        pub cave: Option<()>,
+        #[rasn(identifier = "gba-usim")]
+        pub gba_usim: Option<()>,
+        #[rasn(identifier = "gba-isim")]
+        pub gba_isim: Option<()>,
+        pub mbms: Option<()>,
+        pub eap: Option<()>,
+        pub javacard: Option<()>,
+        pub multos: Option<()>,
+        #[rasn(identifier = "multiple-usim")]
+        pub multiple_usim: Option<()>,
+        #[rasn(identifier = "multiple-isim")]
+        pub multiple_isim: Option<()>,
+        #[rasn(identifier = "multiple-csim")]
+        pub multiple_csim: Option<()>,
+        pub tuak256: Option<()>,
+        #[rasn(identifier = "usim-test-algorithm")]
+        pub usim_test_algorithm: Option<()>,
+        #[rasn(identifier = "ber-tlv")]
+        pub ber_tlv: Option<()>,
+        #[rasn(identifier = "dfLink")]
+        pub df_link: Option<()>,
+        #[rasn(identifier = "cat-tp")]
+        pub cat_tp: Option<()>,
+        #[rasn(identifier = "get-identity")]
+        pub get_identity: Option<()>,
+        #[rasn(identifier = "profile-a-x25519")]
+        pub profile_a_x25519: Option<()>,
+        #[rasn(identifier = "profile-b-p256")]
+        pub profile_b_p256: Option<()>,
+    }
+    impl ServicesList {
+        pub fn new(
+            contactless: Option<()>,
+            usim: Option<()>,
+            isim: Option<()>,
+            csim: Option<()>,
+            milenage: Option<()>,
+            tuak128: Option<()>,
+            cave: Option<()>,
+            gba_usim: Option<()>,
+            gba_isim: Option<()>,
+            mbms: Option<()>,
+            eap: Option<()>,
+            javacard: Option<()>,
+            multos: Option<()>,
+            multiple_usim: Option<()>,
+            multiple_isim: Option<()>,
+            multiple_csim: Option<()>,
+            tuak256: Option<()>,
+            usim_test_algorithm: Option<()>,
+            ber_tlv: Option<()>,
+            df_link: Option<()>,
+            cat_tp: Option<()>,
+            get_identity: Option<()>,
+            profile_a_x25519: Option<()>,
+            profile_b_p256: Option<()>,
+        ) -> Self {
+            Self {
+                contactless,
+                usim,
+                isim,
+                csim,
+                milenage,
+                tuak128,
+                cave,
+                gba_usim,
+                gba_isim,
+                mbms,
+                eap,
+                javacard,
+                multos,
+                multiple_usim,
+                multiple_isim,
+                multiple_csim,
+                tuak256,
+                usim_test_algorithm,
+                ber_tlv,
+                df_link,
+                cat_tp,
+                get_identity,
+                profile_a_x25519,
+                profile_b_p256,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    #[non_exhaustive]
+    pub struct TS102226AdditionalContactlessParameters {
+        #[rasn(identifier = "protocolParameterData")]
+        pub protocol_parameter_data: OctetString,
+    }
+    impl TS102226AdditionalContactlessParameters {
+        pub fn new(protocol_parameter_data: OctetString) -> Self {
+            Self {
+                protocol_parameter_data,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[non_exhaustive]
+    pub struct UICCApplicationParameters {
+        #[rasn(
+            tag(context, 0),
+            identifier = "uiccToolkitApplicationSpecificParametersField"
+        )]
+        pub uicc_toolkit_application_specific_parameters_field: Option<OctetString>,
+        #[rasn(
+            tag(context, 1),
+            identifier = "uiccAccessApplicationSpecificParametersField"
+        )]
+        pub uicc_access_application_specific_parameters_field: Option<OctetString>,
+        #[rasn(
+            tag(context, 2),
+            identifier = "uiccAdministrativeAccessApplicationSpecificParametersField"
+        )]
+        pub uicc_administrative_access_application_specific_parameters_field: Option<OctetString>,
+    }
+    impl UICCApplicationParameters {
+        pub fn new(
+            uicc_toolkit_application_specific_parameters_field: Option<OctetString>,
+            uicc_access_application_specific_parameters_field: Option<OctetString>,
+            uicc_administrative_access_application_specific_parameters_field: Option<OctetString>,
+        ) -> Self {
+            Self {
+                uicc_toolkit_application_specific_parameters_field,
+                uicc_access_application_specific_parameters_field,
+                uicc_administrative_access_application_specific_parameters_field,
+            }
+        }
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=32767"))]
+    pub struct UInt15(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=65535"))]
+    pub struct UInt16(pub u16);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=2147483647"))]
+    pub struct UInt31(pub u32);
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("0..=255"))]
+    pub struct UInt8(pub u8);
+    pub static MAX_UINT15: LazyLock<Integer> = LazyLock::new(|| Integer::from(32767i128));
+    pub static MAX_UINT16: LazyLock<Integer> = LazyLock::new(|| Integer::from(65535i128));
+    pub static MAX_UINT31: LazyLock<Integer> = LazyLock::new(|| Integer::from(2147483647i128));
+    #[doc = " Basic integer types, for size constraints"]
+    pub static MAX_UINT8: LazyLock<Integer> = LazyLock::new(|| Integer::from(255i128));
+}
