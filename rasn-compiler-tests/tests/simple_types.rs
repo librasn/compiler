@@ -28,6 +28,28 @@ e2e_pdu!(
 );
 
 e2e_pdu!(
+    integer_named_values_unbounded,
+    "PUKKeyReferenceValue ::= INTEGER {
+        pukAppl1(1),
+        pukAppl2(2),
+        pukAppl3(3),
+        pukAppl4(4),
+        pukAppl5(5),
+        pukAppl6(6),
+        pukAppl7(7),
+        pukAppl8(8),
+        secondPUKAppl1(129),
+        secondPUKAppl2(130),
+        secondPUKAppl3(131),
+        secondPUKAppl4(132),
+        secondPUKAppl5(133),
+        secondPUKAppl6(134),
+        secondPUKAppl7(135),
+        secondPUKAppl8(136)
+    }"
+);
+
+e2e_pdu!(
     integer_const,
     r#" Test-Int ::= INTEGER
         test-int-val Test-Int ::= 4"#

@@ -162,6 +162,9 @@ impl Rasn {
         if let ASN1Type::Integer(ref int) = tld.ty {
             let (name, mut annotations) = self.format_name_and_common_annotations(&tld);
             annotations.push(self.format_range_annotations(true, &int.constraints)?);
+            if let Some(ref dvs) = int.distinguished_values {
+                annotations.push(self.format_named_values_annotation(dvs));
+            }
             Ok(integer_template(
                 self.format_comments(&tld.comments),
                 name,
