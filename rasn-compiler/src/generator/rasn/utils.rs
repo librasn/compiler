@@ -13,7 +13,7 @@ use crate::{
             per_visible_range_constraints, CharsetSubset, PerVisibleAlphabetConstraints,
         },
         information_object::{InformationObjectField, ObjectClassDefn},
-        types::{Choice, ChoiceOption, Enumerated, SequenceOrSet, SequenceOrSetMember},
+        types::{Choice, ChoiceOption, DistinguishedValue, Enumerated, SequenceOrSet, SequenceOrSetMember},
         ASN1Type, ASN1Value, AsnTag, CharacterStringType, IntegerType, TagClass,
         TaggingEnvironment, ToplevelDefinition, ToplevelTypeDefinition,
     },
@@ -219,6 +219,24 @@ impl Rasn {
                 _ => TokenStream::new(),
             },
         )
+    }
+
+    /// Formats a `named_values(...)` rasn annotation for INTEGER types with a NamedNumberList.
+    /// Returns an empty `TokenStream` when the slice is empty so callers can push it
+    /// unconditionally and `join_annotations` will filter it out.
+    pub(crate) fn format_named_values_annotation(
+        &self,
+        distinguished_values: &[DistinguishedValue],
+    ) -> TokenStream {
+        if distinguished_values.is_empty() {
+            return TokenStream::new();
+        }
+        let pairs = distinguished_values.iter().map(|dv| {
+            let name = &dv.name;
+            let value = Literal::i128_unsuffixed(dv.value);
+            quote!(#name = #value)
+        });
+        quote!(named_values(#(#pairs),*))
     }
 
     pub(crate) fn format_alphabet_annotations(
