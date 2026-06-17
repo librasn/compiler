@@ -812,15 +812,62 @@ fn fold_constraint_set(
                     extensible: x2,
                 }),
             ) => {
-                match (min1, max1, &min2, &max2) {
-                    (Some(ASN1Value::Integer(_)), _, Some(ASN1Value::String(_)), _)
-                    | (Some(ASN1Value::String(_)), _, Some(ASN1Value::Integer(_)), _)
-                    | (_, Some(ASN1Value::Integer(_)), Some(ASN1Value::String(_)), _)
-                    | (_, Some(ASN1Value::String(_)), Some(ASN1Value::Integer(_)), _)
-                    | (Some(ASN1Value::Integer(_)), _, _, Some(ASN1Value::String(_)))
-                    | (Some(ASN1Value::String(_)), _, _, Some(ASN1Value::Integer(_)))
-                    | (_, Some(ASN1Value::Integer(_)), _, Some(ASN1Value::String(_)))
-                    | (_, Some(ASN1Value::String(_)), _, Some(ASN1Value::Integer(_))) => {
+                match (min1, max1, &min2, &max2, char_set, range_constraint) {
+                    (Some(ASN1Value::String(min1)), Some(ASN1Value::String(max1)), Some(ASN1Value::String(min2)), Some(ASN1Value::String(max2)), Some(chars), _) => {
+                        let min_i_1 = find_string_index(min1, chars)?;
+                        let min_i_2 = find_string_index(min2, chars)?;
+                        let max_i_1 = find_string_index(max1, chars)?;
+                        let max_i_2 = find_string_index(max2, chars)?;
+                        let mut indicies = std::collections::BTreeSet::new();
+                        for i in min_i_1..max_i_1 {
+                            indicies.insert(i);
+                        }
+                        for i in min_i_2..max_i_2 {
+                            indicies.insert(i);
+                        }
+                        let mut indices = indicies.iter().collect::<Vec<_>>();
+                        indices.sort();
+                        let mut last = indices[0];
+                        let mut contiguous = true;
+                        for v in indices[1..].iter() {
+                            if **v != last + 1 {
+                                contiguous = false;
+                                break;
+                            }
+                            last = *v;
+                        }
+                        if contiguous {
+                            let min_i = indices[0];
+                            let max_i = indices[indices.len() - 1];
+                            return Ok(Some(SubtypeElements::ValueRange {
+                                min: Some(ASN1Value::String(chars.get(&min_i).unwrap().to_string())),
+                                max: Some(ASN1Value::String(chars.get(&max_i).unwrap().to_string())),
+                                extensible: false,
+                            }));
+                        } else {
+                            let mut c = String::new();
+                            for i in min_i_1..=max_i_1 {
+                                c.push(*chars.get(&i).unwrap());
+                            }
+                            for i in min_i_2..=max_i_2 {
+                                c.push(*chars.get(&i).unwrap());
+                            }
+                            return Ok(Some(SubtypeElements::SingleValue {
+                                value: ASN1Value::String(c),
+                                extensible: false,
+                            }));
+                        }
+                    }
+                    (Some(ASN1Value::Integer(_)), _, Some(ASN1Value::String(_)), _, _, _)
+                    | (Some(ASN1Value::String(_)), _, Some(ASN1Value::Integer(_)), _, _, _)
+                    | (_, Some(ASN1Value::Integer(_)), Some(ASN1Value::String(_)), _, _, _)
+                    | (_, Some(ASN1Value::String(_)), Some(ASN1Value::Integer(_)), _, _, _)
+                    | (Some(ASN1Value::Integer(_)), _, _, Some(ASN1Value::String(_)), _, _)
+                    | (Some(ASN1Value::String(_)), _, _, Some(ASN1Value::Integer(_)), _, _)
+                    | (_, Some(ASN1Value::Integer(_)), _, Some(ASN1Value::String(_)), _, _)
+                    | (_, Some(ASN1Value::String(_)), _, Some(ASN1Value::Integer(_)), _, _)
+                    | (Some(ASN1Value::String(_)), _, Some(ASN1Value::String(_)), _, _, true)
+                    | (_, Some(ASN1Value::String(_)), _, Some(ASN1Value::String(_)), _, true) => {
                         return Ok(None)
                     }
                     _ => (),
