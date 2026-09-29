@@ -524,6 +524,7 @@ impl<B: Backend> Compiler<B, CompilerReady> {
                 modules
             },
         );
+        self.backend.prepare_modules(&modules);
         for (_, module) in modules {
             let mut generated_module = self.backend.generate_module(module)?;
             if let Some(m) = generated_module.generated {

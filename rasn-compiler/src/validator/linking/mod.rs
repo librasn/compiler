@@ -493,11 +493,15 @@ impl ASN1Type {
                     let arg = args.get(index).ok_or_else(|| grammar_error!(LinkerError, "Did not find an argument for parameter {dummy_reference} of {identifier}"))?;
                     match (arg, param_governor) {
                         (Parameter::ValueParameter(v), ParameterGovernor::TypeOrClass(gov)) => {
+                            // Resolve in the caller's scope before a same-named
+                            // formal parameter shadows the actual argument.
+                            let mut value = v.clone();
+                            value.link_elsewhere_declared(identifier, tlds)?;
                             impl_tlds.insert(
                                 dummy_reference.clone(),
                                 ToplevelDefinition::Value(ToplevelValueDefinition::from((
                                     dummy_reference.as_str(),
-                                    v.clone(),
+                                    value,
                                     gov.clone(),
                                 ))),
                             );
@@ -539,7 +543,11 @@ impl ASN1Type {
                         }
                     }
                 }
-                impl_template.link_elsewhere_declared(&impl_tlds)?;
+                // Structural linking was deferred along with the template's
+                // formal substitution. Restore it in the instantiated scope.
+                impl_template.link_components_of_notation(&impl_tlds);
+                impl_template.link_choice_selection_type(&impl_tlds)?;
+                impl_template.link_elsewhere_declared(&impl_tlds, parameters)?;
                 if let Some(replacement) =
                     impl_template.link_constraint_reference(identifier, &impl_tlds)?
                 {
@@ -699,20 +707,40 @@ impl ASN1Type {
     fn link_elsewhere_declared(
         &mut self,
         tlds: &BTreeMap<String, ToplevelDefinition>,
+        parameters: &[ParameterizationArgument],
     ) -> Result<(), GrammarError> {
         match self {
             ASN1Type::Choice(c) => c
                 .options
                 .iter_mut()
-                .try_for_each(|o| o.ty.link_elsewhere_declared(tlds)),
+                .try_for_each(|o| o.ty.link_elsewhere_declared(tlds, parameters)),
             ASN1Type::Set(s) | ASN1Type::Sequence(s) => s
                 .members
                 .iter_mut()
-                .try_for_each(|o| o.ty.link_elsewhere_declared(tlds)),
+                .try_for_each(|o| o.ty.link_elsewhere_declared(tlds, parameters)),
             ASN1Type::SequenceOf(s) | ASN1Type::SetOf(s) => {
-                s.element_type.link_elsewhere_declared(tlds)
+                s.element_type.link_elsewhere_declared(tlds, parameters)
             }
             ASN1Type::ElsewhereDeclaredType(e) => {
+                // Forward actual type arguments in the caller's scope before
+                // the nested template introduces its own formal bindings.
+                for constraint in &mut e.constraints {
+                    if let Constraint::Parameter(args) = constraint {
+                        for arg in args {
+                            if let Parameter::TypeParameter(ty) = arg {
+                                ty.link_elsewhere_declared(tlds, parameters)?;
+                            }
+                        }
+                    }
+                }
+                // Substitute formal type parameters only. Expanding a named
+                // definition here discards its actual parameter arguments and
+                // turns references to public types into anonymous copies.
+                if e.module.is_some()
+                    || !parameters.iter().any(|p| p.dummy_reference == e.identifier)
+                {
+                    return Ok(());
+                }
                 if let Some(ToplevelDefinition::Type(tld)) = tlds.get(&e.identifier) {
                     *self = tld.ty.clone();
                     Ok(())

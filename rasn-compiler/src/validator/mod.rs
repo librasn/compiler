@@ -61,6 +61,13 @@ impl Validator {
             .collect::<Vec<String>>();
         let mut visited_headers = HashSet::<String>::new();
         while let Some(key) = keys.pop() {
+            // A template's formal parameters shadow module references. Link
+            // its body only after the actual arguments have been substituted.
+            if matches!(self.tlds.get(&key), Some(ToplevelDefinition::Type(ty))
+                if ty.parameterization.is_some())
+            {
+                continue;
+            }
             if matches![
                 self.tlds.get(&key),
                 Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
@@ -154,11 +161,14 @@ impl Validator {
                 }
                 self.tlds.insert(k, tld);
             }
-            if self
-                .tlds
-                .get(&key)
-                .and_then(ToplevelDefinition::get_module_header)
-                .is_some_and(|m| visited_headers.contains(&m.borrow().name).not())
+        }
+
+        // Parameter instantiation can introduce named types from another
+        // module. Collect imports after every definition has been linked.
+        for key in self.tlds.keys().cloned().collect::<Vec<_>>() {
+            if self.tlds[&key].get_module_header().is_some()
+                && !matches!(&self.tlds[&key], ToplevelDefinition::Type(ty)
+                    if ty.parameterization.is_some())
             {
                 self.fill_in_associated_type_imports(key, &mut visited_headers);
             }
@@ -190,33 +200,46 @@ impl Validator {
                     );
                 }
             }
-            for import_modules in &module_header.borrow().imports {
-                for import in &import_modules.types {
-                    if import.starts_with(|c: char| c.is_lowercase()) {
-                        match self.tlds.get(import) {
-                            Some(ToplevelDefinition::Object(ToplevelInformationDefinition {
-                                class: ClassLink::ByReference(class_ref),
-                                ..
-                            })) => {
-                                for field in &class_ref.fields {
-                                    self.associated_import_type_class_field(
-                                        field,
+            if let ToplevelDefinition::Type(ref definition) = tld {
+                self.associated_imports_in_type(
+                    &definition.ty,
+                    module_header.clone(),
+                    &mut associated_type_imports,
+                );
+            }
+            // Explicitly imported values only need to be visited once per
+            // module; named types introduced by each definition are separate.
+            if visited_headers.insert(module_header.borrow().name.clone()) {
+                for import_modules in &module_header.borrow().imports {
+                    for import in &import_modules.types {
+                        if import.starts_with(|c: char| c.is_lowercase()) {
+                            match self.tlds.get(import) {
+                                Some(ToplevelDefinition::Object(
+                                    ToplevelInformationDefinition {
+                                        class: ClassLink::ByReference(class_ref),
+                                        ..
+                                    },
+                                )) => {
+                                    for field in &class_ref.fields {
+                                        self.associated_import_type_class_field(
+                                            field,
+                                            module_header.clone(),
+                                            &mut associated_type_imports,
+                                        );
+                                    }
+                                }
+                                Some(ToplevelDefinition::Value(ToplevelValueDefinition {
+                                    associated_type,
+                                    ..
+                                })) => {
+                                    self.associated_import_type(
+                                        associated_type.as_str().as_ref(),
                                         module_header.clone(),
                                         &mut associated_type_imports,
                                     );
                                 }
+                                _ => (),
                             }
-                            Some(ToplevelDefinition::Value(ToplevelValueDefinition {
-                                associated_type,
-                                ..
-                            })) => {
-                                self.associated_import_type(
-                                    associated_type.as_str().as_ref(),
-                                    module_header.clone(),
-                                    &mut associated_type_imports,
-                                );
-                            }
-                            _ => (),
                         }
                     }
                 }
@@ -235,10 +258,35 @@ impl Validator {
                     mut_module_header.imports.push(import);
                 }
             }
-
-            visited_headers.insert(module_header.borrow().name.clone());
         }
         self.tlds.insert(key, tld);
+    }
+
+    fn associated_imports_in_type(
+        &self,
+        ty: &ASN1Type,
+        module_header: Rc<RefCell<ModuleHeader>>,
+        imports: &mut Vec<Import>,
+    ) {
+        match ty {
+            ASN1Type::ElsewhereDeclaredType(reference) if reference.module.is_none() => {
+                self.associated_import_type(&reference.identifier, module_header, imports);
+            }
+            ASN1Type::Choice(choice) => {
+                for option in &choice.options {
+                    self.associated_imports_in_type(&option.ty, module_header.clone(), imports);
+                }
+            }
+            ASN1Type::Sequence(sequence) | ASN1Type::Set(sequence) => {
+                for member in &sequence.members {
+                    self.associated_imports_in_type(&member.ty, module_header.clone(), imports);
+                }
+            }
+            ASN1Type::SequenceOf(sequence) | ASN1Type::SetOf(sequence) => {
+                self.associated_imports_in_type(&sequence.element_type, module_header, imports);
+            }
+            _ => (),
+        }
     }
 
     fn associated_import_type(

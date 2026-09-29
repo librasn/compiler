@@ -25,6 +25,13 @@ pub trait Backend: Default {
     /// For example: `.ts` for Typescript, `.rs` for Rasn bindings.
     const FILE_EXTENSION: &'static str;
 
+    /// Prepare module-wide information before generating individual modules.
+    fn prepare_modules(
+        &mut self,
+        _modules: &std::collections::BTreeMap<String, Vec<ToplevelDefinition>>,
+    ) {
+    }
+
     /// generates bindings for an ASN.1 module
     /// ### Params
     /// - `top_level_declarations` vector of [ToplevelDefinition]s that are defined in the ASN.1 module
