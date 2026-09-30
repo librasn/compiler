@@ -1062,7 +1062,7 @@ impl Rasn {
         let name_ident = self.to_rust_title_case(name);
         let field_inits = members.iter().map(|m| {
             let field_name = self.to_rust_snake_case(&m.name);
-            let def_method_name = self.default_method_name(name, &m.name);
+            let def_method_name = self.default_method_name(&name_ident.to_string(), &m.name);
             quote!( #field_name: #def_method_name() )
         });
 
@@ -1259,6 +1259,20 @@ impl Rasn {
     }
 
     pub(crate) fn to_rust_title_case(&self, input: &str) -> TokenStream {
+        self.type_name_in_module(&self.current_module, input)
+    }
+
+    pub(crate) fn type_name_in_module(&self, module: &str, input: &str) -> TokenStream {
+        let name = self
+            .type_names
+            .get(module)
+            .and_then(|names| names.get(input))
+            .cloned()
+            .unwrap_or_else(|| Self::default_type_name(input));
+        TokenStream::from_str(&name).unwrap()
+    }
+
+    pub(crate) fn default_type_name(input: &str) -> String {
         let mut input = input.replace('-', "_");
         let input = input.drain(..).fold(String::new(), |mut acc, c| {
             if acc.is_empty() && c.is_lowercase() {
@@ -1276,7 +1290,7 @@ impl Rasn {
         } else {
             input
         };
-        TokenStream::from_str(&name).unwrap()
+        name
     }
 
     /// Generate a `TokenStream` containing a type identifier, optionally qualified by module.
@@ -1285,12 +1299,12 @@ impl Rasn {
     ///
     /// If qualified with a module, then path is `super::#module::#ty`, else it is just `#ty`.
     pub(crate) fn to_rust_qualified_type(&self, module: Option<&str>, ty: &str) -> TokenStream {
-        let ty = self.to_rust_title_case(ty);
         if let Some(module) = module {
+            let ty = self.type_name_in_module(module, ty);
             let module = self.to_rust_snake_case(module).to_token_stream();
             quote!(super::#module::#ty)
         } else {
-            ty
+            self.to_rust_title_case(ty)
         }
     }
 

@@ -1,4 +1,5 @@
 use std::{
+    collections::{BTreeMap, HashSet},
     env,
     error::Error,
     io::{self, Write},
@@ -33,6 +34,9 @@ pub struct Rasn {
     /// A combination of the builtin required derives (`Rasn::REQUIRED_DERIVES`) and those supplied
     /// by the user in `Config::type_annotations`.
     required_derives: Vec<String>,
+    exported_items: BTreeMap<String, HashSet<String>>,
+    type_names: BTreeMap<String, BTreeMap<String, String>>,
+    current_module: String,
 }
 
 #[cfg_attr(target_family = "wasm", wasm_bindgen(getter_with_clone))]
@@ -148,6 +152,9 @@ impl Backend for Rasn {
             extensibility_environment,
             tagging_environment,
             required_derives,
+            exported_items: BTreeMap::new(),
+            type_names: BTreeMap::new(),
+            current_module: String::new(),
         }
     }
 
@@ -163,12 +170,105 @@ impl Backend for Rasn {
         &self.config
     }
 
+    fn prepare_modules(&mut self, modules: &BTreeMap<String, Vec<ToplevelDefinition>>) {
+        self.exported_items = modules
+            .iter()
+            .map(|(name, definitions)| {
+                let items = definitions
+                    .iter()
+                    .filter(|definition| match definition {
+                        ToplevelDefinition::Type(ty) => ty.parameterization.is_none(),
+                        ToplevelDefinition::Value(value) => value.parameterization.is_none(),
+                        ToplevelDefinition::Object(object) => {
+                            !self.config.opaque_open_types
+                                && matches!(
+                                    object.value,
+                                    information_object::ASN1Information::ObjectSet(_)
+                                )
+                        }
+                        _ => false,
+                    })
+                    .map(|definition| definition.name().to_owned())
+                    .collect();
+                (name.clone(), items)
+            })
+            .collect();
+        self.type_names = modules
+            .iter()
+            .map(|(module, definitions)| {
+                let mut names: Vec<_> = definitions
+                    .iter()
+                    .filter(|definition| {
+                        matches!(definition,
+                        ToplevelDefinition::Type(ty) if ty.parameterization.is_none())
+                    })
+                    .map(|definition| definition.name().to_owned())
+                    .collect();
+                // Prefer an unchanged ASN.1 spelling, and reserve all original
+                // names before choosing suffixes for collisions.
+                names.sort_by_key(|name| (Self::default_type_name(name) != *name, name.clone()));
+                let mut reserved: HashSet<_> = names
+                    .iter()
+                    .map(|name| Self::default_type_name(name))
+                    .collect();
+                let mut used = HashSet::new();
+                let mut mapped = BTreeMap::new();
+                for name in names {
+                    let base = Self::default_type_name(&name);
+                    let mut rust_name = base.clone();
+                    if !used.insert(rust_name.clone()) {
+                        let mut suffix = 2;
+                        while reserved.contains(&format!("{base}{suffix}")) {
+                            suffix += 1;
+                        }
+                        rust_name = format!("{base}{suffix}");
+                        reserved.insert(rust_name.clone());
+                        used.insert(rust_name.clone());
+                    }
+                    mapped.insert(name, rust_name);
+                }
+                (module.clone(), mapped)
+            })
+            .collect();
+        // Unqualified imported references must use the name assigned in the
+        // defining module, just like the import itself.
+        for (module, definitions) in modules {
+            if let Some(header) = definitions
+                .first()
+                .and_then(|definition| definition.get_module_header())
+            {
+                for import in &header.borrow().imports {
+                    let imported = self
+                        .type_names
+                        .get(&import.global_module_reference.module_reference)
+                        .cloned()
+                        .unwrap_or_default();
+                    for name in &import.types {
+                        if let Some(rust_name) = imported.get(name) {
+                            let names = self.type_names.get_mut(module).unwrap();
+                            if !names.contains_key(name) {
+                                let mut local_name = rust_name.clone();
+                                let mut suffix = 2;
+                                while names.values().any(|used| *used == local_name) {
+                                    local_name = format!("{rust_name}{suffix}");
+                                    suffix += 1;
+                                }
+                                names.insert(name.clone(), local_name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fn generate_module(
         &mut self,
         tlds: Vec<ToplevelDefinition>,
     ) -> Result<GeneratedModule, GeneratorError> {
         if let Some(module_ref) = tlds.first().and_then(|tld| tld.get_module_header()) {
             let module = module_ref.borrow();
+            self.current_module = module.name.clone();
             self.tagging_environment = module.tagging_environment;
             self.extensibility_environment = module.extensibility_environment;
             let name = self.to_rust_snake_case(&module.name);
@@ -182,11 +282,24 @@ impl Backend for Rasn {
                     details: e.to_string(),
                     ..Default::default()
                 })?;
-            let imports = module.imports.iter().map(|import| {
+            let imports = module.imports.iter().filter_map(|import| {
                 let module =
                     self.to_rust_snake_case(&import.global_module_reference.module_reference);
                 let mut usages = Some(vec![]);
-                'imports: for usage in &import.types {
+                let exported = self
+                    .exported_items
+                    .get(&import.global_module_reference.module_reference);
+                let types: Vec<_> = import
+                    .types
+                    .iter()
+                    .filter(|usage| {
+                        exported.is_none_or(|names| names.contains(usage.trim_end_matches("{}")))
+                    })
+                    .collect();
+                if types.is_empty() {
+                    return None;
+                }
+                'imports: for usage in types {
                     if usage.contains("{}") || usage.chars().all(|c| c.is_uppercase() || c == '-') {
                         usages = None;
                         break 'imports;
@@ -196,16 +309,39 @@ impl Backend for Rasn {
                         }
                     } else if usage.starts_with(|c: char| c.is_uppercase()) {
                         if let Some(us) = usages.as_mut() {
-                            us.push(self.to_rust_title_case(usage).to_token_stream())
+                            let remote = self.type_name_in_module(
+                                &import.global_module_reference.module_reference,
+                                usage,
+                            );
+                            let local = self.to_rust_title_case(usage);
+                            us.push(if remote.to_string() == local.to_string() {
+                                remote
+                            } else {
+                                quote!(#remote as #local)
+                            });
                         }
                     }
                 }
-                let used_imports = if self.config.default_wildcard_imports {
-                    vec![TokenStream::from_str("*").unwrap()]
+                let used_imports = if self.config.default_wildcard_imports || usages.is_none() {
+                    let mut imports = vec![TokenStream::from_str("*").unwrap()];
+                    for usage in &import.types {
+                        if !exported.is_none_or(|names| names.contains(usage.as_str())) {
+                            continue;
+                        }
+                        let remote = self.type_name_in_module(
+                            &import.global_module_reference.module_reference,
+                            usage,
+                        );
+                        let local = self.to_rust_title_case(usage);
+                        if remote.to_string() != local.to_string() {
+                            imports.push(quote!(#remote as #local));
+                        }
+                    }
+                    imports
                 } else {
-                    usages.unwrap_or(vec![TokenStream::from_str("*").unwrap()])
+                    usages.unwrap()
                 };
-                quote!(use super:: #module::{ #(#used_imports),* };)
+                Some(quote!(use super:: #module::{ #(#used_imports),* };))
             });
             let (pdus, warnings): (Vec<TokenStream>, Vec<CompilerError>) =
                 tlds.into_iter().fold((vec![], vec![]), |mut acc, tld| {
